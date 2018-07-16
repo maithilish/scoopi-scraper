@@ -1,0 +1,24 @@
+<div *ngIf="gauges.length">
+  <table class="table table-sm table-striped table-bordered gotzw-table-condensed">
+    <thead class="text-center">
+      <tr>
+        <th colspan="2" scope='colgroup'>Pools</th>
+        <th colspan="3" scope='colgroup'>Tasks</th>
+      </tr>
+      <tr>
+        <th scope='col'>pool</th>
+        <th scope='col'>size</th>
+        <th scope='col'>run</th>
+        <th scope='col'>queued</th>
+        <th scope='col'>finished</th>
+      </tr>
+    </thead>
+    <tr *ngFor="let metric of gauges">
+      <td>{{ metric.label }}</td>
+      <td class="text-center">{{ metric.poolSize }}</td>
+      <td class="text-center">{{ metric.activeCount }}</td>
+      <td class="text-center">{{ metric.taskCount }}</td>
+      <td class="text-center">{{ metric.completedTaskCount }}</td>
+    </tr>
+  </table>
+</div>

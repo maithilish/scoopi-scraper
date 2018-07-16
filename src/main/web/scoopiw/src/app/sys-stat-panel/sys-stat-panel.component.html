@@ -1,0 +1,33 @@
+<div *ngIf="gauges.length">
+  <table class="table table-sm table-striped table-bordered gotzw-table-condensed">
+    <thead class="text-center">
+      <tr>
+        <th colspan="2">System Stats</th>
+      </tr>
+    </thead>
+    <tr>
+      <td>Up</td>
+      <td class="text-center">{{gauges[0].uptime}}</td>
+    </tr>
+    <tr>
+      <td>Load Average</td>
+      <td class="text-center">{{gauges[0].systemLoad | number}}</td>
+    </tr>
+    <tr>
+      <td>Max Memory</td>
+      <td class="text-center">{{gauges[0].maxMemory}} MB</td>
+    </tr>
+    <tr>
+      <td>Total Memory</td>
+      <td class="text-center">{{gauges[0].totalMemory}} MB</td>
+    </tr>
+    <tr>
+      <td>Free Memory</td>
+      <td class="text-center">{{gauges[0].freeMemory}} MB</td>
+    </tr>
+    <tr *ngIf="errors.length > 0">
+      <td class="text-danger">Errors</td>
+      <td class="text-danger text-center">{{errors[0].count}}</td>
+    </tr>
+  </table>
+</div>

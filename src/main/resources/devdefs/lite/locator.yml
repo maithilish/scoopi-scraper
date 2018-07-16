@@ -1,0 +1,5 @@
+locatorGroups:
+  lite:   
+    locators: [
+       { name: "acme", url: "na" }       
+    ]

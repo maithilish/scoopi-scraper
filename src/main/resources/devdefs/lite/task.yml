@@ -1,0 +1,23 @@
+taskGroups:
+
+  lite:    
+    simple:
+      dataDef: simpleDef
+      steps: simple  
+        
+steps: 
+  simple:
+    step1:
+      class: org.codetab.scoopi.step.lite.BlankStep
+      previous: start
+      next: step2
+    step2:
+      class: org.codetab.scoopi.step.lite.BlankStep
+      previous: step1
+      next: step3
+    step3:
+      class: org.codetab.scoopi.step.lite.BlankStep
+      previous: step2
+      next: end
+                    
+            

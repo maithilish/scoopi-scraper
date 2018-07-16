@@ -1,0 +1,454 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"description": "Scoopi Defs JSON schema",
+	"allOf": [
+		{
+			"$ref": "#/definitions/locatorGroupsNode"
+		},
+		{
+			"$ref": "#/definitions/dataDefsNode"
+		},
+		{
+			"$ref": "#/definitions/taskGroupsNode"
+		},
+		{
+			"$ref": "#/definitions/stepsNode"
+		}
+	],
+	"definitions": {
+		"locatorGroupsNode": {
+			"type": "object",
+			"properties": {
+				"locatorGroups": {
+					"type": "object",
+					"patternProperties": {
+						"^.+$": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/locatorsNode"
+								}
+							]
+						}
+					}
+				}
+			},
+			"required": [
+				"locatorGroups"
+			]
+		},
+		"locatorsNode": {
+			"type": "object",
+			"properties": {
+				"locators": {
+					"type": "array",
+					"minItems": 1,
+					"uniqueItems": true,
+					"items": {
+						"oneOf": [
+							{
+								"$ref": "#/definitions/locatorNode"
+							}
+						]
+					}
+				}
+			},
+			"required": [
+				"locators"
+			]
+		},
+		"locatorNode": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"url": {
+					"type": "string",
+					"minLength": 1
+				}
+			},
+			"required": [
+				"name",
+				"url"
+			]
+		},
+		"dataDefsNode": {
+			"type": "object",
+			"properties": {
+				"dataDefs": {
+					"type": "object",
+					"patternProperties": {
+						"^.+$": {
+							"allOf": [
+								{
+									"$ref": "#/definitions/axisNode"
+								}
+							]
+						}
+					}
+				}
+			},
+			"required": [
+				"dataDefs"
+			]
+		},
+		"axisNode": {
+			"type": "object",
+			"properties": {
+				"axis": {
+					"allOf": [
+						{
+							"$ref": "#/definitions/factNode"
+						},
+						{
+							"$ref": "#/definitions/colNode"
+						},
+						{
+							"$ref": "#/definitions/rowNode"
+						}
+					]
+				}
+			},
+			"required": [
+				"axis"
+			]
+		},
+		"factNode": {
+			"type": "object",
+			"properties": {
+				"fact": {
+					"allOf": [
+						{
+							"$ref": "#/definitions/queryNode"
+						}
+					]
+				}
+			},
+			"required": [
+				"fact"
+			]
+		},
+		"colNode": {
+			"type": "object",
+			"properties": {
+				"col": {
+					"allOf": [
+						{
+							"$ref": "#/definitions/queryNode"
+						},
+						{
+							"$ref": "#/definitions/membersNode"
+						}
+					]
+				}
+			},
+			"required": [
+				"col"
+			]
+		},
+		"rowNode": {
+			"type": "object",
+			"properties": {
+				"row": {
+					"allOf": [
+						{
+							"$ref": "#/definitions/queryNode"
+						},
+						{
+							"$ref": "#/definitions/membersNode"
+						},
+						{
+							"$ref": "#/definitions/filtersNode"
+						}
+					]
+				}
+			},
+			"required": [
+				"row"
+			]
+		},
+		"queryNode": {
+			"type": "object",
+			"properties": {
+				"query": {
+					"oneOf": [
+						{
+							"$ref": "#/definitions/queryScriptNode"
+						},
+						{
+							"$ref": "#/definitions/queryQueryNode"
+						},
+						{
+							"$ref": "#/definitions/queryNoQueryNode"
+						}
+					]
+				}
+			},
+			"required": [
+				"query"
+			]
+		},
+		"queryScriptNode": {
+			"type": "object",
+			"properties": {
+				"script": {
+					"type": "string",
+					"minLength": 1
+				}
+			},
+			"required": [
+				"script"
+			]
+		},
+		"queryQueryNode": {
+			"type": "object",
+			"properties": {
+				"region": {
+					"type": "string",
+					"minLength": 1
+				},
+				"field": {
+					"type": "string",
+					"minLength": 1
+				},
+				"attribute": {
+					"type": "string",
+					"minLength": 1
+				}
+			},
+			"required": [
+				"region",
+				"field"
+			]
+		},
+		"queryNoQueryNode": {
+			"type": "object",
+			"properties": {
+				"noQuery": {
+					"type": "string",
+					"minLength": 1
+				}
+			},
+			"required": [
+				"noQuery"
+			]
+		},
+		"membersNode": {
+			"type": "object",
+			"properties": {
+				"members": {
+					"type": "array",
+					"uniqueItems": true,
+					"minItems": 1,
+					"items": {
+						"oneOf": [
+							{
+								"$ref": "#/definitions/memberNode"
+							}
+						]
+					}
+				}
+			},
+			"required": [
+				"members"
+			]
+		},
+		"memberNode": {
+			"type": "object",
+			"properties": {
+				"member": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1
+						},
+						"index": {
+							"type": "number"
+						},
+						"indexRange": {
+							"type": "string",
+							"minLength": 1
+						},
+						"breakAfter": {
+							"type": "string",
+							"minLength": 1
+						},
+						"group": {
+							"type": "string",
+							"minLength": 1
+						}
+					},
+					"required": [
+						"name"
+					]
+				}
+			},
+			"required": [
+				"member"
+			]
+		},
+		"filtersNode": {
+			"type": "object",
+			"properties": {
+				"filters": {
+					"type": "array",
+					"uniqueItems": true,
+					"minItems": 1,
+					"items": {
+						"oneOf": [
+							{
+								"$ref": "#/definitions/filterNode"
+							}
+						]
+					}
+				}
+			}
+		},
+		"filterNode": {
+			"type": "object",
+			"properties": {
+				"filter": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1
+						},
+						"pattern": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"name",
+						"pattern"
+					]
+				}
+			},
+			"required": [
+				"filter"
+			]
+		},
+		"taskGroupsNode": {
+			"type": "object",
+			"properties": {
+				"taskGroups": {
+					"type": "object",
+					"patternProperties": {
+						"^.+$": {
+							"allOf": [
+								{
+									"$ref": "#/definitions/taskNode"
+								}
+							]
+						}
+					}
+				}
+			},
+			"required": [
+				"taskGroups"
+			]
+		},
+		"taskNode": {
+			"type": "object",
+			"patternProperties": {
+				"^.+$": {
+					"type": "object",
+					"properties": {
+						"dataDef": {
+							"type": "string",
+							"minLength": 1
+						},
+						"steps": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/taskStepsNameNode"
+								},
+								{
+									"$ref": "#/definitions/taskStepsOverrideNode"
+								}
+							]
+						}
+					},
+					"required": [
+						"dataDef"
+					]
+				}
+			}
+		},
+		"taskStepsNameNode": {
+			"type": "string",
+			"minLength": 1
+		},
+		"taskStepsOverrideNode": {
+			"type": "object",
+			"patternProperties": {
+				"^.+$": {
+					"allOf": [
+						{
+							"$ref": "#/definitions/stepNode"
+						}
+					]
+				}
+			}
+		},
+		"taskStepsNode": {
+			"type": "object",
+			"patternProperties": {
+				"^.+$": {
+					"allOf": [
+						{
+							"$ref": "#/definitions/stepNode"
+						}
+					]
+				}
+			}
+		},
+		"stepNode": {
+			"type": "object",
+			"patternProperties": {
+				"^.+$": {
+					"type": "object",
+					"properties": {
+						"class": {
+							"type": "string",
+							"minLength": 1
+						},
+						"previous": {
+							"type": "string",
+							"minLength": 1
+						},
+						"next": {
+							"type": "string",
+							"minLength": 1
+						}
+					},
+					"required": [
+						"class",
+						"previous",
+						"next"
+					]
+				}
+			}
+		},
+		"stepsNode": {
+			"_comment": "for top level steps such as default steps or user defined steps",
+			"type": "object",
+			"properties": {
+				"steps": {
+					"type": "object",
+					"patternProperties": {
+						"^.+$": {
+							"allOf": [
+								{
+									"$ref": "#/definitions/stepNode"
+								}
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <scoopi>
+        <propertyPattern>scoopi/properties/property</propertyPattern>
+        <beanFile>/bean.xml</beanFile>
+
+        <schemaFile>/schema/scoopi.xsd</schemaFile>
+        <stepsXslFile>/schema/steps.xsl</stepsXslFile>
+        <fieldsNsXslFile>/schema/fieldsns.xsl</fieldsNsXslFile>
+
+        <defs>
+            <dir>devdefs/jsoup/yml</dir>
+            <defaultSteps>/steps-default.yml</defaultSteps>
+            <definedSchema>/schema/defs-defined.json</definedSchema>
+            <effectiveSchema>/schema/defs-effective.json
+            </effectiveSchema>
+        </defs>
+
+        <seederClass>org.codetab.scoopi.step.extract.LocatorSeeder
+        </seederClass>
+        <poolsize>
+            <seeder>6</seeder>
+            <loader>4</loader>
+            <parser>4</parser>
+            <process>4</process>
+            <converter>4</converter>
+            <appender>2</appender>
+        </poolsize>
+        <appender>
+            <queuesize>4096</queuesize>
+        </appender>
+        <webClient>
+            <timeout>120000</timeout>
+            <userAgent>
+              <![CDATA[
+                Mozilla/5.0 (X11\; Linux x86_64\; rv:50.0) Gecko/20100101 Firefox/50.0
+              ]]>
+            </userAgent>
+        </webClient>
+        <highDate>31-12-2037 23:59:59.999</highDate>
+        <dateParsePattern>dd-MM-yyyy ; dd/MM/yyyy</dateParsePattern>
+        <dateTimeParsePattern>
+            <![CDATA[
+                 dd-MM-yyyy HH:mm:ss.SSS ; dd/MM/yyyy HH:mm:ss.SSS
+            ]]>
+        </dateTimeParsePattern>
+        <waitForHeapDump>false</waitForHeapDump>
+        <fork>
+            <locator>0</locator>
+        </fork>
+        <useDatastore>true</useDatastore>
+        <datastore>
+            <name>datastore</name>
+            <orm>jdo</orm>
+            <configFile>jdoconfig.properties</configFile>
+        </datastore>
+        <persist>
+            <dataDef>true</dataDef>
+            <locator>true</locator>
+            <data>true</data>
+        </persist>
+        <metrics>
+            <server>
+                <enable>true</enable>
+                <port>9010</port>
+            </server>
+        </metrics>
+    </scoopi>
+</configuration>

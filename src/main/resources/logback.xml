@@ -1,0 +1,100 @@
+<configuration>
+
+    <appender name="tracelog" class="ch.qos.logback.core.FileAppender">
+        <file>logs/trace.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="debuglog" class="ch.qos.logback.core.FileAppender">
+        <file>logs/debug.log</file>
+        <append>false</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>debug</level>
+        </filter>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="errorlog" class="ch.qos.logback.core.FileAppender">
+        <file>logs/error.log</file>
+        <append>false</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>warn</level>
+        </filter>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="statelog" class="ch.qos.logback.core.FileAppender">
+        <file>logs/state.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>LOG_BS</marker>
+                <marker>LOG_ITC_BS</marker>
+                <marker>LOG_ITC_BS_BS</marker>
+            </evaluator>
+            <onMismatch>DENY</onMismatch>
+            <onMatch>NEUTRAL</onMatch>
+        </filter>
+    </appender>
+
+    <appender name="poolstatelog" class="ch.qos.logback.core.FileAppender">
+        <file>logs/poolstate.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>LOG_POOL_STATE</marker>
+            </evaluator>
+            <onMismatch>DENY</onMismatch>
+            <onMatch>NEUTRAL</onMatch>
+        </filter>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>LOG_POOL_STATE</marker>
+            </evaluator>
+            <onMismatch>NEUTRAL</onMismatch>
+            <onMatch>DENY</onMatch>
+        </filter>
+    </appender>
+
+    <logger name="DataNucleus.JDO" level="OFF" />
+    <logger name="org.eclipse.jetty" level="WARN" />
+
+    <root level="info">
+        <appender-ref ref="console" />
+        <appender-ref ref="errorlog" />
+
+        <!-- <appender-ref ref="debuglog" /> -->
+        <!-- <appender-ref ref="tracelog" /> -->
+        <!-- <appender-ref ref="poolstatelog" /> -->
+        <!-- <appender-ref ref="statelog" /> -->
+    </root>
+
+</configuration>

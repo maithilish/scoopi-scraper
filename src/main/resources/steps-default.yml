@@ -1,0 +1,6 @@
+steps: 
+  default:
+    seeder:
+      class: "org.codetab.scoopi.step.extract.LocatorSeeder"
+      previous: start
+      next: end

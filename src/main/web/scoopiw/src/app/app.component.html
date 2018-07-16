@@ -1,0 +1,47 @@
+<div class="container" *ngIf="metrics.length">
+    <div class="row mt-4">
+        <div class="col-sm-4">
+            <div class="col-sm">
+                <img [src]="logo" width="70" height="40" class="d-inline-block align-top" alt="Gotz Logo">
+                <h3 class="d-inline-block align-top mx-2">{{title}}</h3>
+            </div>
+            <div class="col-sm mt-2">
+                <app-sys-stat-panel [metrics]="metrics"></app-sys-stat-panel>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <app-pool-panel [metrics]="metrics"></app-pool-panel>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="col-sm">
+                <app-meter-panel [heading]="'Locator Stats'" [cat]="'locator'" [metrics]="metrics"></app-meter-panel>
+            </div>
+            <div class="col-sm">
+                <app-counter-panel [heading]="'Page Stats'" [cat]="['data','fetch','parser.cache']" [metrics]="metrics"></app-counter-panel>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <app-timer-panel [heading]="'Task Execution Time'" [cat]="'task'" [metrics]="metrics"></app-timer-panel>
+        </div>
+    </div>
+</div>
+
+<div class="container" *ngIf="!metrics.length">
+    <div class="row mt-4">
+        <div class="col-sm-4">
+            <div class="col-sm">
+                <img [src]="logo" width="70" height="40" class="d-inline-block align-top" alt="Gotz Logo">
+                <h3 class="d-inline-block align-top mx-2">{{title}}</h3>
+            </div>
+            <div class="col-sm mt-4" *ngIf="success">
+                please wait, collecting data . . .
+            </div>
+            <div class="col-sm mt-4 text-danger" *ngIf="!success">
+                error encountered fetching metrics
+            </div>
+        </div>
+    </div>
+</div>

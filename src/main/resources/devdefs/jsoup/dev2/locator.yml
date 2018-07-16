@@ -1,0 +1,12 @@
+locatorGroups:
+  snapshot:   
+    locators: [
+       { name: acme, url: acme.html },
+       { name: acme1, url: acme1.html },
+    ]
+          
+  consSnapshot:   
+    locators: [
+       { name: acme, url: acme.html }       
+    ]
+        

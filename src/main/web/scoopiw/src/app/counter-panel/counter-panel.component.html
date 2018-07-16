@@ -1,0 +1,13 @@
+<div *ngIf="counters.length">
+    <table class="table table-sm table-striped table-bordered gotzw-table-condensed">
+        <thead class="text-center">
+            <tr>
+                <th colspan="2" scope='colgroup'>{{ heading }}</th>
+            </tr>
+        </thead>
+        <tr *ngFor="let metric of counters">
+            <td>{{ metric.label }}</td>
+            <td class="text-center">{{ metric.count }}</td>
+        </tr>
+    </table>
+</div>

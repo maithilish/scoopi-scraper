@@ -1,0 +1,125 @@
+dataDefs:
+  
+  finLinks:
+    axis:
+      fact:
+        query:
+          region: "#page_links > table > tbody > tr > td:nth-child(4) > ul" 
+          field: "li:nth-child(%{row.index}) > a[href]"
+          attribute: href
+        prefix: /defs/examples/page/      
+      col:
+        query:
+          script: configs.getRunDateTime()        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          region: "#page_links > table > tbody > tr > td:nth-child(4) > ul" 
+          field: "li:nth-child(%{row.index}) > a[href]"        
+        members: [ 
+          member: {name: bs, index: 2, group: bs},
+          member: {name: pl, index: 3, group: pl}
+        ]
+
+  snapshot:
+    axis:
+      fact:
+        query:
+          region: "div#snapshot"  
+          field: "div:matchesOwn(^%{row.match}) + div"                
+      col:
+        query:
+          script: "document.getFromDate()"        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          region: "div#snapshot" 
+          field: "div:matchesOwn(^%{row.match})"        
+        members: [ 
+          member: {name: MC, match: "MARKET CAP"},
+          member: {name: EPS, match: "EPS (TTM)"},
+          member: {name: PE, match: "P/E"},
+          member: {name: PC, match: "P/C"},
+          member: {name: BV, match: "BOOK VALUE"},          
+          member: {name: PB, match: "PRICE/BOOK"},
+          member: {name: DIV, match: "DIV (%)"},
+          member: {name: DY, match: "DIV YIELD"},
+          member: {name: FV, match: "FACE VALUE"},
+          member: {name: "IND PE", match: "INDUSTRY P/E"},          
+        ] 
+
+  price:
+    axis:
+      fact:
+        query:
+          region: "div#price_tick"  
+          field: "*"
+      col:
+        query:
+          script: configs.getRunDateTime()        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          noQuery: "query ignored"                      
+        members: [ 
+          member: {name: Price, value: Price},          
+        ]
+
+  bs:
+    axis:
+      fact:
+        query:
+          region: "table:contains(Sources Of Funds)"  
+          field: "tr:nth-child(%{row.index}) > td:nth-child(%{col.index})"
+      col:
+        query:
+          region: "table:contains(Sources Of Funds)"  
+          field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
+        members: [ 
+          member: {name: year, indexRange: 2-6},
+        ]  
+      row:                
+        query:
+          region: "table:contains(Sources Of Funds)"  
+          field: "tr:nth-child(%{row.index}) > td:nth-child(1)"        
+        members: [ 
+          member: {name: item, index: 5, breakAfter="Book Value (Rs)"},
+        ]
+        filters: [
+          filter: {name: blank, pattern: ""},
+          filter: {name: f1, pattern: "Sources Of Funds"},
+          filter: {name: f2, pattern: "Application Of Funds"},
+        ] 
+
+  pl:
+    axis:
+      fact:
+        query:
+          region: "table:contains(Employee Cost)"  
+          field: "tr:nth-child(%{row.index}) > td:nth-child(%{col.index})"
+      col:
+        query:
+          region: "table:contains(Employee Cost)"  
+          field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
+        members: [ 
+          member: {name: year, indexRange: 2-6},
+        ]  
+      row:                
+        query:
+          region: "table:contains(Employee Cost)"  
+          field: "tr:nth-child(%{row.index}) > td:nth-child(1)"        
+        members: [ 
+          member: {name: item, index: 6, breakAfter="Book Value (Rs)"},
+        ]
+        filters: [
+          filter: {name: blank, pattern: ""},
+          filter: {name: f1, pattern: "Expenditure"},
+          filter: {name: f2, pattern: "Per share data (annualised)"},
+        ] 
+        

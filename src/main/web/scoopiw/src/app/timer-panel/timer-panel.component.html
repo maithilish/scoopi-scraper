@@ -1,0 +1,23 @@
+<div *ngIf="timers.length">
+  <table class="table table-sm table-striped table-bordered gotzw-table-condensed">
+    <thead class="text-center">
+      <tr>
+        <th colspan="5">{{ heading }}</th>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <th>count</th>
+        <th>mean</th>
+        <th>min</th>
+        <th>max</th>
+      </tr>
+    </thead>
+    <tr *ngFor="let metric of timers">
+      <td>{{ metric.label }}</td>
+      <td class="text-center">{{ metric.count }}</td>
+      <td class="text-center">{{ metric.mean | number }}</td>
+      <td class="text-center">{{ metric.min | number }}</td>
+      <td class="text-center">{{ metric.max | number }}</td>
+    </tr>
+  </table>
+</div>
