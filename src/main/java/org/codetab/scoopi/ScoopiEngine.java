@@ -15,11 +15,11 @@ public class ScoopiEngine {
     static final Logger LOGGER = LoggerFactory.getLogger(ScoopiEngine.class);
 
     @Inject
-    private StatService activityService;
-    @Inject
-    private ScoopiSystem gSystem;
+    private ScoopiSystem scoopiSystem;
     @Inject
     private TaskMediator taskMediator;
+    @Inject
+    private StatService statService;
 
     /*
      * single thread env throws CriticalException and terminates the app and
@@ -29,30 +29,32 @@ public class ScoopiEngine {
      */
     public void start() {
         LOGGER.info(Messages.getString("ScoopiEngine.0")); //$NON-NLS-1$
-        activityService.start();
+        statService.start();
         try {
-            // single thread env
-            gSystem.initSystem();
-            gSystem.pushInitialPayload();
+            // single thread
+            String defaultConfigFile = "scoopi-default.xml"; //$NON-NLS-1$
+            String userConfigFile = scoopiSystem.getPropertyFileName();
+            scoopiSystem.initSystem(defaultConfigFile, userConfigFile);
+            scoopiSystem.pushInitialPayload();
             LOGGER.info(Messages.getString("ScoopiEngine.1")); //$NON-NLS-1$
-            gSystem.waitForHeapDump();
+            scoopiSystem.waitForHeapDump();
 
+            // multi thread
             LOGGER.info(Messages.getString("ScoopiEngine.2")); //$NON-NLS-1$
-
             taskMediator.start();
-            taskMediator.waitToFinish();
+            taskMediator.waitForFinish();
+            scoopiSystem.waitForHeapDump();
 
-            gSystem.waitForHeapDump();
             LOGGER.info(Messages.getString("ScoopiEngine.3")); //$NON-NLS-1$
 
         } catch (CriticalException e) {
             LOGGER.error("{}", e.getMessage()); //$NON-NLS-1$
             LOGGER.warn(Messages.getString("ScoopiEngine.5")); //$NON-NLS-1$
             LOGGER.debug("{}", e); //$NON-NLS-1$
-            activityService.log(CAT.FATAL, e.getMessage(), e);
+            statService.log(CAT.FATAL, e.getMessage(), e);
         }
-        gSystem.stopMetricsServer();
-        activityService.end();
+        scoopiSystem.stopMetricsServer();
+        statService.end();
         LOGGER.info(Messages.getString("ScoopiEngine.7")); //$NON-NLS-1$
     }
 

@@ -21,7 +21,7 @@ public class Task implements Runnable {
     static final Logger LOGGER = LoggerFactory.getLogger(Task.class);
 
     @Inject
-    private StatService activityService;
+    private StatService statService;
     @Inject
     private MetricsHelper metricsHelper;
 
@@ -64,7 +64,7 @@ public class Task implements Runnable {
                     Util.join("[", step.getStepName(), "] ", e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.error("[{}] {}", label, message); //$NON-NLS-1$
             LOGGER.debug("[{}] [{}]", label, step.getStepName(), e); //$NON-NLS-1$
-            activityService.log(CAT.ERROR, label, message, e);
+            statService.log(CAT.ERROR, label, message, e);
             countError();
         } catch (Exception e) {
             String label = getLabel();
@@ -72,7 +72,7 @@ public class Task implements Runnable {
                     Util.join("[", step.getStepName(), "] ", e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.error("[{}] {}", label, message); //$NON-NLS-1$
             LOGGER.debug("[{}] [{}]", label, step.getStepName(), e); //$NON-NLS-1$
-            activityService.log(CAT.INTERNAL, label, message, e);
+            statService.log(CAT.INTERNAL, label, message, e);
             countError();
         }
     }

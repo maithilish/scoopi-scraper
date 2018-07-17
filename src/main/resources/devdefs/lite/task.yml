@@ -1,10 +1,14 @@
 taskGroups:
 
-  lite:    
-    simple:
+  lite1:    
+    simpleTask:
       dataDef: simpleDef
-      steps: simple  
-        
+      steps: simple
+  lite2:    
+    loopTask:
+      dataDef: simpleDef
+      steps: loop  
+                
 steps: 
   simple:
     step1:
@@ -19,5 +23,15 @@ steps:
       class: org.codetab.scoopi.step.lite.BlankStep
       previous: step2
       next: end
+  loop:
+    stepX1:
+      class: org.codetab.scoopi.step.lite.BlankStep
+      previous: start
+      next: stepX2
+    stepX2:
+      class: org.codetab.scoopi.step.lite.LoopStep
+      previous: stepX1
+      next: step1
+      
                     
             

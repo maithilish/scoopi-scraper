@@ -2,8 +2,10 @@ package org.codetab.scoopi.step;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.defs.ITaskProvider;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Payload;
@@ -24,9 +26,9 @@ public abstract class Step implements IStep {
 
     static final Logger LOGGER = LoggerFactory.getLogger(Step.class);
 
+    private Object data;
     private Payload payload;
     private Marker marker;
-
     private boolean consistent = false;
 
     @Inject
@@ -48,28 +50,40 @@ public abstract class Step implements IStep {
 
     @Override
     public boolean handover() {
-        String group = getPayload().getJobInfo().getGroup();
-        String stepName = getPayload().getStepInfo().getStepName();
-        String taskName = getPayload().getJobInfo().getTask();
         try {
+            Validate.validState((data != null), "data is null");
+            Validate.validState(isConsistent(), "step inconsistent");
+
+            String group = getPayload().getJobInfo().getGroup();
+            String stepName = getPayload().getStepInfo().getStepName();
+            String taskName = getPayload().getJobInfo().getTask();
+
             if (!getPayload().getStepInfo().getNextStepName()
                     .equalsIgnoreCase("end")) {
                 StepInfo nextStep =
                         taskProvider.getNextStep(group, taskName, stepName);
                 Payload nextStepPayload = new Payload();
-                nextStepPayload.setData("dummy");
+                nextStepPayload.setData(data);
                 nextStepPayload.setStepInfo(nextStep);
                 nextStepPayload.setJobInfo(getPayload().getJobInfo());
                 taskMediator.pushPayload(nextStepPayload);
                 LOGGER.info("handover to step: " + nextStep.getStepName());
             }
-        } catch (DefNotFoundException | InterruptedException e) {
-            // TODO Auto-generated catch block
-            // don't throw Exception just log error
-            e.printStackTrace();
+        } catch (DefNotFoundException | InterruptedException
+                | IllegalStateException e) {
+            throw new StepRunException("unable to handover", e);
         }
-
         return true;
+    }
+
+    @Override
+    public Object getData() {
+        return data;
+    }
+
+    @Override
+    public void setData(final Object data) {
+        this.data = data;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.codetab.scoopi;
 
 import java.io.Console;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -49,37 +48,72 @@ public class ScoopiSystem {
     @Inject
     private Runtime runTime;
 
-    @Inject
-    public ScoopiSystem() {
-    }
-
     /*
      *
      */
-    public boolean initSystem() {
-        LOGGER.info(Messages.getString("GSystem.0")); //$NON-NLS-1$
+    public boolean initSystem(final String defaultConfigFile,
+            final String userConfigFile) {
+        LOGGER.info(Messages.getString("ScoopiSystem.0")); //$NON-NLS-1$
+
         runTime.addShutdownHook(shutdownHook);
-
-        String userProvidedFile = getPropertyFileName();
-        String defaultsFile = "scoopi-default.xml"; //$NON-NLS-1$
-        configService.init(userProvidedFile, defaultsFile);
-
+        configService.init(userConfigFile, defaultConfigFile);
         startMetricsServer();
 
-        String mode = getMode();
-        LOGGER.info(mode);
-        Date runDate = configService.getRunDate();
-        LOGGER.info(Messages.getString("GSystem.3"), runDate); //$NON-NLS-1$
+        LOGGER.info(getMode());
+        LOGGER.info(Messages.getString("ScoopiSystem.3"), //$NON-NLS-1$
+                configService.getRunDate());
 
         defsProvider.init();
         defsProvider.initProviders();
 
         // dataDefService.init();
         // int dataDefsCount = dataDefService.getCount();
-        // LOGGER.info(Messages.getString("GSystem.7"), dataDefsCount);
+        // LOGGER.info(Messages.getString("ScoopiSystem.7"), dataDefsCount);
         // //$NON-NLS-1$
 
         return true;
+    }
+
+    public void startMetricsServer() {
+        metricsServer.start();
+        metricsHelper.initMetrics();
+        SystemStat systemStat = new SystemStat();
+        metricsHelper.registerGuage(systemStat, this, "system", "stats");
+    }
+
+    public void stopMetricsServer() {
+        metricsServer.stop();
+    }
+
+    /*
+     *
+     */
+    public void pushInitialPayload() {
+        LOGGER.info(Messages.getString("ScoopiSystem.8")); //$NON-NLS-1$
+        try {
+            String seederClassName =
+                    configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
+            List<LocatorGroup> lGroups = locatorProvider.getLocatorGroups();
+            for (LocatorGroup lGroup : lGroups) {
+                StepInfo stepInfo =
+                        new StepInfo("start", "na", "na", seederClassName);
+                JobInfo jobInfo =
+                        new JobInfo(0, "na", lGroup.getGroup(), "na", "na");
+                Payload payload = new Payload();
+                payload.setStepInfo(stepInfo);
+                payload.setJobInfo(jobInfo);
+                payload.setData(lGroup);
+                try {
+                    taskMediator.pushPayload(payload);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        } catch (ConfigNotFoundException e) {
+            throw new CriticalException(Messages.getString("ScoopiSystem.10"), //$NON-NLS-1$
+                    e);
+        }
     }
 
     /**
@@ -101,7 +135,7 @@ public class ScoopiSystem {
      *
      * @return
      */
-    private String getPropertyFileName() {
+    public String getPropertyFileName() {
         String fileName = null;
 
         String system = System.getProperty("scoopi.propertyFile"); //$NON-NLS-1$
@@ -127,43 +161,13 @@ public class ScoopiSystem {
         return fileName;
     }
 
-    /*
-     *
-     */
-    public void pushInitialPayload() {
-        LOGGER.info(Messages.getString("GSystem.8")); //$NON-NLS-1$
-        try {
-            String seederClassName =
-                    configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
-            List<LocatorGroup> lGroups = locatorProvider.getLocatorGroups();
-            for (LocatorGroup lGroup : lGroups) {
-                StepInfo stepInfo =
-                        new StepInfo("start", "na", "na", seederClassName);
-                JobInfo jobInfo =
-                        new JobInfo(0, "na", lGroup.getGroup(), "na", "na");
-                Payload payload = new Payload();
-                payload.setStepInfo(stepInfo);
-                payload.setJobInfo(jobInfo);
-                payload.setData(lGroup);
-                try {
-                    taskMediator.pushPayload(payload);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        } catch (ConfigNotFoundException e) {
-            throw new CriticalException(Messages.getString("GSystem.10"), e); //$NON-NLS-1$
-        }
-    }
-
-    private String getMode() {
-        String modeInfo = Messages.getString("GSystem.11"); //$NON-NLS-1$
+    public String getMode() {
+        String modeInfo = Messages.getString("ScoopiSystem.11"); //$NON-NLS-1$
         if (configService.isTestMode()) {
-            modeInfo = Messages.getString("GSystem.12"); //$NON-NLS-1$
+            modeInfo = Messages.getString("ScoopiSystem.12"); //$NON-NLS-1$
         }
         if (configService.isDevMode()) {
-            modeInfo = Messages.getString("GSystem.13"); //$NON-NLS-1$
+            modeInfo = Messages.getString("ScoopiSystem.13"); //$NON-NLS-1$
         }
         return modeInfo;
     }
@@ -177,20 +181,11 @@ public class ScoopiSystem {
         if (wait.equalsIgnoreCase("true")) { //$NON-NLS-1$
             System.gc();
             Console console = System.console();
-            console.printf("%s%s", Messages.getString("GSystem.18"), Util.LINE); //$NON-NLS-1$ //$NON-NLS-2$
-            console.printf("%s", Messages.getString("GSystem.20")); //$NON-NLS-1$ //$NON-NLS-2$
+            console.printf("%s%s", Messages.getString("ScoopiSystem.18"), //$NON-NLS-1$ //$NON-NLS-2$
+                    Util.LINE);
+            console.printf("%s", Messages.getString("ScoopiSystem.20")); //$NON-NLS-1$ //$NON-NLS-2$
             console.readLine();
         }
     }
 
-    public void startMetricsServer() {
-        metricsServer.start();
-        metricsHelper.initMetrics();
-        SystemStat systemStat = new SystemStat();
-        metricsHelper.registerGuage(systemStat, this, "system", "stats");
-    }
-
-    public void stopMetricsServer() {
-        metricsServer.stop();
-    }
 }

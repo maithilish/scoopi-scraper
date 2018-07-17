@@ -31,7 +31,7 @@ public class TaskMediator {
         taskRunner.start();
     }
 
-    public void waitToFinish() {
+    public void waitForFinish() {
         try {
             taskRunner.join();
         } catch (InterruptedException e) {
