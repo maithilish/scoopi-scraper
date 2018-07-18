@@ -14,6 +14,7 @@ import org.codetab.scoopi.defs.IDefsProvider;
 import org.codetab.scoopi.defs.yml.helper.DefsHelper;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
+import org.codetab.scoopi.exception.ValidationException;
 import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
@@ -47,15 +48,15 @@ public class DefsProvider implements IDefsProvider {
             definedDefs = defsHelper.loadDefinedDefs();
             JsonNode defaultSteps = defsHelper.loadDefaultSteps();
             defsHelper.mergeDefaultSteps(definedDefs, defaultSteps);
-            defsHelper.validateDefinedDefs(definedDefs);
-            effectiveDefs = defsHelper.createEffectiveDefs(definedDefs);
-            defsHelper.validateEffectiveDefs(effectiveDefs);
-
             LOGGER.debug("defined defs {}", defsHelper.pretty(definedDefs));
-            LOGGER.debug("effective defs {}", defsHelper.pretty(effectiveDefs));
+            defsHelper.validateDefinedDefs(definedDefs);
 
+            effectiveDefs = defsHelper.createEffectiveDefs(definedDefs);
+            LOGGER.debug("effective defs {}", defsHelper.pretty(effectiveDefs));
+            defsHelper.validateEffectiveDefs(effectiveDefs);
         } catch (ConfigNotFoundException | IOException | URISyntaxException
-                | ProcessingException | NoSuchElementException e) {
+                | ProcessingException | NoSuchElementException
+                | ValidationException e) {
             throw new CriticalException(Messages.getString("BeanService.2"), //$NON-NLS-1$
                     e);
         }

@@ -91,14 +91,18 @@ public class ScoopiSystem {
     public void pushInitialPayload() {
         LOGGER.info(Messages.getString("ScoopiSystem.8")); //$NON-NLS-1$
         try {
+            String stepName = "start";
             String seederClassName =
                     configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
+            String undefined = "undefined";
             List<LocatorGroup> lGroups = locatorProvider.getLocatorGroups();
             for (LocatorGroup lGroup : lGroups) {
-                StepInfo stepInfo =
-                        new StepInfo("start", "na", "na", seederClassName);
-                JobInfo jobInfo =
-                        new JobInfo(0, "na", lGroup.getGroup(), "na", "na");
+                // for init payload, only stepName, className and taskGroup are
+                // set. Next and previous steps, taskName, dataDef are undefined
+                StepInfo stepInfo = new StepInfo(stepName, undefined, undefined,
+                        seederClassName);
+                JobInfo jobInfo = new JobInfo(0, undefined, lGroup.getGroup(),
+                        undefined, undefined);
                 Payload payload = new Payload();
                 payload.setStepInfo(stepInfo);
                 payload.setJobInfo(jobInfo);

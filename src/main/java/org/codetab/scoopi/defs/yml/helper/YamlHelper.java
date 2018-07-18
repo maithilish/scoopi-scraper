@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public class YamlHelper {
 
     public boolean validateSchema(final String schemaName,
             final InputStream schemaStream, final JsonNode node)
-            throws ProcessingException, IOException {
+            throws ProcessingException, IOException, ValidationException {
         LOGGER.info("validate schema {}", schemaName);
         ObjectMapper jsonMapper = new ObjectMapper();
         JsonNode schemaNodes = jsonMapper.readTree(schemaStream);
@@ -69,6 +70,7 @@ public class YamlHelper {
         } else {
             LOGGER.error("schema validation failed");
             report.forEach(p -> LOGGER.error(pretty(p.asJson())));
+            throw new ValidationException("invalid defs");
         }
 
         return true;

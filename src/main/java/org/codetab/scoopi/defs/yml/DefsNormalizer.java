@@ -65,6 +65,31 @@ public class DefsNormalizer {
     }
 
     /**
+     * Add missing query (noQuery) to axis.
+     * @param nodes
+     * @throws IOException
+     */
+    public void addNoQuery(final JsonNode nodes) throws IOException {
+        JsonNode dataDefs = nodes.at("/dataDefs");
+        ArrayList<String> names = Lists.newArrayList(dataDefs.fieldNames());
+        for (String name : names) {
+            String path = String.join("/", "", name, "axis");
+            JsonNode axes = dataDefs.at(path);
+            for (String axisName : Lists.newArrayList(axes.fieldNames())) {
+                path = String.join("/", "", axisName);
+                JsonNode axis = axes.at(path);
+                JsonNode query = axis.at("/query");
+                if (query.isMissingNode()) {
+                    String queryYml =
+                            "{ \"noQuery\": \"noQuery\"}";
+                    query = mapper.readTree(queryYml);
+                    ((ObjectNode) axis).replace("query", query);
+                }
+            }
+        }
+    }
+
+    /**
      * If steps is not defined for the task, then add field - steps: default
      * @param defs
      */

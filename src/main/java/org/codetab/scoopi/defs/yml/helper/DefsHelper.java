@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.defs.yml.DefsNormalizer;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
+import org.codetab.scoopi.exception.ValidationException;
 import org.codetab.scoopi.helper.IOHelper;
 import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.shared.ConfigService;
@@ -78,7 +79,7 @@ public class DefsHelper {
 
     public void validateDefinedDefs(final JsonNode definedDefs)
             throws FileNotFoundException, ProcessingException, IOException,
-            ConfigNotFoundException {
+            ConfigNotFoundException, ValidationException {
         LOGGER.info(Messages.getString("BeanService.0"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
 
         String schema = configService.getConfig("scoopi.defs.definedSchema"); //$NON-NLS-1$
@@ -90,7 +91,7 @@ public class DefsHelper {
 
     public void validateEffectiveDefs(final JsonNode effectiveDefs)
             throws FileNotFoundException, ProcessingException, IOException,
-            ConfigNotFoundException {
+            ConfigNotFoundException, ValidationException {
         LOGGER.info(Messages.getString("BeanService.0"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
 
         String schema = configService.getConfig("scoopi.defs.effectiveSchema"); //$NON-NLS-1$
@@ -106,6 +107,8 @@ public class DefsHelper {
         // !! don't change order of these methods !!
         defsNormalizer.addFactMember(eDefs);
         defsNormalizer.addMemberIndex(eDefs);
+        defsNormalizer.addNoQuery(eDefs);
+
         defsNormalizer.setDefaultSteps(eDefs);
         defsNormalizer.expandOverriddenSteps(eDefs);
         defsNormalizer.expandSteps(eDefs);

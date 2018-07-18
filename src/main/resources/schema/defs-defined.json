@@ -184,10 +184,7 @@
 						}
 					]
 				}
-			},
-			"required": [
-				"query"
-			]
+			}
 		},
 		"queryScriptNode": {
 			"type": "object",
