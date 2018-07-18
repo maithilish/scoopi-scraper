@@ -1,0 +1,20 @@
+dataDefs:
+
+  price:
+    axis:
+      fact:
+        query:
+          region: "div#price_tick"  
+          field: "*"
+      col:
+        query:
+          script: configs.getRunDateTime()        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          noQuery: "query ignored"                      
+        members: [ 
+          member: {name: Price, value: Price},          
+        ]

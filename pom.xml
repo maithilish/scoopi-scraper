@@ -9,7 +9,7 @@
     <url>http://www.codetab.org/scoopi</url>
 
     <properties>
-        <logback.version>1.3.0-alpha4</logback.version>
+        <logback.version>1.2.3</logback.version>
         <gson.version>2.8.5</gson.version>
         <guice.version>4.2.0</guice.version>
         <jaxb-xjc.version>2.3.0.1</jaxb-xjc.version>

@@ -7,8 +7,8 @@ taskGroups:
   lite2:    
     loopTask:
       dataDef: simpleDef
-      steps: loop  
-                
+      steps: loop
+
 steps: 
   simple:
     step1:

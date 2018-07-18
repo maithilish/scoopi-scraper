@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 
 import javax.inject.Singleton;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.defs.ITaskProvider;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.StepInfo;
@@ -39,18 +38,6 @@ public class TaskProvider implements ITaskProvider {
     public List<String> getTaskNames(final String taskGroup) {
         String path = "/" + taskGroup;
         return Lists.newArrayList(defs.at(path).fieldNames());
-    }
-
-    @Override
-    public String getDataDefName(final String taskGroup, final String taskName)
-            throws DefNotFoundException {
-        String path = String.join("/", "", taskGroup, taskName, "dataDef");
-        String dataDefName = defs.at(path).asText();
-        if (StringUtils.isEmpty(dataDefName)) {
-            throw new DefNotFoundException(Util.join("dataDef at ", path));
-        } else {
-            return dataDefName;
-        }
     }
 
     /*
@@ -103,6 +90,18 @@ public class TaskProvider implements ITaskProvider {
             throw new DefNotFoundException(Util.join("steps at ", path));
         } else {
             return Lists.newArrayList(steps.fields());
+        }
+    }
+
+    @Override
+    public String getFieldValue(final String taskGroup, final String taskName,
+            final String fieldName) throws DefNotFoundException {
+        String path = String.join("/", "", taskGroup, taskName, fieldName);
+        JsonNode live = defs.at(path);
+        if (live.isMissingNode()) {
+            throw new DefNotFoundException(path);
+        } else {
+            return live.asText();
         }
     }
 }

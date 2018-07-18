@@ -141,9 +141,10 @@ public abstract class Pools {
                 LOGGER.warn(Messages.getString("Pools.4")); //$NON-NLS-1$
             }
         }
-        shutdownAll();
-        while (!isAllTerminated()) {
 
+        shutdownAll();
+
+        while (!isAllTerminated()) {
             try {
                 Thread.sleep(SLEEP_MILLIS);
             } catch (InterruptedException e) {
@@ -241,5 +242,4 @@ public abstract class Pools {
         }
         return sb.toString();
     }
-
 }

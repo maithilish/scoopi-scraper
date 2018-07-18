@@ -16,7 +16,7 @@ public interface ITaskProvider {
      */
     List<String> getTaskNames(String group);
 
-    String getDataDefName(String taskGroup, String taskName)
+    String getFieldValue(String taskGroup, String taskName, String fieldName)
             throws DefNotFoundException;
 
     /*
@@ -25,9 +25,10 @@ public interface ITaskProvider {
     StepInfo getNextStep(String taskGroup, String taskName,
             String currentStepName) throws DefNotFoundException;
 
+    ArrayList<Entry<String, JsonNode>> getSteps(String taskGroup,
+            String taskName, String stepName) throws DefNotFoundException;
+
     String getStepsName(String taskGroup, String taskName)
             throws DefNotFoundException;
 
-    ArrayList<Entry<String, JsonNode>> getSteps(String taskGroup,
-            String taskName, String stepName) throws DefNotFoundException;
 }

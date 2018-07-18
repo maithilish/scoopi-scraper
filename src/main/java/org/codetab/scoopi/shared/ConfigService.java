@@ -286,4 +286,9 @@ public class ConfigService {
     public boolean isPersist(final String configKey) {
         return configs.getBoolean(configKey, true);
     }
+
+    public boolean useDataStore() {
+        String configKey = "scoopi.useDatastore";
+        return configs.getBoolean(configKey, true);
+    }
 }

@@ -29,4 +29,9 @@ public class Payload {
     public void setData(final Object data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "Payload [jobInfo=" + jobInfo + ", stepInfo=" + stepInfo + "]";
+    }
 }

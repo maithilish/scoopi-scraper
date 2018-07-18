@@ -47,12 +47,12 @@ public class SeederStep extends Step {
         String stepName = getPayload().getStepInfo().getStepName();
         for (String taskName : taskProvider.getTaskNames(taskGroup)) {
             try {
-                String dataDefName =
-                        taskProvider.getDataDefName(taskGroup, taskName);
+                String dataDefName = taskProvider.getFieldValue(taskGroup,
+                        taskName, "dataDef");
                 StepInfo nextStep =
                         taskProvider.getNextStep(taskGroup, taskName, stepName);
-                JobInfo jobInfo = new JobInfo(1, "locator", taskGroup, taskName,
-                        dataDefName);
+                JobInfo jobInfo = new JobInfo(taskMediator.getJobId(),
+                        "locator", taskGroup, taskName, dataDefName);
                 Payload nextStepPayload = new Payload();
                 nextStepPayload.setData(getData());
                 nextStepPayload.setStepInfo(nextStep);

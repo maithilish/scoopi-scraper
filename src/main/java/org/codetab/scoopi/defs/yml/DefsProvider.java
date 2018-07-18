@@ -51,8 +51,8 @@ public class DefsProvider implements IDefsProvider {
             effectiveDefs = defsHelper.createEffectiveDefs(definedDefs);
             defsHelper.validateEffectiveDefs(effectiveDefs);
 
-            LOGGER.info("defined defs {}", defsHelper.pretty(definedDefs));
-            LOGGER.info("effective defs {}", defsHelper.pretty(effectiveDefs));
+            LOGGER.debug("defined defs {}", defsHelper.pretty(definedDefs));
+            LOGGER.debug("effective defs {}", defsHelper.pretty(effectiveDefs));
 
         } catch (ConfigNotFoundException | IOException | URISyntaxException
                 | ProcessingException | NoSuchElementException e) {

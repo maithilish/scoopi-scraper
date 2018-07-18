@@ -1,5 +1,7 @@
 package org.codetab.scoopi.step;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,6 +25,7 @@ public class TaskMediator {
     @Inject
     private StepService stepService;
     private TaskRunnerThread taskRunner = new TaskRunnerThread();
+    private AtomicInteger jobIdCounter = new AtomicInteger();
 
     @GuardedBy("this")
     private int reservations = 0;
@@ -58,6 +61,10 @@ public class TaskMediator {
             ++reservations;
         }
         store.putPayload(payload);
+    }
+
+    public int getJobId() {
+        return jobIdCounter.incrementAndGet();
     }
 
     class TaskRunnerThread extends Thread {
