@@ -24,7 +24,7 @@ import net.jcip.annotations.ThreadSafe;
 /**
  * <p>
  * Singleton which provides JDO PersistenceManagerFactory to DAO layer.
- * Initializes JDO PersistenceManagerFactory from properties file specified by
+ * Initialize JDO PersistenceManagerFactory from properties file specified by
  * config property gotz.datastore.configFile.
  * @author Maithilish
  *
@@ -80,7 +80,7 @@ public class PMF {
 
     /**
      * <p>
-     * Initializes JDO PersistenceManagerFactory from properties file specified
+     * Initialize JDO PersistenceManagerFactory from properties file specified
      * by config property gotz.datastore.configFile.
      * @throws CriticalException
      *             if gotz.datastore.configFile config not found or if unable to
@@ -101,12 +101,12 @@ public class PMF {
                 jdoProperties.load(propStream);
                 factory = JDOHelper.getPersistenceManagerFactory(jdoProperties);
 
-                logger.info(Messages.getString("PMF.3")); //$NON-NLS-1$
-                logger.debug(Messages.getString("PMF.4"), //$NON-NLS-1$
+                logger.info(Messages.getString("PMF.2")); //$NON-NLS-1$
+                logger.debug(Messages.getString("PMF.3"), //$NON-NLS-1$
                         Util.getPropertiesAsString(jdoProperties));
-                logger.debug(Messages.getString("PMF.5")); //$NON-NLS-1$
+                logger.debug(Messages.getString("PMF.4")); //$NON-NLS-1$
             } catch (IOException e) {
-                throw new CriticalException(Messages.getString("PMF.6"), e); //$NON-NLS-1$
+                throw new CriticalException(Messages.getString("PMF.5"), e); //$NON-NLS-1$
             }
         }
     }

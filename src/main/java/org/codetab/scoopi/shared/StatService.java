@@ -51,7 +51,7 @@ public class StatService {
         timer.schedule(memoryTask, 0, memoryPollFrequency);
     }
 
-    public void end() {
+    public void stop() {
         timer.cancel();
         stopWatch.stop();
     }

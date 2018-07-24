@@ -56,11 +56,12 @@ public class TaskMediator {
         poolService.submit(poolName, task);
     }
 
-    public void pushPayload(final Payload payload) throws InterruptedException {
+    public boolean pushPayload(final Payload payload) throws InterruptedException {
         synchronized (this) {
             ++reservations;
         }
         store.putPayload(payload);
+        return true;
     }
 
     public int getJobId() {

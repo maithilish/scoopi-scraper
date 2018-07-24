@@ -28,34 +28,50 @@ public class ScoopiEngine {
      *
      */
     public void start() {
-        LOGGER.info(Messages.getString("ScoopiEngine.0")); //$NON-NLS-1$
-        statService.start();
         try {
             // single thread
+            LOGGER.info(Messages.getString("ScoopiEngine.0")); //$NON-NLS-1$
+
+            scoopiSystem.startStatService();
+
+            scoopiSystem.addShutdownHook();
+
             String defaultConfigFile = "scoopi-default.xml"; //$NON-NLS-1$
             String userConfigFile = scoopiSystem.getPropertyFileName();
-            scoopiSystem.initSystem(defaultConfigFile, userConfigFile);
+            scoopiSystem.initConfigService(defaultConfigFile, userConfigFile);
+
+            scoopiSystem.startMetricsServer();
+
+            scoopiSystem.initDefsProvider();
+
+            scoopiSystem.initDataDefService();
+
             scoopiSystem.pushInitialPayload();
+
             LOGGER.info(Messages.getString("ScoopiEngine.1")); //$NON-NLS-1$
+
             scoopiSystem.waitForHeapDump();
 
             // multi thread
+
             LOGGER.info(Messages.getString("ScoopiEngine.2")); //$NON-NLS-1$
+
             taskMediator.start();
+
             taskMediator.waitForFinish();
+
             scoopiSystem.waitForHeapDump();
 
             LOGGER.info(Messages.getString("ScoopiEngine.3")); //$NON-NLS-1$
-
         } catch (CriticalException e) {
             LOGGER.error("{}", e.getMessage()); //$NON-NLS-1$
-            LOGGER.warn(Messages.getString("ScoopiEngine.5")); //$NON-NLS-1$
+            LOGGER.warn(Messages.getString("ScoopiEngine.4")); //$NON-NLS-1$
             LOGGER.debug("{}", e); //$NON-NLS-1$
             statService.log(CAT.FATAL, e.getMessage(), e);
+        } finally {
+            scoopiSystem.stopMetricsServer();
+            scoopiSystem.stopStatService();
+            LOGGER.info(Messages.getString("ScoopiEngine.5")); //$NON-NLS-1$
         }
-        scoopiSystem.stopMetricsServer();
-        statService.end();
-        LOGGER.info(Messages.getString("ScoopiEngine.7")); //$NON-NLS-1$
     }
-
 }

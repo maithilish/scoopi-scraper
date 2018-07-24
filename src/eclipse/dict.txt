@@ -70,3 +70,15 @@ synchronized
 synchronization
 env
 payload
+scoopi
+initialize
+yaml
+initialized
+payloads
+persistable
+detachable
+url
+serialized
+rel
+dir
+fs

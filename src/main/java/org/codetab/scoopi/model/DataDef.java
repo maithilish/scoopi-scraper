@@ -16,6 +16,7 @@ public class DataDef implements Serializable {
     private String name;
     private Date fromDate;
     private Date toDate;
+    private Object dataDef;
 
     /**
      * Gets the value of the id property.
@@ -99,6 +100,14 @@ public class DataDef implements Serializable {
      */
     public void setToDate(Date value) {
         this.toDate = value;
+    }
+    
+    protected Object getDataDef() {
+        return dataDef;
+    }
+
+    protected void setDataDef(Object dataDef) {
+        this.dataDef = dataDef;
     }
 
     @Override

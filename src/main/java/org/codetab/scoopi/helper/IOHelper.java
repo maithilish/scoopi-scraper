@@ -9,8 +9,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +40,6 @@ public class IOHelper {
         return url;
     }
 
-    public StreamSource getStreamSource(final String fileName)
-            throws FileNotFoundException {
-        InputStream is = getInputStream(fileName);
-        return new StreamSource(is);
-    }
-
     public File getFile(final String fileName)
             throws FileNotFoundException, URISyntaxException {
         URL url = getURL(fileName);
@@ -61,8 +53,10 @@ public class IOHelper {
         URL dirURL = IOHelper.class.getClassLoader().getResource(dir);
         Collection<File> files;
         if (dirURL == null) {
+            // fs dir
             files = FileUtils.listFiles(new File(dir), extensions, recursive);
         } else {
+            // res dir
             files = FileUtils.listFiles(new File(dirURL.toURI()), extensions,
                     recursive);
         }

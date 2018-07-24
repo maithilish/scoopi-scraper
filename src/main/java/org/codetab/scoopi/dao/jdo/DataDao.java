@@ -96,7 +96,7 @@ public final class DataDao implements IDataDao {
         case 1:
             return data.get(0);
         default:
-            throw new IllegalStateException(Messages.getString("DataDao.5") //$NON-NLS-1$
+            throw new IllegalStateException(Messages.getString("DataDao.2") //$NON-NLS-1$
                     + documentId + "][" + dataDefId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }

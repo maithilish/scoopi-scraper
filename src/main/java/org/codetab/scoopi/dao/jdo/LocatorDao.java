@@ -83,7 +83,7 @@ public final class LocatorDao implements ILocatorDao {
                 return locators.get(0);
             default:
                 throw new IllegalStateException(
-                        Messages.getString("LocatorDao.6") + name //$NON-NLS-1$
+                        Messages.getString("LocatorDao.3") + name //$NON-NLS-1$
                                 + "][" + group + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } finally {
@@ -97,7 +97,7 @@ public final class LocatorDao implements ILocatorDao {
      */
     @Override
     public void storeLocator(final Locator locator) {
-        Validate.notNull(locator, Messages.getString("LocatorDao.9")); //$NON-NLS-1$
+        Validate.notNull(locator, Messages.getString("LocatorDao.4")); //$NON-NLS-1$
 
         PersistenceManager pm = getPM();
         Transaction tx = pm.currentTransaction();

@@ -62,8 +62,7 @@ public final class DataDefDao implements IDataDefDao {
             query.declareParameters(paramDecla);
             query.setOrdering(ordering);
 
-            pm.getFetchPlan().addGroup("detachFields"); //$NON-NLS-1$
-            pm.getFetchPlan().addGroup("detachAxis"); //$NON-NLS-1$
+            pm.getFetchPlan().addGroup("detachDataDef"); //$NON-NLS-1$
 
             @SuppressWarnings("unchecked")
             List<DataDef> dataDefs =
@@ -105,7 +104,7 @@ public final class DataDefDao implements IDataDefDao {
      */
     @Override
     public List<DataDef> getDataDefs(final Date date) {
-        Validate.notNull(date, Messages.getString("DataDefDao.7")); //$NON-NLS-1$
+        Validate.notNull(date, Messages.getString("DataDefDao.3")); //$NON-NLS-1$
 
         List<DataDef> dataDefs = null;
         PersistenceManager pm = getPM();
@@ -118,8 +117,8 @@ public final class DataDefDao implements IDataDefDao {
 
             @SuppressWarnings("unchecked")
             List<DataDef> result = (List<DataDef>) query.execute(date);
-            pm.getFetchPlan().addGroup("detachFields"); //$NON-NLS-1$
-            pm.getFetchPlan().addGroup("detachAxis"); //$NON-NLS-1$
+
+            pm.getFetchPlan().addGroup("detachDataDef"); //$NON-NLS-1$
 
             dataDefs = (List<DataDef>) pm.detachCopyAll(result);
         } finally {
@@ -137,7 +136,7 @@ public final class DataDefDao implements IDataDefDao {
      */
     @Override
     public List<DataDef> getDataDefs(final String name) {
-        Validate.notNull(name, Messages.getString("DataDefDao.12")); //$NON-NLS-1$
+        Validate.notNull(name, Messages.getString("DataDefDao.2")); //$NON-NLS-1$
 
         List<DataDef> dataDefs = null;
         PersistenceManager pm = getPM();
@@ -150,8 +149,8 @@ public final class DataDefDao implements IDataDefDao {
 
             @SuppressWarnings("unchecked")
             List<DataDef> result = (List<DataDef>) query.execute(name);
-            pm.getFetchPlan().addGroup("detachFields"); //$NON-NLS-1$
-            pm.getFetchPlan().addGroup("detachAxis"); //$NON-NLS-1$
+
+            pm.getFetchPlan().addGroup("detachDataDef"); //$NON-NLS-1$
 
             dataDefs = (List<DataDef>) pm.detachCopyAll(result);
         } finally {

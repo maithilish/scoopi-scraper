@@ -1,0 +1,42 @@
+<configuration>
+
+    <appender name="tracefile" class="ch.qos.logback.core.FileAppender">
+        <file>logs/trace.log</file>
+        <append>false</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>trace</level>
+        </filter>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="debugfile" class="ch.qos.logback.core.FileAppender">
+        <file>logs/debug.log</file>
+        <append>false</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>debug</level>
+        </filter>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>off</level>
+        </filter>
+        <encoder>
+            <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="trace">
+        <appender-ref ref="console" />
+        <appender-ref ref="debugfile" />
+        <appender-ref ref="tracefile" />
+    </root>
+</configuration>

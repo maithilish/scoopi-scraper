@@ -6,22 +6,17 @@ import org.codetab.scoopi.di.DInjector;
 
 public final class Scoopi {
 
-    private ScoopiEngine scoopiEngine;
-
     @Inject
-    public Scoopi(final ScoopiEngine scoopiEngine) {
-        this.scoopiEngine = scoopiEngine;
-    }
-
-    public void start() {
-        scoopiEngine.start();
-    }
+    private ScoopiEngine engine;
 
     public static void main(final String[] args) {
+        // create DInjector singleton
         DInjector dInjector = new DInjector().instance(DInjector.class);
-
         Scoopi scoopi = dInjector.instance(Scoopi.class);
         scoopi.start();
     }
 
+    public void start() {
+        engine.start();
+    }
 }

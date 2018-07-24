@@ -1,5 +1,7 @@
 package org.codetab.scoopi.exception;
 
+import org.codetab.scoopi.util.Util;
+
 /**
  * <p>
  * Exception thrown when DataDef not found.
@@ -27,7 +29,7 @@ public final class DataDefNotFoundException extends Exception {
 
     @Override
     public String getMessage() {
-        return "[" + name + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+        return Util.join("[", name, "]"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

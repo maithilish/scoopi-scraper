@@ -175,6 +175,11 @@
             <version>${guice.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-assistedinject</artifactId>
+            <version>${guice.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
             <version>${jetty.version}</version>
@@ -230,22 +235,22 @@
                     <!-- datanucleus enhance -->
                     <!-- we need classes without enhancement for jaxb schemagen hence they 
                          are enhanced in process-classes phases instead of compile -->
-<!--                     <plugin> -->
-<!--                         <groupId>org.datanucleus</groupId> -->
-<!--                         <artifactId>datanucleus-maven-plugin</artifactId> -->
-<!--                         <version>5.0.2</version> -->
-<!--                         <configuration> -->
-<!--                             <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration> -->
-<!--                         </configuration> -->
-<!--                         <executions> -->
-<!--                             <execution> -->
-<!--                                 <phase>process-classes</phase> -->
-<!--                                 <goals> -->
-<!--                                     <goal>enhance</goal> -->
-<!--                                 </goals> -->
-<!--                             </execution> -->
-<!--                         </executions> -->
-<!--                     </plugin> -->
+                    <plugin>
+                        <groupId>org.datanucleus</groupId>
+                        <artifactId>datanucleus-maven-plugin</artifactId>
+                        <version>5.0.2</version>
+                        <configuration>
+                            <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>enhance</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                                 
                     <!-- include essential config files in jar -->
                     <plugin>

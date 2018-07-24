@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class BasicModule extends AbstractModule {
 
@@ -30,6 +31,9 @@ public class BasicModule extends AbstractModule {
         bind(ITaskProvider.class).to(TaskProvider.class).in(Singleton.class);
         bind(IDataDefProvider.class).to(DataDefProvider.class)
                 .in(Singleton.class);
+
+        // factory to create instances with constructor parameters
+        install(new FactoryModuleBuilder().build(BasicFactory.class));
     }
 
     @Provides

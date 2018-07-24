@@ -1,5 +1,7 @@
 package org.codetab.scoopi.exception;
 
+import org.codetab.scoopi.util.Util;
+
 /**
  * <p>
  * Exception thrown on DataDef validation.
@@ -64,7 +66,7 @@ public class InvalidDataDefException extends Exception {
         if (message == null) {
             return message;
         } else {
-            return "[" + message + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+            return Util.join("[", message, "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 }

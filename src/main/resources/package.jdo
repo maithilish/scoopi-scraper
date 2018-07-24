@@ -12,8 +12,7 @@
         <class name="Locator" detachable="true">            
             <field name="id" primary-key="true" value-strategy="INCREMENT" />
             <field name="name" />            
-            <field name="url" persistence-modifier="none" />            
-            <field name="fields" persistence-modifier="none" />
+            <field name="url" persistence-modifier="none" />
             <field name="documents">
                 <collection element-type="org.codetab.scoopi.model.Document" />
                 <element column="LOCATOR_ID" />
@@ -40,20 +39,15 @@
         <class name="DataDef" detachable="true">
             <field name="id" primary-key="true" value-strategy="INCREMENT" />
             <field name="name" />
-            <field name="axis" serialized="true" />
-            <!-- <field name="memberSets" persistence-modifier="none" /> -->            
-            <field name="fields" persistence-modifier="persistent" serialized="true" />
+            <field name="dataDef" serialized="true" />            
             <unique name="UNIQUE_NAME_DATE">
                 <field name="name" />
                 <field name="fromDate" />
                 <field name="toDate" />
             </unique>            
-            <fetch-group name="detachAxis">
-                <field name="axis" />
-            </fetch-group>
-            <fetch-group name="detachFields">                
-                <field name="fields" />
-            </fetch-group>
+            <fetch-group name="detachDataDef">
+                <field name="dataDef" />
+            </fetch-group>            
         </class>
         <class name="Data" detachable="true" >
             <field name="id" primary-key="true" value-strategy="INCREMENT" />
