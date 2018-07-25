@@ -1,5 +1,9 @@
 package org.codetab.scoopi.di;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
+
 import javax.inject.Singleton;
 
 import org.codetab.scoopi.defs.IDataDefProvider;
@@ -45,6 +49,17 @@ public class BasicModule extends AbstractModule {
     @Provides
     Runtime provideRuntime() {
         return Runtime.getRuntime();
+    }
+
+    @Provides
+    OperatingSystemMXBean getOsMxBean() {
+        return (OperatingSystemMXBean) ManagementFactory
+                .getOperatingSystemMXBean();
+    }
+
+    @Provides
+    RuntimeMXBean getRuntimeMxBean() {
+        return (RuntimeMXBean) ManagementFactory.getRuntimeMXBean();
     }
 
 }

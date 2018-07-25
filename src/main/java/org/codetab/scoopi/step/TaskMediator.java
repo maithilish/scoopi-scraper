@@ -56,7 +56,8 @@ public class TaskMediator {
         poolService.submit(poolName, task);
     }
 
-    public boolean pushPayload(final Payload payload) throws InterruptedException {
+    public boolean pushPayload(final Payload payload)
+            throws InterruptedException {
         synchronized (this) {
             ++reservations;
         }

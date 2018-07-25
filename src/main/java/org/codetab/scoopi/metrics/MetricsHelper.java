@@ -8,16 +8,14 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
-import com.codahale.metrics.Timer.Context;
 
 public class MetricsHelper {
 
     static final MetricRegistry METRICS =
             SharedMetricRegistries.getOrCreate("scoopi");
 
-    public Context getTimer(final Object clz, final String... names) {
-        Timer timer = METRICS.timer(getName(clz, names));
-        return timer.time();
+    public Timer getTimer(final Object clz, final String... names) {
+        return METRICS.timer(getName(clz, names));
     }
 
     public Meter getMeter(final Object clz, final String... names) {

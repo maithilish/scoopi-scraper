@@ -203,7 +203,7 @@ public abstract class Pools {
      */
     private long getNotDone() {
         futures.removeIf(NamedFuture::isDone);
-        return futures.stream().count();
+        return futures.size();
     }
 
     /**

@@ -9,33 +9,33 @@
     <url>http://www.codetab.org/scoopi</url>
 
     <properties>
-        <logback.version>1.2.3</logback.version>
-        <gson.version>2.8.5</gson.version>
-        <guice.version>4.2.0</guice.version>
-        <jaxb-xjc.version>2.3.0.1</jaxb-xjc.version>
-        <metrics.version>4.1.0-rc2</metrics.version>
-        <mysql-connector.version>5.1.43</mysql-connector.version>
-        <mariadb-client.version>2.2.5</mariadb-client.version>
-        <htmlunit.version>2.31</htmlunit.version>
+        <assertj.version>3.10.0</assertj.version>
+        <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <commons-configuration2.version>2.2</commons-configuration2.version>
         <commons-csv.version>1.5</commons-csv.version>
         <commons-dbcp2.version>2.4.0</commons-dbcp2.version>
         <commons-lang3.version>3.7</commons-lang3.version>
         <commons-text.version>1.4</commons-text.version>
-        <jetty.version>9.4.11.v20180605</jetty.version>
+        <commons-validator.version>1.6</commons-validator.version>
+        <gson.version>2.8.5</gson.version>
+        <guice.version>4.2.0</guice.version>
         <hsqldb.version>2.4.1</hsqldb.version>
+        <htmlunit.version>2.31</htmlunit.version>
+        <jackson.version>2.9.0</jackson.version>
+        <jaxb-xjc.version>2.3.0.1</jaxb-xjc.version>
+        <jcip-annotations.version>1.0</jcip-annotations.version>
+        <jetty.version>9.4.11.v20180605</jetty.version>
+        <json-validator.version>2.2.10</json-validator.version>
         <jsoup.version>1.11.3</jsoup.version>
-        <assertj.version>3.10.0</assertj.version>
         <junit.version>4.12</junit.version>
         <log4j.version>1.2.17</log4j.version>
-        <commons-beanutils.version>1.9.3</commons-beanutils.version>
-        <commons-validator.version>1.6</commons-validator.version>
-        <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jackson.version>2.9.0</jackson.version>
-        <json-validator.version>2.2.10</json-validator.version>
+        <logback.version>1.2.3</logback.version>
+        <mariadb-client.version>2.2.5</mariadb-client.version>
+        <metrics.version>4.1.0-rc2</metrics.version>
+        <mockito.version>2.19.1</mockito.version>
+        <mysql-connector.version>5.1.43</mysql-connector.version>
 
         <datanucleus.version>5.0.6</datanucleus.version>
-        <mockito.version>2.8.47</mockito.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -90,12 +90,6 @@
             <version>${datanucleus.version}</version>
             <type>pom</type>
         </dependency>
-<!--         <dependency> -->
-<!--             <groupId>org.datanucleus</groupId> -->
-<!--             <artifactId>datanucleus-accessplatform-jdo-mongodb</artifactId> -->
-<!--             <version>5.1.1</version> -->
-<!--             <type>pom</type>  -->
-<!--         </dependency> -->
         <!-- jdo requires dbcp -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -165,6 +159,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
@@ -220,7 +220,7 @@
                     </resource>
                 </resources>
                 <plugins>
-            <!-- java source level -->
+                    <!-- java source level -->
                     <plugin>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>3.6.0</version>
@@ -244,7 +244,7 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <phase>process-classes</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>enhance</goal>
                                 </goals>
@@ -289,7 +289,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- customize production assembly -->
+                    <!-- customise production assembly -->
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <version>3.0.0</version>
@@ -378,7 +378,7 @@
                         <version>4.3.0</version>
                     </plugin>
             
-                    <!-- know latest versions of dependencies,plugins etc -->
+                    <!-- know latest versions of dependency, plugin etc -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>versions-maven-plugin</artifactId>

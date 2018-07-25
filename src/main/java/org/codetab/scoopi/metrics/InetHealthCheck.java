@@ -9,11 +9,16 @@ import com.codahale.metrics.health.HealthCheck;
 
 public class InetHealthCheck extends HealthCheck {
 
+    private String url;
+
+    public void setUrl(final String url) {
+        this.url = url;
+    }
+
     @Override
     protected Result check() throws Exception {
         try {
-            final URL url = new URL("http://www.google.com");
-            final URLConnection conn = url.openConnection();
+            final URLConnection conn = new URL(url).openConnection();
             conn.connect();
             conn.getInputStream().close();
             return Result.healthy();

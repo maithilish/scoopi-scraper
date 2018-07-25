@@ -2,6 +2,7 @@ package org.codetab.scoopi.metrics;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.di.BasicFactory;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.IOHelper;
@@ -23,6 +24,8 @@ public class MetricsServer {
     private ConfigService configService;
     @Inject
     private IOHelper ioHelper;
+    @Inject
+    private BasicFactory factory;
 
     private Server server;
 
@@ -41,8 +44,8 @@ public class MetricsServer {
         }
 
         try {
-            server = new Server(port);
-            WebAppContext webapp = new WebAppContext();
+            server = factory.getServer(port);
+            WebAppContext webapp = factory.getWebAppContext();
             webapp.setContextPath("/");
 
             String webappBase = ioHelper.getURL("/webapp").toString();

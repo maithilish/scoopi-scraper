@@ -3,6 +3,8 @@ package org.codetab.scoopi.di;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 import com.google.inject.assistedinject.Assisted;
 
@@ -19,4 +21,8 @@ public interface BasicFactory {
             @Assisted("previousStepName") String priviousStepName,
             @Assisted("nextStepName") String nextStepName,
             @Assisted("className") String className);
+
+    Server getServer(@Assisted("port") int port);
+
+    WebAppContext getWebAppContext();
 }

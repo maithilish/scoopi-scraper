@@ -82,3 +82,12 @@ serialized
 rel
 dir
 fs
+datanucleus
+jaxb
+schemagen
+jdo
+dbcp
+lib
+plugin
+travis-ci
+

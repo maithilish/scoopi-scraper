@@ -101,7 +101,7 @@ public class DataDef implements Serializable {
     public void setToDate(Date value) {
         this.toDate = value;
     }
-    
+
     protected Object getDataDef() {
         return dataDef;
     }

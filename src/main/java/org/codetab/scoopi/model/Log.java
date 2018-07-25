@@ -58,7 +58,7 @@ public final class Log {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Log [type=");
+        sb.append("Log [Cat=");
         sb.append(cat);
         sb.append(" label=");
         sb.append(label);

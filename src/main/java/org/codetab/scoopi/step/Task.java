@@ -38,7 +38,8 @@ public class Task implements Runnable {
     @Override
     public void run() {
         try {
-            Context taskTimer = metricsHelper.getTimer(step, "task", "time");
+            Context taskTimer =
+                    metricsHelper.getTimer(step, "task", "time").time();
             Marker marker = step.getMarker();
             String label = getLabel();
             String stepType = step.getStepName();
