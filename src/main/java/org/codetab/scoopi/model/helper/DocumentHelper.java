@@ -88,6 +88,15 @@ public class DocumentHelper {
         return activeDocumentId;
     }
 
+    /**
+     * get document from list
+     * @param id
+     * @param documents
+     *            list
+     * @return document if found
+     * @throws NoSuchElementException
+     *             if no document of that id is found
+     */
     public Document getDocument(final Long id, final List<Document> documents) {
         for (Document doc : documents) {
             if (doc.getId() == id) {
@@ -95,7 +104,7 @@ public class DocumentHelper {
             }
         }
         throw new NoSuchElementException(
-                Util.join("No document with id [", String.valueOf(id), "]"));
+                Util.join("no document with id [", String.valueOf(id), "]"));
     }
 
     /**

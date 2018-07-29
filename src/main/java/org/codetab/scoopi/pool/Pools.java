@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.metrics.MetricsHelper;
@@ -61,6 +62,11 @@ public abstract class Pools {
      */
     @Inject
     private MetricsHelper metricsHelper;
+    /**
+     * DI
+     */
+    @Inject
+    private DInjector di;
     /**
      * pool map - shared state variable.
      */
@@ -138,7 +144,7 @@ public abstract class Pools {
             try {
                 Thread.sleep(SLEEP_MILLIS);
             } catch (InterruptedException e) {
-                LOGGER.warn(Messages.getString("Pools.4")); //$NON-NLS-1$
+                LOGGER.warn(Messages.getString("Pools.3")); //$NON-NLS-1$
             }
         }
 
@@ -148,7 +154,7 @@ public abstract class Pools {
             try {
                 Thread.sleep(SLEEP_MILLIS);
             } catch (InterruptedException e) {
-                LOGGER.warn(Messages.getString("Pools.5")); //$NON-NLS-1$
+                LOGGER.warn(Messages.getString("Pools.3")); //$NON-NLS-1$
             }
         }
         LOGGER.info("pools shutdown complete");
@@ -185,10 +191,11 @@ public abstract class Pools {
                         key, POOL_SIZE);
             }
             executor = Executors.newFixedThreadPool(poolSize);
-            LOGGER.info(Messages.getString("Pools.8"), poolName, //$NON-NLS-1$
+            LOGGER.info(Messages.getString("Pools.4"), poolName, //$NON-NLS-1$
                     poolSize);
             executorsMap.put(poolName, executor);
-            PoolStat poolStat = new PoolStat((ThreadPoolExecutor) executor);
+            PoolStat poolStat = di.instance(PoolStat.class);
+            poolStat.setThreadPool((ThreadPoolExecutor) executor);
             metricsHelper.registerGuage(poolStat, this, "pool", poolName);
         }
 

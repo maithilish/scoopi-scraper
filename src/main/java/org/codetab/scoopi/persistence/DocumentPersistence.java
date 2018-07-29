@@ -33,7 +33,7 @@ public class DocumentPersistence {
 
     /**
      * <p>
-     * Loads document by id.
+     * Loads document with documentObject by id
      * @param id
      *            document id
      * @return document or null if not found
@@ -41,10 +41,6 @@ public class DocumentPersistence {
      *             if persistence error
      */
     public Document loadDocument(final long id) {
-        if (!configService.useDataStore()) { // $NON-NLS-1$
-            return null;
-        }
-
         // get Document with documentObject
         try {
             ORM orm = configService.getOrmType();
@@ -58,5 +54,4 @@ public class DocumentPersistence {
             throw new StepPersistenceException(message, e);
         }
     }
-
 }

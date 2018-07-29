@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.defs.ILocatorProvider;
 import org.codetab.scoopi.defs.yml.DefsProvider;
-import org.codetab.scoopi.di.BasicFactory;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
@@ -19,6 +18,7 @@ import org.codetab.scoopi.misc.ShutdownHook;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
@@ -59,7 +59,7 @@ public class ScoopiSystem {
     @Inject
     private SystemHelper systemHelper;
     @Inject
-    private BasicFactory factory;
+    private ModelFactory factory;
 
     public boolean startStatService() {
         statService.start();
@@ -126,14 +126,12 @@ public class ScoopiSystem {
             for (LocatorGroup lGroup : lGroups) {
                 // for init payload, only stepName, className and taskGroup are
                 // set. Next and previous steps, taskName, dataDef are undefined
-                StepInfo stepInfo = factory.getStepInfo(stepName, undefined,
+                StepInfo stepInfo = factory.createStepInfo(stepName, undefined,
                         undefined, seederClassName);
-                JobInfo jobInfo = factory.getJobInfo(0, undefined,
+                JobInfo jobInfo = factory.createJobInfo(0, undefined,
                         lGroup.getGroup(), undefined, undefined);
-                Payload payload = factory.getPayload();
-                payload.setStepInfo(stepInfo);
-                payload.setJobInfo(jobInfo);
-                payload.setData(lGroup);
+                Payload payload =
+                        factory.createPayload(jobInfo, stepInfo, lGroup);
                 try {
                     taskMediator.pushPayload(payload);
                 } catch (InterruptedException e) {

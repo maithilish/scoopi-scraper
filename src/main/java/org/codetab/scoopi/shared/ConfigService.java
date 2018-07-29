@@ -58,14 +58,14 @@ public class ConfigService {
         } catch (ConfigurationException e) {
             configs.addConfiguration(new PropertiesConfiguration());
             LOGGER.info(e.getLocalizedMessage() + ". " //$NON-NLS-1$
-                    + Messages.getString("ConfigService.2")); //$NON-NLS-1$
+                    + Messages.getString("ConfigService.1")); //$NON-NLS-1$
         }
 
         try {
             Configuration defaults = getXMLConfigs(defaultsFile);
             configs.addConfiguration(defaults);
         } catch (ConfigurationException e) {
-            throw new CriticalException(Messages.getString("ConfigService.3"), //$NON-NLS-1$
+            throw new CriticalException(Messages.getString("ConfigService.2"), //$NON-NLS-1$
                     e);
         }
 
@@ -75,10 +75,9 @@ public class ConfigService {
         LOGGER.trace("{}", configsAsString(ConfigIndex.SYSTEM)); //$NON-NLS-1$
         LOGGER.debug("{}", configsAsString(ConfigIndex.PROVIDED)); //$NON-NLS-1$
         LOGGER.debug("{}", configsAsString(ConfigIndex.DEFAULTS)); //$NON-NLS-1$
-        LOGGER.debug(Messages.getString("ConfigService.7")); //$NON-NLS-1$
-
-        LOGGER.info(Messages.getString("ConfigService.8")); //$NON-NLS-1$
-        LOGGER.info(Messages.getString("ConfigService.9")); //$NON-NLS-1$
+        LOGGER.debug(Messages.getString("ConfigService.3")); //$NON-NLS-1$
+        LOGGER.info(Messages.getString("ConfigService.4")); //$NON-NLS-1$
+        LOGGER.info(Messages.getString("ConfigService.5")); //$NON-NLS-1$
     }
 
     // when config not found, default value may be used in some cases
@@ -88,7 +87,7 @@ public class ConfigService {
     public String getConfig(final String key) throws ConfigNotFoundException {
         String value = configs.getString(key);
         if (value == null) {
-            LOGGER.warn(Messages.getString("ConfigService.10"), key); //$NON-NLS-1$
+            LOGGER.warn(Messages.getString("ConfigService.6"), key); //$NON-NLS-1$
             throw new ConfigNotFoundException(key);
         }
         return value;
@@ -98,7 +97,7 @@ public class ConfigService {
             throws ConfigNotFoundException {
         String[] values = configs.getStringArray(key);
         if (values.length == 0) {
-            LOGGER.warn(Messages.getString("ConfigService.11"), key); //$NON-NLS-1$
+            LOGGER.warn(Messages.getString("ConfigService.6"), key); //$NON-NLS-1$
             throw new ConfigNotFoundException(key);
         }
         return values;
@@ -124,7 +123,7 @@ public class ConfigService {
             runDate = DateUtils.parseDate(dateStr, new String[] {patterns});
             return runDate;
         } catch (ParseException | ConfigNotFoundException e) {
-            throw new CriticalException(Messages.getString("ConfigService.12"), //$NON-NLS-1$
+            throw new CriticalException(Messages.getString("ConfigService.7"), //$NON-NLS-1$
                     e);
         }
     }
@@ -138,7 +137,7 @@ public class ConfigService {
                     DateUtils.parseDate(dateTimeStr, new String[] {patterns});
             return runDateTime;
         } catch (ParseException | ConfigNotFoundException e) {
-            throw new CriticalException(Messages.getString("ConfigService.13"), //$NON-NLS-1$
+            throw new CriticalException(Messages.getString("ConfigService.7"), //$NON-NLS-1$
                     e);
         }
     }
@@ -151,7 +150,7 @@ public class ConfigService {
             highDate = DateUtils.parseDate(dateStr, patterns);
             return highDate;
         } catch (ParseException | ConfigNotFoundException e) {
-            throw new CriticalException(Messages.getString("ConfigService.14"), //$NON-NLS-1$
+            throw new CriticalException(Messages.getString("ConfigService.7"), //$NON-NLS-1$
                     e);
         }
 
@@ -230,25 +229,25 @@ public class ConfigService {
     }
 
     private void addRunDate() {
-        Date runDate = DateUtils.truncate(new Date(), Calendar.SECOND);
         String runDateStr = configs.getString("scoopi.runDate"); //$NON-NLS-1$
         if (runDateStr == null) {
+            Date runDate = DateUtils.truncate(new Date(), Calendar.SECOND);
             String dateFormat = configs.getString("scoopi.dateParsePattern"); //$NON-NLS-1$
             runDateStr = DateFormatUtils.format(runDate, dateFormat);
+            configs.addProperty("scoopi.runDate", runDateStr); //$NON-NLS-1$
         }
-        configs.addProperty("scoopi.runDate", runDateStr); //$NON-NLS-1$
     }
 
     private void addRunDateTime() {
-        Date runDateTime = DateUtils.truncate(new Date(), Calendar.SECOND);
         String runDateTimeStr = configs.getString("scoopi.runDateTime"); //$NON-NLS-1$
         if (runDateTimeStr == null) {
+            Date runDateTime = DateUtils.truncate(new Date(), Calendar.SECOND);
             String dateTimeFormat =
                     configs.getString("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
             runDateTimeStr =
                     DateFormatUtils.format(runDateTime, dateTimeFormat);
+            configs.addProperty("scoopi.runDateTime", runDateTimeStr); //$NON-NLS-1$
         }
-        configs.addProperty("scoopi.runDateTime", runDateTimeStr); //$NON-NLS-1$
     }
 
     private String configsAsString(final ConfigIndex index) {
@@ -280,13 +279,26 @@ public class ConfigService {
      * This method returns boolean for a key and if not found then true;
      * </p>
      * @param key
-     *            scoopi.useDatastore, scoopi.persist.locator|data|datadef
-     * @return
+     *            scoopi.persist.locator|data|datadef
+     * @return value of key and if not found then true
      */
     public boolean isPersist(final String configKey) {
         return configs.getBoolean(configKey, true);
     }
 
+    /**
+     *
+     * <p>
+     * Return value for the key scoopi.useDatastore
+     * </p>
+     * <p>
+     * This method returns for the key scoopi.useDatastore and if not found then
+     * true;
+     * </p>
+     * @param key
+     *            scoopi.useDatastore
+     * @return value of key and if not found then true
+     */
     public boolean useDataStore() {
         String configKey = "scoopi.useDatastore";
         return configs.getBoolean(configKey, true);

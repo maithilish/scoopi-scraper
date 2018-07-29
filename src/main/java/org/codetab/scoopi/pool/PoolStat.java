@@ -6,7 +6,7 @@ public class PoolStat {
 
     private ThreadPoolExecutor threadPool;
 
-    public PoolStat(final ThreadPoolExecutor threadPool) {
+    protected void setThreadPool(final ThreadPoolExecutor threadPool) {
         this.threadPool = threadPool;
     }
 
@@ -25,5 +25,4 @@ public class PoolStat {
     public long getTaskCount() {
         return threadPool.getTaskCount();
     }
-
 }

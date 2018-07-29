@@ -3,22 +3,15 @@
 <configuration>
     <scoopi>
         <propertyPattern>scoopi/properties/property</propertyPattern>
-        <beanFile>/bean.xml</beanFile>
-
-        <schemaFile>/schema/scoopi.xsd</schemaFile>
-        <stepsXslFile>/schema/steps.xsl</stepsXslFile>
-        <fieldsNsXslFile>/schema/fieldsns.xsl</fieldsNsXslFile>
 
         <defs>
-            <dir>devdefs/jsoup/yml</dir>
+            <dir>/defs/examples/jsoup/ex-1</dir>
             <defaultSteps>/steps-default.yml</defaultSteps>
             <definedSchema>/schema/defs-defined.json</definedSchema>
-            <effectiveSchema>/schema/defs-effective.json
-            </effectiveSchema>
+            <effectiveSchema>/schema/defs-effective.json</effectiveSchema>
         </defs>
 
-        <seederClass>org.codetab.scoopi.step.extract.LocatorSeeder
-        </seederClass>
+        <seederClass>org.codetab.scoopi.step.extract.LocatorSeeder</seederClass>
         <poolsize>
             <seeder>6</seeder>
             <loader>4</loader>

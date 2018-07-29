@@ -1,8 +1,11 @@
 package org.codetab.scoopi.step.lite;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.JobInfo;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.Step;
@@ -12,6 +15,12 @@ import org.slf4j.LoggerFactory;
 public class SeederStep extends Step {
 
     static final Logger LOGGER = LoggerFactory.getLogger(SeederStep.class);
+
+    /**
+     * model factory
+     */
+    @Inject
+    private ModelFactory factory;
 
     @Override
     public boolean initialize() {
@@ -51,12 +60,10 @@ public class SeederStep extends Step {
                         taskName, "dataDef");
                 StepInfo nextStep =
                         taskProvider.getNextStep(taskGroup, taskName, stepName);
-                JobInfo jobInfo = new JobInfo(taskMediator.getJobId(),
+                JobInfo jobInfo = factory.createJobInfo(taskMediator.getJobId(),
                         "locator", taskGroup, taskName, dataDefName);
-                Payload nextStepPayload = new Payload();
-                nextStepPayload.setData(getData());
-                nextStepPayload.setStepInfo(nextStep);
-                nextStepPayload.setJobInfo(jobInfo);
+                Payload nextStepPayload =
+                        factory.createPayload(jobInfo, nextStep, getData());
                 taskMediator.pushPayload(nextStepPayload);
             } catch (DefNotFoundException | InterruptedException e) {
                 // TODO Auto-generated catch block

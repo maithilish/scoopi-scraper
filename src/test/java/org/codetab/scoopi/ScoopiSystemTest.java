@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.codetab.scoopi.defs.ILocatorProvider;
 import org.codetab.scoopi.defs.yml.DefsProvider;
-import org.codetab.scoopi.di.BasicFactory;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
@@ -26,6 +25,7 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
@@ -68,7 +68,7 @@ public class ScoopiSystemTest {
     @Mock
     private SystemHelper systemHelper;
     @Mock
-    private BasicFactory factory;
+    private ModelFactory factory;
 
     @InjectMocks
     private ScoopiSystem sSystem;
@@ -173,13 +173,16 @@ public class ScoopiSystemTest {
         JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
         Payload payload2 = Mockito.mock(Payload.class);
 
-        given(factory.getStepInfo(stepName, undefined, undefined,
+        given(factory.createStepInfo(stepName, undefined, undefined,
                 seederClassName)).willReturn(stepInfo1).willReturn(stepInfo2);
-        given(factory.getJobInfo(0, undefined, lg1.getGroup(), undefined,
+        given(factory.createJobInfo(0, undefined, lg1.getGroup(), undefined,
                 undefined)).willReturn(jobInfo1);
-        given(factory.getJobInfo(0, undefined, lg2.getGroup(), undefined,
+        given(factory.createJobInfo(0, undefined, lg2.getGroup(), undefined,
                 undefined)).willReturn(jobInfo2);
-        given(factory.getPayload()).willReturn(payload1).willReturn(payload2);
+        given(factory.createPayload(jobInfo1, stepInfo1, lg1))
+                .willReturn(payload1);
+        given(factory.createPayload(jobInfo2, stepInfo2, lg2))
+                .willReturn(payload2);
 
         given(configService.getConfig("scoopi.seederClass"))
                 .willReturn(seederClassName);
@@ -191,14 +194,7 @@ public class ScoopiSystemTest {
 
         InOrder inOrder = inOrder(payload1, payload2, taskMediator);
 
-        inOrder.verify(payload1).setStepInfo(stepInfo1);
-        inOrder.verify(payload1).setJobInfo(jobInfo1);
-        inOrder.verify(payload1).setData(lg1);
         inOrder.verify(taskMediator).pushPayload(payload1);
-
-        inOrder.verify(payload2).setStepInfo(stepInfo2);
-        inOrder.verify(payload2).setJobInfo(jobInfo2);
-        inOrder.verify(payload2).setData(lg2);
         inOrder.verify(taskMediator).pushPayload(payload2);
         verifyNoMoreInteractions(payload1, payload2, taskMediator);
     }
@@ -222,13 +218,16 @@ public class ScoopiSystemTest {
         JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
         Payload payload2 = Mockito.mock(Payload.class);
 
-        given(factory.getStepInfo(stepName, undefined, undefined,
+        given(factory.createStepInfo(stepName, undefined, undefined,
                 seederClassName)).willReturn(stepInfo1).willReturn(stepInfo2);
-        given(factory.getJobInfo(0, undefined, lg1.getGroup(), undefined,
+        given(factory.createJobInfo(0, undefined, lg1.getGroup(), undefined,
                 undefined)).willReturn(jobInfo1);
-        given(factory.getJobInfo(0, undefined, lg2.getGroup(), undefined,
+        given(factory.createJobInfo(0, undefined, lg2.getGroup(), undefined,
                 undefined)).willReturn(jobInfo2);
-        given(factory.getPayload()).willReturn(payload1).willReturn(payload2);
+        given(factory.createPayload(jobInfo1, stepInfo1, lg1))
+                .willReturn(payload1);
+        given(factory.createPayload(jobInfo2, stepInfo2, lg2))
+                .willReturn(payload2);
 
         given(configService.getConfig("scoopi.seederClass"))
                 .willReturn(seederClassName);
@@ -244,15 +243,8 @@ public class ScoopiSystemTest {
         InOrder inOrder =
                 inOrder(payload1, payload2, taskMediator, statService);
 
-        inOrder.verify(payload1).setStepInfo(stepInfo1);
-        inOrder.verify(payload1).setJobInfo(jobInfo1);
-        inOrder.verify(payload1).setData(lg1);
         inOrder.verify(taskMediator).pushPayload(payload1);
         inOrder.verify(statService).log(eq(CAT.INTERNAL), any(String.class));
-
-        inOrder.verify(payload2).setStepInfo(stepInfo2);
-        inOrder.verify(payload2).setJobInfo(jobInfo2);
-        inOrder.verify(payload2).setData(lg2);
         inOrder.verify(taskMediator).pushPayload(payload2);
 
         verifyNoMoreInteractions(payload1, payload2, taskMediator, statService);

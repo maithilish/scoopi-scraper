@@ -8,6 +8,7 @@ import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
@@ -47,6 +48,8 @@ public abstract class Step implements IStep {
     protected ITaskProvider taskProvider;
     @Inject
     protected TaskMediator taskMediator;
+    @Inject
+    private ModelFactory factory;
 
     @Override
     public boolean handover() {
@@ -62,10 +65,8 @@ public abstract class Step implements IStep {
                     .equalsIgnoreCase("end")) {
                 StepInfo nextStep =
                         taskProvider.getNextStep(group, taskName, stepName);
-                Payload nextStepPayload = new Payload();
-                nextStepPayload.setData(data);
-                nextStepPayload.setStepInfo(nextStep);
-                nextStepPayload.setJobInfo(getPayload().getJobInfo());
+                Payload nextStepPayload = factory.createPayload(
+                        getPayload().getJobInfo(), nextStep, data);
                 taskMediator.pushPayload(nextStepPayload);
                 LOGGER.info("handover to step: " + nextStep.getStepName());
             }

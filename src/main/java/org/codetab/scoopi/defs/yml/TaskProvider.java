@@ -5,10 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codetab.scoopi.defs.ITaskProvider;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.util.Util;
 
@@ -17,6 +19,9 @@ import com.google.common.collect.Lists;
 
 @Singleton
 public class TaskProvider implements ITaskProvider {
+
+    @Inject
+    private ModelFactory factory;
 
     private JsonNode defs;
 
@@ -56,8 +61,8 @@ public class TaskProvider implements ITaskProvider {
                 String previousStepName = currentStepName;
                 String nextStepNameOfNextStep = step.findValue("next").asText();
                 String className = step.findValue("class").asText();
-                StepInfo nextStep = new StepInfo(nextStepName, previousStepName,
-                        nextStepNameOfNextStep, className);
+                StepInfo nextStep = factory.createStepInfo(nextStepName,
+                        previousStepName, nextStepNameOfNextStep, className);
                 return nextStep;
             }
         }

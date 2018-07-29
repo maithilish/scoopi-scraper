@@ -96,8 +96,10 @@ public abstract class BaseLoader extends Step {
         Locator savedLocator = null;
 
         // load locator from db
-        savedLocator = locatorPersistence.loadLocator(locator.getName(),
-                locator.getGroup());
+        if (persist()) {
+            savedLocator = locatorPersistence.loadLocator(locator.getName(),
+                    locator.getGroup());
+        }
 
         if (savedLocator == null) {
             // use the locator passed as input to this step
@@ -135,7 +137,7 @@ public abstract class BaseLoader extends Step {
      * If active document id is not null, then it loads the document with its
      * documentObject. Otherwise, it creates new document and adds it locator.
      * <p>
-     * When new document is created, it fetches the documentObject either from
+     * When new document is created, it fetches the documRentObject either from
      * web or file system and adds it to document using DocumentHelper which
      * compresses the documentObject. Other metadata like from and to dates are
      * also added to new document.
@@ -195,7 +197,7 @@ public abstract class BaseLoader extends Step {
          * active document.
          */
         if (activeDocumentId == null) {
-            // no existing active document, we need to create new one
+            // no active document, create new one
             byte[] documentObject = null;
             try {
                 // fetch documentObject as byte[]
@@ -214,7 +216,7 @@ public abstract class BaseLoader extends Step {
             document = documentHelper.createDocument(locator.getName(),
                     locator.getUrl(), fromDate, toDate);
 
-            // set documentObject (helper method compress the bytes before set)
+            // compress and set documentObject
             try {
                 documentHelper.setDocumentObject(document, documentObject);
             } catch (IOException e) {
@@ -224,7 +226,6 @@ public abstract class BaseLoader extends Step {
 
             // add document to locator
             locator.getDocuments().add(document);
-
             setConsistent(true);
 
             LOGGER.info(Messages.getString("BaseLoader.2"), getLabel(), //$NON-NLS-1$
@@ -233,13 +234,14 @@ public abstract class BaseLoader extends Step {
                     document);
         } else {
             // load the existing active document
-            document = documentPersistence.loadDocument(activeDocumentId);
-            setConsistent(true);
-            LOGGER.info(Messages.getString("BaseLoader.12"), getLabel(), //$NON-NLS-1$
-                    document.getToDate());
-
-            LOGGER.trace(getMarker(), Messages.getString("BaseLoader.13"), //$NON-NLS-1$
-                    document);
+            if (persist()) {
+                document = documentPersistence.loadDocument(activeDocumentId);
+                setConsistent(true);
+                LOGGER.info(Messages.getString("BaseLoader.12"), getLabel(), //$NON-NLS-1$
+                        document.getToDate());
+                LOGGER.trace(getMarker(), Messages.getString("BaseLoader.13"), //$NON-NLS-1$
+                        document);
+            }
         }
         if (isDocumentLoaded()) {
             setData(document);
@@ -250,8 +252,7 @@ public abstract class BaseLoader extends Step {
     /**
      * <p>
      * Stores locator and its documents when persists is true. As DAO may clear
-     * the data object after persist, they are reloaded. Locator fields are not
-     * stored, hence they are added back upon reload.
+     * the data object after persist, they are reloaded.
      *
      * @return true;
      * @throws StepRunException
@@ -266,11 +267,7 @@ public abstract class BaseLoader extends Step {
                 Messages.getString("BaseLoader.15")); //$NON-NLS-1$
 
         try {
-            // TODO code this
-            Optional<Boolean> taskLevelPersistenceDefined =
-                    Optional.ofNullable(false);
-            boolean persist = locatorPersistence
-                    .persistLocator(taskLevelPersistenceDefined);
+            boolean persist = persist();
             // store locator
             if (persist && locatorPersistence.storeLocator(locator)) {
                 // if stored then reload locator and document
@@ -295,6 +292,15 @@ public abstract class BaseLoader extends Step {
             throw new StepRunException(message, e);
         }
         return true;
+    }
+
+    private boolean persist() {
+        // TODO code this and move it to locatorPersistence.persistLocator()
+        Optional<Boolean> taskLevelPersistenceDefined =
+                Optional.ofNullable(false);
+        boolean persist =
+                locatorPersistence.persistLocator(taskLevelPersistenceDefined);
+        return persist;
     }
 
     /**

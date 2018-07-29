@@ -13,6 +13,7 @@ import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.base.BaseSeeder;
@@ -53,6 +54,12 @@ public final class LocatorSeeder extends BaseSeeder {
      */
     @Inject
     private ThreadSleep threadSleep;
+
+    /**
+     * model factory
+     */
+    @Inject
+    private ModelFactory factory;
 
     /**
      * <p>
@@ -132,14 +139,11 @@ public final class LocatorSeeder extends BaseSeeder {
                             taskName, "dataDef");
                     StepInfo nextStep = taskProvider.getNextStep(taskGroup,
                             taskName, thisStep.getStepName());
-                    JobInfo jobInfo = new JobInfo(taskMediator.getJobId(),
-                            locator.getName(), taskGroup, taskName,
-                            dataDefName);
-
-                    Payload nextStepPayload = new Payload();
-                    nextStepPayload.setData(locator);
-                    nextStepPayload.setStepInfo(nextStep);
-                    nextStepPayload.setJobInfo(jobInfo);
+                    JobInfo jobInfo = factory.createJobInfo(
+                            taskMediator.getJobId(), locator.getName(),
+                            taskGroup, taskName, dataDefName);
+                    Payload nextStepPayload =
+                            factory.createPayload(jobInfo, nextStep, locator);
                     payloads.add(nextStepPayload);
                 }
             } catch (DefNotFoundException e) {
