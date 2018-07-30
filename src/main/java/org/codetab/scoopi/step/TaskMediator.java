@@ -6,8 +6,10 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.pool.TaskPoolService;
+import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.shared.StepService;
 import org.codetab.scoopi.store.IStore;
 import org.slf4j.Logger;
@@ -24,6 +26,9 @@ public class TaskMediator {
     private IStore store;
     @Inject
     private StepService stepService;
+    @Inject
+    private StatService statService;
+
     private TaskRunnerThread taskRunner = new TaskRunnerThread();
     private AtomicInteger jobIdCounter = new AtomicInteger();
 
@@ -38,22 +43,11 @@ public class TaskMediator {
         try {
             taskRunner.join();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            String message = "wait for finish interrupted";
+            LOGGER.error("{}", message);
+            LOGGER.debug("{}", message, e);
+            statService.log(CAT.INTERNAL, message, e);
         }
-    }
-
-    private void initiateTask()
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException, InterruptedException {
-        Payload payload = store.takePayload();
-        synchronized (this) {
-            --reservations;
-        }
-        Task task = stepService.createTask(payload);
-        String poolName = task.getStep().getStepName();
-        LOGGER.info("submit to " + poolName);
-        poolService.submit(poolName, task);
     }
 
     public boolean pushPayload(final Payload payload)
@@ -67,6 +61,18 @@ public class TaskMediator {
 
     public int getJobId() {
         return jobIdCounter.incrementAndGet();
+    }
+
+    private void initiateTask()
+            throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException, InterruptedException {
+        Payload payload = store.takePayload();
+        synchronized (this) {
+            --reservations;
+        }
+        Task task = stepService.createTask(payload);
+        String poolName = task.getStep().getStepName();
+        poolService.submit(poolName, task);
     }
 
     class TaskRunnerThread extends Thread {
@@ -86,8 +92,10 @@ public class TaskMediator {
                     }
                 } catch (ClassNotFoundException | InstantiationException
                         | IllegalAccessException | InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    String message = "initiate task";
+                    LOGGER.error("{}", message);
+                    LOGGER.debug("{}", message, e);
+                    statService.log(CAT.ERROR, message, e);
                 }
             }
         }

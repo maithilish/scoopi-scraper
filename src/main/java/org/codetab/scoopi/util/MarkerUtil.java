@@ -68,7 +68,7 @@ public final class MarkerUtil {
      */
     public static Marker getMarker(final String dataDefName) {
 
-        Validate.notNull(dataDefName, Messages.getString("MarkerUtil.5")); //$NON-NLS-1$
+        Validate.notNull(dataDefName, Messages.getString("MarkerUtil.2")); //$NON-NLS-1$
 
         String markerName = String.join("_", "LOG", dataDefName.toUpperCase()); //$NON-NLS-1$ //$NON-NLS-2$
         return MarkerFactory.getMarker(markerName);

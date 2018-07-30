@@ -41,7 +41,7 @@ public class Task implements Runnable {
             Context taskTimer =
                     metricsHelper.getTimer(step, "task", "time").time();
             Marker marker = step.getMarker();
-            String label = getLabel();
+            String label = step.getLabel();
             String stepType = step.getStepName();
 
             step.initialize();
@@ -60,7 +60,7 @@ public class Task implements Runnable {
             taskTimer.stop();
 
         } catch (StepRunException | StepPersistenceException e) {
-            String label = getLabel();
+            String label = step.getLabel();
             String message =
                     Util.join("[", step.getStepName(), "] ", e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.error("[{}] {}", label, message); //$NON-NLS-1$
@@ -68,7 +68,7 @@ public class Task implements Runnable {
             statService.log(CAT.ERROR, label, message, e);
             countError();
         } catch (Exception e) {
-            String label = getLabel();
+            String label = step.getLabel();
             String message =
                     Util.join("[", step.getStepName(), "] ", e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.error("[{}] {}", label, message); //$NON-NLS-1$
@@ -76,10 +76,6 @@ public class Task implements Runnable {
             statService.log(CAT.INTERNAL, label, message, e);
             countError();
         }
-    }
-
-    private String getLabel() {
-        return step.getLabel();
     }
 
     private void countError() {

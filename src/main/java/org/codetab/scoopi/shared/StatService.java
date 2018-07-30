@@ -77,9 +77,9 @@ public class StatService {
     }
 
     public void outputLog() {
-        LOGGER.info("{}", Messages.getString("ActivityService.0")); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.info("{}", Messages.getString("StatService.0")); //$NON-NLS-1$ //$NON-NLS-2$
         if (logs.size() == 0) {
-            LOGGER.info(Messages.getString("ActivityService.2")); //$NON-NLS-1$
+            LOGGER.info(Messages.getString("StatService.2")); //$NON-NLS-1$
         }
         for (Log activity : logs) {
             Throwable throwable = activity.getThrowable();
@@ -97,18 +97,18 @@ public class StatService {
                     causeMessage = cause.getLocalizedMessage();
                 }
             }
-            LOGGER.info(Messages.getString("ActivityService.7"), //$NON-NLS-1$
+            LOGGER.info(Messages.getString("StatService.7"), //$NON-NLS-1$
                     activity.getCat(), activity.getLabel(),
                     activity.getMessage());
-            LOGGER.info(Messages.getString("ActivityService.8"), throwableClass, //$NON-NLS-1$
+            LOGGER.info(Messages.getString("StatService.8"), throwableClass, //$NON-NLS-1$
                     throwableMessage);
             if (cause != null) {
-                LOGGER.info(Messages.getString("ActivityService.9"), causeClass, //$NON-NLS-1$
+                LOGGER.info(Messages.getString("StatService.9"), causeClass, //$NON-NLS-1$
                         causeMessage);
             }
 
         }
-        LOGGER.info("{}  {}", Messages.getString("ActivityService.11"), //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.info("{}  {}", Messages.getString("StatService.11"), //$NON-NLS-1$ //$NON-NLS-2$
                 stopWatch);
     }
 
@@ -123,13 +123,13 @@ public class StatService {
     }
 
     public void logMemoryUsage() {
-        LOGGER.info("{}", Messages.getString("ActivityService.14")); //$NON-NLS-1$ //$NON-NLS-2$
-        LOGGER.info(Messages.getString("ActivityService.15"), //$NON-NLS-1$
+        LOGGER.info("{}", Messages.getString("StatService.14")); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.info(Messages.getString("StatService.15"), //$NON-NLS-1$
                 runtime.maxMemory() / MB_DIVISOR);
-        LOGGER.info(Messages.getString("ActivityService.16"), //$NON-NLS-1$
+        LOGGER.info(Messages.getString("StatService.16"), //$NON-NLS-1$
                 (long) totalMemory.getAverage(), totalMemory.getMax(),
                 totalMemory.getMin());
-        LOGGER.info(Messages.getString("ActivityService.17"), //$NON-NLS-1$
+        LOGGER.info(Messages.getString("StatService.17"), //$NON-NLS-1$
                 (long) freeMemory.getAverage(), freeMemory.getMax(),
                 freeMemory.getMin());
     }

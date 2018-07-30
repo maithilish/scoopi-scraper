@@ -14,6 +14,7 @@ import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
 import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.shared.StepService;
+import org.codetab.scoopi.util.MarkerUtil;
 import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,20 +54,18 @@ public abstract class Step implements IStep {
 
     @Override
     public boolean handover() {
+        Validate.validState((data != null), "data is null");
+        Validate.validState(isConsistent(), "step inconsistent");
         try {
-            Validate.validState((data != null), "data is null");
-            Validate.validState(isConsistent(), "step inconsistent");
+            String group = getJobInfo().getGroup();
+            String stepName = getStepInfo().getStepName();
+            String taskName = getJobInfo().getTask();
 
-            String group = getPayload().getJobInfo().getGroup();
-            String stepName = getPayload().getStepInfo().getStepName();
-            String taskName = getPayload().getJobInfo().getTask();
-
-            if (!getPayload().getStepInfo().getNextStepName()
-                    .equalsIgnoreCase("end")) {
+            if (!getStepInfo().getNextStepName().equalsIgnoreCase("end")) {
                 StepInfo nextStep =
                         taskProvider.getNextStep(group, taskName, stepName);
-                Payload nextStepPayload = factory.createPayload(
-                        getPayload().getJobInfo(), nextStep, data);
+                Payload nextStepPayload =
+                        factory.createPayload(getJobInfo(), nextStep, data);
                 taskMediator.pushPayload(nextStepPayload);
                 LOGGER.info("handover to step: " + nextStep.getStepName());
             }
@@ -112,6 +111,7 @@ public abstract class Step implements IStep {
         return payload.getStepInfo().getStepName();
     }
 
+    // TODO should be consistent only if data is set
     @Override
     public boolean isConsistent() {
         return consistent;
@@ -124,6 +124,12 @@ public abstract class Step implements IStep {
 
     @Override
     public Marker getMarker() {
+        if (marker == null) {
+            String name = getJobInfo().getName();
+            String group = getJobInfo().getGroup();
+            String task = getJobInfo().getTask();
+            marker = MarkerUtil.getMarker(name, group, task);
+        }
         return marker;
     }
 
@@ -133,12 +139,12 @@ public abstract class Step implements IStep {
     @Override
     public String getLabel() {
         String lable = payload.getJobInfo().getLabel();
-        return Util.join("[", lable, "] ");
+        return Util.join("[", lable, "]");
     }
 
     @Override
     public String getLabeled(final String message) {
-        return Util.join(getLabel(), message); // $NON-NLS-1$ //$NON-NLS-2$
+        return Util.join(getLabel(), " ", message); // $NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

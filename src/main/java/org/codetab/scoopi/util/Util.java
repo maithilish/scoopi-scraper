@@ -300,7 +300,7 @@ public final class Util {
     public static TemporalAmount parseTemporalAmount(final CharSequence text)
             throws DateTimeParseException {
 
-        Validate.notNull(text, Messages.getString("Util.16")); //$NON-NLS-1$
+        Validate.notNull(text, Messages.getString("Util.14")); //$NON-NLS-1$
 
         TemporalAmount ta;
         try {
@@ -320,7 +320,7 @@ public final class Util {
      */
     public static String getMessage(final Exception exception) {
 
-        Validate.notNull(exception, Messages.getString("Util.17")); //$NON-NLS-1$
+        Validate.notNull(exception, Messages.getString("Util.15")); //$NON-NLS-1$
 
         return exception.getClass().getSimpleName() + ": " //$NON-NLS-1$
                 + exception.getLocalizedMessage();
@@ -335,7 +335,7 @@ public final class Util {
      */
     public static String getPropertiesAsString(final Properties properties) {
 
-        Validate.notNull(properties, Messages.getString("Util.19")); //$NON-NLS-1$
+        Validate.notNull(properties, Messages.getString("Util.10")); //$NON-NLS-1$
 
         String line = System.lineSeparator();
         StringBuilder sb = new StringBuilder();
@@ -365,9 +365,9 @@ public final class Util {
     public static Map<String, String> split(final String input,
             final String keyValueSeparator, final String delimiter) {
 
-        Validate.notNull(input, Messages.getString("Util.20")); //$NON-NLS-1$
-        Validate.notNull(keyValueSeparator, Messages.getString("Util.21")); //$NON-NLS-1$
-        Validate.notNull(delimiter, Messages.getString("Util.22")); //$NON-NLS-1$
+        Validate.notNull(input, Messages.getString("Util.11")); //$NON-NLS-1$
+        Validate.notNull(keyValueSeparator, Messages.getString("Util.8")); //$NON-NLS-1$
+        Validate.notNull(delimiter, Messages.getString("Util.6")); //$NON-NLS-1$
 
         // toMap last arg is mergeFunction which selects the second item from
         // duplicates
