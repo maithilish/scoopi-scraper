@@ -1,5 +1,7 @@
 package org.codetab.scoopi.step.lite;
 
+import static java.util.Objects.nonNull;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.Validate;
@@ -40,7 +42,7 @@ public class SeederStep extends Step {
 
     @Override
     public boolean process() {
-        setData("dummy");
+        setData(getPayload().getData());
         setConsistent(true);
         return true;
     }
@@ -48,7 +50,7 @@ public class SeederStep extends Step {
     @Override
     public boolean handover() {
 
-        Validate.validState((getData() != null), "data is null");
+        Validate.validState(nonNull(getData()), "data is null");
         Validate.validState(isConsistent(), "step inconsistent");
 
         LOGGER.info("handover");
@@ -66,9 +68,6 @@ public class SeederStep extends Step {
                         factory.createPayload(jobInfo, nextStep, getData());
                 taskMediator.pushPayload(nextStepPayload);
             } catch (DefNotFoundException | InterruptedException e) {
-                // TODO Auto-generated catch block
-                // don't throw Exception just log error
-                e.printStackTrace();
             }
 
         }

@@ -50,4 +50,15 @@ public class JobInfoTest {
                 "JobInfo [id=1, locator=locator, group=group, task=task, dataDef=dataDef]");
     }
 
+    @Test
+    public void testHashCode() {
+        int actual = jobInfo.hashCode();
+        assertThat(actual).isEqualTo(-1162997337);
+    }
+
+    @Test
+    public void testEqual() {
+        JobInfo another = new JobInfo(1, "locator", "group", "task", "dataDef");
+        assertThat(jobInfo).isEqualTo(another);
+    }
 }

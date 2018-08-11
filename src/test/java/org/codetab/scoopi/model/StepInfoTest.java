@@ -44,4 +44,16 @@ public class StepInfoTest {
         assertThat(stepInfo.toString()).isEqualTo(expected.toString());
     }
 
+    @Test
+    public void testHashCode() {
+        int actual = stepInfo.hashCode();
+        assertThat(actual).isEqualTo(2003484491);
+    }
+
+    @Test
+    public void testEqual() {
+        StepInfo another = new StepInfo("stepName", "priviousStepName",
+                "nextStepName", "className");
+        assertThat(stepInfo).isEqualTo(another);
+    }
 }

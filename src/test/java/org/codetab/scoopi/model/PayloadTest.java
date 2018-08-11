@@ -45,4 +45,19 @@ public class PayloadTest {
         assertThat(payload.toString()).isEqualTo(expected.toString());
     }
 
+    @Test
+    public void testHashCode() {
+        int actual = payload.hashCode();
+        assertThat(actual).isEqualTo(-1887035587);
+    }
+
+    @Test
+    public void testEqual() {
+        JobInfo aj = new JobInfo(1, "locator", "group", "task", "dataDef");
+        StepInfo as = new StepInfo("stepName", "priviousStepName",
+                "nextStepName", "className");
+        Object ad = "data";
+        Payload another = new Payload(aj, as, ad);
+        assertThat(payload).isEqualTo(another);
+    }
 }

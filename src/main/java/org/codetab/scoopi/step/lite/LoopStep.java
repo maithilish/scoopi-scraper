@@ -1,5 +1,7 @@
 package org.codetab.scoopi.step.lite;
 
+import static java.util.Objects.nonNull;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.Validate;
@@ -41,7 +43,7 @@ public class LoopStep extends Step {
 
     @Override
     public boolean process() {
-        setData("dummy");
+        setData(getPayload().getData());
         setConsistent(true);
         return true;
     }
@@ -49,7 +51,7 @@ public class LoopStep extends Step {
     @Override
     public boolean handover() {
         try {
-            Validate.validState((getData() != null), "data is null");
+            Validate.validState(nonNull(getData()), "data is null");
             Validate.validState(isConsistent(), "step inconsistent");
 
             String group = "lite1";
