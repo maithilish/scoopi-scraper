@@ -46,7 +46,7 @@ public class PMFTestIT {
     private PMF pmf;
 
     @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+    public ExpectedException testRule = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -72,17 +72,17 @@ public class PMFTestIT {
             SecurityException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, ConfigNotFoundException {
 
-        String dsConfigFile = System.getProperty("gotz.datastore.configFile");
+        String dsConfigFile = System.getProperty("scoopi.datastore.configFile");
         if (dsConfigFile == null) {
             dsConfigFile = "jdoconfig.properties";
         }
-        given(configService.getConfig("gotz.datastore.configFile"))
+        given(configService.getConfig("scoopi.datastore.configFile"))
                 .willReturn(dsConfigFile);
 
         pmf.init();
 
         InOrder inOrder = inOrder(configService, ioHelper, jdoProperties);
-        inOrder.verify(configService).getConfig("gotz.datastore.configFile");
+        inOrder.verify(configService).getConfig("scoopi.datastore.configFile");
         inOrder.verify(ioHelper).getInputStream("/" + dsConfigFile);
         inOrder.verify(jdoProperties).load(any(InputStream.class));
 
@@ -94,18 +94,18 @@ public class PMFTestIT {
             SecurityException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, ConfigNotFoundException {
 
-        String dsConfigFile = System.getProperty("gotz.datastore.configFile");
+        String dsConfigFile = System.getProperty("scoopi.datastore.configFile");
         if (dsConfigFile == null) {
             dsConfigFile = "jdoconfig.properties";
         }
 
-        given(configService.getConfig("gotz.datastore.configFile"))
+        given(configService.getConfig("scoopi.datastore.configFile"))
                 .willReturn(dsConfigFile);
 
         pmf.init();
 
         InOrder inOrder = inOrder(configService, ioHelper, jdoProperties);
-        inOrder.verify(configService).getConfig("gotz.datastore.configFile");
+        inOrder.verify(configService).getConfig("scoopi.datastore.configFile");
         inOrder.verify(ioHelper).getInputStream("/" + dsConfigFile);
         inOrder.verify(jdoProperties).load(any(InputStream.class));
 
@@ -121,21 +121,20 @@ public class PMFTestIT {
     @Test
     public void testInitThrowConfigNotFoundException()
             throws ConfigNotFoundException {
-        given(configService.getConfig("gotz.datastore.configFile"))
+        given(configService.getConfig("scoopi.datastore.configFile"))
                 .willThrow(ConfigNotFoundException.class);
 
-        exceptionRule.expect(CriticalException.class);
+        testRule.expect(CriticalException.class);
         pmf.init();
     }
 
     @Test
     public void testInitThrowFileNotFoundException()
             throws FileNotFoundException, ConfigNotFoundException {
-        given(configService.getConfig("gotz.datastore.configFile"))
+        given(configService.getConfig("scoopi.datastore.configFile"))
                 .willReturn("x.properties");
 
-        exceptionRule.expect(CriticalException.class);
+        testRule.expect(CriticalException.class);
         pmf.init();
     }
-
 }

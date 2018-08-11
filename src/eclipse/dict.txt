@@ -91,3 +91,23 @@ lib
 plugin
 travis-ci
 
+localhost
+foo
+mysql
+mariadb
+hsqldb
+sa
+hsql
+mongodb
+todate
+scoopidev
+scoopitest
+mockito
+usr
+jvm
+uncheck
+mvn
+maven
+rundate
+tmp
+ext

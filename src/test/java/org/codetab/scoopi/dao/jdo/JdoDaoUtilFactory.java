@@ -2,11 +2,8 @@ package org.codetab.scoopi.dao.jdo;
 
 import javax.jdo.PersistenceManagerFactory;
 
-import org.codetab.scoopi.dao.DaoUtil;
-import org.codetab.scoopi.dao.DaoUtilFactory;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.shared.ConfigService;
 
 /**
  * <p>
@@ -14,7 +11,7 @@ import org.codetab.scoopi.shared.ConfigService;
  * @author Maithilish
  *
  */
-public final class JdoDaoUtilFactory extends DaoUtilFactory {
+public final class JdoDaoUtilFactory {
 
     /**
      * pmf.
@@ -26,15 +23,10 @@ public final class JdoDaoUtilFactory extends DaoUtilFactory {
      * Constructor.
      *
      */
-    public JdoDaoUtilFactory() {
-        String userProvidedFile = "gotz.properties";
-        String defaultsFile = "gotz-default.xml";
-        DInjector dInjector = new DInjector();
-        ConfigService configService = dInjector.instance(ConfigService.class);
-        configService.init(userProvidedFile, defaultsFile);
-        PMF jdoPMF = dInjector.instance(PMF.class);
-        jdoPMF.init();
-        pmf = jdoPMF.getFactory();
+    public JdoDaoUtilFactory(final DInjector dInjector) {
+        PMF p = dInjector.instance(PMF.class);
+        p.init();
+        pmf = p.getFactory();
     }
 
     /**
@@ -46,9 +38,7 @@ public final class JdoDaoUtilFactory extends DaoUtilFactory {
         return pmf;
     }
 
-    @Override
     public IDaoUtil getUtilDao() {
-        return new DaoUtil(pmf);
+        return new JdoDaoUtil(pmf);
     }
-
 }

@@ -1,5 +1,8 @@
 package org.codetab.scoopi.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class StepInfo {
 
     private final String stepName;
@@ -29,6 +32,16 @@ public class StepInfo {
 
     public String getClassName() {
         return className;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override

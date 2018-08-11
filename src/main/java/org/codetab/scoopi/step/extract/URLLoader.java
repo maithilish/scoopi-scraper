@@ -74,7 +74,7 @@ public final class URLLoader extends BaseLoader {
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
                 LOGGER.debug(Messages.getString("URLLoader.10"), urlSpec); //$NON-NLS-1$
                 return bytes;
-            } catch (IOException | NullPointerException e1) {
+            } catch (IOException e1) {
                 throw new IOException(
                         Util.join("file not found [", urlSpec, "]"));
             }

@@ -1,5 +1,7 @@
 package org.codetab.scoopi.model.helper;
 
+import static java.util.Objects.isNull;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.Instant;
@@ -17,11 +19,11 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.shared.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
 import org.codetab.scoopi.util.MarkerUtil;
@@ -48,10 +50,10 @@ public class DocumentHelper {
     @Inject
     private ConfigService configService;
     /**
-     * DI singleton.
+     * ModelFactory
      */
     @Inject
-    private DInjector dInjector;
+    private ModelFactory modelFactory;
 
     /**
      * private constructor.
@@ -86,6 +88,43 @@ public class DocumentHelper {
             }
         }
         return activeDocumentId;
+    }
+
+    public Document getActiveDocument(final List<Document> documents) {
+        Validate.validState(configService != null,
+                Messages.getString("DocumentHelper.0")); //$NON-NLS-1$
+
+        if (isNull(documents)) {
+            return null;
+        }
+        Document activeDocument = null;
+        Date runDateTime = configService.getRunDateTime();
+        for (Document document : documents) {
+            // toDate > rundate
+            if (document.getToDate().compareTo(runDateTime) >= 0) {
+                activeDocument = document;
+            }
+        }
+        return activeDocument;
+    }
+
+    /*
+     * get todate for live and reset document toDate to new toDate. If still
+     * active for new toDate then use the active document else reset toDate to
+     * runDateTime - 1 and set activeDocument to null so that new document is
+     * created
+     */
+    public boolean resetToDate(final Document document, final Date newToDate) {
+        document.setToDate(newToDate);
+        // expired for new toDate
+        if (newToDate.compareTo(configService.getRunDateTime()) < 0) {
+            Date runDateMinusOne =
+                    DateUtils.addSeconds(configService.getRunDateTime(), -1);
+            document.setToDate(runDateMinusOne);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -247,15 +286,9 @@ public class DocumentHelper {
         Validate.notNull(fromDate, Messages.getString("DocumentHelper.18")); //$NON-NLS-1$
         Validate.notNull(toDate, Messages.getString("DocumentHelper.19")); //$NON-NLS-1$
 
-        Validate.validState(dInjector != null,
+        Validate.validState(modelFactory != null,
                 Messages.getString("DocumentHelper.20")); //$NON-NLS-1$
 
-        Document document = dInjector.instance(Document.class);
-        document.setName(name);
-        document.setUrl(url);
-        document.setFromDate(fromDate);
-        document.setToDate(toDate);
-        return document;
+        return modelFactory.createDocument(name, url, fromDate, toDate);
     }
-
 }

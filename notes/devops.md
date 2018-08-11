@@ -123,6 +123,8 @@ For static import of AssertJ and Mockito go to, _Static import - Preference -> J
     org.mockito.Matchers
     org.mockito.ArgumentMatchers
     org.assertj.core.api.Assertions
+    java.util.Objects
+    java.util.stream.Collectors
 
 #### change author name
 
@@ -134,9 +136,9 @@ to download JavaDoc and sources, go to  Project Context Menu-> Maven
 
 - check Download Artifact sources
 - check Download Artifact JavaDoc
-- unchekc Download reporsitory index on startup
+- uncheck Download repository index on startup
 
-JavaDoc and sources may be downloaded manually
+or download manually
 
     mvn dependency:sources dependency:resolve -Dclassifier=JavaDoc
 

@@ -1,0 +1,17 @@
+version: "3"
+services:
+  db:
+      image: mariadb:latest
+      container_name: gotz-test-db
+      command: 
+          --log_warnings=1
+          --lower_case_table_names=1 
+          --innodb-compression-default=1
+          --innodb_compression_algorithm=zlib
+      environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DATABASE=scoopitest
+      ports:
+          - "3306:3306"
+      volumes:
+          - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro

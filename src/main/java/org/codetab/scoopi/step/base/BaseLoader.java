@@ -1,14 +1,15 @@
 package org.codetab.scoopi.step.base;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.io.IOException;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.messages.Messages;
@@ -69,6 +70,11 @@ public abstract class BaseLoader extends Step {
      */
     @Override
     public boolean initialize() {
+        Validate.validState(nonNull(getPayload()),
+                Messages.getString("BaseLoader.29")); //$NON-NLS-1$
+        Validate.validState(nonNull(getPayload().getData()),
+                Messages.getString("BaseLoader.30")); //$NON-NLS-1$
+
         Object pData = getPayload().getData();
         if (pData instanceof Locator) {
             this.locator = (Locator) pData;
@@ -90,7 +96,7 @@ public abstract class BaseLoader extends Step {
      */
     @Override
     public boolean load() {
-        Validate.validState(locator != null,
+        Validate.validState(nonNull(locator),
                 Messages.getString("BaseLoader.1")); //$NON-NLS-1$
 
         Locator savedLocator = null;
@@ -101,8 +107,8 @@ public abstract class BaseLoader extends Step {
                     locator.getGroup());
         }
 
-        if (savedLocator == null) {
-            // use the locator passed as input to this step
+        if (isNull(savedLocator)) {
+            // use the locator from payload passed to this step
             LOGGER.debug("{} {}", getLabel(), //$NON-NLS-1$
                     Messages.getString("BaseLoader.3")); //$NON-NLS-1$
         } else {
@@ -150,7 +156,7 @@ public abstract class BaseLoader extends Step {
      */
     @Override
     public boolean process() {
-        Validate.validState(locator != null,
+        Validate.validState(nonNull(locator),
                 Messages.getString("BaseLoader.7")); //$NON-NLS-1$
 
         String taskGroup = getJobInfo().getGroup();
@@ -162,33 +168,19 @@ public abstract class BaseLoader extends Step {
             live = "PT0S";
         }
 
-        Long activeDocumentId = null;
-        // locator loaded from db
-        if (locator.getId() != null) {
-            activeDocumentId =
-                    documentHelper.getActiveDocumentId(locator.getDocuments());
-        }
-
         /*
          * load the active document, get new todate for new live and reset
          * document toDate to new toDate. If still active for new toDate then
          * use the active document else reset toDate to runDateTime - 1 and set
          * activeDocument to null so that new document is created
          */
-
-        if (activeDocumentId != null) {
-            document = documentHelper.getDocument(activeDocumentId,
-                    locator.getDocuments());
-            Date newToDate = documentHelper.getToDate(document.getFromDate(),
+        Document activeDoc =
+                documentHelper.getActiveDocument(locator.getDocuments());
+        if (nonNull(activeDoc)) {
+            Date newToDate = documentHelper.getToDate(activeDoc.getFromDate(),
                     live, getJobInfo());
-            document.setToDate(newToDate);
-
-            // expired for new toDate
-            if (newToDate.compareTo(configService.getRunDateTime()) < 0) {
-                newToDate = DateUtils.addSeconds(configService.getRunDateTime(),
-                        -1);
-                document.setToDate(newToDate);
-                activeDocumentId = null;
+            if (documentHelper.resetToDate(activeDoc, newToDate)) {
+                activeDoc = null;
             }
         }
 
@@ -196,7 +188,7 @@ public abstract class BaseLoader extends Step {
          * if activeDocumentId is null create new document otherwise load the
          * active document.
          */
-        if (activeDocumentId == null) {
+        if (isNull(activeDoc)) {
             // no active document, create new one
             byte[] documentObject = null;
             try {
@@ -213,38 +205,35 @@ public abstract class BaseLoader extends Step {
                     documentHelper.getToDate(fromDate, live, getJobInfo());
 
             // create new document
-            document = documentHelper.createDocument(locator.getName(),
+            activeDoc = documentHelper.createDocument(locator.getName(),
                     locator.getUrl(), fromDate, toDate);
 
             // compress and set documentObject
             try {
-                documentHelper.setDocumentObject(document, documentObject);
+                documentHelper.setDocumentObject(activeDoc, documentObject);
             } catch (IOException e) {
                 String message = Messages.getString("BaseLoader.9"); //$NON-NLS-1$
                 throw new StepRunException(message, e);
             }
 
-            // add document to locator
+            document = activeDoc;
             locator.getDocuments().add(document);
+            setData(document);
             setConsistent(true);
-
             LOGGER.info(Messages.getString("BaseLoader.2"), getLabel(), //$NON-NLS-1$
                     document.getToDate());
             LOGGER.trace(getMarker(), Messages.getString("BaseLoader.11"), //$NON-NLS-1$
                     document);
         } else {
-            // load the existing active document
-            if (persist()) {
-                document = documentPersistence.loadDocument(activeDocumentId);
-                setConsistent(true);
-                LOGGER.info(Messages.getString("BaseLoader.12"), getLabel(), //$NON-NLS-1$
-                        document.getToDate());
-                LOGGER.trace(getMarker(), Messages.getString("BaseLoader.13"), //$NON-NLS-1$
-                        document);
-            }
-        }
-        if (isDocumentLoaded()) {
+            // as activeDoc comes from datastore it indicates that
+            // datastore is active so load the activeDoc with doc object
+            document = documentPersistence.loadDocument(activeDoc.getId());
             setData(document);
+            setConsistent(true);
+            LOGGER.info(Messages.getString("BaseLoader.12"), getLabel(), //$NON-NLS-1$
+                    document.getToDate());
+            LOGGER.trace(getMarker(), Messages.getString("BaseLoader.13"), //$NON-NLS-1$
+                    document);
         }
         return true;
     }
@@ -261,9 +250,9 @@ public abstract class BaseLoader extends Step {
      */
     @Override
     public boolean store() {
-        Validate.validState(locator != null,
+        Validate.validState(nonNull(locator),
                 Messages.getString("BaseLoader.14")); //$NON-NLS-1$
-        Validate.validState(document != null,
+        Validate.validState(nonNull(document),
                 Messages.getString("BaseLoader.15")); //$NON-NLS-1$
 
         try {
@@ -273,16 +262,16 @@ public abstract class BaseLoader extends Step {
                 // if stored then reload locator and document
                 Locator tLocator =
                         locatorPersistence.loadLocator(locator.getId());
-                if (tLocator != null) {
+                if (nonNull(tLocator)) {
                     locator = tLocator;
                 }
 
                 Document tDocument =
                         documentPersistence.loadDocument(document.getId());
-                if (tDocument != null) {
+                if (nonNull(tDocument)) {
                     document = tDocument;
+                    setData(tDocument);
                 }
-
                 LOGGER.debug(Messages.getString("BaseLoader.16"), getLabel()); //$NON-NLS-1$
                 LOGGER.trace(getMarker(), Messages.getString("BaseLoader.17"), //$NON-NLS-1$
                         Util.LINE, locator);
@@ -297,21 +286,10 @@ public abstract class BaseLoader extends Step {
     private boolean persist() {
         // TODO code this and move it to locatorPersistence.persistLocator()
         Optional<Boolean> taskLevelPersistenceDefined =
-                Optional.ofNullable(false);
+                Optional.ofNullable(true);
         boolean persist =
                 locatorPersistence.persistLocator(taskLevelPersistenceDefined);
         return persist;
-    }
-
-    /**
-     * <p>
-     * Returns whether step is consistent.
-     * @return true if document is loaded
-     * @see org.codetab.gotz.step.Step#isConsistent()
-     */
-    @Override
-    public boolean isConsistent() {
-        return (super.isConsistent() && isDocumentLoaded());
     }
 
     /**
@@ -320,7 +298,7 @@ public abstract class BaseLoader extends Step {
      * @return true if document is not null
      */
     public boolean isDocumentLoaded() {
-        return Objects.nonNull(document);
+        return nonNull(document);
     }
 
     /**

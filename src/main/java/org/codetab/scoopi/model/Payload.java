@@ -1,5 +1,8 @@
 package org.codetab.scoopi.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Payload {
 
     private final JobInfo jobInfo;
@@ -22,6 +25,16 @@ public class Payload {
 
     public Object getData() {
         return data;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override

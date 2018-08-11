@@ -5,12 +5,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.codetab.scoopi.defs.ITaskProvider;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.model.Payload;
@@ -58,7 +56,6 @@ public class StepTest {
         MockitoAnnotations.initMocks(this);
         payload = getTestPayload();
         step.setPayload(payload);
-
     }
 
     @Test
@@ -76,7 +73,6 @@ public class StepTest {
                 modelFactory.createPayload(step.getJobInfo(), nextStep, data);
         step.setData(data);
         step.setConsistent(true);
-        FieldUtils.writeField(step, "document", new Document(), true);
 
         given(taskProvider.getNextStep(group, taskName, stepName))
                 .willReturn(nextStep);
@@ -102,7 +98,6 @@ public class StepTest {
         step.setPayload(payload);
         step.setConsistent(true);
         step.setData(data);
-        FieldUtils.writeField(step, "document", new Document(), true);
 
         boolean actual = step.handover();
 
@@ -121,7 +116,6 @@ public class StepTest {
 
         step.setData(data);
         step.setConsistent(true);
-        FieldUtils.writeField(step, "document", new Document(), true);
 
         given(taskProvider.getNextStep(group, taskName, stepName))
                 .willThrow(DefNotFoundException.class);
@@ -184,7 +178,8 @@ public class StepTest {
         step.setConsistent(false);
         assertThat(step.isConsistent()).isFalse();
 
-        FieldUtils.writeField(step, "document", new Document(), true);
+        String data = "test data";
+        step.setData(data);
         step.setConsistent(true);
         assertThat(step.isConsistent()).isTrue();
     }

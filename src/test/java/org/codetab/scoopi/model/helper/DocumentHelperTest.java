@@ -14,7 +14,6 @@ import java.util.zip.DataFormatException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
@@ -41,7 +40,7 @@ public class DocumentHelperTest {
     @Mock
     private ConfigService configService;
     @Mock
-    private DInjector dInjector;
+    private ModelFactory modelFactory;
 
     @InjectMocks
     private DocumentHelper documentHelper;
@@ -49,12 +48,17 @@ public class DocumentHelperTest {
     @Rule
     public ExpectedException testRule = ExpectedException.none();
     private JobInfo jobInfo;
+    private Document document;
+    // real factory to create test objects
+    private ModelFactory factory = new ModelFactory();
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        jobInfo = new ModelFactory().createJobInfo(0, "locator1", "group1",
-                "task1", "dataDef1");
+        jobInfo = factory.createJobInfo(0, "locator1", "group1", "task1",
+                "dataDef1");
+        document =
+                factory.createDocument("name", "url", new Date(), new Date());
     }
 
     @Test
@@ -254,7 +258,6 @@ public class DocumentHelperTest {
 
     @Test
     public void testSetDocumentObjectCompression() throws IOException {
-        Document document = new Document();
         byte[] documentObject = String.valueOf("some string").getBytes();
 
         // when
@@ -278,7 +281,7 @@ public class DocumentHelperTest {
         }
 
         try {
-            documentHelper.setDocumentObject(new Document(), null);
+            documentHelper.setDocumentObject(document, null);
             fail("must throw NullPointerException");
         } catch (NullPointerException e) {
             assertThat(e.getMessage())
@@ -298,7 +301,7 @@ public class DocumentHelperTest {
 
         try {
             // document without documentObject
-            documentHelper.getDocumentObject(new Document());
+            documentHelper.getDocumentObject(document);
             fail("must throw NullPointerException");
         } catch (NullPointerException e) {
             assertThat(e.getMessage())
@@ -309,7 +312,6 @@ public class DocumentHelperTest {
     @Test
     public void testGetDocumentObject()
             throws IOException, DataFormatException {
-        Document document = new Document();
         byte[] documentObject = String.valueOf("some string").getBytes();
         documentHelper.setDocumentObject(document, documentObject);
 
@@ -321,31 +323,28 @@ public class DocumentHelperTest {
 
     @Test
     public void testCreateDocument() {
-        Document document = new Document();
-        Date fromDate = new Date();
-        Date toDate = new Date();
+        Date fromDate = document.getFromDate();
+        Date toDate = document.getToDate();
 
-        given(dInjector.instance(Document.class)).willReturn(document);
+        given(modelFactory.createDocument("name", "url", fromDate, toDate))
+                .willReturn(document);
 
         Document actual =
-                documentHelper.createDocument("x", "y", fromDate, toDate);
+                documentHelper.createDocument("name", "url", fromDate, toDate);
 
         assertThat(actual).isSameAs(document);
-        assertThat(actual.getName()).isEqualTo("x");
-        assertThat(actual.getUrl()).isEqualTo("y");
-        assertThat(actual.getFromDate()).isEqualTo(fromDate);
-        assertThat(actual.getToDate()).isEqualTo(toDate);
     }
 
     @Test
     public void testCreateDocumentObjectIllegalState()
             throws IllegalAccessException {
-        FieldUtils.writeDeclaredField(documentHelper, "dInjector", null, true);
+        FieldUtils.writeDeclaredField(documentHelper, "modelFactory", null,
+                true);
         try {
             documentHelper.createDocument("x", "y", new Date(), new Date());
             fail("should throw IllegalStateException");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage()).isEqualTo("dInjector is null");
+            assertThat(e.getMessage()).isEqualTo("modelFactory is null");
         }
     }
 
@@ -381,14 +380,17 @@ public class DocumentHelperTest {
     }
 
     private List<Document> getTestDocuments() throws ParseException {
+
         String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
-        Document doc1 = new Document();
+        Document doc1 =
+                factory.createDocument("name", "url", new Date(), new Date());
         doc1.setId(1L);
         Date toDate =
                 DateUtils.parseDate("01-07-2017 09:59:59.999", parsePatterns);
         doc1.setToDate(toDate);
 
-        Document doc2 = new Document();
+        Document doc2 =
+                factory.createDocument("name", "url", new Date(), new Date());
         doc2.setId(2L);
         toDate = DateUtils.parseDate("01-07-2017 10:00:00.000", parsePatterns);
         doc2.setToDate(toDate);
@@ -398,5 +400,4 @@ public class DocumentHelperTest {
         documents.add(doc2);
         return documents;
     }
-
 }

@@ -1,8 +1,11 @@
 package org.codetab.scoopi.defs.yml;
 
+import static java.util.Objects.isNull;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -41,11 +44,15 @@ public class DefsProvider implements IDefsProvider {
 
     private JsonNode definedDefs;
     private JsonNode effectiveDefs;
+    private Collection<String> defsFiles;
 
     @Override
     public void init() {
         try {
-            definedDefs = defsHelper.loadDefinedDefs();
+            if (isNull(defsFiles)) {
+                defsFiles = defsHelper.getDefsFiles();
+            }
+            definedDefs = defsHelper.loadDefinedDefs(defsFiles);
             JsonNode defaultSteps = defsHelper.loadDefaultSteps();
             defsHelper.mergeDefaultSteps(definedDefs, defaultSteps);
             LOGGER.debug("defined defs {}", defsHelper.pretty(definedDefs));
@@ -70,6 +77,11 @@ public class DefsProvider implements IDefsProvider {
         locatorProvider.init(getDefs("locatorGroups", defsMap));
         dataDefProvider.init(getDefs("dataDefs", defsMap));
         taskProvider.init(getDefs("taskGroups", defsMap));
+    }
+
+    @Override
+    public void setDefsFiles(final Collection<String> defsFiles) {
+        this.defsFiles = defsFiles;
     }
 
     private JsonNode getDefs(final String key,

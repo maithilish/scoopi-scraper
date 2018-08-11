@@ -1,6 +1,8 @@
 package org.codetab.scoopi.model;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class JobInfo {
 
@@ -50,6 +52,16 @@ public class JobInfo {
 
     public String getLabel() {
         return label;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override

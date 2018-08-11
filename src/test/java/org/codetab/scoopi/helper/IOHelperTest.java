@@ -1,8 +1,10 @@
 package org.codetab.scoopi.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +51,16 @@ public class IOHelperTest {
         actual = ioHelper.getInputStream(file);
 
         assertThat(IOUtils.contentEquals(actual, expected)).isTrue();
+
+        String testDir =
+                FileUtils.getTempDirectory().getAbsolutePath() + "/scoopi";
+        file = createTmpTestFile(testDir + "/test1.txt", "test1")
+                .getAbsolutePath();
+
+        actual = ioHelper.getInputStream(file);
+
+        expected = new FileInputStream(file);
+        assertThat(IOUtils.contentEquals(actual, expected)).isTrue();
     }
 
     @Test
@@ -75,15 +87,45 @@ public class IOHelperTest {
         actual = ioHelper.getURL(file);
 
         assertThat(actual).isEqualTo(expected);
+
+        String testDir =
+                FileUtils.getTempDirectory().getAbsolutePath() + "/scoopi";
+        file = createTmpTestFile(testDir + "/test1.txt", "test1")
+                .getAbsolutePath();
+
+        actual = ioHelper.getURL(file);
+
+        assertThat(actual).isEqualTo(new File(file).toURI().toURL());
     }
 
     @Test
     public void testGetUrlShouldThrowException() throws IOException {
-        // given
-        testRule.expect(FileNotFoundException.class);
+        try {
+            ioHelper.getURL("xyz");
+            fail("should throw FileNotFoundException");
+        } catch (FileNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("xyz");
+        }
 
-        // when
-        ioHelper.getURL("xyz");
+        testRule.expect(FileNotFoundException.class);
+        ioHelper.getURL("httpx:///xyz");
+    }
+
+    @Test
+    public void testGetResourceUrl() throws IOException {
+        String file = "/scoopi-default.xml";
+        URL expected = IOHelper.class.getResource(file);
+
+        URL actual = ioHelper.getResourceURL(file);
+
+        assertThat(actual).isEqualTo(expected);
+
+        file = "java/lang/Object.class";
+        expected = ClassLoader.getSystemResource(file);
+
+        actual = ioHelper.getResourceURL(file);
+
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -97,84 +139,80 @@ public class IOHelperTest {
     }
 
     @Test
-    public void testGetFilesInDir() throws IOException, URISyntaxException {
-        File tmpDir = FileUtils.getTempDirectory();
-        File testDir = new File(tmpDir, "scoopi");
-        File testChildDir = new File(testDir, "scoopi-child");
-        File testFile1 = new File(testDir, "test1.txt");
-        File testFile2 = new File(testDir, "test2.txt");
-        File testFile3 = new File(testDir, "test3.xml");
-        File testFile4 = new File(testChildDir, "test4.txt");
+    public void testGetFilesInDirFromFs()
+            throws IOException, URISyntaxException {
+        String testDir =
+                FileUtils.getTempDirectory().getAbsolutePath() + "/scoopi";
+        File testFile1 = createTmpTestFile(testDir + "/test1.txt", "test1");
+        File testFile2 = createTmpTestFile(testDir + "/test2.txt", "test2");
+        File testFile3 = createTmpTestFile(testDir + "/test3.xml", "test3");
+        File testFile4 =
+                createTmpTestFile(testDir + "/child/test4.txt", "test4");
 
-        FileUtils.forceMkdir(testChildDir);
-        testFile1.createNewFile();
-        testFile2.createNewFile();
-        testFile3.createNewFile();
-        testFile4.createNewFile();
+        Collection<String> result =
+                ioHelper.getFilesInDir(testDir, new String[] {"txt"});
+        assertThat(result).contains(testFile1.getAbsolutePath(),
+                testFile2.getAbsolutePath());
 
-        Collection<File> result = ioHelper.getFilesInDir(testDir.getPath(),
-                new String[] {"txt"}, false);
-        assertThat(result).contains(testFile1, testFile2);
+        result = ioHelper.getFilesInDir(testDir, new String[] {"xml"});
+        assertThat(result).contains(testFile3.getAbsolutePath());
 
-        result = ioHelper.getFilesInDir(testDir.getPath(), new String[] {"xml"},
-                false);
-        assertThat(result).contains(testFile3);
-
-        result = ioHelper.getFilesInDir(testDir.getPath(), new String[] {"txt"},
-                true);
-        assertThat(result).contains(testFile1, testFile2, testFile4);
-        FileUtils.deleteQuietly(testDir);
+        result = ioHelper.getFilesInDir(testDir, new String[] {"txt"});
+        assertThat(result).contains(testFile1.getAbsolutePath(),
+                testFile2.getAbsolutePath(), testFile4.getAbsolutePath());
+        FileUtils.deleteQuietly(new File(testDir));
     }
 
     @Test
-    public void testGetFilesInDirInClasspath()
+    public void testGetFilesInDirFromClasspath()
             throws IOException, URISyntaxException {
-        File classDir =
-                new File(new File("target/test-classes").getAbsolutePath());
-        File testTemDir = new File(classDir, "test-tem");
-        File testTemChildDir = new File(testTemDir, "scoopi-child");
-        File testFile1 = new File(testTemDir, "test1.txt");
-        File testFile2 = new File(testTemDir, "test2.txt");
-        File testFile3 = new File(testTemDir, "test3.xml");
-        File testFile4 = new File(testTemChildDir, "test4.txt");
+        // create test files in build dir
+        String testDir = "target/test-classes/test-tem";
+        File testFile1 = createTmpTestFile(testDir + "/test1.txt", "test1");
+        File testFile2 = createTmpTestFile(testDir + "/test2.txt", "test2");
+        File testFile3 = createTmpTestFile(testDir + "/test3.xml", "test3");
+        File testFile4 =
+                createTmpTestFile(testDir + "/child/test4.txt", "test4");
 
-        FileUtils.forceMkdir(testTemChildDir);
-        testFile1.createNewFile();
-        testFile2.createNewFile();
-        testFile3.createNewFile();
-        testFile4.createNewFile();
+        // access through classpath
+        Collection<String> result =
+                ioHelper.getFilesInDir("/test-tem", new String[] {"txt"});
+        assertThat(result).contains(testFile1.getAbsolutePath(),
+                testFile2.getAbsolutePath());
 
-        Collection<File> result = ioHelper.getFilesInDir(testTemDir.getName(),
-                new String[] {"txt"}, false);
-        assertThat(result).contains(testFile1, testFile2);
+        result = ioHelper.getFilesInDir("/test-tem", new String[] {"xml"});
+        assertThat(result).contains(testFile3.getAbsolutePath());
 
-        result = ioHelper.getFilesInDir(testTemDir.getPath(),
-                new String[] {"xml"}, false);
-        assertThat(result).contains(testFile3);
+        result = ioHelper.getFilesInDir("/test-tem", new String[] {"txt"});
+        assertThat(result).contains(testFile1.getAbsolutePath(),
+                testFile2.getAbsolutePath(), testFile4.getAbsolutePath());
 
-        result = ioHelper.getFilesInDir(testTemDir.getPath(),
-                new String[] {"txt"}, true);
-        assertThat(result).contains(testFile1, testFile2, testFile4);
+        FileUtils.deleteQuietly(new File(testDir));
+    }
 
-        FileUtils.deleteQuietly(testTemDir);
+    // this is tested in IT, here only for coverage
+    @Test
+    public void testGetFilesInDirFromJar()
+            throws IOException, URISyntaxException {
+        ioHelper.getFilesInDir("/java/lang/Object.class",
+                new String[] {"class"});
     }
 
     @Test
     public void testGetPrintWriter() throws IOException {
-        File tmpDir = FileUtils.getTempDirectory();
-        File testDir = new File(tmpDir, "scoopi");
-        File testFile1 = new File(testDir, "test1.txt");
+        String testDir = FileUtils.getTempDirectory() + "/scoopi";
+        File testFile = createTmpTestFile(testDir + "/test1.txt", "test1");
 
-        FileUtils.deleteQuietly(testDir);
-        PrintWriter pw = ioHelper.getPrintWriter(testFile1.getAbsolutePath());
+        FileUtils.deleteQuietly(testFile);
+        PrintWriter pw = ioHelper.getPrintWriter(testFile.getAbsolutePath());
         pw.println("test");
         pw.close();
 
         String actual =
-                FileUtils.readFileToString(testFile1, Charset.defaultCharset());
+                FileUtils.readFileToString(testFile, Charset.defaultCharset());
 
         assertThat(actual).isEqualTo("test" + System.lineSeparator());
-        FileUtils.deleteQuietly(testDir);
+        FileUtils.deleteQuietly(testFile);
     }
 
     @Test
@@ -186,4 +224,15 @@ public class IOHelperTest {
         // when
         ioHelper.getFile("xyz");
     }
+
+    private File createTmpTestFile(final String file, final String data)
+            throws IOException {
+        File testFile = new File(file);
+        FileUtils.forceMkdirParent(testFile);
+        testFile.createNewFile();
+        Charset c = null;
+        FileUtils.writeStringToFile(testFile, data, c);
+        return testFile;
+    }
+
 }

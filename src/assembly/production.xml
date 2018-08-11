@@ -1,0 +1,73 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <id>production</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}</directory>
+            <outputDirectory>${file.separator}</outputDirectory>
+            <includes>
+                <include>README*</include>
+                <include>LICENSE*</include>
+                <include>NOTICE*</include>
+            </includes>
+        </fileSet>
+        <!-- copy scoopi jar to lib -->
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>${file.separator}/lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <!-- copy dependencies to lib -->
+        <fileSet>
+            <directory>${project.build.directory}/lib</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <!-- copy conf files -->
+        <fileSet>
+            <directory>${project.build.directory}/classes</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>scoopi.properties</include>
+                <include>jdoconfig.properties</include>
+                <include>logback.xml</include>
+                <include>log4j.properties</include>
+            </includes>
+        </fileSet>
+        <!-- copy scripts -->
+        <fileSet>
+            <directory>${project.build.scriptSourceDirectory}
+            </directory>
+            <outputDirectory>${file.separator}</outputDirectory>
+            <includes>
+                <include>scoopi.sh</include>
+                <include>scoopi.bat</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/docker</directory>
+            <outputDirectory>docker</outputDirectory>
+            <includes>
+                <include>schema.sql</include>
+                <include>docker-compose.yml</include>
+            </includes>
+        </fileSet>
+
+        <!-- copy examples -->
+        <fileSet>
+            <directory>${project.build.directory}/classes</directory>
+            <outputDirectory>${file.separator}</outputDirectory>
+            <includes>
+                <include>defs/examples/**</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

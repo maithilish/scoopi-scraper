@@ -308,20 +308,21 @@ public class ScoopiSystemTest {
     }
 
     public List<LocatorGroup> getTestLocatorGroups() {
+        ModelFactory mf = new ModelFactory();
+
         List<LocatorGroup> lGroups = new ArrayList<>();
-        Locator l = new Locator();
-        l.setName("l1");
-        LocatorGroup lg = new LocatorGroup();
-        lg.setGroup("lg1");
+
+        Locator l = mf.createLocator("l1", "lg1", "url1");
+        LocatorGroup lg = mf.createLocatorGroup("lg1");
         lg.getLocators().add(l);
         lGroups.add(lg);
 
-        l = new Locator();
+        l = mf.createLocator("l2", "lg2", "url2");
         l.setName("l2");
-        lg = new LocatorGroup();
-        lg.setGroup("lg2");
+        lg = mf.createLocatorGroup("lg2");
         lg.getLocators().add(l);
         lGroups.add(lg);
+
         return lGroups;
     }
 

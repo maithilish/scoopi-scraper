@@ -1,4 +1,4 @@
-package org.codetab.scoopi.dao;
+package org.codetab.scoopi.dao.jdo;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +17,7 @@ import javax.jdo.Query;
 import javax.jdo.datastore.DataStoreCache;
 import javax.jdo.datastore.JDOConnection;
 
-import org.codetab.scoopi.dao.jdo.PMF;
+import org.codetab.scoopi.dao.IDaoUtil;
 import org.datanucleus.PersistenceNucleusContext;
 import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
 import org.datanucleus.store.schema.SchemaAwareStoreManager;
@@ -28,7 +28,7 @@ import org.datanucleus.store.schema.SchemaAwareStoreManager;
  * @author Maithilish
  *
  */
-public class DaoUtil implements IDaoUtil {
+public class JdoDaoUtil implements IDaoUtil {
 
     /**
      * pmf.
@@ -41,7 +41,7 @@ public class DaoUtil implements IDaoUtil {
      * @param pmf
      *            pmf
      */
-    public DaoUtil(final PersistenceManagerFactory pmf) {
+    public JdoDaoUtil(final PersistenceManagerFactory pmf) {
         this.pmf = pmf;
     }
 

@@ -23,30 +23,6 @@ BaseConverter.1=unable to get next step fields, empty nodes
 BaseConverter.2=input must not be null
 BaseConverter.3=next step input : required [Data], but is instance of 
 
-BaseLoader.0=step input [locator] must not be null
-BaseLoader.1=step input [locator] must not be null
-BaseLoader.11=create new document {}
-BaseLoader.12={} use stored document, toDate={}
-BaseLoader.13=found document {}
-BaseLoader.14=step input [locator] must not be null
-BaseLoader.15=document must not be null
-BaseLoader.16={} stored locator
-BaseLoader.17=-- Locator stored --{}{}
-BaseLoader.18=unable to store
-BaseLoader.19=step input [locator] must not be null
-BaseLoader.2={} create new document, toDate={}
-BaseLoader.20=unable to create parser
-BaseLoader.22=no task defined
-BaseLoader.23=\ as get next step fields failed
-BaseLoader.25=\ as document not loaded
-BaseLoader.27=unable to clone next step fields
-BaseLoader.28=next step input : required [Locator], but is instance of 
-BaseLoader.3=using locator read from file
-BaseLoader.5=using locator loaded from datastore
-BaseLoader.6=-- Locator loaded --{}{}
-BaseLoader.7=step input [locator] must not be null
-BaseLoader.8=unable to fetch document 
-BaseLoader.9=unable to compress document object
 
 BaseParser.10=unable to get next step fields
 BaseParser.11=<< Query [Script] >>{}

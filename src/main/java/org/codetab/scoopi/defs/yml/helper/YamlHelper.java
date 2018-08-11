@@ -1,6 +1,5 @@
 package org.codetab.scoopi.defs.yml.helper;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.ValidationException;
+import org.codetab.scoopi.helper.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,20 +29,23 @@ public class YamlHelper {
 
     @Inject
     private ObjectMapper mapper;
+    @Inject
+    private IOHelper ioHelper;
 
-    public JsonNode loadYamls(final Collection<File> files)
+    public JsonNode loadYamls(final Collection<String> files)
             throws JsonProcessingException, IOException {
         List<JsonNode> nodes = new ArrayList<>();
-        for (File file : files) {
+        for (String file : files) {
             nodes.add(loadYaml(file));
         }
         return mergeNodes(nodes);
     }
 
-    public JsonNode loadYaml(final File file)
+    public JsonNode loadYaml(final String file)
             throws JsonProcessingException, IOException {
-        LOGGER.info("load defs {} ", file.getPath());
-        return mapper.readTree(file);
+        LOGGER.info("load defs {} ", file);
+        InputStream ymlStream = ioHelper.getInputStream(file);
+        return mapper.readTree(ymlStream);
     }
 
     public JsonNode mergeNodes(final List<JsonNode> nodes) {
@@ -72,7 +75,6 @@ public class YamlHelper {
             report.forEach(p -> LOGGER.error(pretty(p.asJson())));
             throw new ValidationException("invalid defs");
         }
-
         return true;
     }
 

@@ -93,7 +93,7 @@ public class PMF {
             String configFile;
             try {
                 configFile = Util.join("/", //$NON-NLS-1$
-                        configService.getConfig("gotz.datastore.configFile")); // $NON-NLS-2$
+                        configService.getConfig("scoopi.datastore.configFile")); // $NON-NLS-2$
             } catch (ConfigNotFoundException e) {
                 throw new CriticalException(Messages.getString("PMF.1"), e); //$NON-NLS-1$
             }
@@ -110,5 +110,4 @@ public class PMF {
             }
         }
     }
-
 }

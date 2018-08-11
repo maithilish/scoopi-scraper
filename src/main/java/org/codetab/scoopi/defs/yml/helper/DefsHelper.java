@@ -1,6 +1,5 @@
 package org.codetab.scoopi.defs.yml.helper;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -35,18 +34,17 @@ public class DefsHelper {
     @Inject
     private DefsNormalizer defsNormalizer;
 
-    public JsonNode loadDefinedDefs()
+    public Collection<String> getDefsFiles()
+            throws ConfigNotFoundException, IOException, URISyntaxException {
+        String defsDir = configService.getConfig("scoopi.defs.dir"); //$NON-NLS-1$
+        return ioHelper.getFilesInDir(defsDir, new String[] {"yml", "yaml"});
+    }
+
+    public JsonNode loadDefinedDefs(final Collection<String> defsFiles)
             throws ConfigNotFoundException, IOException, URISyntaxException {
         LOGGER.info(Messages.getString("BeanService.0"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        String defsDir = configService.getConfig("scoopi.defs.dir"); //$NON-NLS-1$
-        Collection<File> defsFiles = ioHelper.getFilesInDir(defsDir,
-                new String[] {"yml", "yaml"}, false);
-
         JsonNode defs = yamlHelper.loadYamls(defsFiles);
-
         LOGGER.debug(Messages.getString("BeanService.3"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
-
         return defs;
     }
 
@@ -54,8 +52,9 @@ public class DefsHelper {
             throws ConfigNotFoundException, IOException, URISyntaxException {
         LOGGER.info(Messages.getString("BeanService.0"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        File defaultStepsFile = ioHelper
-                .getFile(configService.getConfig("scoopi.defs.defaultSteps"));
+        String defaultStepsFile =
+                configService.getConfig("scoopi.defs.defaultSteps");
+
         JsonNode defaultSteps = yamlHelper.loadYaml(defaultStepsFile);
 
         LOGGER.debug(Messages.getString("BeanService.3"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -118,4 +117,5 @@ public class DefsHelper {
     public String pretty(final JsonNode node) {
         return yamlHelper.pretty(node);
     }
+
 }

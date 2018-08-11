@@ -3,6 +3,7 @@ taskGroups:
   quote:
     price:
       dataDef: price
+      live: P10D
       steps: devSteps
         
 steps: 
@@ -15,5 +16,3 @@ steps:
       class: org.codetab.scoopi.step.extract.URLLoader
       previous: seeder
       next: end
-                    
-            

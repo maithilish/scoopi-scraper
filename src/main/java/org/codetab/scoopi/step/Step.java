@@ -1,5 +1,8 @@
 package org.codetab.scoopi.step;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.Validate;
@@ -50,11 +53,11 @@ public abstract class Step implements IStep {
     @Inject
     protected TaskMediator taskMediator;
     @Inject
-    private ModelFactory factory;
+    protected ModelFactory factory;
 
     @Override
     public boolean handover() {
-        Validate.validState((data != null), "data is null");
+        Validate.validState(nonNull(data), "data is null");
         Validate.validState(isConsistent(), "step inconsistent");
         try {
             String group = getJobInfo().getGroup();
@@ -111,10 +114,9 @@ public abstract class Step implements IStep {
         return payload.getStepInfo().getStepName();
     }
 
-    // TODO should be consistent only if data is set
     @Override
     public boolean isConsistent() {
-        return consistent;
+        return consistent && nonNull(data);
     }
 
     @Override
@@ -124,7 +126,7 @@ public abstract class Step implements IStep {
 
     @Override
     public Marker getMarker() {
-        if (marker == null) {
+        if (isNull(marker)) {
             String name = getJobInfo().getName();
             String group = getJobInfo().getGroup();
             String task = getJobInfo().getTask();

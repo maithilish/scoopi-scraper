@@ -70,6 +70,7 @@ public final class LocatorSeeder extends BaseSeeder {
         Object pData = getPayload().getData();
         if (pData instanceof LocatorGroup) {
             locatorGroup = (LocatorGroup) pData;
+            setData(pData);
             setConsistent(true);
         } else {
             String message = Util.join(Messages.getString("BaseLoader.28"), //$NON-NLS-1$

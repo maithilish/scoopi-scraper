@@ -19,6 +19,9 @@ public class Document implements Serializable {
     private Date toDate;
     private String url;
 
+    Document() {
+    }
+
     /**
      * Gets the value of the id property.
      *

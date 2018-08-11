@@ -19,6 +19,9 @@ public class Locator implements Serializable {
     private String url;
     private List<Document> documents;
 
+    Locator() {
+    }
+
     /**
      * Gets the value of the id property.
      *

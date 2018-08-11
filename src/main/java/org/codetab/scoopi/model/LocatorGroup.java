@@ -15,6 +15,9 @@ public class LocatorGroup implements Serializable {
     private String group;
     private List<Locator> locators;
 
+    LocatorGroup() {
+    }
+
     public String getGroup() {
         return group;
     }

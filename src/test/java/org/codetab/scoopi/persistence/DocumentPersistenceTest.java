@@ -5,12 +5,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.util.Date;
+
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.dao.jdo.JdoDaoFactory;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Document;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.shared.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,7 +57,8 @@ public class DocumentPersistenceTest {
 
     @Test
     public void testLoadDocumentById() {
-        Document document = new Document();
+        Document document = new ModelFactory().createDocument("name", "url",
+                new Date(), new Date());
 
         given(configService.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO)).willReturn(jdoDao);

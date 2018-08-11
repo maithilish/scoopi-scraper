@@ -14,6 +14,7 @@ import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.dao.jdo.JdoDaoFactory;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Locator;
+import org.codetab.scoopi.model.ModelFactory;
 import org.codetab.scoopi.shared.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,14 +51,17 @@ public class LocatorPersistenceTest {
     @Rule
     public ExpectedException testRule = ExpectedException.none();
 
+    private ModelFactory modelFactory;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        modelFactory = new ModelFactory();
     }
 
     @Test
     public void testLoadLocatorByNameGroup() {
-        Locator locator = new Locator();
+        Locator locator = modelFactory.createLocator("name", "group", "url");
 
         given(configService.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO)).willReturn(jdoDao);
@@ -106,7 +110,7 @@ public class LocatorPersistenceTest {
 
     @Test
     public void testLoadLocatorById() {
-        Locator locator = new Locator();
+        Locator locator = modelFactory.createLocator("name", "group", "url");
 
         given(configService.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO)).willReturn(jdoDao);
@@ -138,7 +142,7 @@ public class LocatorPersistenceTest {
 
     @Test
     public void testStoreLocator() {
-        Locator locator = new Locator();
+        Locator locator = modelFactory.createLocator("name", "group", "url");
 
         given(configService.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO)).willReturn(jdoDao);
@@ -158,7 +162,7 @@ public class LocatorPersistenceTest {
 
     @Test
     public void testStoreLocatorShouldThrowException() {
-        Locator locator = new Locator();
+        Locator locator = modelFactory.createLocator("name", "group", "url");
 
         given(configService.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO))
