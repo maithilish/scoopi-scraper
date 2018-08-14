@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 
 import org.codetab.scoopi.defs.ITaskProvider;
 import org.codetab.scoopi.exception.DefNotFoundException;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.util.Util;
 
@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 public class TaskProvider implements ITaskProvider {
 
     @Inject
-    private ModelFactory factory;
+    private ObjectFactory factory;
 
     private JsonNode defs;
 

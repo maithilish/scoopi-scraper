@@ -18,12 +18,11 @@ public class AxisTest {
 
     @Before
     public void setUp() throws Exception {
-        axis = new Axis();
+        axis = new Axis(AxisName.COL);
     }
 
     @Test
     public void testGetName() {
-        axis.setName(AxisName.COL);
         assertThat(axis.getName()).isEqualTo(AxisName.COL);
     }
 
@@ -53,19 +52,17 @@ public class AxisTest {
 
     @Test
     public void testCompareTo() {
-        Axis a1 = new Axis();
-        Axis a2 = new Axis();
+        Axis a1 = new Axis(AxisName.COL);
+        Axis a2 = new Axis(AxisName.COL);
 
-        a1.setName(AxisName.COL);
-        a2.setName(AxisName.COL);
         assertThat(a1.compareTo(a2)).isEqualTo(0);
 
-        a1.setName(AxisName.COL);
-        a2.setName(AxisName.ROW);
+        a1 = new Axis(AxisName.COL);
+        a2 = new Axis(AxisName.ROW);
         assertThat(a1.compareTo(a2)).isEqualTo(-1);
 
-        a1.setName(AxisName.ROW);
-        a2.setName(AxisName.COL);
+        a1 = new Axis(AxisName.ROW);
+        a2 = new Axis(AxisName.COL);
         assertThat(a1.compareTo(a2)).isEqualTo(1);
     }
 
@@ -107,15 +104,13 @@ public class AxisTest {
     }
 
     private List<Axis> createTestObjects() {
-        Axis t1 = new Axis();
-        t1.setName(AxisName.COL);
+        Axis t1 = new Axis(AxisName.COL);
         t1.setMatch("m");
         t1.setValue("v");
         t1.setIndex(1);
         t1.setOrder(2);
 
-        Axis t2 = new Axis();
-        t2.setName(AxisName.COL);
+        Axis t2 = new Axis(AxisName.COL);
         t2.setMatch("m");
         t2.setValue("v");
         t2.setIndex(1);

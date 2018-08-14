@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.IStep;
@@ -51,7 +51,7 @@ public class StepServiceTest {
     @Test
     public void testCreateTaskFromPayload() throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        ModelFactory mf = new ModelFactory();
+        ObjectFactory mf = new ObjectFactory();
         JobInfo jobInfo =
                 mf.createJobInfo(0, "locator", "group", "task", "dataDef");
         StepInfo stepInfo = mf.createStepInfo("s1", "s0", "s2", clzName);

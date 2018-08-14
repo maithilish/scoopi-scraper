@@ -19,7 +19,7 @@ import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
@@ -35,14 +35,14 @@ import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
 
-public class BaseLoaderTestIT {
+public class BaseLoaderIT {
 
     private static DInjector di;
     private static IDaoUtil daoUtil;
     private static HashSet<String> schemaClasses;
     private static DefsProvider defsProvider;
     private static String url;
-    private static ModelFactory modelFactory;
+    private static ObjectFactory objectFactory;
     private static ConfigService configService;
     private static IStore store;
     private static String clzName;
@@ -79,7 +79,7 @@ public class BaseLoaderTestIT {
 
         store = di.instance(IStore.class);
 
-        modelFactory = di.instance(ModelFactory.class);
+        objectFactory = di.instance(ObjectFactory.class);
         url = "/testdefs/page/acme-quote.html";
         clzName = "org.codetab.scoopi.step.lite.BlankStep";
     }
@@ -103,10 +103,10 @@ public class BaseLoaderTestIT {
     @Test
     public void testNoDocument()
             throws IllegalAccessException, IOException, InterruptedException {
-        Locator locator = modelFactory.createLocator("acme", "quote", url);
+        Locator locator = objectFactory.createLocator("acme", "quote", url);
         locator.getDocuments(); // init array
 
-        StepInfo stepInfo = modelFactory.createStepInfo("loader", "seeder",
+        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
                 "parser", clzName);
 
         Payload payload = getTestPayload(stepInfo, locator);
@@ -140,8 +140,8 @@ public class BaseLoaderTestIT {
         // test handed over payload
         Payload actualPayload = store.takePayload();
 
-        StepInfo nextStepInfo =
-                modelFactory.createStepInfo("parser", "loader", "end", clzName);
+        StepInfo nextStepInfo = objectFactory.createStepInfo("parser", "loader",
+                "end", clzName);
         Payload expectedPayload = getTestPayload(nextStepInfo, actualDocument);
 
         assertThat(actualPayload).isEqualTo(expectedPayload);
@@ -154,16 +154,16 @@ public class BaseLoaderTestIT {
     @Test
     public void testNoActiveDocument()
             throws IllegalAccessException, IOException, InterruptedException {
-        Locator locator = modelFactory.createLocator("acme", "quote", url);
+        Locator locator = objectFactory.createLocator("acme", "quote", url);
 
         Date fromDate = DateUtils.addDays(configService.getRunDateTime(), -1);
         Date toDate = DateUtils.addSeconds(configService.getRunDateTime(), -1);
         Document document =
-                modelFactory.createDocument("acme", clzName, fromDate, toDate);
+                objectFactory.createDocument("acme", clzName, fromDate, toDate);
         document.setDocumentObject("doc");
         locator.getDocuments().add(document);
 
-        StepInfo stepInfo = modelFactory.createStepInfo("loader", "seeder",
+        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
                 "parser", clzName);
 
         Payload inPayload = getTestPayload(stepInfo, locator);
@@ -202,8 +202,8 @@ public class BaseLoaderTestIT {
         // test handed over payload
         Payload outPayload = store.takePayload();
 
-        StepInfo nextStepInfo =
-                modelFactory.createStepInfo("parser", "loader", "end", clzName);
+        StepInfo nextStepInfo = objectFactory.createStepInfo("parser", "loader",
+                "end", clzName);
         Payload expectedPayload = getTestPayload(nextStepInfo, actualDocument);
 
         assertThat(outPayload).isEqualTo(expectedPayload);
@@ -221,15 +221,15 @@ public class BaseLoaderTestIT {
 
         Document expectedDocument = insertActiveDocument(-2, 1);
 
-        Locator locator = modelFactory.createLocator("acme", "quote", url);
+        Locator locator = objectFactory.createLocator("acme", "quote", url);
         locator.getDocuments();
 
-        StepInfo stepInfo = modelFactory.createStepInfo("loader", "seeder",
+        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
                 "parser", clzName);
-        JobInfo jobInfo = modelFactory.createJobInfo(0, "acme", "quote",
+        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "quote",
                 "task2", "task2"); // live 1 day
         Payload inPayload =
-                modelFactory.createPayload(jobInfo, stepInfo, locator);
+                objectFactory.createPayload(jobInfo, stepInfo, locator);
         loader.setPayload(inPayload);
 
         task.run(); // run loader task
@@ -267,10 +267,10 @@ public class BaseLoaderTestIT {
         // test handed over payload
         Payload actualPayload = store.takePayload();
 
-        StepInfo nextStepInfo =
-                modelFactory.createStepInfo("parser", "loader", "end", clzName);
+        StepInfo nextStepInfo = objectFactory.createStepInfo("parser", "loader",
+                "end", clzName);
         Payload expectedPayload =
-                modelFactory.createPayload(jobInfo, nextStepInfo, newDocument);
+                objectFactory.createPayload(jobInfo, nextStepInfo, newDocument);
 
         assertThat(actualPayload).isEqualTo(expectedPayload);
     }
@@ -285,15 +285,15 @@ public class BaseLoaderTestIT {
             throws IllegalAccessException, IOException, InterruptedException {
         Document expectedDocument = insertActiveDocument(-1, 1);
 
-        Locator locator = modelFactory.createLocator("acme", "quote", url);
+        Locator locator = objectFactory.createLocator("acme", "quote", url);
         locator.getDocuments();
 
-        StepInfo stepInfo = modelFactory.createStepInfo("loader", "seeder",
+        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
                 "parser", clzName);
-        JobInfo jobInfo = modelFactory.createJobInfo(0, "acme", "quote",
+        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "quote",
                 "task3", "task3"); // live 3 day
         Payload inPayload =
-                modelFactory.createPayload(jobInfo, stepInfo, locator);
+                objectFactory.createPayload(jobInfo, stepInfo, locator);
         loader.setPayload(inPayload);
 
         task.run(); // run loader task
@@ -319,9 +319,9 @@ public class BaseLoaderTestIT {
         // test handed over payload
         Payload actualPayload = store.takePayload();
 
-        StepInfo nextStepInfo =
-                modelFactory.createStepInfo("parser", "loader", "end", clzName);
-        Payload expectedPayload = modelFactory.createPayload(jobInfo,
+        StepInfo nextStepInfo = objectFactory.createStepInfo("parser", "loader",
+                "end", clzName);
+        Payload expectedPayload = objectFactory.createPayload(jobInfo,
                 nextStepInfo, existingDocument);
 
         assertThat(actualPayload.getData())
@@ -329,9 +329,9 @@ public class BaseLoaderTestIT {
     }
 
     private Document getTestDocument() throws IOException {
-        Document document = modelFactory.createDocument("acme", url,
+        Document document = objectFactory.createDocument("acme", url,
                 configService.getRunDateTime(), configService.getRunDateTime());
-        URL fileURL = BaseLoaderTestIT.class.getResource(url);
+        URL fileURL = BaseLoaderIT.class.getResource(url);
         byte[] bytes = IOUtils.toByteArray(fileURL);
         final int bufferLength = 4086;
         byte[] compressedObject =
@@ -341,23 +341,23 @@ public class BaseLoaderTestIT {
     }
 
     private Payload getTestPayload(final StepInfo stepInfo, final Object data) {
-        JobInfo jobInfo = modelFactory.createJobInfo(0, "acme", "quote",
+        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "quote",
                 "task1", "task1");
-        return modelFactory.createPayload(jobInfo, stepInfo, data);
+        return objectFactory.createPayload(jobInfo, stepInfo, data);
     }
 
     private Document insertActiveDocument(final int fromDateOffset,
             final int toDateOffset) throws IllegalAccessException {
-        Locator locator = modelFactory.createLocator("acme", "quote", url);
+        Locator locator = objectFactory.createLocator("acme", "quote", url);
 
         Date fromDate = DateUtils.addDays(new Date(), fromDateOffset);
         Date toDate = DateUtils.addDays(new Date(), toDateOffset);
         Document document =
-                modelFactory.createDocument("acme", clzName, fromDate, toDate);
+                objectFactory.createDocument("acme", clzName, fromDate, toDate);
         document.setDocumentObject("doc");
         locator.getDocuments().add(document);
 
-        StepInfo stepInfo = modelFactory.createStepInfo("loader", "seeder",
+        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
                 "parser", clzName);
 
         Payload inPayload = getTestPayload(stepInfo, locator);

@@ -33,7 +33,7 @@ import org.mockito.Spy;
  * @author Maithilish
  *
  */
-public class PMFTestIT {
+public class PMFIT {
 
     @Mock
     private ConfigService configService;

@@ -20,6 +20,9 @@ public final class Member implements Serializable {
     private String group;
     private Set<Axis> axes = new HashSet<Axis>();
 
+    Member() {
+    }
+
     public Long getId() {
         return id;
     }

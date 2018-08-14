@@ -10,7 +10,7 @@ import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
@@ -41,7 +41,7 @@ public class StepTest {
     @Mock
     protected TaskMediator taskMediator;
     @Mock
-    private ModelFactory factory;
+    private ObjectFactory factory;
 
     @InjectMocks
     private URLLoader step;
@@ -66,11 +66,11 @@ public class StepTest {
         String taskName = step.getJobInfo().getTask();
         String data = "test data";
 
-        ModelFactory modelFactory = new ModelFactory();
+        ObjectFactory objectFactory = new ObjectFactory();
         StepInfo nextStep =
-                modelFactory.createStepInfo("s2", "s1", "s3", "class2");
+                objectFactory.createStepInfo("s2", "s1", "s3", "class2");
         Payload nextStepPayload =
-                modelFactory.createPayload(step.getJobInfo(), nextStep, data);
+                objectFactory.createPayload(step.getJobInfo(), nextStep, data);
         step.setData(data);
         step.setConsistent(true);
 
@@ -88,11 +88,11 @@ public class StepTest {
     @Test
     public void testHandoverNextStepIsEnd() throws DefNotFoundException,
             InterruptedException, IllegalAccessException {
-        ModelFactory modelFactory = new ModelFactory();
+        ObjectFactory objectFactory = new ObjectFactory();
         // next step is end - case ignored
         StepInfo stepInfo =
-                modelFactory.createStepInfo("s2", "s1", "ENd", "class2");
-        payload = modelFactory.createPayload(step.getJobInfo(), stepInfo,
+                objectFactory.createStepInfo("s2", "s1", "ENd", "class2");
+        payload = objectFactory.createPayload(step.getJobInfo(), stepInfo,
                 step.getData());
         String data = "test data";
         step.setPayload(payload);
@@ -210,13 +210,13 @@ public class StepTest {
     }
 
     private Payload getTestPayload() {
-        ModelFactory modelFactory = new ModelFactory();
-        JobInfo jobInfo = modelFactory.createJobInfo(0, "locator1", "group1",
+        ObjectFactory objectFactory = new ObjectFactory();
+        JobInfo jobInfo = objectFactory.createJobInfo(0, "locator1", "group1",
                 "task1", "dataDef1");
         StepInfo stepInfo =
-                modelFactory.createStepInfo("s1", "s0", "s2", "clzName1");
+                objectFactory.createStepInfo("s1", "s0", "s2", "clzName1");
         String data = "data";
-        return modelFactory.createPayload(jobInfo, stepInfo, data);
+        return objectFactory.createPayload(jobInfo, stepInfo, data);
     }
 
 }

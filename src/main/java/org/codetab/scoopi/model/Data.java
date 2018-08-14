@@ -18,7 +18,7 @@ public final class Data implements Serializable {
     private Long documentId;
     private List<Member> members = new ArrayList<Member>();
 
-    public Data() {
+    Data() {
     }
 
     public Long getId() {

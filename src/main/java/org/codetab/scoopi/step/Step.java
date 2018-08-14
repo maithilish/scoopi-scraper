@@ -11,7 +11,7 @@ import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
@@ -53,7 +53,7 @@ public abstract class Step implements IStep {
     @Inject
     protected TaskMediator taskMediator;
     @Inject
-    protected ModelFactory factory;
+    protected ObjectFactory factory;
 
     @Override
     public boolean handover() {

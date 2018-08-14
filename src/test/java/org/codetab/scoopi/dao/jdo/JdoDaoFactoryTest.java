@@ -7,6 +7,11 @@ import static org.mockito.Mockito.verify;
 
 import javax.jdo.PersistenceManagerFactory;
 
+import org.codetab.scoopi.dao.IDataDao;
+import org.codetab.scoopi.dao.IDataDefDao;
+import org.codetab.scoopi.dao.IDataSetDao;
+import org.codetab.scoopi.dao.IDocumentDao;
+import org.codetab.scoopi.dao.ILocatorDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -59,4 +64,48 @@ public class JdoDaoFactoryTest {
         }
     }
 
+    @Test
+    public void testGetLocatorDao() {
+        given(pmf.getFactory()).willReturn(persistenceManagerFactory);
+        factory.setPmf(pmf);
+
+        ILocatorDao dao = factory.getLocatorDao();
+        assertThat(dao).isInstanceOf(LocatorDao.class);
+    }
+
+    @Test
+    public void testGetDocumentDao() {
+        given(pmf.getFactory()).willReturn(persistenceManagerFactory);
+        factory.setPmf(pmf);
+
+        IDocumentDao dao = factory.getDocumentDao();
+        assertThat(dao).isInstanceOf(DocumentDao.class);
+    }
+
+    @Test
+    public void testGetDataDefDao() {
+        given(pmf.getFactory()).willReturn(persistenceManagerFactory);
+        factory.setPmf(pmf);
+
+        IDataDefDao dao = factory.getDataDefDao();
+        assertThat(dao).isInstanceOf(DataDefDao.class);
+    }
+
+    @Test
+    public void testGetDataDao() {
+        given(pmf.getFactory()).willReturn(persistenceManagerFactory);
+        factory.setPmf(pmf);
+
+        IDataDao dao = factory.getDataDao();
+        assertThat(dao).isInstanceOf(DataDao.class);
+    }
+
+    @Test
+    public void testGetDataSetDao() {
+        given(pmf.getFactory()).willReturn(persistenceManagerFactory);
+        factory.setPmf(pmf);
+
+        IDataSetDao dao = factory.getDataSetDao();
+        assertThat(dao).isInstanceOf(DataSetDao.class);
+    }
 }

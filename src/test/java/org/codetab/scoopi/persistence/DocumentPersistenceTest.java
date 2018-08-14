@@ -13,7 +13,7 @@ import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.dao.jdo.JdoDaoFactory;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Document;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.shared.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,7 +57,7 @@ public class DocumentPersistenceTest {
 
     @Test
     public void testLoadDocumentById() {
-        Document document = new ModelFactory().createDocument("name", "url",
+        Document document = new ObjectFactory().createDocument("name", "url",
                 new Date(), new Date());
 
         given(configService.getOrmType()).willReturn(ORM.JDO);

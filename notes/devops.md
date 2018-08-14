@@ -35,11 +35,16 @@ skip tests and run integration tests (itests)
 
    mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false
 
-to generate coverage report
+generate coverage report
 
-      mvn clean test jacoco:report    # excludes itests
-      mvn clean verify                # excludes itests    
-      mvn clean verify jacoco:report  # includes itests
+only tests
+      
+      mvn clean test jacoco:report
+      	or    
+      mvn clean verify      
+include itest
+                          
+      mvn clean verify jacoco:report  
 
 find selector
 

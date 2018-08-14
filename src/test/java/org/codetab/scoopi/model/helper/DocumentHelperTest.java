@@ -17,7 +17,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.shared.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
 import org.junit.Before;
@@ -40,7 +40,7 @@ public class DocumentHelperTest {
     @Mock
     private ConfigService configService;
     @Mock
-    private ModelFactory modelFactory;
+    private ObjectFactory objectFactory;
 
     @InjectMocks
     private DocumentHelper documentHelper;
@@ -50,7 +50,7 @@ public class DocumentHelperTest {
     private JobInfo jobInfo;
     private Document document;
     // real factory to create test objects
-    private ModelFactory factory = new ModelFactory();
+    private ObjectFactory factory = new ObjectFactory();
 
     @Before
     public void setUp() throws Exception {
@@ -326,7 +326,7 @@ public class DocumentHelperTest {
         Date fromDate = document.getFromDate();
         Date toDate = document.getToDate();
 
-        given(modelFactory.createDocument("name", "url", fromDate, toDate))
+        given(objectFactory.createDocument("name", "url", fromDate, toDate))
                 .willReturn(document);
 
         Document actual =
@@ -338,13 +338,13 @@ public class DocumentHelperTest {
     @Test
     public void testCreateDocumentObjectIllegalState()
             throws IllegalAccessException {
-        FieldUtils.writeDeclaredField(documentHelper, "modelFactory", null,
+        FieldUtils.writeDeclaredField(documentHelper, "objectFactory", null,
                 true);
         try {
             documentHelper.createDocument("x", "y", new Date(), new Date());
             fail("should throw IllegalStateException");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage()).isEqualTo("modelFactory is null");
+            assertThat(e.getMessage()).isEqualTo("objectFactory is null");
         }
     }
 

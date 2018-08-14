@@ -13,7 +13,7 @@ import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.base.BaseSeeder;
@@ -59,7 +59,7 @@ public final class LocatorSeeder extends BaseSeeder {
      * model factory
      */
     @Inject
-    private ModelFactory factory;
+    private ObjectFactory factory;
 
     /**
      * <p>

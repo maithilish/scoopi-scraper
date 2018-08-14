@@ -83,12 +83,10 @@ public class MemberTest {
 
     @Test
     public void testGetAxis() {
-        Axis col = new Axis();
-        col.setName(AxisName.COL);
+        Axis col = new Axis(AxisName.COL);
         member.addAxis(col);
 
-        Axis row = new Axis();
-        row.setName(AxisName.ROW);
+        Axis row = new Axis(AxisName.ROW);
         member.addAxis(row);
 
         assertThat(member.getAxis(AxisName.COL)).isSameAs(col);
@@ -103,12 +101,10 @@ public class MemberTest {
 
     @Test
     public void testGetAxisMap() {
-        Axis col = new Axis();
-        col.setName(AxisName.COL);
+        Axis col = new Axis(AxisName.COL);
         member.addAxis(col);
 
-        Axis row = new Axis();
-        row.setName(AxisName.ROW);
+        Axis row = new Axis(AxisName.ROW);
         member.addAxis(row);
 
         Map<String, Axis> axisMap = member.getAxisMap();
@@ -120,12 +116,10 @@ public class MemberTest {
 
     @Test
     public void testAddAxis() {
-        Axis col = new Axis();
-        col.setName(AxisName.COL);
+        Axis col = new Axis(AxisName.COL);
         member.addAxis(col);
 
-        Axis row = new Axis();
-        row.setName(AxisName.ROW);
+        Axis row = new Axis(AxisName.ROW);
         member.addAxis(row);
 
         assertThat(member.getAxis(AxisName.COL)).isSameAs(col);
@@ -134,12 +128,10 @@ public class MemberTest {
 
     @Test
     public void testGetValue() {
-        Axis col = new Axis();
-        col.setName(AxisName.COL);
+        Axis col = new Axis(AxisName.COL);
         member.addAxis(col);
 
-        Axis row = new Axis();
-        row.setName(AxisName.ROW);
+        Axis row = new Axis(AxisName.ROW);
         member.addAxis(row);
 
         member.setValue(AxisName.COL, "x");
@@ -157,13 +149,11 @@ public class MemberTest {
 
     @Test
     public void testTraceMember() {
-        Axis col = new Axis();
-        col.setName(AxisName.COL);
+        Axis col = new Axis(AxisName.COL);
         col.setValue("x");
         member.addAxis(col);
 
-        Axis row = new Axis();
-        row.setName(AxisName.ROW);
+        Axis row = new Axis(AxisName.ROW);
         row.setValue("y");
         member.addAxis(row);
 

@@ -24,7 +24,7 @@ import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.model.helper.DocumentHelper;
@@ -67,7 +67,7 @@ public class BaseLoaderTest {
     @Mock
     private TaskMediator taskMediator;
     @Mock
-    private ModelFactory factory;
+    private ObjectFactory factory;
     @Mock
     private LocatorPersistence locatorPersistence;
     @Mock
@@ -83,22 +83,22 @@ public class BaseLoaderTest {
     @Rule
     public ExpectedException testRule = ExpectedException.none();
 
-    private ModelFactory modelFactory;
+    private ObjectFactory objectFactory;
     private String url;
     private String clzName;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        modelFactory = new ModelFactory();
+        objectFactory = new ObjectFactory();
         url = "/testdefs/page/acme-quote.html";
         clzName = "org.codetab.scoopi.step.lite.BlankStep";
     }
 
     @Test
     public void testInitialize() throws IllegalAccessException {
-        Locator locator = modelFactory.createLocator("acme", "quote", url);
-        StepInfo stepInfo = modelFactory.createStepInfo("loader", "seeder",
+        Locator locator = objectFactory.createLocator("acme", "quote", url);
+        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
                 "parser", clzName);
         Payload payload = getTestPayload(stepInfo, locator);
         loader.setPayload(payload);
@@ -131,7 +131,7 @@ public class BaseLoaderTest {
     @Test
     public void testInitializeShouldThrowException()
             throws IllegalAccessException {
-        StepInfo stepInfo = modelFactory.createStepInfo("loader", "seeder",
+        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
                 "parser", clzName);
         Payload payload =
                 getTestPayload(stepInfo, "data not instance of locator");
@@ -145,7 +145,7 @@ public class BaseLoaderTest {
     public void testLoadPersistIsTrue() throws IllegalAccessException {
         initializeLoader();
         Locator savedLocator =
-                modelFactory.createLocator("acme", "quote", null);
+                objectFactory.createLocator("acme", "quote", null);
         Optional<Boolean> taskLevelPersistenceDefined =
                 Optional.ofNullable(true);
         given(locatorPersistence.persistLocator(taskLevelPersistenceDefined))
@@ -198,7 +198,7 @@ public class BaseLoaderTest {
         Date toDate = DateUtils.addDays(runDate, 1);
         String live = "P1D";
         Document document =
-                modelFactory.createDocument("acme", url, fromDate, toDate);
+                objectFactory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
         given(taskProvider.getFieldValue("quote", "task1", "live"))
@@ -241,7 +241,7 @@ public class BaseLoaderTest {
         String live = "P1D";
 
         Document document =
-                modelFactory.createDocument("acme", url, fromDate, toDate);
+                objectFactory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
         given(taskProvider.getFieldValue("quote", "task1", "live"))
@@ -285,10 +285,10 @@ public class BaseLoaderTest {
         Date newToDate = DateUtils.addDays(runDate, 2);
         String live = "PT0S";
         Document document =
-                modelFactory.createDocument("acme", url, fromDate, toDate);
+                objectFactory.createDocument("acme", url, fromDate, toDate);
         document.setId(1L);
         Document loadedDocument =
-                modelFactory.createDocument("acmex", url, fromDate, toDate);
+                objectFactory.createDocument("acmex", url, fromDate, toDate);
         loadedDocument.setId(2L);
 
         given(documentHelper.getActiveDocument(locator.getDocuments()))
@@ -326,7 +326,7 @@ public class BaseLoaderTest {
         Date newToDate = DateUtils.addDays(runDate, 2);
         String live = "PT0S";
         Document document =
-                modelFactory.createDocument("acme", url, fromDate, toDate);
+                objectFactory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
         given(taskProvider.getFieldValue("quote", "task1", "live"))
@@ -365,14 +365,14 @@ public class BaseLoaderTest {
     public void testStore() throws IllegalAccessException {
         Locator locator = initializeLoader();
         locator.setId(1L);
-        Document document = modelFactory.createDocument("acme", url, new Date(),
-                new Date());
+        Document document = objectFactory.createDocument("acme", url,
+                new Date(), new Date());
         document.setId(2L);
         FieldUtils.writeField(loader, "document", document, true);
 
         Locator loadedLocator =
-                modelFactory.createLocator("acme", "quote", null);
-        Document loadedDocument = modelFactory.createDocument("acme", url,
+                objectFactory.createLocator("acme", "quote", null);
+        Document loadedDocument = objectFactory.createDocument("acme", url,
                 new Date(), new Date());
 
         Optional<Boolean> taskLevelPersistenceDefined =
@@ -401,8 +401,8 @@ public class BaseLoaderTest {
         // persist true and store false
         Locator locator = initializeLoader();
         locator.setId(1L);
-        Document document = modelFactory.createDocument("acme", url, new Date(),
-                new Date());
+        Document document = objectFactory.createDocument("acme", url,
+                new Date(), new Date());
         document.setId(2L);
         FieldUtils.writeField(loader, "document", document, true);
 
@@ -427,7 +427,7 @@ public class BaseLoaderTest {
         // persist false and store false
         locator = initializeLoader();
         locator.setId(1L);
-        document = modelFactory.createDocument("acme", url, new Date(),
+        document = objectFactory.createDocument("acme", url, new Date(),
                 new Date());
         document.setId(2L);
         FieldUtils.writeField(loader, "document", document, true);
@@ -451,8 +451,8 @@ public class BaseLoaderTest {
     public void testStoreReload() throws IllegalAccessException {
         Locator locator = initializeLoader();
         locator.setId(1L);
-        Document document = modelFactory.createDocument("acme", url, new Date(),
-                new Date());
+        Document document = objectFactory.createDocument("acme", url,
+                new Date(), new Date());
         document.setId(2L);
         FieldUtils.writeField(loader, "document", document, true);
 
@@ -487,8 +487,8 @@ public class BaseLoaderTest {
     public void testStoreShouldThrowException() throws IllegalAccessException {
         Locator locator = initializeLoader();
         locator.setId(1L);
-        Document document = modelFactory.createDocument("acme", url, new Date(),
-                new Date());
+        Document document = objectFactory.createDocument("acme", url,
+                new Date(), new Date());
         document.setId(2L);
         FieldUtils.writeField(loader, "document", document, true);
 
@@ -515,16 +515,16 @@ public class BaseLoaderTest {
     public void testIsDocumentLoaded() throws IllegalAccessException {
         assertThat(loader.isDocumentLoaded()).isFalse();
 
-        Document document = modelFactory.createDocument("acme", url, new Date(),
-                new Date());
+        Document document = objectFactory.createDocument("acme", url,
+                new Date(), new Date());
         FieldUtils.writeField(loader, "document", document, true);
 
         assertThat(loader.isDocumentLoaded()).isTrue();
     }
 
     private Locator initializeLoader() {
-        Locator locator = modelFactory.createLocator("acme", "quote", url);
-        StepInfo stepInfo = modelFactory.createStepInfo("loader", "seeder",
+        Locator locator = objectFactory.createLocator("acme", "quote", url);
+        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
                 "parser", clzName);
         Payload payload = getTestPayload(stepInfo, locator);
         loader.setPayload(payload);
@@ -533,13 +533,13 @@ public class BaseLoaderTest {
     }
 
     private Payload getTestPayload(final StepInfo stepInfo, final Object data) {
-        JobInfo jobInfo = modelFactory.createJobInfo(0, "acme", "quote",
+        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "quote",
                 "task1", "task1");
-        return modelFactory.createPayload(jobInfo, stepInfo, data);
+        return objectFactory.createPayload(jobInfo, stepInfo, data);
     }
 
     private byte[] getTestDocumentObject() throws IOException {
-        URL fileURL = BaseLoaderTestIT.class.getResource(url);
+        URL fileURL = BaseLoaderIT.class.getResource(url);
         return IOUtils.toByteArray(fileURL);
     }
 }

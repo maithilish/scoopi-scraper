@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import org.codetab.scoopi.defs.ILocatorProvider;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
@@ -19,7 +19,7 @@ import com.google.common.collect.Lists;
 public class LocatorProvider implements ILocatorProvider {
 
     @Inject
-    private ModelFactory modelFactory;
+    private ObjectFactory objectFactory;
 
     private JsonNode defs;
 
@@ -40,7 +40,7 @@ public class LocatorProvider implements ILocatorProvider {
 
     @Override
     public LocatorGroup getLocatorGroup(final String group) {
-        LocatorGroup locatorGroup = modelFactory.createLocatorGroup(group);
+        LocatorGroup locatorGroup = objectFactory.createLocatorGroup(group);
 
         JsonNode groupNode = defs.at("/" + group);
         JsonNode nodes = groupNode.get("locators");
@@ -50,7 +50,7 @@ public class LocatorProvider implements ILocatorProvider {
             String locatorName = node.get("name").asText();
             String locatorUrl = node.get("url").asText();
             Locator locator =
-                    modelFactory.createLocator(locatorName, group, locatorUrl);
+                    objectFactory.createLocator(locatorName, group, locatorUrl);
             locatorGroup.getLocators().add(locator);
         }
         return locatorGroup;

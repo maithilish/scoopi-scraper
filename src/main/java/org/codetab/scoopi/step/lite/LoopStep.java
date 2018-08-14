@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.Step;
@@ -23,7 +23,7 @@ public class LoopStep extends Step {
      * model factory
      */
     @Inject
-    private ModelFactory factory;
+    private ObjectFactory factory;
 
     @Override
     public boolean initialize() {

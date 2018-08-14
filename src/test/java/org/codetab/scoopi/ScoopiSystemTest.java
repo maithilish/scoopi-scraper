@@ -25,7 +25,7 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
@@ -68,7 +68,7 @@ public class ScoopiSystemTest {
     @Mock
     private SystemHelper systemHelper;
     @Mock
-    private ModelFactory factory;
+    private ObjectFactory factory;
 
     @InjectMocks
     private ScoopiSystem sSystem;
@@ -308,7 +308,7 @@ public class ScoopiSystemTest {
     }
 
     public List<LocatorGroup> getTestLocatorGroups() {
-        ModelFactory mf = new ModelFactory();
+        ObjectFactory mf = new ObjectFactory();
 
         List<LocatorGroup> lGroups = new ArrayList<>();
 

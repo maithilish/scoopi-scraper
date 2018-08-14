@@ -23,7 +23,7 @@ import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.shared.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
 import org.codetab.scoopi.util.MarkerUtil;
@@ -50,10 +50,10 @@ public class DocumentHelper {
     @Inject
     private ConfigService configService;
     /**
-     * ModelFactory
+     * ObjectFactory
      */
     @Inject
-    private ModelFactory modelFactory;
+    private ObjectFactory objectFactory;
 
     /**
      * private constructor.
@@ -286,9 +286,9 @@ public class DocumentHelper {
         Validate.notNull(fromDate, Messages.getString("DocumentHelper.18")); //$NON-NLS-1$
         Validate.notNull(toDate, Messages.getString("DocumentHelper.19")); //$NON-NLS-1$
 
-        Validate.validState(modelFactory != null,
+        Validate.validState(objectFactory != null,
                 Messages.getString("DocumentHelper.20")); //$NON-NLS-1$
 
-        return modelFactory.createDocument(name, url, fromDate, toDate);
+        return objectFactory.createDocument(name, url, fromDate, toDate);
     }
 }

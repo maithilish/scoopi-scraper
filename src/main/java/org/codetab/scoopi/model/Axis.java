@@ -11,21 +11,18 @@ public final class Axis implements Comparable<Axis>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private AxisName name;
+    private final AxisName name;
     private String value;
     private String match;
     private Integer index;
     private Integer order;
 
-    public Axis() {
+    public Axis(final AxisName name) {
+        this.name = name;
     }
 
     public AxisName getName() {
         return name;
-    }
-
-    public void setName(final AxisName name) {
-        this.name = name;
     }
 
     public String getValue() {

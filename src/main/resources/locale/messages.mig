@@ -294,14 +294,6 @@ LocatorHelper.3=configService is null
 LocatorHelper.5=extract locators to locator
 LocatorHelper.6=propagate locators group to all locator
 
-LocatorSeeder.1=next step input : required [Locator], but is instance of 
-LocatorSeeder.2=locator after init
-LocatorSeeder.3=unable to set fields copy to locator
-LocatorSeeder.4=locator after merging fields
-LocatorSeeder.5=push locators to taskpool
-LocatorSeeder.6=locators count [{}], queued to taskpool [{}].
-LocatorSeeder.7=unable spawn seeder
-
 ParserCache.0=map must not be null
 
 Task.0=[{}] start step [{}]

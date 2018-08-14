@@ -11,7 +11,7 @@ import java.util.List;
 import org.codetab.scoopi.defs.yml.TaskProvider;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.TaskMediator;
@@ -30,12 +30,12 @@ public class SeederStepTest {
     @Mock
     private TaskProvider taskProvider;
     @Mock
-    private ModelFactory factory;
+    private ObjectFactory factory;
 
     @InjectMocks
     private SeederStep step;
 
-    private ModelFactory modelFactory;
+    private ObjectFactory objectFactory;
 
     @Rule
     public ExpectedException testRule = ExpectedException.none();
@@ -44,12 +44,13 @@ public class SeederStepTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        modelFactory = new ModelFactory();
+        objectFactory = new ObjectFactory();
         StepInfo stepInfo =
-                modelFactory.createStepInfo("s1", "s2", "s3", "clz");
-        JobInfo jobInfo = modelFactory.createJobInfo(0, "acme", "group1",
+                objectFactory.createStepInfo("s1", "s2", "s3", "clz");
+        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
                 "task1", "dataDef1");
-        Payload payload = modelFactory.createPayload(jobInfo, stepInfo, "data");
+        Payload payload =
+                objectFactory.createPayload(jobInfo, stepInfo, "data");
         step.setPayload(payload);
     }
 
@@ -85,11 +86,11 @@ public class SeederStepTest {
         String stepName = step.getPayload().getStepInfo().getStepName();
 
         StepInfo nextStep =
-                modelFactory.createStepInfo("step1", "step0", "step2", "clz");
-        JobInfo jobInfo = modelFactory.createJobInfo(0, "acme", "group1",
+                objectFactory.createStepInfo("step1", "step0", "step2", "clz");
+        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
                 "task1", "dataDef1");
         Payload nextStepPayload =
-                modelFactory.createPayload(jobInfo, nextStep, "data");
+                objectFactory.createPayload(jobInfo, nextStep, "data");
 
         List<String> taskNames = Arrays.asList("task1", "task2");
         given(taskProvider.getTaskNames(taskGroup)).willReturn(taskNames);
@@ -126,11 +127,11 @@ public class SeederStepTest {
         String stepName = step.getPayload().getStepInfo().getStepName();
 
         StepInfo nextStep =
-                modelFactory.createStepInfo("step1", "step0", "step2", "clz");
-        JobInfo jobInfo = modelFactory.createJobInfo(0, "acme", "group1",
+                objectFactory.createStepInfo("step1", "step0", "step2", "clz");
+        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
                 "task1", "dataDef1");
         Payload nextStepPayload =
-                modelFactory.createPayload(jobInfo, nextStep, "data");
+                objectFactory.createPayload(jobInfo, nextStep, "data");
 
         List<String> taskNames = Arrays.asList("task1", "task2");
         given(taskProvider.getTaskNames(taskGroup)).willReturn(taskNames);

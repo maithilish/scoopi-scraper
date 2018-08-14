@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.pool.TaskPoolService;
 import org.codetab.scoopi.shared.StatService;
@@ -77,7 +77,7 @@ public class TaskMediatorTest {
     @Test
     public void testPushPayload()
             throws InterruptedException, IllegalAccessException {
-        ModelFactory mf = new ModelFactory();
+        ObjectFactory mf = new ObjectFactory();
         Payload payload = mf.createPayload(null, null, null);
 
         boolean actual = taskMediator.pushPayload(payload);

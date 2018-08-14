@@ -18,7 +18,7 @@ import org.codetab.scoopi.misc.ShutdownHook;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.model.ModelFactory;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.shared.ConfigService;
@@ -59,7 +59,7 @@ public class ScoopiSystem {
     @Inject
     private SystemHelper systemHelper;
     @Inject
-    private ModelFactory factory;
+    private ObjectFactory factory;
 
     public boolean startStatService() {
         statService.start();

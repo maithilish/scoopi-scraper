@@ -5,7 +5,19 @@ import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-public class ModelFactory {
+/**
+ * Factory to create model objects.
+ * <p>
+ * JDO Persistable classes are regular POJO with getters and setters as fields
+ * can't be final.
+ * </p>
+ * <p>
+ * Other classes are either immutable or with some final fields.
+ * </p>
+ * @author maithilish
+ *
+ */
+public class ObjectFactory {
 
     public StepInfo createStepInfo(final String stepName,
             final String priviousStepName, final String nextStepName,
@@ -47,5 +59,25 @@ public class ModelFactory {
         document.setFromDate(DateUtils.truncate(fromDate, Calendar.SECOND));
         document.setToDate(DateUtils.truncate(toDate, Calendar.SECOND));
         return document;
+    }
+
+    public Data createData(final String name, final String dataDef,
+            final long documentId, final long dataDefId) {
+        Data data = new Data();
+        data.setName(name);
+        data.setDataDef(dataDef);
+        data.setDocumentId(documentId);
+        data.setDataDefId(dataDefId);
+        return data;
+    }
+
+    public Member createMember() {
+        Member member = new Member();
+        return member;
+    }
+
+    public Axis createAxis(final AxisName name) {
+        Axis axis = new Axis(name);
+        return axis;
     }
 }
