@@ -30,6 +30,7 @@ public class DataDaoIT extends ITBase {
     public void setUp() throws Exception {
         dao = new DataDao(daoUtil.getPersistenceManagerFactory());
 
+        daoUtil.clearCache();
         schemaClasses.add("org.codetab.scoopi.model.Data");
         daoUtil.deleteSchemaForClasses(schemaClasses);
         daoUtil.createSchemaForClasses(schemaClasses);
@@ -128,7 +129,10 @@ public class DataDaoIT extends ITBase {
         member.setName("date");
         member.setGroup("group1");
         member.getAxes().add(col);
-        Data data = objectFactory.createData("acme", "dataDef1", 1L, 2L);
+        Data data = objectFactory.createData("dataDef1");
+        data.setName("acme");
+        data.setDocumentId(1L);
+        data.setDataDefId(2L);
         data.addMember(member);
         return data;
     }

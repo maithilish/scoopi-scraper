@@ -78,6 +78,21 @@ public final class Member implements Serializable {
         getAxis(axisName).setValue(value);
     }
 
+    /**
+     * Deep Copy
+     * @return deep copy of Member
+     */
+    public Member copy() {
+        Member member = new Member();
+        member.id = id;
+        member.name = name;
+        member.group = group;
+        for (Axis axis : axes) {
+            member.addAxis(axis.copy());
+        }
+        return member;
+    }
+
     public StringBuilder traceMember() {
         String nl = System.lineSeparator();
         StringBuilder sb = new StringBuilder();

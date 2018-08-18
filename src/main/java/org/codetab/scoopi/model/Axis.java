@@ -57,9 +57,22 @@ public final class Axis implements Comparable<Axis>, Serializable {
         this.order = order;
     }
 
+    /**
+     * Deep Copy
+     * @return deep copy of Axis
+     */
+    public Axis copy() {
+        Axis copy = new Axis(this.name);
+        copy.match = match;
+        copy.value = value;
+        copy.index = index;
+        copy.order = order;
+        return copy;
+    }
+
     @Override
     public int compareTo(final Axis other) {
-        // String name is converted to Enum AxisName and compared
+        // compare Enum AxisName
         AxisName a1 = name;
         AxisName a2 = other.name;
         return a1.compareTo(a2);

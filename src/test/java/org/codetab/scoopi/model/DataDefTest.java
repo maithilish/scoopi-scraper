@@ -52,9 +52,9 @@ public class DataDefTest {
     @Test
     public void testGetDataDef() {
         String obj = "test";
-        dataDef.setDataDef(obj);
+        dataDef.setDef(obj);
 
-        assertThat(dataDef.getDataDef()).isEqualTo(obj);
+        assertThat(dataDef.getDef()).isEqualTo(obj);
     }
 
     @Test
@@ -63,8 +63,8 @@ public class DataDefTest {
         Enhanced t1 = testObjects.get(0);
         Enhanced t2 = testObjects.get(1);
 
-        String[] excludes = {"id", "fromDate", "toDate", "dnDetachedState",
-                "dnFlags", "dnStateManager"};
+        String[] excludes =
+                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
         int expectedHashT1 = HashCodeBuilder.reflectionHashCode(t1, excludes);
         int expectedHashT2 = HashCodeBuilder.reflectionHashCode(t2, excludes);
 
@@ -74,13 +74,42 @@ public class DataDefTest {
     }
 
     @Test
+    public void testEqualsForDef() {
+        ObjectFactory factory = new ObjectFactory();
+        Date fromDate = new Date();
+        Date toDate = DateUtils.addDays(fromDate, 1);
+        DataDef t1 = factory.createDataDef("def1", fromDate, toDate, "json1");
+        t1.setId(1L);
+        t1.setDef("test def");
+
+        fromDate = DateUtils.addDays(fromDate, 1);
+        toDate = DateUtils.addDays(fromDate, 2);
+        DataDef t2 = factory.createDataDef("def1", fromDate, toDate, "json1");
+        t2.setId(2L);
+        t2.setDef("test def");
+
+        assertThat(t1.equalsForDef(t1)).isTrue();
+        assertThat(t1.equalsForDef(null)).isFalse();
+        assertThat(t1.equalsForDef("some other class")).isFalse();
+
+        assertThat(t1.equalsForDef(t2)).isTrue();
+
+        t2.setName("def2");
+        assertThat(t1.equalsForDef(t2)).isFalse();
+
+        t2.setName("def1");
+        t2.setDefJson("json2");
+        assertThat(t1.equalsForDef(t2)).isFalse();
+    }
+
+    @Test
     public void testEqualsObject() {
         List<Enhanced> testObjects = createTestObjects();
         Enhanced t1 = testObjects.get(0);
         Enhanced t2 = testObjects.get(1);
 
-        String[] excludes = {"id", "fromDate", "toDate", "dnDetachedState",
-                "dnFlags", "dnStateManager"};
+        String[] excludes =
+                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
         assertThat(EqualsBuilder.reflectionEquals(t1, t2, excludes)).isTrue();
 
         assertThat(t1).isEqualTo(t2);
@@ -101,20 +130,23 @@ public class DataDefTest {
     }
 
     private List<Enhanced> createTestObjects() {
-        Date date = new Date();
+        Date fromDate = new Date();
+        Date toDate = DateUtils.addMonths(fromDate, 1);
 
         Enhanced t1 = new Enhanced();
-        t1.setFromDate(date);
-        t1.setToDate(DateUtils.addMonths(date, 1));
+        t1.setFromDate(fromDate);
+        t1.setToDate(toDate);
         t1.setId(1L);
         t1.setName("x");
+        t1.setDefJson("json");
 
         Enhanced t2 = new Enhanced();
 
-        t2.setFromDate(DateUtils.addMonths(date, 2));
-        t2.setToDate(DateUtils.addMonths(date, 3));
+        t2.setFromDate(fromDate);
+        t2.setToDate(toDate);
         t2.setId(2L);
         t2.setName("x");
+        t2.setDefJson("json");
         t2.dnDetachedState = 11;
         t2.dnFlags = 12;
         t2.dnStateManager = 13;

@@ -73,6 +73,23 @@ public final class Data implements Serializable {
         members.add(member);
     }
 
+    /**
+     * Deep Copy
+     * @return deep copy of Data
+     */
+    public Data copy() {
+        Data copy = new Data();
+        copy.id = id;
+        copy.name = name;
+        copy.dataDef = dataDef;
+        copy.dataDefId = dataDefId;
+        copy.documentId = documentId;
+        for (Member member : members) {
+            copy.addMember(member.copy());
+        }
+        return copy;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         String[] excludes =

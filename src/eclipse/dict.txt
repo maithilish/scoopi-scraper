@@ -112,3 +112,5 @@ rundate
 tmp
 ext
 itest
+def
+json

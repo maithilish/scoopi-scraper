@@ -61,13 +61,9 @@ public class ObjectFactory {
         return document;
     }
 
-    public Data createData(final String name, final String dataDef,
-            final long documentId, final long dataDefId) {
+    public Data createData(final String dataDef) {
         Data data = new Data();
-        data.setName(name);
         data.setDataDef(dataDef);
-        data.setDocumentId(documentId);
-        data.setDataDefId(dataDefId);
         return data;
     }
 
@@ -79,5 +75,25 @@ public class ObjectFactory {
     public Axis createAxis(final AxisName name) {
         Axis axis = new Axis(name);
         return axis;
+    }
+
+    public Axis createAxis(final AxisName name, final String value,
+            final String match, final int index, final int order) {
+        Axis axis = new Axis(name);
+        axis.setValue(value);
+        axis.setMatch(match);
+        axis.setIndex(index);
+        axis.setOrder(order);
+        return axis;
+    }
+
+    public DataDef createDataDef(final String name, final Date fromDate,
+            final Date toDate, final String defJson) {
+        DataDef dataDef = new DataDef();
+        dataDef.setName(name);
+        dataDef.setFromDate(fromDate);
+        dataDef.setToDate(toDate);
+        dataDef.setDefJson(defJson);
+        return dataDef;
     }
 }

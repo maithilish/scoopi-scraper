@@ -22,6 +22,7 @@ public class DocumentDaoIT extends ITBase {
     public void setUp() throws Exception {
         dao = new DocumentDao(daoUtil.getPersistenceManagerFactory());
 
+        daoUtil.clearCache();
         schemaClasses.add("org.codetab.scoopi.model.Locator");
         schemaClasses.add("org.codetab.scoopi.model.Document");
         daoUtil.deleteSchemaForClasses(schemaClasses);

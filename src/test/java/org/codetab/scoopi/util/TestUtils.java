@@ -7,7 +7,11 @@ import java.lang.reflect.Modifier;
 
 import org.junit.Assert;
 
+import com.google.gson.JsonParser;
+
 public class TestUtils {
+
+    private static JsonParser jsonParser = new JsonParser();
 
     private TestUtils() {
     }
@@ -33,5 +37,9 @@ public class TestUtils {
                 Assert.fail("there exists a non-static method:" + method);
             }
         }
+    }
+
+    public static String parseJson(final String json) {
+        return jsonParser.parse(json).toString();
     }
 }

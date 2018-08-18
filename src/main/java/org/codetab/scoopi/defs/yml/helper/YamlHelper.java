@@ -97,4 +97,12 @@ public class YamlHelper {
         node.set(name, defaultStepsCopy);
         return node;
     }
+
+    public String toJson(final JsonNode node) throws JsonProcessingException {
+        return mapper.writeValueAsString(node);
+    }
+
+    public JsonNode toJsonNode(final String json) throws IOException {
+        return mapper.readTree(json);
+    }
 }

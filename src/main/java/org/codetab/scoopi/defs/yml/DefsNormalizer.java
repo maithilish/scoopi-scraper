@@ -1,5 +1,7 @@
 package org.codetab.scoopi.defs.yml;
 
+import static java.util.Objects.isNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * Methods to normalize user defs and to create effective defs.
+ * Methods to normalise user defs and to create effective defs.
  *
  * @author maithilish
  *
@@ -39,9 +41,28 @@ public class DefsNormalizer {
         JsonNode dataDefs = nodes.at("/dataDefs");
         List<JsonNode> members = dataDefs.findValues("member");
         for (JsonNode member : members) {
-            if (member.findValue("index") == null
-                    && member.findValue("indexRange") == null) {
+            if (isNull(member.findValue("index"))
+                    && isNull(member.findValue("indexRange"))) {
                 ((ObjectNode) member).put("index", 0);
+            }
+        }
+    }
+
+    /**
+     * If order field is not defined, then add order
+     * @param nodes
+     * @throws IOException
+     */
+    public void addMemberOrder(final JsonNode nodes) throws IOException {
+        JsonNode dataDefs = nodes.at("/dataDefs");
+        List<JsonNode> membersList = dataDefs.findValues("members");
+        for (JsonNode members : membersList) {
+            List<JsonNode> memberList = members.findValues("member");
+            for (int i = 0; i < memberList.size(); i++) {
+                JsonNode member = memberList.get(i);
+                if (isNull(member.findValue("order"))) {
+                    ((ObjectNode) member).put("order", i);
+                }
             }
         }
     }
@@ -147,7 +168,7 @@ public class DefsNormalizer {
         for (String taskName : tasks.keySet()) {
             JsonNode task = tasks.get(taskName);
             JsonNode steps = task.get("steps");
-            if (steps == null) {
+            if (isNull(steps)) {
                 throw new NoSuchElementException(
                         "steps not defined for task : " + taskName);
             }

@@ -96,19 +96,6 @@ DataDefHelper.26=] data structure
 DataDefHelper.4=dataDef must not be null
 DataDefHelper.5=dataDef must not be null
 
-DataDefPersistence.1=DataDef loaded : [{}]
-DataDefPersistence.10=dataDefs must not be null
-DataDefPersistence.11=newDataDefs must not be null
-DataDefPersistence.12=no changes
-DataDefPersistence.13=changed, insert new version
-DataDefPersistence.14=not in store, insert
-DataDefPersistence.15=DataDef [{}] {}
-DataDefPersistence.2=datadef creation error
-DataDefPersistence.3=dataDef must not be null
-DataDefPersistence.7=store DataDef
-DataDefPersistence.8=stored DataDef [{}] [{}]
-DataDefPersistence.9=datadef creation error
-
 DataDefService.0=initialize DataDefs singleton
 DataDefService.1=initialized DataDefs singleton
 DataDefService.10=datadef [

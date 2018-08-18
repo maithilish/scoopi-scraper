@@ -29,6 +29,7 @@ public class LocatorDaoIT extends ITBase {
     public void setUp() throws Exception {
         dao = new LocatorDao(daoUtil.getPersistenceManagerFactory());
 
+        daoUtil.clearCache();
         schemaClasses.add("org.codetab.scoopi.model.Locator");
         daoUtil.deleteSchemaForClasses(schemaClasses);
         daoUtil.createSchemaForClasses(schemaClasses);

@@ -106,6 +106,7 @@ public class DefsHelper {
         // !! don't change order of these methods !!
         defsNormalizer.addFactMember(eDefs);
         defsNormalizer.addMemberIndex(eDefs);
+        defsNormalizer.addMemberOrder(eDefs);
         defsNormalizer.addNoQuery(eDefs);
 
         defsNormalizer.setDefaultSteps(eDefs);

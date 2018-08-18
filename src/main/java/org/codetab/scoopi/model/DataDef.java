@@ -1,6 +1,8 @@
 
 package org.codetab.scoopi.model;
 
+import static java.util.Objects.isNull;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,7 +18,11 @@ public class DataDef implements Serializable {
     private String name;
     private Date fromDate;
     private Date toDate;
-    private Object dataDef;
+    private String defJson;
+    private Object def;
+
+    DataDef() {
+    }
 
     /**
      * Gets the value of the id property.
@@ -102,25 +108,48 @@ public class DataDef implements Serializable {
         this.toDate = value;
     }
 
-    protected Object getDataDef() {
-        return dataDef;
+    public String getDefJson() {
+        return defJson;
     }
 
-    protected void setDataDef(Object dataDef) {
-        this.dataDef = dataDef;
+    public void setDefJson(String defJson) {
+        this.defJson = defJson;
+    }
+
+    public Object getDef() {
+        return def;
+    }
+
+    public void setDef(Object def) {
+        this.def = def;
+    }
+
+    public boolean equalsForDef(final Object obj) {
+        if (isNull(obj)) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        DataDef rhs = (DataDef) obj;
+        return new EqualsBuilder().append(name, rhs.getName())
+                .append(defJson, rhs.getDefJson()).isEquals();
     }
 
     @Override
     public boolean equals(final Object obj) {
-        String[] excludes = {"id", "fromDate", "toDate", "dnDetachedState",
-                "dnFlags", "dnStateManager"};
+        String[] excludes =
+                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
         return EqualsBuilder.reflectionEquals(this, obj, excludes);
     }
 
     @Override
     public int hashCode() {
-        String[] excludes = {"id", "fromDate", "toDate", "dnDetachedState",
-                "dnFlags", "dnStateManager"};
+        String[] excludes =
+                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
         return HashCodeBuilder.reflectionHashCode(this, excludes);
     }
 

@@ -31,7 +31,7 @@
             <field name="fromDate" />
             <field name="toDate" />
             <field name="documentObject" persistence-modifier="persistent"
-                serialized="true" />
+                   serialized="true" />
             <fetch-group name="detachDocumentObject">
                 <field name="documentObject" />
             </fetch-group>
@@ -39,14 +39,16 @@
         <class name="DataDef" detachable="true">
             <field name="id" primary-key="true" value-strategy="INCREMENT" />
             <field name="name" />
-            <field name="dataDef" serialized="true" />            
+            <field name="defJson" persistence-modifier="persistent" 
+                   serialized="true" />
+            <field name="def" persistence-modifier="none" />            
             <unique name="UNIQUE_NAME_DATE">
                 <field name="name" />
                 <field name="fromDate" />
                 <field name="toDate" />
             </unique>            
-            <fetch-group name="detachDataDef">
-                <field name="dataDef" />
+            <fetch-group name="detachDefJson">
+                <field name="defJson" />
             </fetch-group>            
         </class>
         <class name="Data" detachable="true" >
