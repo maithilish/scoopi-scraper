@@ -124,7 +124,7 @@ public class DataDaoIT extends ITBase {
     }
 
     private Data createTestData() {
-        Axis col = objectFactory.createAxis(AxisName.COL);
+        Axis col = objectFactory.createAxis(AxisName.COL, "date");
         Member member = objectFactory.createMember();
         member.setName("date");
         member.setGroup("group1");

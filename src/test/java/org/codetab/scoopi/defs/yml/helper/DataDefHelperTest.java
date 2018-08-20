@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -228,21 +227,23 @@ public class DataDefHelperTest {
     @Test
     public void testGetAxisSets() throws IOException {
         DataDef dataDef = getTestDataDef();
-        Axis fact = factory.createAxis(AxisName.FACT);
-        Axis col = factory.createAxis(AxisName.COL);
-        Axis row1 = factory.createAxis(AxisName.ROW);
-        Axis row2 = factory.createAxis(AxisName.ROW);
+        Axis fact = factory.createAxis(AxisName.FACT, "fact");
+        Axis col = factory.createAxis(AxisName.COL, "date");
+        Axis row1 = factory.createAxis(AxisName.ROW, "Price");
+        Axis row2 = factory.createAxis(AxisName.ROW, "High");
 
-        given(objectFactory.createAxis(AxisName.FACT)).willReturn(fact);
-        given(objectFactory.createAxis(AxisName.COL)).willReturn(col);
-        given(objectFactory.createAxis(AxisName.ROW)).willReturn(row1, row2);
+        given(objectFactory.createAxis(AxisName.FACT, "fact")).willReturn(fact);
+        given(objectFactory.createAxis(AxisName.COL, "date")).willReturn(col);
+        given(objectFactory.createAxis(AxisName.ROW, "Price")).willReturn(row1);
+        given(objectFactory.createAxis(AxisName.ROW, "High")).willReturn(row2);
 
         Axis expectedFact =
-                factory.createAxis(AxisName.FACT, null, null, 0, 10);
-        Axis expectedCol = factory.createAxis(AxisName.COL, null, null, 1, 11);
+                factory.createAxis(AxisName.FACT, "fact", null, null, 0, 10);
+        Axis expectedCol =
+                factory.createAxis(AxisName.COL, "date", null, null, 1, 11);
         Axis expectedRow1 =
-                factory.createAxis(AxisName.ROW, "Price", null, 2, 12);
-        Axis expectedRow2 = factory.createAxis(AxisName.ROW);
+                factory.createAxis(AxisName.ROW, "Price", "Price", null, 2, 12);
+        Axis expectedRow2 = factory.createAxis(AxisName.ROW, "High");
         expectedRow2.setMatch("High"); // all other are null
 
         List<Set<Axis>> actual = dataDefHelper.getAxisSets(dataDef);
@@ -258,28 +259,31 @@ public class DataDefHelperTest {
     @Test
     public void testGetData() throws IOException {
         DataDef dataDef = getTestDataDef();
-        Axis fact = factory.createAxis(AxisName.FACT);
-        Axis col = factory.createAxis(AxisName.COL);
-        Axis row1 = factory.createAxis(AxisName.ROW);
-        Axis row2 = factory.createAxis(AxisName.ROW);
+        Axis fact = factory.createAxis(AxisName.FACT, "fact");
+        Axis col = factory.createAxis(AxisName.COL, "date");
+        Axis row1 = factory.createAxis(AxisName.ROW, "Price");
+        Axis row2 = factory.createAxis(AxisName.ROW, "High");
 
         Data data = factory.createData(dataDef.getName());
         Member member1 = factory.createMember();
         Member member2 = factory.createMember();
 
-        given(objectFactory.createAxis(AxisName.FACT)).willReturn(fact);
-        given(objectFactory.createAxis(AxisName.COL)).willReturn(col);
-        given(objectFactory.createAxis(AxisName.ROW)).willReturn(row1, row2);
+        given(objectFactory.createAxis(AxisName.FACT, "fact")).willReturn(fact);
+        given(objectFactory.createAxis(AxisName.COL, "date")).willReturn(col);
+        given(objectFactory.createAxis(AxisName.ROW, "Price")).willReturn(row1);
+        given(objectFactory.createAxis(AxisName.ROW, "High")).willReturn(row2);
+
         given(objectFactory.createData(dataDef.getName())).willReturn(data);
         given(objectFactory.createMember()).willReturn(member1, member2);
 
-        Axis f1 = factory.createAxis(AxisName.FACT, null, null, 0, 10);
-        Axis f2 = factory.createAxis(AxisName.FACT, null, null, 0, 10);
-        Axis c1 = factory.createAxis(AxisName.COL, null, null, 1, 11);
-        Axis c2 = factory.createAxis(AxisName.COL, null, null, 1, 11);
-        Axis r2 = factory.createAxis(AxisName.ROW);
+        Axis f1 = factory.createAxis(AxisName.FACT, "fact", null, null, 0, 10);
+        Axis f2 = factory.createAxis(AxisName.FACT, "fact", null, null, 0, 10);
+        Axis c1 = factory.createAxis(AxisName.COL, "date", null, null, 1, 11);
+        Axis c2 = factory.createAxis(AxisName.COL, "date", null, null, 1, 11);
+        Axis r2 = factory.createAxis(AxisName.ROW, "High");
         r2.setMatch("High");
-        Axis r1 = factory.createAxis(AxisName.ROW, "Price", null, 2, 12);
+        Axis r1 =
+                factory.createAxis(AxisName.ROW, "Price", "Price", null, 2, 12);
 
         HashSet<Axis> expectedAxes1 = Sets.newHashSet(f1, c1, r1);
         HashSet<Axis> expectedAxes2 = Sets.newHashSet(f2, c2, r2);
@@ -312,26 +316,6 @@ public class DataDefHelperTest {
         assertThat(actual.size()).isEqualTo(2);
         assertThat(actual.get("def1")).isSameAs(dataDef1);
         assertThat(actual.get("def2")).isSameAs(dataDef2);
-    }
-
-    @Test
-    public void testGetQuery() throws IOException {
-        DataDef dataDef = getTestDataDef();
-
-        assertThat(dataDefHelper.getQuery(dataDef, AxisName.FACT, "region"))
-                .isEqualTo("queryregion");
-        assertThat(dataDefHelper.getQuery(dataDef, AxisName.FACT, "field"))
-                .isEqualTo("queryfield");
-        assertThat(dataDefHelper.getQuery(dataDef, AxisName.COL, "script"))
-                .isEqualTo("colscript");
-    }
-
-    @Test
-    public void testGetQueryNoQuery() throws IOException {
-        DataDef dataDef = getTestDataDef();
-
-        testRule.expect(NoSuchElementException.class);
-        dataDefHelper.getQuery(dataDef, AxisName.ROW, "region");
     }
 
     private DataDef getTestDataDef() throws IOException {

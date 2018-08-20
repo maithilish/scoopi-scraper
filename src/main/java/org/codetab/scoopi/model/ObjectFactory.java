@@ -72,14 +72,15 @@ public class ObjectFactory {
         return member;
     }
 
-    public Axis createAxis(final AxisName name) {
-        Axis axis = new Axis(name);
+    public Axis createAxis(final AxisName name, final String memberName) {
+        Axis axis = new Axis(name, memberName);
         return axis;
     }
 
-    public Axis createAxis(final AxisName name, final String value,
-            final String match, final int index, final int order) {
-        Axis axis = new Axis(name);
+    public Axis createAxis(final AxisName name, final String memberName,
+            final String value, final String match, final int index,
+            final int order) {
+        Axis axis = new Axis(name, memberName);
         axis.setValue(value);
         axis.setMatch(match);
         axis.setIndex(index);

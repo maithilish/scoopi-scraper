@@ -18,7 +18,7 @@ public class AxisTest {
 
     @Before
     public void setUp() throws Exception {
-        axis = new Axis(AxisName.COL);
+        axis = new Axis(AxisName.COL, "date");
     }
 
     @Test
@@ -52,17 +52,17 @@ public class AxisTest {
 
     @Test
     public void testCompareTo() {
-        Axis a1 = new Axis(AxisName.COL);
-        Axis a2 = new Axis(AxisName.COL);
+        Axis a1 = new Axis(AxisName.COL, "date");
+        Axis a2 = new Axis(AxisName.COL, "date");
 
         assertThat(a1.compareTo(a2)).isEqualTo(0);
 
-        a1 = new Axis(AxisName.COL);
-        a2 = new Axis(AxisName.ROW);
+        a1 = new Axis(AxisName.COL, "date");
+        a2 = new Axis(AxisName.ROW, "Price");
         assertThat(a1.compareTo(a2)).isEqualTo(-1);
 
-        a1 = new Axis(AxisName.ROW);
-        a2 = new Axis(AxisName.COL);
+        a1 = new Axis(AxisName.ROW, "Price");
+        a2 = new Axis(AxisName.COL, "date");
         assertThat(a1.compareTo(a2)).isEqualTo(1);
     }
 
@@ -104,13 +104,13 @@ public class AxisTest {
     }
 
     private List<Axis> createTestObjects() {
-        Axis t1 = new Axis(AxisName.COL);
+        Axis t1 = new Axis(AxisName.COL, "date");
         t1.setMatch("m");
         t1.setValue("v");
         t1.setIndex(1);
         t1.setOrder(2);
 
-        Axis t2 = new Axis(AxisName.COL);
+        Axis t2 = new Axis(AxisName.COL, "date");
         t2.setMatch("m");
         t2.setValue("v");
         t2.setIndex(1);
@@ -126,6 +126,7 @@ public class AxisTest {
         String str =
                 new ToStringBuilder(testAxis, ToStringStyle.SHORT_PREFIX_STYLE)
                         .append("name", testAxis.getName())
+                        .append("memberName", testAxis.getMemberName())
                         .append("value", testAxis.getValue())
                         .append("match", testAxis.getMatch())
                         .append("index", testAxis.getIndex())

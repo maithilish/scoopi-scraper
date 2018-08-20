@@ -18,7 +18,6 @@ import org.codetab.scoopi.defs.yml.helper.DataDefHelper;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.Axis;
-import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.persistence.DataDefPersistence;
@@ -39,7 +38,6 @@ public class DataDefProvider implements IDataDefProvider {
     private Map<String, DataDef> dataDefMap;
     private Map<String, Data> dataTemplateMap = new HashMap<>();
 
-    private Map<String, String> queryCache = new HashMap<>();
     private boolean consistent = false;
 
     /**
@@ -99,6 +97,7 @@ public class DataDefProvider implements IDataDefProvider {
     }
 
     // accessor methods
+    @Override
     public DataDef getDataDef(final String name)
             throws DataDefNotFoundException {
         DataDef dataDef = dataDefMap.get(name);
@@ -109,6 +108,13 @@ public class DataDefProvider implements IDataDefProvider {
         }
     }
 
+    @Override
+    public Long getDataDefId(final String name)
+            throws DataDefNotFoundException {
+        return getDataDef(name).getId();
+    }
+
+    @Override
     public Data getDataTemplate(final String dataDef) {
         requireNonNull(dataDef, "dataDefName must not be null");
 
@@ -118,20 +124,6 @@ public class DataDefProvider implements IDataDefProvider {
         } else {
             throw new NoSuchElementException(
                     Util.join("data template for datadef: ", dataDef));
-        }
-    }
-
-    public String getQuery(final String dataDef, final AxisName axisName,
-            final String queryType) throws DataDefNotFoundException {
-        DataDef d = getDataDef(dataDef);
-        String key =
-                String.join("-", d.getName(), axisName.toString(), queryType);
-        if (queryCache.containsKey(key)) {
-            return queryCache.get(key);
-        } else {
-            String query = dataDefHelper.getQuery(d, axisName, queryType);
-            queryCache.put(key, query);
-            return query;
         }
     }
 }

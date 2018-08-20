@@ -3,7 +3,6 @@ package org.codetab.scoopi.defs.yml;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
@@ -20,7 +19,6 @@ import org.codetab.scoopi.defs.yml.helper.DataDefHelper;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.Axis;
-import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -265,48 +263,6 @@ public class DataDefProviderTest {
 
         testRule.expect(NoSuchElementException.class);
         dataDefProvider.getDataTemplate("def2");
-    }
-
-    @Test
-    public void testGetQuery()
-            throws IllegalAccessException, DataDefNotFoundException {
-        Map<String, DataDef> dataDefMap = getTestDataDefMap();
-        DataDef dataDefA = dataDefMap.get("defA");
-
-        FieldUtils.writeField(dataDefProvider, "dataDefMap", dataDefMap, true);
-
-        String query = "test query";
-        given(dataDefHelper.getQuery(dataDefA, AxisName.COL, "region"))
-                .willReturn(query);
-
-        String actual =
-                dataDefProvider.getQuery("defA", AxisName.COL, "region");
-
-        assertThat(actual).isEqualTo(query);
-    }
-
-    @Test
-    public void testGetQueryFromCache()
-            throws IllegalAccessException, DataDefNotFoundException {
-        Map<String, DataDef> dataDefMap = getTestDataDefMap();
-        DataDef dataDefA = dataDefMap.get("defA");
-
-        FieldUtils.writeField(dataDefProvider, "dataDefMap", dataDefMap, true);
-
-        String query = "test query";
-        given(dataDefHelper.getQuery(dataDefA, AxisName.COL, "region"))
-                .willReturn(query);
-
-        // from def
-        dataDefProvider.getQuery("defA", AxisName.COL, "region");
-
-        // from cache
-        String actual =
-                dataDefProvider.getQuery("defA", AxisName.COL, "region");
-        assertThat(actual).isEqualTo(query);
-
-        verify(dataDefHelper, times(1)).getQuery(dataDefA, AxisName.COL,
-                "region");
     }
 
     public Map<String, DataDef> getTestDataDefMap() {
