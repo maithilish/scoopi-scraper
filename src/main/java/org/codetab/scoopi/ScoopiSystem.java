@@ -5,8 +5,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codetab.scoopi.defs.ILocatorProvider;
-import org.codetab.scoopi.defs.yml.DefsProvider;
+import org.codetab.scoopi.defs.ILocatorDefs;
+import org.codetab.scoopi.defs.yml.Defs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
@@ -35,13 +35,13 @@ public class ScoopiSystem {
     @Inject
     private ConfigService configService;
     @Inject
-    private DefsProvider defsProvider;
+    private Defs defs;
     // @Inject
     // private DataDefService dataDefService;
     @Inject
     private TaskMediator taskMediator;
     @Inject
-    private ILocatorProvider locatorProvider;
+    private ILocatorDefs locatorDefs;
     @Inject
     private MetricsServer metricsServer;
     @Inject
@@ -86,9 +86,9 @@ public class ScoopiSystem {
         return true;
     }
 
-    public boolean initDefsProvider() {
-        defsProvider.init();
-        defsProvider.initProviders();
+    public boolean initDefs() {
+        defs.init();
+        defs.initDefProviders();
         return true;
     }
 
@@ -122,7 +122,7 @@ public class ScoopiSystem {
             String seederClassName =
                     configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
             String undefined = "undefined";
-            List<LocatorGroup> lGroups = locatorProvider.getLocatorGroups();
+            List<LocatorGroup> lGroups = locatorDefs.getLocatorGroups();
             for (LocatorGroup lGroup : lGroups) {
                 // for init payload, only stepName, className and taskGroup are
                 // set. Next and previous steps, taskName, dataDef are undefined

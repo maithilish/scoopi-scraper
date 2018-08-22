@@ -163,7 +163,7 @@ public abstract class BaseLoader extends Step {
         String taskName = getJobInfo().getTask();
         String live;
         try {
-            live = taskProvider.getFieldValue(taskGroup, taskName, "live");
+            live = taskDefs.getFieldValue(taskGroup, taskName, "live");
         } catch (DefNotFoundException e1) {
             live = "PT0S";
         }
@@ -284,11 +284,11 @@ public abstract class BaseLoader extends Step {
     }
 
     private boolean persist() {
-        // TODO code this and move it to locatorPersistence.persistLocator()
+        // TODO code and move it to yaml
         Optional<Boolean> taskLevelPersistenceDefined =
                 Optional.ofNullable(true);
         boolean persist =
-                locatorPersistence.persistLocator(taskLevelPersistenceDefined);
+                locatorPersistence.persist(taskLevelPersistenceDefined);
         return persist;
     }
 

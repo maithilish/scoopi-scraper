@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-import org.codetab.scoopi.defs.yml.TaskProvider;
+import org.codetab.scoopi.defs.yml.TaskDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.JobInfo;
@@ -26,7 +26,7 @@ public class LoopStepTest {
     @Mock
     private TaskMediator taskMediator;
     @Mock
-    private TaskProvider taskProvider;
+    private TaskDefs taskDefs;
     @Mock
     private ObjectFactory factory;
 
@@ -91,7 +91,7 @@ public class LoopStepTest {
         Payload nextStepPayload =
                 objectFactory.createPayload(jobInfo, nextStep, "data");
 
-        given(taskProvider.getNextStep(group, taskName, stepName))
+        given(taskDefs.getNextStep(group, taskName, stepName))
                 .willReturn(nextStep);
         given(factory.createJobInfo(0, "acme", group, taskName,
                 step.getPayload().getJobInfo().getDataDef()))
@@ -123,7 +123,7 @@ public class LoopStepTest {
 
         assertThat(actual).isTrue();
 
-        verifyZeroInteractions(taskMediator, factory, taskProvider);
+        verifyZeroInteractions(taskMediator, factory, taskDefs);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class LoopStepTest {
         String stepName = "step1";
         String taskName = "simpleTask";
 
-        given(taskProvider.getNextStep(group, taskName, stepName))
+        given(taskDefs.getNextStep(group, taskName, stepName))
                 .willThrow(DefNotFoundException.class);
 
         testRule.expect(StepRunException.class);

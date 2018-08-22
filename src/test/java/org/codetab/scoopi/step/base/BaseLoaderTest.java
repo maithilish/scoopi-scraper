@@ -15,7 +15,7 @@ import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.defs.ITaskProvider;
+import org.codetab.scoopi.defs.ITaskDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
@@ -63,7 +63,7 @@ public class BaseLoaderTest {
     @Mock
     private MetricsHelper metricsHelper;
     @Mock
-    private ITaskProvider taskProvider;
+    private ITaskDefs taskDefs;
     @Mock
     private TaskMediator taskMediator;
     @Mock
@@ -148,7 +148,7 @@ public class BaseLoaderTest {
                 objectFactory.createLocator("acme", "quote", null);
         Optional<Boolean> taskLevelPersistenceDefined =
                 Optional.ofNullable(true);
-        given(locatorPersistence.persistLocator(taskLevelPersistenceDefined))
+        given(locatorPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);
         given(locatorPersistence.loadLocator("acme", "quote"))
                 .willReturn(savedLocator);
@@ -165,7 +165,7 @@ public class BaseLoaderTest {
         Locator locator = initializeLoader();
         Optional<Boolean> taskLevelPersistenceDefined =
                 Optional.ofNullable(true);
-        given(locatorPersistence.persistLocator(taskLevelPersistenceDefined))
+        given(locatorPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(false);
 
         boolean actual = loader.load();
@@ -201,7 +201,7 @@ public class BaseLoaderTest {
                 objectFactory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskProvider.getFieldValue("quote", "task1", "live"))
+        given(taskDefs.getFieldValue("quote", "task1", "live"))
                 .willReturn(live);
         given(ucHelper.getProtocol(url)).willReturn("resource");
         given(configService.getRunDateTime()).willReturn(fromDate);
@@ -244,7 +244,7 @@ public class BaseLoaderTest {
                 objectFactory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskProvider.getFieldValue("quote", "task1", "live"))
+        given(taskDefs.getFieldValue("quote", "task1", "live"))
                 .willReturn(live);
         given(ucHelper.getProtocol(invalidUrl)).willReturn("file");
 
@@ -329,7 +329,7 @@ public class BaseLoaderTest {
                 objectFactory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskProvider.getFieldValue("quote", "task1", "live"))
+        given(taskDefs.getFieldValue("quote", "task1", "live"))
                 .willThrow(DefNotFoundException.class);
         given(documentHelper.getActiveDocument(locator.getDocuments()))
                 .willReturn(document);
@@ -377,7 +377,7 @@ public class BaseLoaderTest {
 
         Optional<Boolean> taskLevelPersistenceDefined =
                 Optional.ofNullable(true);
-        given(locatorPersistence.persistLocator(taskLevelPersistenceDefined))
+        given(locatorPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);
         given(locatorPersistence.storeLocator(locator)).willReturn(true);
         given(locatorPersistence.loadLocator(locator.getId()))
@@ -408,7 +408,7 @@ public class BaseLoaderTest {
 
         Optional<Boolean> taskLevelPersistenceDefined =
                 Optional.ofNullable(true);
-        given(locatorPersistence.persistLocator(taskLevelPersistenceDefined))
+        given(locatorPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(false);
         given(locatorPersistence.storeLocator(locator)).willReturn(false);
 
@@ -432,7 +432,7 @@ public class BaseLoaderTest {
         document.setId(2L);
         FieldUtils.writeField(loader, "document", document, true);
 
-        given(locatorPersistence.persistLocator(taskLevelPersistenceDefined))
+        given(locatorPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);
         given(locatorPersistence.storeLocator(locator)).willReturn(false);
 
@@ -461,7 +461,7 @@ public class BaseLoaderTest {
 
         Optional<Boolean> taskLevelPersistenceDefined =
                 Optional.ofNullable(true);
-        given(locatorPersistence.persistLocator(taskLevelPersistenceDefined))
+        given(locatorPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);
         given(locatorPersistence.storeLocator(locator)).willReturn(true);
         given(locatorPersistence.loadLocator(locator.getId()))
@@ -494,7 +494,7 @@ public class BaseLoaderTest {
 
         Optional<Boolean> taskLevelPersistenceDefined =
                 Optional.ofNullable(true);
-        given(locatorPersistence.persistLocator(taskLevelPersistenceDefined))
+        given(locatorPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true).willReturn(true);
         given(locatorPersistence.storeLocator(locator)).willReturn(true)
                 .willThrow(StepPersistenceException.class);

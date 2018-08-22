@@ -42,7 +42,7 @@ public class ScoopiEngine {
 
             scoopiSystem.startMetricsServer();
 
-            scoopiSystem.initDefsProvider();
+            scoopiSystem.initDefs();
 
             scoopiSystem.initDataDefService();
 

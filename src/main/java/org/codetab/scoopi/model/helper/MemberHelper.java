@@ -1,15 +1,16 @@
 package org.codetab.scoopi.model.helper;
 
+import static java.util.Objects.isNull;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.defs.IBreakAfterProvider;
+import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Log.CAT;
@@ -28,7 +29,7 @@ public class MemberHelper {
     static final Logger LOGGER = LoggerFactory.getLogger(MemberHelper.class);
 
     @Inject
-    private IBreakAfterProvider breakAfterProvider;
+    private IAxisDefs axiDefs;
     @Inject
     private StatService statService;
 
@@ -71,17 +72,15 @@ public class MemberHelper {
     }
 
     public boolean hasFinished(final String dataDef, final Axis axis,
-            final String memberName, final int endIndex)
-            throws NumberFormatException {
+            final int endIndex) throws NumberFormatException {
         boolean noField = true;
         try {
-            List<String> breakAfters = null;
-            breakAfters = breakAfterProvider.getBreakAfters(dataDef, axis,
-                    memberName);
+            List<String> breakAfters = axiDefs.getBreakAfters(dataDef, axis);
             noField = false;
             String value = axis.getValue();
-            if (value == null) {
-                String message = Messages.getString("BaseParser.48"); //$NON-NLS-1$
+            if (isNull(value)) {
+                String message =
+                        "value is null, check breakAfter or query in datadef";
                 throw new StepRunException(message);
             } else {
                 for (String breakAfter : breakAfters) {
@@ -106,7 +105,7 @@ public class MemberHelper {
         }
 
         if (noField) {
-            String message = Messages.getString("BaseParser.49"); //$NON-NLS-1$
+            String message = "breakAfter or indexRange undefined";
             throw new NoSuchElementException(message);
         }
         return false;

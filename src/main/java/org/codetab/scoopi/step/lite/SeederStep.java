@@ -56,12 +56,12 @@ public class SeederStep extends Step {
         LOGGER.info("handover");
         String taskGroup = getPayload().getJobInfo().getGroup();
         String stepName = getPayload().getStepInfo().getStepName();
-        for (String taskName : taskProvider.getTaskNames(taskGroup)) {
+        for (String taskName : taskDefs.getTaskNames(taskGroup)) {
             try {
-                String dataDefName = taskProvider.getFieldValue(taskGroup,
-                        taskName, "dataDef");
+                String dataDefName =
+                        taskDefs.getFieldValue(taskGroup, taskName, "dataDef");
                 StepInfo nextStep =
-                        taskProvider.getNextStep(taskGroup, taskName, stepName);
+                        taskDefs.getNextStep(taskGroup, taskName, stepName);
                 JobInfo jobInfo = factory.createJobInfo(taskMediator.getJobId(),
                         "locator", taskGroup, taskName, dataDefName);
                 Payload nextStepPayload =

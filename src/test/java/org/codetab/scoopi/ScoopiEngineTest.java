@@ -53,7 +53,7 @@ public class ScoopiEngineTest {
         inOrder.verify(scoopiSystem).initConfigService(defaultConfigFile,
                 userConfigFile);
         inOrder.verify(scoopiSystem).startMetricsServer();
-        inOrder.verify(scoopiSystem).initDefsProvider();
+        inOrder.verify(scoopiSystem).initDefs();
         inOrder.verify(scoopiSystem).initDataDefService();
         inOrder.verify(scoopiSystem).pushInitialPayload();
         inOrder.verify(scoopiSystem).waitForHeapDump();

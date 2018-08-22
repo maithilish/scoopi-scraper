@@ -2,11 +2,11 @@ package org.codetab.scoopi.defs;
 
 import java.util.Collection;
 
-public interface IDefsProvider {
+public interface IDefs {
 
     void init();
 
-    void initProviders();
+    void initDefProviders();
 
     void setDefsFiles(Collection<String> defsFiles);
 }

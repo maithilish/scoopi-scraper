@@ -188,7 +188,7 @@ public class LocatorPersistenceTest {
         given(configService.useDataStore()).willReturn(false);
 
         Optional<Boolean> persistDefined = Optional.ofNullable(null);
-        assertThat(locatorPersistence.persistLocator(persistDefined)).isFalse();
+        assertThat(locatorPersistence.persist(persistDefined)).isFalse();
     }
 
     @Test
@@ -199,8 +199,8 @@ public class LocatorPersistenceTest {
                 .willReturn(true).willReturn(false);
 
         Optional<Boolean> persistDefined = Optional.ofNullable(null);
-        assertThat(locatorPersistence.persistLocator(persistDefined)).isTrue();
-        assertThat(locatorPersistence.persistLocator(persistDefined)).isFalse();
+        assertThat(locatorPersistence.persist(persistDefined)).isTrue();
+        assertThat(locatorPersistence.persist(persistDefined)).isFalse();
     }
 
     @Test
@@ -212,14 +212,14 @@ public class LocatorPersistenceTest {
 
         // enabled at task level
         Optional<Boolean> persistDefined = Optional.ofNullable(true);
-        assertThat(locatorPersistence.persistLocator(persistDefined)).isTrue();
+        assertThat(locatorPersistence.persist(persistDefined)).isTrue();
 
         // disabled at task level
         persistDefined = Optional.ofNullable(false);
-        assertThat(locatorPersistence.persistLocator(persistDefined)).isFalse();
+        assertThat(locatorPersistence.persist(persistDefined)).isFalse();
 
         // undefined at task level
         persistDefined = Optional.ofNullable(null);
-        assertThat(locatorPersistence.persistLocator(persistDefined)).isTrue();
+        assertThat(locatorPersistence.persist(persistDefined)).isTrue();
     }
 }

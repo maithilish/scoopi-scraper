@@ -4,7 +4,7 @@ import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 
-public interface IDataDefProvider {
+public interface IDataDefDefs {
 
     DataDef getDataDef(String name) throws DataDefNotFoundException;
 

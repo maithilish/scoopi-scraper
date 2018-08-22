@@ -6,12 +6,12 @@ import java.lang.management.RuntimeMXBean;
 
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.defs.IDataDefProvider;
-import org.codetab.scoopi.defs.ILocatorProvider;
-import org.codetab.scoopi.defs.ITaskProvider;
-import org.codetab.scoopi.defs.yml.DataDefProvider;
-import org.codetab.scoopi.defs.yml.LocatorProvider;
-import org.codetab.scoopi.defs.yml.TaskProvider;
+import org.codetab.scoopi.defs.IDataDefDefs;
+import org.codetab.scoopi.defs.ILocatorDefs;
+import org.codetab.scoopi.defs.ITaskDefs;
+import org.codetab.scoopi.defs.yml.DataDefDefs;
+import org.codetab.scoopi.defs.yml.LocatorDefs;
+import org.codetab.scoopi.defs.yml.TaskDefs;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.store.basic.BasicStore;
 
@@ -29,12 +29,10 @@ public class BasicModule extends AbstractModule {
         // bind basic store
         bind(IStore.class).to(BasicStore.class).in(Singleton.class);
 
-        // bind yaml defs providers
-        bind(ILocatorProvider.class).to(LocatorProvider.class)
-                .in(Singleton.class);
-        bind(ITaskProvider.class).to(TaskProvider.class).in(Singleton.class);
-        bind(IDataDefProvider.class).to(DataDefProvider.class)
-                .in(Singleton.class);
+        // bind yaml defs
+        bind(ILocatorDefs.class).to(LocatorDefs.class).in(Singleton.class);
+        bind(ITaskDefs.class).to(TaskDefs.class).in(Singleton.class);
+        bind(IDataDefDefs.class).to(DataDefDefs.class).in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));

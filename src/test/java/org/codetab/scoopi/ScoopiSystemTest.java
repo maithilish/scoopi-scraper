@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codetab.scoopi.defs.ILocatorProvider;
-import org.codetab.scoopi.defs.yml.DefsProvider;
+import org.codetab.scoopi.defs.ILocatorDefs;
+import org.codetab.scoopi.defs.yml.Defs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
@@ -46,13 +46,13 @@ public class ScoopiSystemTest {
     @Mock
     private ConfigService configService;
     @Mock
-    private DefsProvider defsProvider;
+    private Defs defs;
     // @Inject
     // private DataDefService dataDefService;
     @Mock
     private TaskMediator taskMediator;
     @Mock
-    private ILocatorProvider locatorProvider;
+    private ILocatorDefs locatorDefs;
     @Mock
     private MetricsServer metricsServer;
     @Mock
@@ -118,15 +118,15 @@ public class ScoopiSystemTest {
 
     @Test
     public void testInitDefsProvider() {
-        boolean result = sSystem.initDefsProvider();
+        boolean result = sSystem.initDefs();
 
         assertThat(result).isTrue();
 
-        InOrder inOrder = inOrder(defsProvider);
+        InOrder inOrder = inOrder(defs);
 
-        inOrder.verify(defsProvider).init();
-        inOrder.verify(defsProvider).initProviders();
-        verifyNoMoreInteractions(defsProvider);
+        inOrder.verify(defs).init();
+        inOrder.verify(defs).initDefProviders();
+        verifyNoMoreInteractions(defs);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class ScoopiSystemTest {
 
         given(configService.getConfig("scoopi.seederClass"))
                 .willReturn(seederClassName);
-        given(locatorProvider.getLocatorGroups()).willReturn(lGroups);
+        given(locatorDefs.getLocatorGroups()).willReturn(lGroups);
 
         boolean result = sSystem.pushInitialPayload();
 
@@ -231,7 +231,7 @@ public class ScoopiSystemTest {
 
         given(configService.getConfig("scoopi.seederClass"))
                 .willReturn(seederClassName);
-        given(locatorProvider.getLocatorGroups()).willReturn(lGroups);
+        given(locatorDefs.getLocatorGroups()).willReturn(lGroups);
 
         given(taskMediator.pushPayload(payload1))
                 .willThrow(InterruptedException.class);

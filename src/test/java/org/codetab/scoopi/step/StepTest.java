@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-import org.codetab.scoopi.defs.ITaskProvider;
+import org.codetab.scoopi.defs.ITaskDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
@@ -37,7 +37,7 @@ public class StepTest {
     @Mock
     protected MetricsHelper metricsHelper;
     @Mock
-    protected ITaskProvider taskProvider;
+    protected ITaskDefs taskDefs;
     @Mock
     protected TaskMediator taskMediator;
     @Mock
@@ -74,7 +74,7 @@ public class StepTest {
         step.setData(data);
         step.setConsistent(true);
 
-        given(taskProvider.getNextStep(group, taskName, stepName))
+        given(taskDefs.getNextStep(group, taskName, stepName))
                 .willReturn(nextStep);
         given(factory.createPayload(step.getJobInfo(), nextStep, data))
                 .willReturn(nextStepPayload);
@@ -103,7 +103,7 @@ public class StepTest {
 
         assertThat(actual).isTrue();
 
-        verifyZeroInteractions(taskMediator, factory, taskProvider);
+        verifyZeroInteractions(taskMediator, factory, taskDefs);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class StepTest {
         step.setData(data);
         step.setConsistent(true);
 
-        given(taskProvider.getNextStep(group, taskName, stepName))
+        given(taskDefs.getNextStep(group, taskName, stepName))
                 .willThrow(DefNotFoundException.class);
 
         testRule.expect(StepRunException.class);

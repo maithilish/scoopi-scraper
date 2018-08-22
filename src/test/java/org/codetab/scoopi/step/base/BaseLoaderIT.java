@@ -14,7 +14,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.dao.jdo.JdoDaoUtilFactory;
-import org.codetab.scoopi.defs.yml.DefsProvider;
+import org.codetab.scoopi.defs.yml.Defs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
@@ -40,7 +40,7 @@ public class BaseLoaderIT {
     private static DInjector di;
     private static IDaoUtil daoUtil;
     private static HashSet<String> schemaClasses;
-    private static DefsProvider defsProvider;
+    private static Defs defs;
     private static String url;
     private static ObjectFactory objectFactory;
     private static ConfigService configService;
@@ -70,12 +70,12 @@ public class BaseLoaderIT {
 
         daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
 
-        defsProvider = di.instance(DefsProvider.class);
+        defs = di.instance(Defs.class);
         // IT tests against project artifact jar and fails if dir is specified
         // hence set defs files instead of dir
-        // defsProvider.setDefsFiles(getTestDefsFiles());
-        defsProvider.init();
-        defsProvider.initProviders();
+        // defs.setDefsFiles(getTestDefsFiles());
+        defs.init();
+        defs.initDefProviders();
 
         store = di.instance(IStore.class);
 

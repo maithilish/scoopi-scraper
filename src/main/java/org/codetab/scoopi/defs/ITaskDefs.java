@@ -9,7 +9,7 @@ import org.codetab.scoopi.model.StepInfo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public interface ITaskProvider {
+public interface ITaskDefs {
 
     /*
      * Tasks routine

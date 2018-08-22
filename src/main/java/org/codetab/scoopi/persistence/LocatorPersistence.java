@@ -133,8 +133,7 @@ public class LocatorPersistence {
      * @param taskLevelPersistence
      * @return true or false
      */
-    public boolean persistLocator(
-            final Optional<Boolean> taskLevelPersistence) {
+    public boolean persist(final Optional<Boolean> taskLevelPersistence) {
         if (!configService.useDataStore()) {
             // disabled at global level
             return false;

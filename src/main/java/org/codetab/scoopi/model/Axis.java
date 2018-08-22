@@ -79,6 +79,10 @@ public final class Axis implements Comparable<Axis>, Serializable {
         this.order = order;
     }
 
+    public String getNameString() {
+        return name.toString().toLowerCase();
+    }
+
     /**
      * Deep Copy
      * @return deep copy of Axis

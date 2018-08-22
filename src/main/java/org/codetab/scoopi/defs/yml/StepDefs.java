@@ -2,12 +2,12 @@ package org.codetab.scoopi.defs.yml;
 
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.defs.IStepProvider;
+import org.codetab.scoopi.defs.IStepDefs;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Singleton
-public class StepProvider implements IStepProvider {
+public class StepDefs implements IStepDefs {
 
     private JsonNode defs;
 

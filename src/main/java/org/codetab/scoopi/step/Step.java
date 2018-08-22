@@ -6,7 +6,7 @@ import static java.util.Objects.nonNull;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.Validate;
-import org.codetab.scoopi.defs.ITaskProvider;
+import org.codetab.scoopi.defs.ITaskDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
@@ -49,7 +49,7 @@ public abstract class Step implements IStep {
     protected MetricsHelper metricsHelper;
 
     @Inject
-    protected ITaskProvider taskProvider;
+    protected ITaskDefs taskDefs;
     @Inject
     protected TaskMediator taskMediator;
     @Inject
@@ -66,7 +66,7 @@ public abstract class Step implements IStep {
 
             if (!getStepInfo().getNextStepName().equalsIgnoreCase("end")) {
                 StepInfo nextStep =
-                        taskProvider.getNextStep(group, taskName, stepName);
+                        taskDefs.getNextStep(group, taskName, stepName);
                 Payload nextStepPayload =
                         factory.createPayload(getJobInfo(), nextStep, data);
                 taskMediator.pushPayload(nextStepPayload);
@@ -146,7 +146,7 @@ public abstract class Step implements IStep {
 
     @Override
     public String getLabeled(final String message) {
-        return Util.join(getLabel(), " ", message); // $NON-NLS-1$ //$NON-NLS-2$
+        return String.join(" ", getLabel(), message); // $NON-NLS-1$
     }
 
 }

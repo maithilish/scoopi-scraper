@@ -7,7 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.defs.ILocatorProvider;
+import org.codetab.scoopi.defs.ILocatorDefs;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 
 @Singleton
-public class LocatorProvider implements ILocatorProvider {
+public class LocatorDefs implements ILocatorDefs {
 
     @Inject
     private ObjectFactory objectFactory;

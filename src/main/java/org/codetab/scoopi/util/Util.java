@@ -1,5 +1,7 @@
 package org.codetab.scoopi.util;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.messages.Messages;
@@ -376,6 +379,32 @@ public final class Util {
                 .map(s -> s.split(keyValueSeparator))
                 .collect(Collectors.toMap(a -> a[0], a -> a[1], (x, y) -> y));
         return map;
+    }
+
+    public static Range<Integer> getRange(final String value) {
+        notNull(value, "value must not be null");
+
+        if (value.startsWith("-")) { //$NON-NLS-1$
+            throw new NumberFormatException("invalid range" + value);
+        }
+        String[] tokens = StringUtils.split(value, '-');
+        if (tokens.length < 1 || tokens.length > 2) {
+            throw new NumberFormatException("invalid range" + value);
+        }
+        Integer min = 0, max = 0;
+        if (tokens.length == 1) {
+            min = Integer.parseInt(tokens[0]);
+            max = Integer.parseInt(tokens[0]);
+        }
+        if (tokens.length == 2) {
+            min = Integer.parseInt(tokens[0]);
+            max = Integer.parseInt(tokens[1]);
+
+        }
+        if (min > max) {
+            throw new NumberFormatException("invalid range, min > max" + value);
+        }
+        return Range.between(min, max);
     }
 
 }

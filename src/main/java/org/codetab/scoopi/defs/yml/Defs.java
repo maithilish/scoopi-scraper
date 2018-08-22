@@ -13,7 +13,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.defs.IDefsProvider;
+import org.codetab.scoopi.defs.IDefs;
 import org.codetab.scoopi.defs.yml.helper.DefsHelper;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
@@ -28,19 +28,18 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.google.common.collect.Lists;
 
 @Singleton
-public class DefsProvider implements IDefsProvider {
+public class Defs implements IDefs {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(DefsProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Defs.class);
 
     @Inject
     private DefsHelper defsHelper;
     @Inject
-    private LocatorProvider locatorProvider;
+    private LocatorDefs locatorDefs;
     @Inject
-    private DataDefProvider dataDefProvider;
+    private DataDefDefs dataDefDefs;
     @Inject
-    private TaskProvider taskProvider;
+    private TaskDefs taskDefs;
 
     private JsonNode definedDefs;
     private JsonNode effectiveDefs;
@@ -70,13 +69,13 @@ public class DefsProvider implements IDefsProvider {
     }
 
     @Override
-    public void initProviders() {
+    public void initDefProviders() {
         ArrayList<Entry<String, JsonNode>> defsMap =
                 Lists.newArrayList(effectiveDefs.fields());
 
-        locatorProvider.init(getDefs("locatorGroups", defsMap));
-        dataDefProvider.init(getDefs("dataDefs", defsMap));
-        taskProvider.init(getDefs("taskGroups", defsMap));
+        locatorDefs.init(getDefs("locatorGroups", defsMap));
+        dataDefDefs.init(getDefs("dataDefs", defsMap));
+        taskDefs.init(getDefs("taskGroups", defsMap));
     }
 
     @Override
@@ -91,9 +90,8 @@ public class DefsProvider implements IDefsProvider {
         if (entry.isPresent()) {
             return entry.get().getValue();
         } else {
-            throw new CriticalException(
-                    Util.join("unable to initialize def providers, ", key,
-                            " is not defined"));
+            throw new CriticalException(Util.join("unable to initialize defs, ",
+                    key, " is not defined"));
         }
     }
 }

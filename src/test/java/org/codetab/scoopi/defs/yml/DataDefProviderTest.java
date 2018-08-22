@@ -45,7 +45,7 @@ public class DataDefProviderTest {
     private DataDefPersistence dataDefPersistence;
 
     @InjectMocks
-    private DataDefProvider dataDefProvider;
+    private DataDefDefs dataDefDefs;
 
     private static ObjectFactory factory;
     private static ObjectMapper mapper;
@@ -90,11 +90,11 @@ public class DataDefProviderTest {
         given(dataDefHelper.getData(dataDefA, axisSetsA)).willReturn(dataA);
         given(dataDefHelper.getData(dataDefB, axisSetsB)).willReturn(dataB);
 
-        dataDefProvider.init(defs);
+        dataDefDefs.init(defs);
 
         @SuppressWarnings("unchecked")
         Map<String, Data> map = (Map<String, Data>) FieldUtils
-                .readField(dataDefProvider, "dataTemplateMap", true);
+                .readField(dataDefDefs, "dataTemplateMap", true);
 
         assertThat(map.size()).isEqualTo(2);
         assertThat(map.get(dataDefA.getName())).isEqualTo(dataA);
@@ -135,11 +135,11 @@ public class DataDefProviderTest {
         given(dataDefHelper.getData(dataDefA, axisSetsA)).willReturn(dataA);
         given(dataDefHelper.getData(dataDefB, axisSetsB)).willReturn(dataB);
 
-        dataDefProvider.init(defs);
+        dataDefDefs.init(defs);
 
         @SuppressWarnings("unchecked")
         Map<String, Data> map = (Map<String, Data>) FieldUtils
-                .readField(dataDefProvider, "dataTemplateMap", true);
+                .readField(dataDefDefs, "dataTemplateMap", true);
 
         assertThat(map.size()).isEqualTo(2);
         assertThat(map.get(dataDefA.getName())).isEqualTo(dataA);
@@ -186,13 +186,13 @@ public class DataDefProviderTest {
         given(dataDefHelper.getData(dataDefA, axisSetsA)).willReturn(dataA);
         given(dataDefHelper.getData(dataDefB, axisSetsB)).willReturn(dataB);
 
-        dataDefProvider.init(defs);
+        dataDefDefs.init(defs);
 
         verify(dataDefPersistence).storeDataDefs(loadedDataDefs);
 
         @SuppressWarnings("unchecked")
         Map<String, Data> map = (Map<String, Data>) FieldUtils
-                .readField(dataDefProvider, "dataTemplateMap", true);
+                .readField(dataDefDefs, "dataTemplateMap", true);
 
         assertThat(map.size()).isEqualTo(2);
         assertThat(map.get(dataDefA.getName())).isEqualTo(dataA);
@@ -201,10 +201,10 @@ public class DataDefProviderTest {
 
     @Test
     public void testInitAlreadyInitialized() throws IllegalAccessException {
-        FieldUtils.writeField(dataDefProvider, "consistent", true, true);
+        FieldUtils.writeField(dataDefDefs, "consistent", true, true);
 
         JsonNode defs = mapper.createObjectNode();
-        dataDefProvider.init(defs);
+        dataDefDefs.init(defs);
 
         verifyZeroInteractions(dataDefPersistence, dataDefHelper);
     }
@@ -217,13 +217,13 @@ public class DataDefProviderTest {
                 .willThrow(JsonProcessingException.class);
 
         testRule.expect(CriticalException.class);
-        dataDefProvider.init(defs);
+        dataDefDefs.init(defs);
     }
 
     @Test
     public void testInitNullParams() {
         try {
-            dataDefProvider.init(null);
+            dataDefDefs.init(null);
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
             assertThat(e.getMessage())
@@ -238,13 +238,13 @@ public class DataDefProviderTest {
         DataDef dataDefA = dataDefMap.get("defA");
         DataDef dataDefB = dataDefMap.get("defB");
 
-        FieldUtils.writeField(dataDefProvider, "dataDefMap", dataDefMap, true);
+        FieldUtils.writeField(dataDefDefs, "dataDefMap", dataDefMap, true);
 
-        assertThat(dataDefProvider.getDataDef("defA")).isEqualTo(dataDefA);
-        assertThat(dataDefProvider.getDataDef("defB")).isEqualTo(dataDefB);
+        assertThat(dataDefDefs.getDataDef("defA")).isEqualTo(dataDefA);
+        assertThat(dataDefDefs.getDataDef("defB")).isEqualTo(dataDefB);
 
         testRule.expect(DataDefNotFoundException.class);
-        dataDefProvider.getDataDef("defC");
+        dataDefDefs.getDataDef("defC");
     }
 
     @Test
@@ -254,15 +254,15 @@ public class DataDefProviderTest {
         Map<String, Data> dataTemplateMap = new HashMap<>();
         dataTemplateMap.put("def1", dataA);
 
-        FieldUtils.writeField(dataDefProvider, "dataTemplateMap",
-                dataTemplateMap, true);
+        FieldUtils.writeField(dataDefDefs, "dataTemplateMap", dataTemplateMap,
+                true);
 
-        Data actual = dataDefProvider.getDataTemplate("def1");
+        Data actual = dataDefDefs.getDataTemplate("def1");
 
         assertThat(actual).isEqualTo(dataA);
 
         testRule.expect(NoSuchElementException.class);
-        dataDefProvider.getDataTemplate("def2");
+        dataDefDefs.getDataTemplate("def2");
     }
 
     public Map<String, DataDef> getTestDataDefMap() {

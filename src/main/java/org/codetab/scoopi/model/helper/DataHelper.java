@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import org.codetab.scoopi.defs.yml.DataDefProvider;
+import org.codetab.scoopi.defs.yml.DataDefDefs;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.Data;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public class DataHelper {
     static final Logger LOGGER = LoggerFactory.getLogger(Data.class);
 
     @Inject
-    private DataDefProvider dataDefProvider;
+    private DataDefDefs dataDefDefs;
 
     @Inject
     private DataHelper() {
@@ -31,9 +31,9 @@ public class DataHelper {
     public Data getDataTemplate(final String dataDefName, final Long documentId,
             final String label) throws DataDefNotFoundException,
             ClassNotFoundException, IOException {
-        Data data = dataDefProvider.getDataTemplate(dataDefName);
+        Data data = dataDefDefs.getDataTemplate(dataDefName);
         data.setName(label);
-        data.setDataDefId(dataDefProvider.getDataDefId(dataDefName));
+        data.setDataDefId(dataDefDefs.getDataDefId(dataDefName));
         data.setDocumentId(documentId);
         return data;
     }

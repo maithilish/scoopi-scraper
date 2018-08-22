@@ -1,5 +1,5 @@
 package org.codetab.scoopi.defs;
 
-public interface IStepProvider {
+public interface IStepDefs {
 
 }

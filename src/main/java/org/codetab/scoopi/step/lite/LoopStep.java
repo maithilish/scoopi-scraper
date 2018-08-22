@@ -61,7 +61,7 @@ public class LoopStep extends Step {
             if (!getPayload().getStepInfo().getNextStepName()
                     .equalsIgnoreCase("end")) {
                 StepInfo nextStep =
-                        taskProvider.getNextStep(group, taskName, stepName);
+                        taskDefs.getNextStep(group, taskName, stepName);
                 JobInfo jobInfo = factory.createJobInfo(0, "acme", group,
                         taskName, getJobInfo().getDataDef());
                 Payload nextStepPayload =

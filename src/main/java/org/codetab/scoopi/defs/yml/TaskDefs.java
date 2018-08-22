@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.defs.ITaskProvider;
+import org.codetab.scoopi.defs.ITaskDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.StepInfo;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 
 @Singleton
-public class TaskProvider implements ITaskProvider {
+public class TaskDefs implements ITaskDefs {
 
     @Inject
     private ObjectFactory factory;

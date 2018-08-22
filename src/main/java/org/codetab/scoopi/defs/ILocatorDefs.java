@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.codetab.scoopi.model.LocatorGroup;
 
-public interface ILocatorProvider {
+public interface ILocatorDefs {
 
     List<String> getGroups();
 

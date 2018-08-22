@@ -124,7 +124,7 @@ public final class LocatorSeeder extends BaseSeeder {
     private List<Payload> getPayloads(final String taskGroup,
             final Locator locator) {
         List<Payload> payloads = new ArrayList<>();
-        for (String taskName : taskProvider.getTaskNames(taskGroup)) {
+        for (String taskName : taskDefs.getTaskNames(taskGroup)) {
             try {
                 StepInfo thisStep = getStepInfo();
                 /*
@@ -132,13 +132,13 @@ public final class LocatorSeeder extends BaseSeeder {
                  * constructed and get proper stepInfo where previous=start
                  */
                 if (getStepInfo().getStepName().equalsIgnoreCase("start")) {
-                    thisStep = taskProvider.getNextStep(taskGroup, taskName,
+                    thisStep = taskDefs.getNextStep(taskGroup, taskName,
                             getStepName());
                 }
                 if (!thisStep.getNextStepName().equalsIgnoreCase("end")) {
-                    String dataDefName = taskProvider.getFieldValue(taskGroup,
+                    String dataDefName = taskDefs.getFieldValue(taskGroup,
                             taskName, "dataDef");
-                    StepInfo nextStep = taskProvider.getNextStep(taskGroup,
+                    StepInfo nextStep = taskDefs.getNextStep(taskGroup,
                             taskName, thisStep.getStepName());
                     JobInfo jobInfo = factory.createJobInfo(
                             taskMediator.getJobId(), locator.getName(),

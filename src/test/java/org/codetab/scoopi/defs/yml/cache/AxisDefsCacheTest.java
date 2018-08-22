@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Date;
 
-import org.codetab.scoopi.defs.yml.DataDefProvider;
-import org.codetab.scoopi.defs.yml.helper.QueryHelper;
+import org.codetab.scoopi.defs.yml.DataDefDefs;
+import org.codetab.scoopi.defs.yml.helper.AxisDefsHelper;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
@@ -22,15 +22,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class QueryCacheTest {
+public class AxisDefsCacheTest {
 
     @Mock
-    private QueryHelper queryHelper;
+    private AxisDefsHelper axisDefsHelper;
     @Mock
-    private DataDefProvider dataDefProvider;
+    private DataDefDefs dataDefDefs;
 
     @InjectMocks
-    private QueryCache queryCache;
+    private AxisDefsCache axisDefsCache;
 
     private static ObjectFactory factory;
 
@@ -54,12 +54,12 @@ public class QueryCacheTest {
 
         DataDef dataDefA = factory.createDataDef("defA", new Date(), new Date(),
                 "defJsonA");
-        given(dataDefProvider.getDataDef("defA")).willReturn(dataDefA);
-        given(queryHelper.getQuery(dataDefA, AxisName.COL, "region"))
+        given(dataDefDefs.getDataDef("defA")).willReturn(dataDefA);
+        given(axisDefsHelper.getQuery(dataDefA, AxisName.COL, "region"))
                 .willReturn(query);
 
         // from def
-        String actual = queryCache.getQuery("defA", AxisName.COL, "region");
+        String actual = axisDefsCache.getQuery("defA", AxisName.COL, "region");
         assertThat(actual).isEqualTo(query);
     }
 
@@ -70,19 +70,19 @@ public class QueryCacheTest {
 
         DataDef dataDefA = factory.createDataDef("defA", new Date(), new Date(),
                 "defJsonA");
-        given(dataDefProvider.getDataDef("defA")).willReturn(dataDefA);
-        given(queryHelper.getQuery(dataDefA, AxisName.COL, "region"))
+        given(dataDefDefs.getDataDef("defA")).willReturn(dataDefA);
+        given(axisDefsHelper.getQuery(dataDefA, AxisName.COL, "region"))
                 .willReturn(query);
 
         // from def
-        String actual = queryCache.getQuery("defA", AxisName.COL, "region");
+        String actual = axisDefsCache.getQuery("defA", AxisName.COL, "region");
         assertThat(actual).isEqualTo(query);
 
         // from cache
-        actual = queryCache.getQuery("defA", AxisName.COL, "region");
+        actual = axisDefsCache.getQuery("defA", AxisName.COL, "region");
         assertThat(actual).isEqualTo(query);
 
-        verify(queryHelper, times(1)).getQuery(dataDefA, AxisName.COL,
+        verify(axisDefsHelper, times(1)).getQuery(dataDefA, AxisName.COL,
                 "region");
     }
 }

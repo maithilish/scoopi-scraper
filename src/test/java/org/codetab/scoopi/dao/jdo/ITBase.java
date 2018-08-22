@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 
 import org.codetab.scoopi.dao.IDaoUtil;
-import org.codetab.scoopi.defs.yml.DefsProvider;
+import org.codetab.scoopi.defs.yml.Defs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.shared.ConfigService;
@@ -16,7 +16,7 @@ public abstract class ITBase {
     protected static DInjector di;
     protected static IDaoUtil daoUtil;
     protected static HashSet<String> schemaClasses;
-    protected static DefsProvider defsProvider;
+    protected static Defs defs;
     protected static ObjectFactory objectFactory;
     protected static ConfigService configService;
 
@@ -35,9 +35,9 @@ public abstract class ITBase {
 
         daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
 
-        defsProvider = di.instance(DefsProvider.class);
-        defsProvider.init();
-        defsProvider.initProviders();
+        defs = di.instance(Defs.class);
+        defs.init();
+        defs.initDefProviders();
 
         objectFactory = di.instance(ObjectFactory.class);
     }

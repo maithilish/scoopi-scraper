@@ -2,7 +2,7 @@ package org.codetab.scoopi.defs.yml;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.defs.ILocatorProvider;
+import org.codetab.scoopi.defs.ILocatorDefs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.shared.ConfigService;
 
@@ -19,14 +19,14 @@ public class DefsApp {
 
     public void start(final DInjector di) {
 
-        DefsProvider defsProvider = di.instance(DefsProvider.class);
+        Defs defs = di.instance(Defs.class);
 
         configService.init("scoopi-dev.properties", "scoopi-default.xml");
 
-        defsProvider.init();
-        defsProvider.initProviders();
+        defs.init();
+        defs.initDefProviders();
 
-        ILocatorProvider lp = di.instance(ILocatorProvider.class);
+        ILocatorDefs lp = di.instance(ILocatorDefs.class);
         System.out.println(lp.getGroups());
         System.out.println(lp.getLocatorGroup("snapshot"));
     }

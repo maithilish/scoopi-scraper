@@ -13,7 +13,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.defs.IDataDefProvider;
+import org.codetab.scoopi.defs.IDataDefDefs;
 import org.codetab.scoopi.defs.yml.helper.DataDefHelper;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
@@ -26,7 +26,7 @@ import org.codetab.scoopi.util.Util;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Singleton
-public class DataDefProvider implements IDataDefProvider {
+public class DataDefDefs implements IDataDefDefs {
 
     @Inject
     private DataDefHelper dataDefHelper;

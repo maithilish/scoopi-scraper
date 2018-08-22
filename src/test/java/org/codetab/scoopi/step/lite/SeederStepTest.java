@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import java.util.Arrays;
 import java.util.List;
 
-import org.codetab.scoopi.defs.yml.TaskProvider;
+import org.codetab.scoopi.defs.yml.TaskDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -28,7 +28,7 @@ public class SeederStepTest {
     @Mock
     private TaskMediator taskMediator;
     @Mock
-    private TaskProvider taskProvider;
+    private TaskDefs taskDefs;
     @Mock
     private ObjectFactory factory;
 
@@ -93,15 +93,15 @@ public class SeederStepTest {
                 objectFactory.createPayload(jobInfo, nextStep, "data");
 
         List<String> taskNames = Arrays.asList("task1", "task2");
-        given(taskProvider.getTaskNames(taskGroup)).willReturn(taskNames);
+        given(taskDefs.getTaskNames(taskGroup)).willReturn(taskNames);
 
-        given(taskProvider.getFieldValue(taskGroup, "task1", "dataDef"))
+        given(taskDefs.getFieldValue(taskGroup, "task1", "dataDef"))
                 .willReturn("dataDef1");
-        given(taskProvider.getFieldValue(taskGroup, "task2", "dataDef"))
+        given(taskDefs.getFieldValue(taskGroup, "task2", "dataDef"))
                 .willReturn("dataDef2");
-        given(taskProvider.getNextStep(taskGroup, "task1", stepName))
+        given(taskDefs.getNextStep(taskGroup, "task1", stepName))
                 .willReturn(nextStep);
-        given(taskProvider.getNextStep(taskGroup, "task2", stepName))
+        given(taskDefs.getNextStep(taskGroup, "task2", stepName))
                 .willReturn(nextStep);
         given(factory.createJobInfo(taskMediator.getJobId(), "locator",
                 taskGroup, "task1", "dataDef1")).willReturn(jobInfo);
@@ -134,15 +134,15 @@ public class SeederStepTest {
                 objectFactory.createPayload(jobInfo, nextStep, "data");
 
         List<String> taskNames = Arrays.asList("task1", "task2");
-        given(taskProvider.getTaskNames(taskGroup)).willReturn(taskNames);
+        given(taskDefs.getTaskNames(taskGroup)).willReturn(taskNames);
 
-        given(taskProvider.getFieldValue(taskGroup, "task1", "dataDef"))
+        given(taskDefs.getFieldValue(taskGroup, "task1", "dataDef"))
                 .willReturn("dataDef1");
-        given(taskProvider.getFieldValue(taskGroup, "task2", "dataDef"))
+        given(taskDefs.getFieldValue(taskGroup, "task2", "dataDef"))
                 .willReturn("dataDef2");
-        given(taskProvider.getNextStep(taskGroup, "task1", stepName))
+        given(taskDefs.getNextStep(taskGroup, "task1", stepName))
                 .willThrow(DefNotFoundException.class);
-        given(taskProvider.getNextStep(taskGroup, "task2", stepName))
+        given(taskDefs.getNextStep(taskGroup, "task2", stepName))
                 .willReturn(nextStep);
         given(factory.createJobInfo(taskMediator.getJobId(), "locator",
                 taskGroup, "task1", "dataDef1")).willReturn(jobInfo);
