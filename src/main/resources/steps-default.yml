@@ -3,4 +3,12 @@ steps:
     seeder:
       class: "org.codetab.scoopi.step.extract.LocatorSeeder"
       previous: start
+      next: loader
+    loader:
+      class: "org.codetab.scoopi.step.extract.URLLoader"
+      previous: seeder
+      next: parser
+    parser:
+      class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
+      previous: loader
       next: end

@@ -13,15 +13,23 @@ import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
+import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.helper.MemberHelper;
+import org.codetab.scoopi.shared.StatService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MemberStack {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(MemberStack.class);
 
     @Inject
     private MemberHelper memberHelper;
     @Inject
     private IAxisDefs axisDefs;
+    @Inject
+    private StatService statService;
 
     private Deque<Member> mStack = new ArrayDeque<>();
     private Set<Integer[]> memberIndexSet = new HashSet<>();
@@ -60,23 +68,31 @@ public class MemberStack {
                 endIndex = -1;
             }
 
-            if (!memberHelper.hasFinished(dataDef, axis, endIndex)) {
-                Integer[] nextMemberIndexes =
-                        memberHelper.nextMemberIndexes(member, axisName);
-                if (!memberHelper.alreadyProcessed(memberIndexSet,
-                        nextMemberIndexes)) {
-                    // Member newMember = Util.deepClone(Member.class, member);
-                    Member newMember = memberHelper.createMember(member);
-                    Axis newAxis = newMember.getAxis(axisName);
-                    newAxis.setIndex(newAxis.getIndex() + 1);
-                    newAxis.setOrder(newAxis.getOrder() + 1);
-                    // nullify all axis value
-                    for (Axis na : newMember.getAxes()) {
-                        na.setValue(null);
+            try {
+                if (!memberHelper.hasFinished(dataDef, axis, endIndex)) {
+                    Integer[] nextMemberIndexes =
+                            memberHelper.nextMemberIndexes(member, axisName);
+                    if (!memberHelper.alreadyProcessed(memberIndexSet,
+                            nextMemberIndexes)) {
+                        // Member newMember = Util.deepClone(Member.class,
+                        // member);
+                        Member newMember = memberHelper.createMember(member);
+                        Axis newAxis = newMember.getAxis(axisName);
+                        newAxis.setIndex(newAxis.getIndex() + 1);
+                        newAxis.setOrder(newAxis.getOrder() + 1);
+                        // nullify all axis value
+                        for (Axis na : newMember.getAxes()) {
+                            na.setValue(null);
+                        }
+                        mStack.addFirst(newMember); // push
+                        memberIndexSet.add(nextMemberIndexes);
                     }
-                    mStack.addFirst(newMember); // push
-                    memberIndexSet.add(nextMemberIndexes);
                 }
+            } catch (DataDefNotFoundException e) {
+                String message = String.join(" ", "unable to get breakAfter");
+                LOGGER.error("{} {}", message, e.getMessage());
+                LOGGER.debug("{} {}", message, e);
+                statService.log(CAT.INTERNAL, message, e);
             }
         }
     }

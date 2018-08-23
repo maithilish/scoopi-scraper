@@ -101,7 +101,8 @@ public class DefsNormalizer {
                 JsonNode axis = axes.at(path);
                 JsonNode query = axis.at("/query");
                 if (query.isMissingNode()) {
-                    String queryYml = "{ \"noQuery\": \"noQuery\"}";
+                    String queryYml =
+                            "{ \"region\": \"undefined\", \"field\": \"undefined\" }";
                     query = mapper.readTree(queryYml);
                     ((ObjectNode) axis).replace("query", query);
                 }

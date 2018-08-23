@@ -1,0 +1,49 @@
+locatorGroups:
+  quote:   
+    locators: [
+       { name: acme, url: "/defs/examples/page/acme-quote.html" }  
+    ]
+
+dataDefs:
+
+  price:
+    axis:
+      fact:
+        query:
+          region: "div#price_tick"  
+          field: "*"
+      col:
+        query:
+          script: configs.getRunDateTime()        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        members: [ 
+          member: {name: Price, value: Price},
+        ]
+
+taskGroups:
+
+  quote:
+    price:
+      dataDef: price
+      steps: dev
+         
+steps: 
+  dev:
+    seeder:
+      class: "org.codetab.scoopi.step.extract.LocatorSeeder"
+      previous: start
+      next: loader
+    loader:
+      class: "org.codetab.scoopi.step.extract.URLLoader"
+      previous: seeder
+      next: parser
+    parser:
+      class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
+      previous: loader
+      next: end
+      
+      
+        

@@ -16,6 +16,10 @@ public interface IAxisDefs {
 
     int getEndIndex(String dataDef, Axis axis) throws DataDefNotFoundException;
 
+    boolean isRangeAxis(String dataDef, Axis axis)
+            throws DataDefNotFoundException;
+
     String getQuery(String dataDef, AxisName axisName, String queryType)
             throws DataDefNotFoundException;
+
 }

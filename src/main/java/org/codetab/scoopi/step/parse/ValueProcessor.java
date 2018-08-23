@@ -57,15 +57,17 @@ public class ValueProcessor {
                 }
 
                 if (isNull(value)) {
-                    Map<String, String> queries =
-                            queryProcessor.getQueries(dataDef, axisName);
-                    varSubstitutor.replaceVariables(queries,
-                            member.getAxisMap());
-                    value = queryProcessor.query(queries, valueParser);
+                    try {
+                        Map<String, String> queries =
+                                queryProcessor.getQueries(dataDef, axisName);
+                        varSubstitutor.replaceVariables(queries,
+                                member.getAxisMap());
+                        value = queryProcessor.query(queries, valueParser);
+                    } catch (NoSuchElementException e) {
+                    }
                 }
 
                 // prefixProcessor
-
                 axis.setValue(value);
             }
         }

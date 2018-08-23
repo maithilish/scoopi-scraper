@@ -181,9 +181,6 @@
 						},
 						{
 							"$ref": "#/definitions/queryQueryNode"
-						},
-						{
-							"$ref": "#/definitions/queryNoQueryNode"
 						}
 					]
 				}
@@ -225,18 +222,6 @@
 				"field"
 			]
 		},
-		"queryNoQueryNode": {
-			"type": "object",
-			"properties": {
-				"noQuery": {
-					"type": "string",
-					"minLength": 1
-				}
-			},
-			"required": [
-				"noQuery"
-			]
-		},
 		"membersNode": {
 			"type": "object",
 			"properties": {
@@ -267,17 +252,26 @@
 							"type": "string",
 							"minLength": 1
 						},
-						"index": {
-							"type": "number",
+						"value": {
+							"type": "string",
 							"minLength": 1
+						},
+						"index": {
+							"type": "number"
 						},
 						"indexRange": {
 							"type": "string",
 							"minLength": 1
 						},
 						"breakAfter": {
-							"type": "string",
-							"minLength": 1
+							"type": "array",
+							"minItems": 1,
+							"uniqueItems": true,
+							"items": [
+								{
+									"type": "string"
+								}
+							]
 						},
 						"group": {
 							"type": "string",

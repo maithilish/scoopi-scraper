@@ -25,12 +25,12 @@ public class AxisDefsCache {
     private Map<String, List<String>> breakAfterCache = new HashMap<>();
     private Map<String, Range<Integer>> indexRangeCache = new HashMap<>();
     private Map<String, String> queryCache = new HashMap<>();
+    private Map<String, Boolean> rangeAxisCache = new HashMap<>();
 
     public List<String> getBreakAfters(final String dataDef, final Axis axis)
             throws DataDefNotFoundException {
-        String memberName = axis.getMemberName();
         String key = String.join("-", dataDef, axis.getName().toString(),
-                memberName);
+                axis.getMemberName());
         if (!breakAfterCache.containsKey(key)) {
             DataDef dDef = dataDefDefs.getDataDef(dataDef);
             List<String> breakAfters =
@@ -42,9 +42,8 @@ public class AxisDefsCache {
 
     public Range<Integer> getIndexRange(final String dataDef, final Axis axis)
             throws DataDefNotFoundException {
-        String memberName = axis.getMemberName();
         String key = String.join("-", dataDef, axis.getName().toString(),
-                memberName);
+                axis.getMemberName());
         if (!indexRangeCache.containsKey(key)) {
             DataDef dDef = dataDefDefs.getDataDef(dataDef);
             Range<Integer> indexRange =
@@ -52,6 +51,18 @@ public class AxisDefsCache {
             indexRangeCache.put(key, indexRange);
         }
         return indexRangeCache.get(key);
+    }
+
+    public boolean isRangeAxis(final String dataDef, final Axis axis)
+            throws DataDefNotFoundException {
+        String key = String.join("-", dataDef, axis.getName().toString(),
+                axis.getMemberName());
+        if (!rangeAxisCache.containsKey(key)) {
+            DataDef dDef = dataDefDefs.getDataDef(dataDef);
+            boolean rangeAxis = axisDefsHelper.isRangeAxis(dDef, axis);
+            rangeAxisCache.put(key, rangeAxis);
+        }
+        return rangeAxisCache.get(key);
     }
 
     public String getQuery(final String dataDef, final AxisName axisName,

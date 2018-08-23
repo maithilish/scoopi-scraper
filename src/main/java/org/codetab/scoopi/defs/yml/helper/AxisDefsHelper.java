@@ -30,7 +30,7 @@ public class AxisDefsHelper {
         validState(dataDef.getDef() instanceof JsonNode, "def is not JsonNode");
 
         JsonNode def = (JsonNode) dataDef.getDef();
-        String path = String.join("/", "", dataDef.getName(), "axis",
+        String path = String.join("/", "", "axis",
                 axisName.toString().toLowerCase(), "query", queryType);
         JsonNode query = def.at(path);
         if (query.isMissingNode()) {
@@ -46,8 +46,8 @@ public class AxisDefsHelper {
     public List<String> getBreakAfters(final DataDef dataDef, final Axis axis) {
         validState(dataDef.getDef() instanceof JsonNode, "def is not JsonNode");
 
-        String path = String.join("/", "", dataDef.getName(), "axis",
-                axis.getNameString(), "members");
+        String path =
+                String.join("/", "", "axis", axis.getNameString(), "members");
 
         JsonNode def = (JsonNode) dataDef.getDef();
         List<JsonNode> jMemberList =
@@ -69,8 +69,8 @@ public class AxisDefsHelper {
             final Axis axis) {
         validState(dataDef.getDef() instanceof JsonNode, "def is not JsonNode");
 
-        String path = String.join("/", "", dataDef.getName(), "axis",
-                axis.getNameString(), "members");
+        String path =
+                String.join("/", "", "axis", axis.getNameString(), "members");
 
         JsonNode def = (JsonNode) dataDef.getDef();
         List<JsonNode> jMemberList =
@@ -91,4 +91,28 @@ public class AxisDefsHelper {
         return indexRange;
     }
 
+    public boolean isRangeAxis(final DataDef dataDef, final Axis axis) {
+        validState(dataDef.getDef() instanceof JsonNode, "def is not JsonNode");
+
+        String path =
+                String.join("/", "", "axis", axis.getNameString(), "members");
+
+        JsonNode def = (JsonNode) dataDef.getDef();
+        List<JsonNode> jMemberList =
+                jsonNodeHelper.findValues(def, path, "member");
+        Optional<JsonNode> jMember = jsonNodeHelper.findByField(jMemberList,
+                "name", axis.getMemberName());
+
+        boolean indexRangeDefined = true;
+        boolean breakAfterDefined = true;
+        if (jMember.isPresent()) {
+            if (jMember.get().path("indexRange").isMissingNode()) {
+                indexRangeDefined = false;
+            }
+            if (jMember.get().path("breakAfter").isMissingNode()) {
+                breakAfterDefined = false;
+            }
+        }
+        return (indexRangeDefined || breakAfterDefined);
+    }
 }

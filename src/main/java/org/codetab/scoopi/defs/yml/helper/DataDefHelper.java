@@ -174,7 +174,7 @@ public class DataDefHelper {
                 "def is not JsonNode");
 
         JsonNode def = (JsonNode) dataDef.getDef();
-        String path = String.join("/", "", dataDef.getName(), "axis");
+        String path = String.join("/", "", "axis");
         JsonNode jAxes = def.at(path);
         List<Set<Axis>> axisSets = new ArrayList<>();
         for (String jAxisName : Lists.newArrayList(jAxes.fieldNames())) {

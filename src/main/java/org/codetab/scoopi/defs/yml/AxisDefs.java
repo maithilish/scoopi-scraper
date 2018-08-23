@@ -20,7 +20,13 @@ public class AxisDefs implements IAxisDefs {
     @Override
     public List<String> getBreakAfters(final String dataDef, final Axis axis)
             throws DataDefNotFoundException {
-        return cache.getBreakAfters(dataDef, axis);
+        List<String> breakAfters = cache.getBreakAfters(dataDef, axis);
+        if (breakAfters.isEmpty()) {
+            throw new NoSuchElementException(
+                    "breakAfter undefined or is empty");
+        } else {
+            return breakAfters;
+        }
     }
 
     @Override
@@ -43,6 +49,12 @@ public class AxisDefs implements IAxisDefs {
         } catch (NoSuchElementException e) {
             return -1;
         }
+    }
+
+    @Override
+    public boolean isRangeAxis(final String dataDef, final Axis axis)
+            throws DataDefNotFoundException {
+        return cache.isRangeAxis(dataDef, axis);
     }
 
     @Override

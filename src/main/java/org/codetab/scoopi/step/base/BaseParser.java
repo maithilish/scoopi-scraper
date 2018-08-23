@@ -114,6 +114,8 @@ public abstract class BaseParser extends Step {
             dataReuseCounter.inc();
             LOGGER.info("{}", getLabeled("data exists, reuse"));
         }
+        System.out.println(data.getMembers());
+        super.setData(data);
         return true;
     }
 
@@ -123,7 +125,7 @@ public abstract class BaseParser extends Step {
             NoSuchMethodException {
 
         valueProcessor.addScriptObject("document", document);
-        valueProcessor.addScriptObject("configService", configService);
+        valueProcessor.addScriptObject("configs", configService);
 
         memberStack.pushMembers(data.getMembers());
 

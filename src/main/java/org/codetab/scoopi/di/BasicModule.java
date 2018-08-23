@@ -6,9 +6,11 @@ import java.lang.management.RuntimeMXBean;
 
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.defs.IDataDefDefs;
 import org.codetab.scoopi.defs.ILocatorDefs;
 import org.codetab.scoopi.defs.ITaskDefs;
+import org.codetab.scoopi.defs.yml.AxisDefs;
 import org.codetab.scoopi.defs.yml.DataDefDefs;
 import org.codetab.scoopi.defs.yml.LocatorDefs;
 import org.codetab.scoopi.defs.yml.TaskDefs;
@@ -33,6 +35,7 @@ public class BasicModule extends AbstractModule {
         bind(ILocatorDefs.class).to(LocatorDefs.class).in(Singleton.class);
         bind(ITaskDefs.class).to(TaskDefs.class).in(Singleton.class);
         bind(IDataDefDefs.class).to(DataDefDefs.class).in(Singleton.class);
+        bind(IAxisDefs.class).to(AxisDefs.class).in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));

@@ -13,9 +13,7 @@ import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
-import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Member;
-import org.codetab.scoopi.shared.StatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +27,7 @@ public class MemberHelper {
     static final Logger LOGGER = LoggerFactory.getLogger(MemberHelper.class);
 
     @Inject
-    private IAxisDefs axiDefs;
-    @Inject
-    private StatService statService;
+    private IAxisDefs axisDefs;
 
     @Inject
     private MemberHelper() {
@@ -72,11 +68,15 @@ public class MemberHelper {
     }
 
     public boolean hasFinished(final String dataDef, final Axis axis,
-            final int endIndex) throws NumberFormatException {
-        boolean noField = true;
+            final int endIndex)
+            throws NumberFormatException, DataDefNotFoundException {
+
+        if (!axisDefs.isRangeAxis(dataDef, axis)) {
+            return true;
+        }
+
         try {
-            List<String> breakAfters = axiDefs.getBreakAfters(dataDef, axis);
-            noField = false;
+            List<String> breakAfters = axisDefs.getBreakAfters(dataDef, axis);
             String value = axis.getValue();
             if (isNull(value)) {
                 String message =
@@ -90,24 +90,14 @@ public class MemberHelper {
                 }
             }
         } catch (NoSuchElementException e) {
-        } catch (DataDefNotFoundException e) {
-            String message = String.join(" ", "unable to get breakAfter");
-            LOGGER.error("{} {}", message, e.getMessage());
-            LOGGER.debug("{} {}", message, e);
-            statService.log(CAT.INTERNAL, message, e);
         }
 
         if (endIndex >= 0) {
-            noField = false;
             if (axis.getIndex() + 1 > endIndex) {
                 return true;
             }
         }
 
-        if (noField) {
-            String message = "breakAfter or indexRange undefined";
-            throw new NoSuchElementException(message);
-        }
         return false;
     }
 
