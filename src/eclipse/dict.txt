@@ -114,3 +114,6 @@ ext
 itest
 def
 json
+bs
+perf
+cli

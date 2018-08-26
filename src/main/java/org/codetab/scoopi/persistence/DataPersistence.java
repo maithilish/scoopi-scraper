@@ -55,9 +55,8 @@ public class DataPersistence {
             Data data = dao.getData(documentId, dataDefId);
             return data;
         } catch (RuntimeException e) {
-            String message = Util.join(Messages.getString("DataPersistence.1"), //$NON-NLS-1$
-                    "dataDefId=", //$NON-NLS-1$
-                    String.valueOf(dataDefId), ",documentId=", //$NON-NLS-1$
+            String message = String.join(" ", "unable to load data for",
+                    "dataDefId:", String.valueOf(dataDefId), ",documentId:",
                     String.valueOf(documentId));
             throw new StepPersistenceException(message, e);
         }

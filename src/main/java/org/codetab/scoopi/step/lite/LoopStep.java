@@ -43,7 +43,7 @@ public class LoopStep extends Step {
 
     @Override
     public boolean process() {
-        setData(getPayload().getData());
+        setOutput(getPayload().getData());
         setConsistent(true);
         return true;
     }
@@ -51,7 +51,7 @@ public class LoopStep extends Step {
     @Override
     public boolean handover() {
         try {
-            Validate.validState(nonNull(getData()), "data is null");
+            Validate.validState(nonNull(getOutput()), "data is null");
             Validate.validState(isConsistent(), "step inconsistent");
 
             String group = "lite1";
@@ -65,7 +65,7 @@ public class LoopStep extends Step {
                 JobInfo jobInfo = factory.createJobInfo(0, "acme", group,
                         taskName, getJobInfo().getDataDef());
                 Payload nextStepPayload =
-                        factory.createPayload(jobInfo, nextStep, getData());
+                        factory.createPayload(jobInfo, nextStep, getOutput());
                 taskMediator.pushPayload(nextStepPayload);
                 LOGGER.info("handover to step: " + nextStep.getStepName());
             }

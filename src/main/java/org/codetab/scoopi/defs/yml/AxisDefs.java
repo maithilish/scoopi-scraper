@@ -1,16 +1,16 @@
 package org.codetab.scoopi.defs.yml;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.Range;
 import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.defs.yml.cache.AxisDefsCache;
-import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
+import org.codetab.scoopi.model.DataDef;
 
 public class AxisDefs implements IAxisDefs {
 
@@ -18,48 +18,27 @@ public class AxisDefs implements IAxisDefs {
     private AxisDefsCache cache;
 
     @Override
-    public List<String> getBreakAfters(final String dataDef, final Axis axis)
-            throws DataDefNotFoundException {
-        List<String> breakAfters = cache.getBreakAfters(dataDef, axis);
-        if (breakAfters.isEmpty()) {
-            throw new NoSuchElementException(
-                    "breakAfter undefined or is empty");
-        } else {
-            return breakAfters;
-        }
-    }
-
-    @Override
-    public int getStartIndex(final String dataDef, final Axis axis)
-            throws DataDefNotFoundException {
-        try {
-            Range<Integer> indexRange = cache.getIndexRange(dataDef, axis);
-            return indexRange.getMinimum();
-        } catch (NoSuchElementException e) {
-            return 1;
-        }
-    }
-
-    @Override
-    public int getEndIndex(final String dataDef, final Axis axis)
-            throws DataDefNotFoundException {
-        try {
-            Range<Integer> indexRange = cache.getIndexRange(dataDef, axis);
-            return indexRange.getMaximum();
-        } catch (NoSuchElementException e) {
-            return -1;
-        }
-    }
-
-    @Override
-    public boolean isRangeAxis(final String dataDef, final Axis axis)
-            throws DataDefNotFoundException {
-        return cache.isRangeAxis(dataDef, axis);
-    }
-
-    @Override
-    public String getQuery(final String dataDef, final AxisName axisName,
-            final String queryType) throws DataDefNotFoundException {
+    public String getQuery(final DataDef dataDef, final AxisName axisName,
+            final String queryType) {
         return cache.getQuery(dataDef, axisName, queryType);
     }
+
+    @Override
+    public Optional<List<String>> getBreakAfters(final DataDef dataDef,
+            final Axis axis) {
+        return cache.getBreakAfters(dataDef, axis);
+    }
+
+    @Override
+    public Optional<Range<Integer>> getIndexRange(final DataDef dataDef,
+            final Axis axis) {
+        return cache.getIndexRange(dataDef, axis);
+    }
+
+    @Override
+    public Optional<List<String>> getPrefixes(final DataDef dataDef,
+            final AxisName axisName) {
+        return cache.getPrefixes(dataDef, axisName);
+    }
+
 }

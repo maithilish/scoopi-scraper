@@ -1,0 +1,59 @@
+locatorGroups:
+  quote:   
+    locators: [
+       { name: acme, url: "/defs/examples/page/acme-quote.html" }  
+    ]
+
+dataDefs:
+
+  snapshot:
+    axis:
+      fact:
+        query:
+          region: "div#snapshot"  
+          field: "div:matchesOwn(^%{row.match}) + div"
+      col:
+        query:
+          script: "document.getFromDate()"        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          region: "div#snapshot"
+          field: "div:matchesOwn(^%{row.match})"      
+        members: [ 
+          member: { name: "MC", match: "MARKET CAP" },
+          member: { name: "EPS", match: "EPS \\(TTM\\)" },
+          member: { name: "PE", match: "P/E" },
+          member: { name: "PC", match: "P/C" },
+          member: { name: "BV", match: "BOOK VALUE" },
+          member: { name: "PB", match: "PRICE/BOOK" },
+          member: { name: "DIV", match: "DIV \\(%\\)" },
+          member: { name: "DY", match: "DIV YIELD" },
+          member: { name: "FV", match: "FACE VALUE" },
+          member: { name: "IND PE", match: "INDUSTRY P/E" },
+        ]
+        
+taskGroups:
+
+  quote:
+    snapshot:
+      dataDef: snapshot
+      steps: dev
+         
+steps: 
+  dev:
+    seeder:
+      class: "org.codetab.scoopi.step.extract.LocatorSeeder"
+      previous: start
+      next: loader
+    loader:
+      class: "org.codetab.scoopi.step.extract.URLLoader"
+      previous: seeder
+      next: parser
+    parser:
+      class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
+      previous: loader
+      next: end
+      

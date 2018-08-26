@@ -34,13 +34,10 @@ public class DocumentPersistenceTest {
 
     @Mock
     private ConfigService configService;
-
     @Mock
     private DaoFactoryProvider daoFactoryProvider;
-
     @Mock
     private JdoDaoFactory jdoDao;
-
     @Mock
     private IDocumentDao documentDao;
 

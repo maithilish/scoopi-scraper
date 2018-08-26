@@ -33,7 +33,7 @@ run tests and Integration tests
 
 skip tests and run integration tests (itests)
 
-   mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false
+    mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false
 
 generate coverage report
 

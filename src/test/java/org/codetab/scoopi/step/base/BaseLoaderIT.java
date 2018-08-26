@@ -37,61 +37,60 @@ import com.google.common.collect.Lists;
 
 public class BaseLoaderIT {
 
-    private static DInjector di;
-    private static IDaoUtil daoUtil;
-    private static HashSet<String> schemaClasses;
-    private static Defs defs;
-    private static String url;
-    private static ObjectFactory objectFactory;
-    private static ConfigService configService;
-    private static IStore store;
-    private static String clzName;
+    protected static DInjector di;
+    protected static IDaoUtil daoUtil;
+    protected static HashSet<String> schemaClasses;
+    protected static Defs defs;
+    protected static ObjectFactory factory;
+    protected static ConfigService configService;
 
     private BaseLoader loader;
     private Task task;
+    private IStore store;
+    private String pageUrl;
+    private String clzName;
 
     @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+    public ExpectedException testRule = ExpectedException.none();
 
+    // don't move this to base class, tests fail in cli
     @BeforeClass
     public static void setUpBeforeClass()
             throws IOException, IllegalAccessException, URISyntaxException {
-        schemaClasses = new HashSet<>();
-        schemaClasses.add("org.codetab.scoopi.model.Locator");
-        schemaClasses.add("org.codetab.scoopi.model.Document");
 
         di = new DInjector();
+
+        String defDir = "/testdefs/test-price";
 
         configService = di.instance(ConfigService.class);
         configService.init("scoopi.properties", "scoopi-default.xml");
         configService.getConfigs().setProperty("scoopi.useDatastore", "true");
-        configService.getConfigs().setProperty("scoopi.defs.dir",
-                "/testdefs/test-1");
-
-        daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
+        configService.getConfigs().setProperty("scoopi.defs.dir", defDir);
 
         defs = di.instance(Defs.class);
-        // IT tests against project artifact jar and fails if dir is specified
-        // hence set defs files instead of dir
-        // defs.setDefsFiles(getTestDefsFiles());
         defs.init();
         defs.initDefProviders();
 
-        store = di.instance(IStore.class);
+        schemaClasses = new HashSet<>();
 
-        objectFactory = di.instance(ObjectFactory.class);
-        url = "/testdefs/page/acme-quote.html";
-        clzName = "org.codetab.scoopi.step.lite.BlankStep";
+        daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
+
+        factory = di.instance(ObjectFactory.class);
     }
 
     @Before
     public void setUp() throws Exception {
+        store = di.instance(IStore.class);
         loader = di.instance(URLLoader.class);
         task = di.instance(Task.class);
         task.setStep(loader);
 
-        clearStore();
+        pageUrl = "/testdefs/page/acme-quote.html";
+        clzName = "org.codetab.scoopi.step.lite.BlankStep";
 
+        schemaClasses.add("org.codetab.scoopi.model.Locator");
+        schemaClasses.add("org.codetab.scoopi.model.Document");
+        daoUtil.clearCache();
         daoUtil.deleteSchemaForClasses(schemaClasses);
         daoUtil.createSchemaForClasses(schemaClasses);
     }
@@ -103,11 +102,11 @@ public class BaseLoaderIT {
     @Test
     public void testNoDocument()
             throws IllegalAccessException, IOException, InterruptedException {
-        Locator locator = objectFactory.createLocator("acme", "quote", url);
+        Locator locator = factory.createLocator("acme", "quote", pageUrl);
         locator.getDocuments(); // init array
 
-        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
-                "parser", clzName);
+        StepInfo stepInfo =
+                factory.createStepInfo("loader", "seeder", "parser", clzName);
 
         Payload payload = getTestPayload(stepInfo, locator);
 
@@ -125,7 +124,7 @@ public class BaseLoaderIT {
         Locator actual = actuals.get(0);
 
         // document url is persisted and locator url is not persisted
-        actual.setUrl(url);
+        actual.setUrl(pageUrl);
 
         assertThat(actual).isEqualTo(locator);
 
@@ -140,8 +139,8 @@ public class BaseLoaderIT {
         // test handed over payload
         Payload actualPayload = store.takePayload();
 
-        StepInfo nextStepInfo = objectFactory.createStepInfo("parser", "loader",
-                "end", clzName);
+        StepInfo nextStepInfo =
+                factory.createStepInfo("parser", "loader", "end", clzName);
         Payload expectedPayload = getTestPayload(nextStepInfo, actualDocument);
 
         assertThat(actualPayload).isEqualTo(expectedPayload);
@@ -154,17 +153,17 @@ public class BaseLoaderIT {
     @Test
     public void testNoActiveDocument()
             throws IllegalAccessException, IOException, InterruptedException {
-        Locator locator = objectFactory.createLocator("acme", "quote", url);
+        Locator locator = factory.createLocator("acme", "quote", pageUrl);
 
         Date fromDate = DateUtils.addDays(configService.getRunDateTime(), -1);
         Date toDate = DateUtils.addSeconds(configService.getRunDateTime(), -1);
         Document document =
-                objectFactory.createDocument("acme", clzName, fromDate, toDate);
+                factory.createDocument("acme", clzName, fromDate, toDate);
         document.setDocumentObject("doc");
         locator.getDocuments().add(document);
 
-        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
-                "parser", clzName);
+        StepInfo stepInfo =
+                factory.createStepInfo("loader", "seeder", "parser", clzName);
 
         Payload inPayload = getTestPayload(stepInfo, locator);
 
@@ -182,7 +181,7 @@ public class BaseLoaderIT {
         Locator actual = actuals.get(0);
 
         // document url is persisted and locator url is not persisted
-        actual.setUrl(url);
+        actual.setUrl(pageUrl);
 
         assertThat(actual).isEqualTo(locator);
 
@@ -202,8 +201,8 @@ public class BaseLoaderIT {
         // test handed over payload
         Payload outPayload = store.takePayload();
 
-        StepInfo nextStepInfo = objectFactory.createStepInfo("parser", "loader",
-                "end", clzName);
+        StepInfo nextStepInfo =
+                factory.createStepInfo("parser", "loader", "end", clzName);
         Payload expectedPayload = getTestPayload(nextStepInfo, actualDocument);
 
         assertThat(outPayload).isEqualTo(expectedPayload);
@@ -221,15 +220,16 @@ public class BaseLoaderIT {
 
         Document expectedDocument = insertActiveDocument(-2, 1);
 
-        Locator locator = objectFactory.createLocator("acme", "quote", url);
+        Locator locator = factory.createLocator("acme", "quote", pageUrl);
         locator.getDocuments();
 
-        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
-                "parser", clzName);
-        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "quote",
-                "task2", "task2"); // live 1 day
-        Payload inPayload =
-                objectFactory.createPayload(jobInfo, stepInfo, locator);
+        StepInfo stepInfo =
+                factory.createStepInfo("loader", "seeder", "parser", clzName);
+        JobInfo jobInfo =
+                factory.createJobInfo(0, "acme", "quote", "task2", "task2"); // live
+                                                                             // 1
+                                                                             // day
+        Payload inPayload = factory.createPayload(jobInfo, stepInfo, locator);
         loader.setPayload(inPayload);
 
         task.run(); // run loader task
@@ -256,7 +256,7 @@ public class BaseLoaderIT {
         assertThat(newDocument.getId()).isNotNull();
         assertThat(newDocument.getId()).isNotSameAs(existingDocument.getId());
         assertThat(newDocument.getName()).isEqualTo("acme");
-        assertThat(newDocument.getUrl()).isEqualTo(url);
+        assertThat(newDocument.getUrl()).isEqualTo(pageUrl);
         assertThat(newDocument.getFromDate())
                 .isEqualTo(configService.getRunDateTime());
         assertThat(newDocument.getToDate())
@@ -267,10 +267,10 @@ public class BaseLoaderIT {
         // test handed over payload
         Payload actualPayload = store.takePayload();
 
-        StepInfo nextStepInfo = objectFactory.createStepInfo("parser", "loader",
-                "end", clzName);
+        StepInfo nextStepInfo =
+                factory.createStepInfo("parser", "loader", "end", clzName);
         Payload expectedPayload =
-                objectFactory.createPayload(jobInfo, nextStepInfo, newDocument);
+                factory.createPayload(jobInfo, nextStepInfo, newDocument);
 
         assertThat(actualPayload).isEqualTo(expectedPayload);
     }
@@ -285,15 +285,16 @@ public class BaseLoaderIT {
             throws IllegalAccessException, IOException, InterruptedException {
         Document expectedDocument = insertActiveDocument(-1, 1);
 
-        Locator locator = objectFactory.createLocator("acme", "quote", url);
+        Locator locator = factory.createLocator("acme", "quote", pageUrl);
         locator.getDocuments();
 
-        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
-                "parser", clzName);
-        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "quote",
-                "task3", "task3"); // live 3 day
-        Payload inPayload =
-                objectFactory.createPayload(jobInfo, stepInfo, locator);
+        StepInfo stepInfo =
+                factory.createStepInfo("loader", "seeder", "parser", clzName);
+        JobInfo jobInfo =
+                factory.createJobInfo(0, "acme", "quote", "task3", "task3"); // live
+                                                                             // 3
+                                                                             // day
+        Payload inPayload = factory.createPayload(jobInfo, stepInfo, locator);
         loader.setPayload(inPayload);
 
         task.run(); // run loader task
@@ -319,19 +320,19 @@ public class BaseLoaderIT {
         // test handed over payload
         Payload actualPayload = store.takePayload();
 
-        StepInfo nextStepInfo = objectFactory.createStepInfo("parser", "loader",
-                "end", clzName);
-        Payload expectedPayload = objectFactory.createPayload(jobInfo,
-                nextStepInfo, existingDocument);
+        StepInfo nextStepInfo =
+                factory.createStepInfo("parser", "loader", "end", clzName);
+        Payload expectedPayload =
+                factory.createPayload(jobInfo, nextStepInfo, existingDocument);
 
         assertThat(actualPayload.getData())
                 .isEqualTo(expectedPayload.getData());
     }
 
     private Document getTestDocument() throws IOException {
-        Document document = objectFactory.createDocument("acme", url,
+        Document document = factory.createDocument("acme", pageUrl,
                 configService.getRunDateTime(), configService.getRunDateTime());
-        URL fileURL = BaseLoaderIT.class.getResource(url);
+        URL fileURL = BaseLoaderIT.class.getResource(pageUrl);
         byte[] bytes = IOUtils.toByteArray(fileURL);
         final int bufferLength = 4086;
         byte[] compressedObject =
@@ -341,24 +342,24 @@ public class BaseLoaderIT {
     }
 
     private Payload getTestPayload(final StepInfo stepInfo, final Object data) {
-        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "quote",
-                "task1", "task1");
-        return objectFactory.createPayload(jobInfo, stepInfo, data);
+        JobInfo jobInfo =
+                factory.createJobInfo(0, "acme", "quote", "task1", "task1");
+        return factory.createPayload(jobInfo, stepInfo, data);
     }
 
     private Document insertActiveDocument(final int fromDateOffset,
             final int toDateOffset) throws IllegalAccessException {
-        Locator locator = objectFactory.createLocator("acme", "quote", url);
+        Locator locator = factory.createLocator("acme", "quote", pageUrl);
 
         Date fromDate = DateUtils.addDays(new Date(), fromDateOffset);
         Date toDate = DateUtils.addDays(new Date(), toDateOffset);
         Document document =
-                objectFactory.createDocument("acme", clzName, fromDate, toDate);
+                factory.createDocument("acme", clzName, fromDate, toDate);
         document.setDocumentObject("doc");
         locator.getDocuments().add(document);
 
-        StepInfo stepInfo = objectFactory.createStepInfo("loader", "seeder",
-                "parser", clzName);
+        StepInfo stepInfo =
+                factory.createStepInfo("loader", "seeder", "parser", clzName);
 
         Payload inPayload = getTestPayload(stepInfo, locator);
 
@@ -371,10 +372,4 @@ public class BaseLoaderIT {
         return document;
     }
 
-    private void clearStore() throws InterruptedException {
-        int count = store.getPayloadsCount();
-        for (int i = 0; i < count; i++) {
-            store.takePayload();
-        }
-    }
 }

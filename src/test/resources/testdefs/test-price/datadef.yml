@@ -12,9 +12,7 @@ dataDefs:
         members: [ 
           member: {name: date},
         ]  
-      row:
-        query:
-          noQuery: "query ignored"                      
+      row:                              
         members: [ 
           member: {name: Price, value: Price},          
         ]

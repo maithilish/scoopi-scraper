@@ -70,7 +70,7 @@ public final class LocatorSeeder extends BaseSeeder {
         Object pData = getPayload().getData();
         if (pData instanceof LocatorGroup) {
             locatorGroup = (LocatorGroup) pData;
-            setData(pData);
+            setOutput(pData);
             setConsistent(true);
         } else {
             String message = Util.join(Messages.getString("BaseLoader.28"), //$NON-NLS-1$
@@ -121,6 +121,7 @@ public final class LocatorSeeder extends BaseSeeder {
         return true;
     }
 
+    // TODO extract it to helper class
     private List<Payload> getPayloads(final String taskGroup,
             final Locator locator) {
         List<Payload> payloads = new ArrayList<>();

@@ -183,7 +183,7 @@ public class LocatorPersistenceTest {
     }
 
     @Test
-    public void testPersistLocatorNotUseDataStore() {
+    public void testPersistUseDataStoreFalse() {
         // globally disabled
         given(configService.useDataStore()).willReturn(false);
 
@@ -192,7 +192,7 @@ public class LocatorPersistenceTest {
     }
 
     @Test
-    public void testPersistLocatorConfigSet() {
+    public void testPersistConfigSet() {
         // enabled at global but disabled at model level
         given(configService.useDataStore()).willReturn(true);
         given(configService.isPersist("scoopi.persist.locator"))
@@ -204,7 +204,7 @@ public class LocatorPersistenceTest {
     }
 
     @Test
-    public void testPersistLocatorTaskLevelPersistenceDefined() {
+    public void testPersistTaskLevelPersistenceDefined() {
         // enabled at global and model level
         given(configService.useDataStore()).willReturn(true);
         given(configService.isPersist("scoopi.persist.locator"))

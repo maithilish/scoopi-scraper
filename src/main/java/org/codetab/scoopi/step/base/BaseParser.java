@@ -11,11 +11,12 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.codetab.scoopi.defs.IDataDefDefs;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Data;
+import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.persistence.DataPersistence;
@@ -33,9 +34,6 @@ public abstract class BaseParser extends Step {
 
     static final Logger LOGGER = LoggerFactory.getLogger(BaseParser.class);
 
-    private Data data;
-    protected Document document;
-
     @Inject
     private MemberStack memberStack;
     @Inject
@@ -45,10 +43,15 @@ public abstract class BaseParser extends Step {
     @Inject
     private IDataDefDefs dataDefDefs;
 
-    @Inject
-    private MetricsHelper metricsHelper;
+    private Data data;
+    protected Document document;
 
+    /**
+     * set by subclass
+     */
     private IValueParser valueParser;
+
+    private StopWatch sw = StopWatch.createStarted();
 
     @Override
     public boolean initialize() {
@@ -72,7 +75,18 @@ public abstract class BaseParser extends Step {
 
     @Override
     public boolean load() {
-        return true;
+        try {
+            String dataDefName = getJobInfo().getDataDef();
+            Long dataDefId = dataDefDefs.getDataDef(dataDefName).getId();
+            Long documentId = document.getId();
+            if (nonNull(documentId) && nonNull(dataDefId)) {
+                data = dataPersistence.loadData(dataDefId, documentId);
+            }
+            return true;
+        } catch (DataDefNotFoundException e) {
+            String message = "unable to get datadef id";
+            throw new StepRunException(message, e);
+        }
     }
 
     @Override
@@ -98,12 +112,12 @@ public abstract class BaseParser extends Step {
             LOGGER.info("{}", getLabeled("parse data"));
             String dataDefName = getJobInfo().getDataDef();
             data = dataDefDefs.getDataTemplate(dataDefName);
+
             try {
                 parse();
                 setConsistent(true);
                 dataParseCounter.inc();
-            } catch (NumberFormatException | ClassNotFoundException
-                    | IllegalAccessException | InvocationTargetException
+            } catch (IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException | DataDefNotFoundException
                     | ScriptException e) {
                 String message = getLabeled("unable to parse data");
@@ -114,15 +128,23 @@ public abstract class BaseParser extends Step {
             dataReuseCounter.inc();
             LOGGER.info("{}", getLabeled("data exists, reuse"));
         }
-        System.out.println(data.getMembers());
-        super.setData(data);
+
+        // TODO - remove this
+        sw.stop();
+        LOGGER.info(data.getMembers().toString());
+        LOGGER.info("parse time : ", sw);
+
+        setOutput(data);
         return true;
     }
 
-    public void parse() throws DataDefNotFoundException, ScriptException,
-            NumberFormatException, ClassNotFoundException,
-            IllegalAccessException, InvocationTargetException,
-            NoSuchMethodException {
+    protected void setValueParser(final IValueParser valueParser) {
+        this.valueParser = valueParser;
+    }
+
+    private void parse()
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException, DataDefNotFoundException, ScriptException {
 
         valueProcessor.addScriptObject("document", document);
         valueProcessor.addScriptObject("configs", configService);
@@ -130,7 +152,8 @@ public abstract class BaseParser extends Step {
         memberStack.pushMembers(data.getMembers());
 
         List<Member> members = new ArrayList<>(); // expanded member list
-        String dataDef = getJobInfo().getDataDef();
+        String dataDefName = getJobInfo().getDataDef();
+        DataDef dataDef = dataDefDefs.getDataDef(dataDefName);
 
         while (!memberStack.isEmpty()) {
             Member member = memberStack.popMember();
@@ -138,16 +161,12 @@ public abstract class BaseParser extends Step {
             // collections.sort not possible as axes is a Set so implied sort
             // as value field of an axis may be referred by later axis
             valueProcessor.setAxisValues(dataDef, member, valueParser);
-            memberStack.pushNewMember(dataDef, member);
+            memberStack.pushAdjacentMembers(dataDef, member);
         }
 
         data.setMembers(members); // replace with expanded member list
         LOGGER.trace(getMarker(), "-- data after parse --{}{}{}", Util.LINE,
                 getLabel(), Util.LINE, data);
-    }
-
-    protected void setValueParser(final IValueParser valueParser) {
-        this.valueParser = valueParser;
     }
 
     private boolean persist() {

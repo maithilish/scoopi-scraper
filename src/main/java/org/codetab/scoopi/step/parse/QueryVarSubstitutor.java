@@ -14,6 +14,25 @@ import org.codetab.scoopi.model.Axis;
 
 public class QueryVarSubstitutor {
 
+    /**
+     * <p>
+     * Substitutes variables such as ${col.match} in each query with the value
+     * from corresponding axis field.
+     * </p>
+     *
+     * <pre>
+     * Format of variables is ${AxisName.FieldName}
+     * Examples:
+     *   ${col.index}, ${col.match}, ${col.value}
+     *   ${row.index}, ${row.match}, ${row.value}
+     * </pre>
+     *
+     * @param queries
+     * @param axisMap
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
     public void replaceVariables(final Map<String, String> queries,
             final Map<String, Axis> axisMap) throws IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
@@ -23,6 +42,9 @@ public class QueryVarSubstitutor {
         notNull(queries, "queries must not be null");
         notNull(axisMap, "axisMap must not be null");
 
+        // TODO perf - create single value map for all strings in queries
+        // one of the option is member can return value map of its
+        // axes (can't cache as value may change)
         for (String key : queries.keySet()) {
             String str = queries.get(key);
             Map<String, String> valueMap = getValueMap(str, axisMap);
@@ -37,7 +59,17 @@ public class QueryVarSubstitutor {
 
     /**
      * <p>
-     * Get value map.
+     * Returns a key and value map of variable name and its value from
+     * corresponding axis field.
+     * </p>
+     *
+     * <pre>
+     * Key          Value
+     * col.index    8
+     * col.match    Price
+     * row.value    20.00
+     * </pre>
+     *
      * @param str
      *            string to parse
      * @param map

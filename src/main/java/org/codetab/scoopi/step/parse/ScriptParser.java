@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.Validate.validState;
 
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -18,6 +19,9 @@ public class ScriptParser {
 
     static final Logger LOGGER = LoggerFactory.getLogger(ScriptParser.class);
 
+    @Inject
+    private ScriptEngineManager seManager;
+
     private ScriptEngine jsEngine;
 
     // TODO check whether this class can be singleton
@@ -27,8 +31,7 @@ public class ScriptParser {
             return;
         }
         LOGGER.debug("{}", "initialize script engine");
-        ScriptEngineManager scriptEngineMgr = new ScriptEngineManager();
-        jsEngine = scriptEngineMgr.getEngineByName("JavaScript"); //$NON-NLS-1$
+        jsEngine = seManager.getEngineByName("JavaScript"); //$NON-NLS-1$
         if (isNull(jsEngine)) {
             throw new CriticalException(
                     "script engine lib not found in classpath");

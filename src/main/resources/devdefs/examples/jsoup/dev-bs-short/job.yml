@@ -1,0 +1,53 @@
+locatorGroups:
+  bs:   
+    locators: [
+       { name: acme, url: "/defs/examples/page/acme-bs.html" }  
+    ]
+
+dataDefs:
+
+  bs:
+    axis:
+      fact:
+        query:
+          region: "table:contains(Sources Of Funds)"  
+          field: "tr:nth-child(%{row.index}) > td:nth-child(%{col.index})" 
+      col:
+        query:
+          region: "table:contains(Sources Of Funds)"
+          field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
+        members: [ 
+          member: {name: year, indexRange: 2-3},
+        ]  
+      row:
+        query:
+          region: "table:contains(Sources Of Funds)"
+          field: "tr:nth-child(%{row.index}) > td:nth-child(1)"      
+        members: [ 
+          member: {name: item, index: 8, breakAfter: ["Secured Loans"] },
+        ]
+                                        
+taskGroups:
+
+  bs:
+    bs:
+      dataDef: bs
+      steps: dev
+         
+steps: 
+  dev:
+    seeder:
+      class: "org.codetab.scoopi.step.extract.LocatorSeeder"
+      previous: start
+      next: loader
+    loader:
+      class: "org.codetab.scoopi.step.extract.URLLoader"
+      previous: seeder
+      next: parser
+    parser:
+      class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
+      previous: loader
+      next: end
+      
+      
+        

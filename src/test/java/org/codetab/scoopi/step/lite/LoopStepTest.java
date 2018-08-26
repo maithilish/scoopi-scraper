@@ -71,7 +71,7 @@ public class LoopStepTest {
     public void testProcess() {
         assertThat(step.isConsistent()).isFalse();
         assertThat(step.process()).isTrue();
-        assertThat(step.getData()).isEqualTo(step.getPayload().getData());
+        assertThat(step.getOutput()).isEqualTo(step.getPayload().getData());
         assertThat(step.isConsistent()).isTrue();
     }
 
@@ -96,7 +96,7 @@ public class LoopStepTest {
         given(factory.createJobInfo(0, "acme", group, taskName,
                 step.getPayload().getJobInfo().getDataDef()))
                         .willReturn(jobInfo);
-        given(factory.createPayload(jobInfo, nextStep, step.getData()))
+        given(factory.createPayload(jobInfo, nextStep, step.getOutput()))
                 .willReturn(nextStepPayload);
 
         boolean actual = step.handover();

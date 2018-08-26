@@ -3,27 +3,56 @@ package org.codetab.scoopi.dao.jdo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.jdo.JDODataStoreException;
 
+import org.codetab.scoopi.dao.IDaoUtil;
+import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Locator;
+import org.codetab.scoopi.model.ObjectFactory;
+import org.codetab.scoopi.shared.ConfigService;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
 
-public class LocatorDaoIT extends ITBase {
+public class LocatorDaoIT {
+
+    private static DInjector di;
+    private static IDaoUtil daoUtil;
+    private static HashSet<String> schemaClasses;
+    private static ObjectFactory factory;
+    private static ConfigService configService;
 
     private LocatorDao dao;
 
     @Rule
     public ExpectedException testRule = ExpectedException.none();
+
+    // don't move this to base class, tests fail in cli
+    @BeforeClass
+    public static void setUpBeforeClass()
+            throws IOException, IllegalAccessException, URISyntaxException {
+        di = new DInjector();
+
+        configService = di.instance(ConfigService.class);
+        configService.init("scoopi.properties", "scoopi-default.xml");
+        configService.getConfigs().setProperty("scoopi.useDatastore", "true");
+
+        daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
+        factory = di.instance(ObjectFactory.class);
+        schemaClasses = new HashSet<>();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -149,9 +178,9 @@ public class LocatorDaoIT extends ITBase {
     }
 
     private Locator createTestLocator() {
-        Document document = objectFactory.createDocument("acme", "url1",
-                new Date(), new Date());
-        Locator locator = objectFactory.createLocator("acme", "group1", "url1");
+        Document document =
+                factory.createDocument("acme", "url1", new Date(), new Date());
+        Locator locator = factory.createLocator("acme", "group1", "url1");
         locator.getDocuments().add(document);
         return locator;
     }

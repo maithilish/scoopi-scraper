@@ -3,8 +3,6 @@ package org.codetab.scoopi.model.helper;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 
 import org.codetab.scoopi.defs.yml.DataDefDefs;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
@@ -36,10 +34,5 @@ public class DataHelper {
         data.setDataDefId(dataDefDefs.getDataDefId(dataDefName));
         data.setDocumentId(documentId);
         return data;
-    }
-
-    public ScriptEngine getScriptEngine() {
-        ScriptEngineManager scriptEngineMgr = new ScriptEngineManager();
-        return scriptEngineMgr.getEngineByName("JavaScript"); //$NON-NLS-1$
     }
 }

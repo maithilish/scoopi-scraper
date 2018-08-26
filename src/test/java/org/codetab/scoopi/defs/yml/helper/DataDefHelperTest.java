@@ -6,12 +6,14 @@ import static org.mockito.BDDMockito.given;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.codetab.scoopi.defs.yml.AxisDefs;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
@@ -42,6 +44,8 @@ public class DataDefHelperTest {
     private ObjectFactory objectFactory;
     @Mock
     private YamlHelper yamlHelper;
+    @Mock
+    private AxisDefs axisDefs;
 
     @InjectMocks
     private DataDefHelper dataDefHelper;
@@ -227,22 +231,29 @@ public class DataDefHelperTest {
     @Test
     public void testGetAxisSets() throws IOException {
         DataDef dataDef = getTestDataDef();
-        Axis fact = factory.createAxis(AxisName.FACT, "fact");
-        Axis col = factory.createAxis(AxisName.COL, "date");
-        Axis row1 = factory.createAxis(AxisName.ROW, "Price");
-        Axis row2 = factory.createAxis(AxisName.ROW, "High");
+        Map<String, Axis> axes = getTestAxes();
 
+        Axis fact = axes.get("fact");
         given(objectFactory.createAxis(AxisName.FACT, "fact")).willReturn(fact);
+
+        Axis col = axes.get("col");
         given(objectFactory.createAxis(AxisName.COL, "date")).willReturn(col);
+
+        Axis row1 = axes.get("row1");
         given(objectFactory.createAxis(AxisName.ROW, "Price")).willReturn(row1);
+
+        Axis row2 = axes.get("row2");
         given(objectFactory.createAxis(AxisName.ROW, "High")).willReturn(row2);
 
         Axis expectedFact =
                 factory.createAxis(AxisName.FACT, "fact", null, null, 0, 10);
+
         Axis expectedCol =
                 factory.createAxis(AxisName.COL, "date", null, null, 1, 11);
+
         Axis expectedRow1 =
                 factory.createAxis(AxisName.ROW, "Price", "Price", null, 2, 12);
+
         Axis expectedRow2 = factory.createAxis(AxisName.ROW, "High");
         expectedRow2.setMatch("High"); // all other are null
 
@@ -253,42 +264,36 @@ public class DataDefHelperTest {
         assertThat(actual.get(0)).containsOnly(expectedFact);
         assertThat(actual.get(1)).containsOnly(expectedCol);
         assertThat(actual.get(2)).containsOnly(expectedRow1, expectedRow2);
-
     }
 
     @Test
     public void testGetData() throws IOException {
         DataDef dataDef = getTestDataDef();
-        Axis fact = factory.createAxis(AxisName.FACT, "fact");
-        Axis col = factory.createAxis(AxisName.COL, "date");
-        Axis row1 = factory.createAxis(AxisName.ROW, "Price");
-        Axis row2 = factory.createAxis(AxisName.ROW, "High");
 
         Data data = factory.createData(dataDef.getName());
         Member member1 = factory.createMember();
         Member member2 = factory.createMember();
 
-        given(objectFactory.createAxis(AxisName.FACT, "fact")).willReturn(fact);
-        given(objectFactory.createAxis(AxisName.COL, "date")).willReturn(col);
-        given(objectFactory.createAxis(AxisName.ROW, "Price")).willReturn(row1);
-        given(objectFactory.createAxis(AxisName.ROW, "High")).willReturn(row2);
+        Map<String, Axis> axes = getTestAxes();
+        Axis fact = axes.get("fact");
+        Axis col = axes.get("col");
+        Axis row1 = axes.get("row1");
+        Axis row2 = axes.get("row2");
+
+        HashSet<Axis> expectedAxes1 = Sets.newHashSet(fact, col, row1);
+        HashSet<Axis> expectedAxes2 = Sets.newHashSet(fact, col, row2);
+
+        // axis set as given by datadef
+        List<Set<Axis>> axisSets = new ArrayList<>();
+        Set<Axis> axisSet = Sets.newHashSet(fact);
+        axisSets.add(axisSet);
+        axisSet = Sets.newHashSet(col);
+        axisSets.add(axisSet);
+        axisSet = Sets.newHashSet(row1, row2);
+        axisSets.add(axisSet);
 
         given(objectFactory.createData(dataDef.getName())).willReturn(data);
         given(objectFactory.createMember()).willReturn(member1, member2);
-
-        Axis f1 = factory.createAxis(AxisName.FACT, "fact", null, null, 0, 10);
-        Axis f2 = factory.createAxis(AxisName.FACT, "fact", null, null, 0, 10);
-        Axis c1 = factory.createAxis(AxisName.COL, "date", null, null, 1, 11);
-        Axis c2 = factory.createAxis(AxisName.COL, "date", null, null, 1, 11);
-        Axis r2 = factory.createAxis(AxisName.ROW, "High");
-        r2.setMatch("High");
-        Axis r1 =
-                factory.createAxis(AxisName.ROW, "Price", "Price", null, 2, 12);
-
-        HashSet<Axis> expectedAxes1 = Sets.newHashSet(f1, c1, r1);
-        HashSet<Axis> expectedAxes2 = Sets.newHashSet(f2, c2, r2);
-
-        List<Set<Axis>> axisSets = dataDefHelper.getAxisSets(dataDef);
 
         Data actual = dataDefHelper.getData(dataDef, axisSets);
 
@@ -322,19 +327,40 @@ public class DataDefHelperTest {
         Date runDate = new Date();
         Date fromDate = DateUtils.addDays(runDate, -1);
         Date toDate = DateUtils.addDays(runDate, 1);
-        String defJson = new StringBuilder().append("{price:{axis:")
+        String defJson = new StringBuilder().append("{axis:")
                 .append("{fact:{query:{region:queryregion,field:queryfield},")
                 .append("members:[{member:{name:fact,index:0,order:10}}]},")
                 .append("col:{query:{script:colscript},")
                 .append("members:[{member:{name:date,index:1,order:11}}]},")
                 .append("row:{query:{noQuery: ignored},")
                 .append("members:[{member:{name:Price,value:Price,index:2,order:12}},")
-                .append("{member:{name:High,match:High}}").append("]} }}}")
+                .append("{member:{name:High,match:High}}").append("]} }}")
                 .toString();
         JsonNode def = mapper.readTree(TestUtils.parseJson(defJson));
         DataDef dataDef =
                 factory.createDataDef("price", fromDate, toDate, defJson);
         dataDef.setDef(def);
         return dataDef;
+    }
+
+    private Map<String, Axis> getTestAxes() {
+
+        Axis fact =
+                factory.createAxis(AxisName.FACT, "fact", null, null, 0, 10);
+
+        Axis col = factory.createAxis(AxisName.COL, "date", null, null, 1, 11);
+
+        Axis row1 =
+                factory.createAxis(AxisName.ROW, "Price", "Price", null, 2, 12);
+
+        Axis row2 = factory.createAxis(AxisName.ROW, "High");
+        row2.setMatch("High");
+
+        Map<String, Axis> axisMap = new HashMap<>();
+        axisMap.put("fact", fact);
+        axisMap.put("col", col);
+        axisMap.put("row1", row1);
+        axisMap.put("row2", row2);
+        return axisMap;
     }
 }

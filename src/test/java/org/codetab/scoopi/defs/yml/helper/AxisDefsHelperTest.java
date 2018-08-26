@@ -1,12 +1,12 @@
 package org.codetab.scoopi.defs.yml.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.time.DateUtils;
@@ -77,9 +77,11 @@ public class AxisDefsHelperTest {
         DataDef dataDef = getTestDataDef();
         Axis axis = factory.createAxis(AxisName.COL, "item");
 
-        List<String> actual = axisDefsHelper.getBreakAfters(dataDef, axis);
+        Optional<List<String>> actual =
+                axisDefsHelper.getBreakAfters(dataDef, axis);
 
-        assertThat(actual).containsExactly("break1", "break2");
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get()).containsExactly("break1", "break2");
     }
 
     @Test
@@ -87,13 +89,14 @@ public class AxisDefsHelperTest {
         DataDef dataDef = getTestDataDef();
         Axis axis = factory.createAxis(AxisName.ROW, "Xyz");
 
-        List<String> actual = axisDefsHelper.getBreakAfters(dataDef, axis);
-        assertThat(actual).isEmpty();
+        Optional<List<String>> actual =
+                axisDefsHelper.getBreakAfters(dataDef, axis);
+        assertThat(actual.isPresent()).isFalse();
 
         axis = factory.createAxis(AxisName.ROW, "Price");
 
         actual = axisDefsHelper.getBreakAfters(dataDef, axis);
-        assertThat(actual).isEmpty();
+        assertThat(actual.isPresent()).isTrue();
     }
 
     @Test
@@ -101,10 +104,12 @@ public class AxisDefsHelperTest {
         DataDef dataDef = getTestDataDef();
         Axis axis = factory.createAxis(AxisName.COL, "item");
 
-        Range<Integer> actual = axisDefsHelper.getIndexRange(dataDef, axis);
+        Optional<Range<Integer>> actual =
+                axisDefsHelper.getIndexRange(dataDef, axis);
 
-        assertThat(actual.getMinimum()).isEqualTo(2);
-        assertThat(actual.getMaximum()).isEqualTo(5);
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get().getMinimum()).isEqualTo(2);
+        assertThat(actual.get().getMaximum()).isEqualTo(5);
     }
 
     @Test
@@ -112,28 +117,47 @@ public class AxisDefsHelperTest {
         DataDef dataDef = getTestDataDef();
         Axis axis = factory.createAxis(AxisName.ROW, "Xyz");
 
-        try {
-            axisDefsHelper.getIndexRange(dataDef, axis);
-            fail("should throw NoSuchElementException");
-        } catch (NoSuchElementException e) {
-            assertThat(e.getMessage()).isEqualTo("indexRange not defined");
-        }
+        Optional<Range<Integer>> actual =
+                axisDefsHelper.getIndexRange(dataDef, axis);
+        assertThat(actual.isPresent()).isFalse();
 
         axis = factory.createAxis(AxisName.ROW, "Price");
 
-        try {
-            axisDefsHelper.getIndexRange(dataDef, axis);
-            fail("should throw NoSuchElementException");
-        } catch (NoSuchElementException e) {
-            assertThat(e.getMessage()).isEqualTo("indexRange not defined");
-        }
+        actual = axisDefsHelper.getIndexRange(dataDef, axis);
+        assertThat(actual.isPresent()).isFalse();
     }
+
+    @Test
+    public void testGetPrefixes() throws IOException {
+        DataDef dataDef = getTestDataDef();
+
+        Optional<List<String>> actual =
+                axisDefsHelper.getPrefixes(dataDef, AxisName.ROW);
+
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get()).containsExactly("p1", "p2");
+    }
+
+    // @Test
+    // public void testGetBreakAftersNotDefined() throws IOException {
+    // DataDef dataDef = getTestDataDef();
+    // Axis axis = factory.createAxis(AxisName.ROW, "Xyz");
+    //
+    // Optional<List<String>> actual =
+    // axisDefsHelper.getBreakAfters(dataDef, axis);
+    // assertThat(actual.isPresent()).isFalse();
+    //
+    // axis = factory.createAxis(AxisName.ROW, "Price");
+    //
+    // actual = axisDefsHelper.getBreakAfters(dataDef, axis);
+    // assertThat(actual.isPresent()).isTrue();
+    // }
 
     private DataDef getTestDataDef() throws IOException {
         Date runDate = new Date();
         Date fromDate = DateUtils.addDays(runDate, -1);
         Date toDate = DateUtils.addDays(runDate, 1);
-        String defJson = new StringBuilder().append("{price:{axis:")
+        String defJson = new StringBuilder().append("{axis:")
                 .append("{fact:{query:{region:queryregion,field:queryfield},")
                 .append("members:[{member:{name:fact,index:0,order:10}}]},")
                 .append("col:{query:{script:colscript},")
@@ -141,8 +165,8 @@ public class AxisDefsHelperTest {
                 .append("indexRange: 2-5, order:11}}]},")
                 .append("row:{query:{noQuery: ignored},")
                 .append("members:[{member:{name:Price,value:Price,index:2,order:12}},")
-                .append("{member:{name:High,match:High}}").append("]} }}}")
-                .toString();
+                .append("{member:{name:High,match:High}}],")
+                .append("prefix: [ p1, p2 ] ").append("} }}").toString();
         JsonNode def = mapper.readTree(TestUtils.parseJson(defJson));
         DataDef dataDef =
                 factory.createDataDef("price", fromDate, toDate, defJson);

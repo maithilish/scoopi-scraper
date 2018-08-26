@@ -64,19 +64,19 @@ public class StepTest {
         String group = step.getJobInfo().getGroup();
         String stepName = step.getStepInfo().getStepName();
         String taskName = step.getJobInfo().getTask();
-        String data = "test data";
+        String output = "test output";
 
         ObjectFactory objectFactory = new ObjectFactory();
         StepInfo nextStep =
                 objectFactory.createStepInfo("s2", "s1", "s3", "class2");
-        Payload nextStepPayload =
-                objectFactory.createPayload(step.getJobInfo(), nextStep, data);
-        step.setData(data);
+        Payload nextStepPayload = objectFactory.createPayload(step.getJobInfo(),
+                nextStep, output);
+        step.setOutput(output);
         step.setConsistent(true);
 
         given(taskDefs.getNextStep(group, taskName, stepName))
                 .willReturn(nextStep);
-        given(factory.createPayload(step.getJobInfo(), nextStep, data))
+        given(factory.createPayload(step.getJobInfo(), nextStep, output))
                 .willReturn(nextStepPayload);
 
         boolean actual = step.handover();
@@ -93,11 +93,11 @@ public class StepTest {
         StepInfo stepInfo =
                 objectFactory.createStepInfo("s2", "s1", "ENd", "class2");
         payload = objectFactory.createPayload(step.getJobInfo(), stepInfo,
-                step.getData());
-        String data = "test data";
+                step.getOutput());
+        String output = "test output";
         step.setPayload(payload);
         step.setConsistent(true);
-        step.setData(data);
+        step.setOutput(output);
 
         boolean actual = step.handover();
 
@@ -112,9 +112,9 @@ public class StepTest {
         String group = step.getJobInfo().getGroup();
         String stepName = step.getStepInfo().getStepName();
         String taskName = step.getJobInfo().getTask();
-        String data = "test data";
+        String output = "test output";
 
-        step.setData(data);
+        step.setOutput(output);
         step.setConsistent(true);
 
         given(taskDefs.getNextStep(group, taskName, stepName))
@@ -126,7 +126,7 @@ public class StepTest {
 
     @Test
     public void testHandoverDataIllegalState() throws IllegalAccessException {
-        step.setData(null);
+        step.setOutput(null);
 
         testRule.expect(IllegalStateException.class);
         step.handover();
@@ -135,7 +135,7 @@ public class StepTest {
     @Test
     public void testHandoverConsitentIllegalState()
             throws IllegalAccessException {
-        step.setData("test data");
+        step.setOutput("test data");
         step.setConsistent(false);
 
         testRule.expect(IllegalStateException.class);
@@ -145,9 +145,9 @@ public class StepTest {
     @Test
     public void testGetData() {
         String data = "data";
-        step.setData(data);
+        step.setOutput(data);
 
-        assertThat(step.getData()).isEqualTo(data);
+        assertThat(step.getOutput()).isEqualTo(data);
     }
 
     @Test
@@ -179,7 +179,7 @@ public class StepTest {
         assertThat(step.isConsistent()).isFalse();
 
         String data = "test data";
-        step.setData(data);
+        step.setOutput(data);
         step.setConsistent(true);
         assertThat(step.isConsistent()).isTrue();
     }

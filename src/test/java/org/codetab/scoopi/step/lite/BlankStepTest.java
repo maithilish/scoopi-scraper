@@ -46,7 +46,7 @@ public class BlankStepTest {
     public void testProcess() {
         assertThat(step.isConsistent()).isFalse();
         assertThat(step.process()).isTrue();
-        assertThat(step.getData()).isEqualTo(step.getPayload().getData());
+        assertThat(step.getOutput()).isEqualTo(step.getPayload().getData());
         assertThat(step.isConsistent()).isTrue();
     }
 

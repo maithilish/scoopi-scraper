@@ -73,7 +73,7 @@ public class SeederStepTest {
     public void testProcess() {
         assertThat(step.isConsistent()).isFalse();
         assertThat(step.process()).isTrue();
-        assertThat(step.getData()).isEqualTo(step.getPayload().getData());
+        assertThat(step.getOutput()).isEqualTo(step.getPayload().getData());
         assertThat(step.isConsistent()).isTrue();
     }
 
@@ -108,7 +108,7 @@ public class SeederStepTest {
         given(factory.createJobInfo(taskMediator.getJobId(), "locator",
                 taskGroup, "task2", "dataDef2")).willReturn(jobInfo);
 
-        given(factory.createPayload(jobInfo, nextStep, step.getData()))
+        given(factory.createPayload(jobInfo, nextStep, step.getOutput()))
                 .willReturn(nextStepPayload).willReturn(nextStepPayload);
 
         boolean actual = step.handover();
@@ -149,7 +149,7 @@ public class SeederStepTest {
         given(factory.createJobInfo(taskMediator.getJobId(), "locator",
                 taskGroup, "task2", "dataDef2")).willReturn(jobInfo);
 
-        given(factory.createPayload(jobInfo, nextStep, step.getData()))
+        given(factory.createPayload(jobInfo, nextStep, step.getOutput()))
                 .willReturn(nextStepPayload).willReturn(nextStepPayload);
 
         boolean actual = step.handover();

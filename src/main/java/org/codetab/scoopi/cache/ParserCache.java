@@ -1,5 +1,8 @@
 package org.codetab.scoopi.cache;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,18 +15,14 @@ import org.codetab.scoopi.metrics.MetricsHelper;
 
 public class ParserCache {
 
-    private Map<Integer, String> cache;
+    private Map<Integer, String> cache = new HashMap<>();
 
     @Inject
     private MetricsHelper metricsHelper;
 
-    public ParserCache() {
-        cache = new HashMap<Integer, String>();
-    }
-
     public String get(final int key) {
         String value = cache.get(key);
-        if (value == null) {
+        if (isNull(value)) {
             count("miss");
         } else {
             count("hit");
@@ -32,11 +31,12 @@ public class ParserCache {
     }
 
     public void put(final int key, final String value) {
-        if (value != null) {
+        if (nonNull(value)) {
             cache.put(key, value);
         }
     }
 
+    // TODO - perf
     public int getKey(final Map<String, String> map) {
         Validate.notNull(map, Messages.getString("ParserCache.0")); //$NON-NLS-1$
         return Arrays.hashCode(map.values().toArray());

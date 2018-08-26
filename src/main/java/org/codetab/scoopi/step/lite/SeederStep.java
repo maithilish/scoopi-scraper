@@ -42,7 +42,7 @@ public class SeederStep extends Step {
 
     @Override
     public boolean process() {
-        setData(getPayload().getData());
+        setOutput(getPayload().getData());
         setConsistent(true);
         return true;
     }
@@ -50,7 +50,7 @@ public class SeederStep extends Step {
     @Override
     public boolean handover() {
 
-        Validate.validState(nonNull(getData()), "data is null");
+        Validate.validState(nonNull(getOutput()), "data is null");
         Validate.validState(isConsistent(), "step inconsistent");
 
         LOGGER.info("handover");
@@ -65,7 +65,7 @@ public class SeederStep extends Step {
                 JobInfo jobInfo = factory.createJobInfo(taskMediator.getJobId(),
                         "locator", taskGroup, taskName, dataDefName);
                 Payload nextStepPayload =
-                        factory.createPayload(jobInfo, nextStep, getData());
+                        factory.createPayload(jobInfo, nextStep, getOutput());
                 taskMediator.pushPayload(nextStepPayload);
             } catch (DefNotFoundException | InterruptedException e) {
             }

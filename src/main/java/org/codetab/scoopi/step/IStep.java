@@ -37,7 +37,7 @@ public interface IStep {
 
     String getLabeled(String message);
 
-    Object getData();
+    Object getOutput();
 
-    void setData(Object data);
+    void setOutput(Object data);
 }

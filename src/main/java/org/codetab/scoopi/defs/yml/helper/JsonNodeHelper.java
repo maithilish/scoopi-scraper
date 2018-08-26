@@ -65,15 +65,22 @@ public class JsonNodeHelper {
     }
 
     /**
-     * find array and return its content as list of string
+     * find array inside the node and return its content as list of string
      * @param node
-     * @param arrayName
+     * @param arrayName,
+     *            if null then node itself is the array else node is searched
+     *            for named array
      * @return
      */
     public List<String> getArrayAsStrings(final JsonNode node,
             final String arrayName) {
         List<String> values = new ArrayList<>();
-        JsonNode array = node.path(arrayName);
+        JsonNode array = null;
+        if (arrayName == null) {
+            array = node;
+        } else {
+            array = node.path(arrayName);
+        }
         if (array.isArray()) {
             Iterator<JsonNode> it = array.iterator();
             while (it.hasNext()) {

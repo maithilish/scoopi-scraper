@@ -1,6 +1,6 @@
 package org.codetab.scoopi.step.parse;
 
-import static java.util.Objects.nonNull;
+import static java.util.Objects.isNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +11,8 @@ import javax.script.ScriptException;
 
 import org.codetab.scoopi.cache.ParserCache;
 import org.codetab.scoopi.defs.IAxisDefs;
-import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.AxisName;
+import org.codetab.scoopi.model.DataDef;
 
 public class QueryProcessor {
 
@@ -21,8 +21,8 @@ public class QueryProcessor {
     @Inject
     private ParserCache parserCache;
 
-    public Map<String, String> getQueries(final String dataDef,
-            final AxisName axisName) throws DataDefNotFoundException {
+    public Map<String, String> getQueries(final DataDef dataDef,
+            final AxisName axisName) {
         Map<String, String> queries = new HashMap<>();
         String region = axisDefs.getQuery(dataDef, axisName, "region");
         String field = axisDefs.getQuery(dataDef, axisName, "field");
@@ -44,16 +44,12 @@ public class QueryProcessor {
 
     public String query(final Map<String, String> queries,
             final IValueParser valueParser) throws ScriptException {
-
         int key = parserCache.getKey(queries);
         String value = parserCache.get(key);
-        if (nonNull(value)) {
-            return value;
+        if (isNull(value)) {
+            value = valueParser.parseValue(queries);
+            parserCache.put(key, value);
         }
-
-        value = valueParser.parseValue(queries);
-        parserCache.put(key, value);
-
         return value;
     }
 

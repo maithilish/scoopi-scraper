@@ -1,6 +1,7 @@
 package org.codetab.scoopi.step.parse.jsoup;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
 
 import java.io.ByteArrayInputStream;
@@ -11,7 +12,6 @@ import java.util.zip.DataFormatException;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.step.base.BaseParser;
 import org.jsoup.Jsoup;
@@ -32,8 +32,9 @@ public class JSoupParser extends BaseParser {
     @Override
     protected boolean postInitialize() {
         try {
+            notNull(document, "document must not be null");
             validState(nonNull(document.getDocumentObject()),
-                    "document is not loaded");
+                    "documentObject is not loaded");
 
             InputStream html = getDocumentHTML();
             Document page = Jsoup.parse(html, null, "");
@@ -41,8 +42,9 @@ public class JSoupParser extends BaseParser {
             jsoupValueParser.setPage(page);
             setValueParser(jsoupValueParser);
             return true;
-        } catch (DataFormatException | IOException | IllegalStateException e) {
-            String message = Messages.getString("JSoupHtmlParser.17"); //$NON-NLS-1$
+        } catch (DataFormatException | IOException | IllegalStateException
+                | NullPointerException e) {
+            String message = "unable to initialize parser";
             throw new StepRunException(message, e);
         }
     }

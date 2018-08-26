@@ -218,7 +218,7 @@ public abstract class BaseLoader extends Step {
 
             document = activeDoc;
             locator.getDocuments().add(document);
-            setData(document);
+            setOutput(document);
             setConsistent(true);
             LOGGER.info(Messages.getString("BaseLoader.2"), getLabel(), //$NON-NLS-1$
                     document.getToDate());
@@ -228,7 +228,7 @@ public abstract class BaseLoader extends Step {
             // as activeDoc comes from datastore it indicates that
             // datastore is active so load the activeDoc with doc object
             document = documentPersistence.loadDocument(activeDoc.getId());
-            setData(document);
+            setOutput(document);
             setConsistent(true);
             LOGGER.info(Messages.getString("BaseLoader.12"), getLabel(), //$NON-NLS-1$
                     document.getToDate());
@@ -270,7 +270,7 @@ public abstract class BaseLoader extends Step {
                         documentPersistence.loadDocument(document.getId());
                 if (nonNull(tDocument)) {
                     document = tDocument;
-                    setData(tDocument);
+                    setOutput(tDocument);
                 }
                 LOGGER.debug(Messages.getString("BaseLoader.16"), getLabel()); //$NON-NLS-1$
                 LOGGER.trace(getMarker(), Messages.getString("BaseLoader.17"), //$NON-NLS-1$

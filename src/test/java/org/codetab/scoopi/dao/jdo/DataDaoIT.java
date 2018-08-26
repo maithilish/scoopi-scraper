@@ -3,28 +3,57 @@ package org.codetab.scoopi.dao.jdo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.jdo.JDODataStoreException;
 
+import org.codetab.scoopi.dao.IDaoUtil;
+import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.ObjectFactory;
+import org.codetab.scoopi.shared.ConfigService;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
 
-public class DataDaoIT extends ITBase {
+public class DataDaoIT {
+
+    private static DInjector di;
+    private static IDaoUtil daoUtil;
+    private static HashSet<String> schemaClasses;
+    private static ObjectFactory factory;
+    private static ConfigService configService;
 
     private DataDao dao;
 
     @Rule
     public ExpectedException testRule = ExpectedException.none();
+
+    // don't move this to base class, tests fail in cli
+    @BeforeClass
+    public static void setUpBeforeClass()
+            throws IOException, IllegalAccessException, URISyntaxException {
+        di = new DInjector();
+
+        configService = di.instance(ConfigService.class);
+        configService.init("scoopi.properties", "scoopi-default.xml");
+        configService.getConfigs().setProperty("scoopi.useDatastore", "true");
+
+        daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
+        factory = di.instance(ObjectFactory.class);
+        schemaClasses = new HashSet<>();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -124,12 +153,12 @@ public class DataDaoIT extends ITBase {
     }
 
     private Data createTestData() {
-        Axis col = objectFactory.createAxis(AxisName.COL, "date");
-        Member member = objectFactory.createMember();
+        Axis col = factory.createAxis(AxisName.COL, "date");
+        Member member = factory.createMember();
         member.setName("date");
         member.setGroup("group1");
         member.getAxes().add(col);
-        Data data = objectFactory.createData("dataDef1");
+        Data data = factory.createData("dataDef1");
         data.setName("acme");
         data.setDocumentId(1L);
         data.setDataDefId(2L);

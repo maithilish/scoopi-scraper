@@ -31,23 +31,19 @@ public abstract class Step implements IStep {
 
     static final Logger LOGGER = LoggerFactory.getLogger(Step.class);
 
-    private Object data;
+    private Object output;
     private Payload payload;
     private Marker marker;
     private boolean consistent = false;
 
     @Inject
     protected ConfigService configService;
-
     @Inject
     protected StepService stepService;
-
     @Inject
     protected StatService activityService;
-
     @Inject
     protected MetricsHelper metricsHelper;
-
     @Inject
     protected ITaskDefs taskDefs;
     @Inject
@@ -57,7 +53,7 @@ public abstract class Step implements IStep {
 
     @Override
     public boolean handover() {
-        Validate.validState(nonNull(data), "data is null");
+        Validate.validState(nonNull(output), "output is null");
         Validate.validState(isConsistent(), "step inconsistent");
         try {
             String group = getJobInfo().getGroup();
@@ -68,7 +64,7 @@ public abstract class Step implements IStep {
                 StepInfo nextStep =
                         taskDefs.getNextStep(group, taskName, stepName);
                 Payload nextStepPayload =
-                        factory.createPayload(getJobInfo(), nextStep, data);
+                        factory.createPayload(getJobInfo(), nextStep, output);
                 taskMediator.pushPayload(nextStepPayload);
                 LOGGER.info("handover to step: " + nextStep.getStepName());
             }
@@ -80,13 +76,13 @@ public abstract class Step implements IStep {
     }
 
     @Override
-    public Object getData() {
-        return data;
+    public Object getOutput() {
+        return output;
     }
 
     @Override
-    public void setData(final Object data) {
-        this.data = data;
+    public void setOutput(final Object output) {
+        this.output = output;
     }
 
     @Override
@@ -116,7 +112,7 @@ public abstract class Step implements IStep {
 
     @Override
     public boolean isConsistent() {
-        return consistent && nonNull(data);
+        return consistent && nonNull(output);
     }
 
     @Override

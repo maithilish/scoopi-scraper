@@ -2,21 +2,19 @@ package org.codetab.scoopi.step.parse;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.defs.IAxisDefs;
-import org.codetab.scoopi.exception.DataDefNotFoundException;
+import org.apache.commons.lang3.Range;
+import org.codetab.scoopi.defs.yml.AxisDefs;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.helper.MemberHelper;
-import org.codetab.scoopi.shared.StatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +23,13 @@ public class MemberStack {
     static final Logger LOGGER = LoggerFactory.getLogger(MemberStack.class);
 
     @Inject
+    private AxisDefs axisDefs;
+    @Inject
     private MemberHelper memberHelper;
     @Inject
-    private IAxisDefs axisDefs;
-    @Inject
-    private StatService statService;
+    private MemberMatrix memberMatrix;
 
     private Deque<Member> mStack = new ArrayDeque<>();
-    private Set<Integer[]> memberIndexSet = new HashSet<>();
 
     public void pushMembers(final List<Member> members) {
         for (Member member : members) {
@@ -48,8 +45,10 @@ public class MemberStack {
         return mStack.isEmpty();
     }
 
-    public void pushNewMember(final String dataDef, final Member member)
-            throws ClassNotFoundException, NumberFormatException {
+    public void pushAdjacentMembers(final DataDef dataDef,
+            final Member member) {
+        Integer[] indexes = memberHelper.getMemberIndexes(member);
+
         for (AxisName axisName : AxisName.values()) {
             Axis axis = null;
             try {
@@ -61,38 +60,20 @@ public class MemberStack {
                 continue;
             }
 
-            int endIndex;
-            try {
-                endIndex = axisDefs.getEndIndex(dataDef, axis);
-            } catch (DataDefNotFoundException e) {
-                endIndex = -1;
-            }
-
-            try {
-                if (!memberHelper.hasFinished(dataDef, axis, endIndex)) {
-                    Integer[] nextMemberIndexes =
-                            memberHelper.nextMemberIndexes(member, axisName);
-                    if (!memberHelper.alreadyProcessed(memberIndexSet,
-                            nextMemberIndexes)) {
-                        // Member newMember = Util.deepClone(Member.class,
-                        // member);
-                        Member newMember = memberHelper.createMember(member);
-                        Axis newAxis = newMember.getAxis(axisName);
-                        newAxis.setIndex(newAxis.getIndex() + 1);
-                        newAxis.setOrder(newAxis.getOrder() + 1);
-                        // nullify all axis value
-                        for (Axis na : newMember.getAxes()) {
-                            na.setValue(null);
-                        }
-                        mStack.addFirst(newMember); // push
-                        memberIndexSet.add(nextMemberIndexes);
-                    }
+            Optional<List<String>> breakAfters =
+                    axisDefs.getBreakAfters(dataDef, axis);
+            Optional<Range<Integer>> indexRange =
+                    axisDefs.getIndexRange(dataDef, axis);
+            if (memberHelper.isAxisWithinRange(axis, breakAfters, indexRange)) {
+                Integer[] nextMemberIndexes =
+                        memberMatrix.nextMemberIndexes(indexes, axis);
+                // if not already created, create and push adjacent member
+                // for this axis
+                if (memberMatrix.notYetCreated(nextMemberIndexes)) {
+                    Member newMember =
+                            memberMatrix.createAdjacentMember(member, axis);
+                    mStack.addFirst(newMember); // push
                 }
-            } catch (DataDefNotFoundException e) {
-                String message = String.join(" ", "unable to get breakAfter");
-                LOGGER.error("{} {}", message, e.getMessage());
-                LOGGER.debug("{} {}", message, e);
-                statService.log(CAT.INTERNAL, message, e);
             }
         }
     }

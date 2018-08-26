@@ -28,7 +28,7 @@ public class BlankStep extends Step {
 
     @Override
     public boolean process() {
-        setData(getPayload().getData());
+        setOutput(getPayload().getData());
         setConsistent(true);
         return true;
     }
