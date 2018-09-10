@@ -1,6 +1,7 @@
 package org.codetab.scoopi.defs.yml;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -11,6 +12,7 @@ import org.codetab.scoopi.defs.yml.cache.AxisDefsCache;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
+import org.codetab.scoopi.model.Filter;
 
 public class AxisDefs implements IAxisDefs {
 
@@ -41,4 +43,14 @@ public class AxisDefs implements IAxisDefs {
         return cache.getPrefixes(dataDef, axisName);
     }
 
+    @Override
+    public Map<AxisName, List<Filter>> getFilterMap(final DataDef dataDef) {
+        return cache.getFilters(dataDef);
+    }
+
+    @Override
+    public Optional<String> getLinkGroup(final DataDef dataDef,
+            final Axis axis) {
+        return cache.getLinkGroup(dataDef, axis);
+    }
 }

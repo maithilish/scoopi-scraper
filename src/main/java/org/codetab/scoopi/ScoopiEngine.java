@@ -44,9 +44,7 @@ public class ScoopiEngine {
 
             scoopiSystem.initDefs();
 
-            scoopiSystem.initDataDefService();
-
-            scoopiSystem.pushInitialPayload();
+            scoopiSystem.seedLocatorGroups();
 
             LOGGER.info(Messages.getString("ScoopiEngine.1")); //$NON-NLS-1$
 

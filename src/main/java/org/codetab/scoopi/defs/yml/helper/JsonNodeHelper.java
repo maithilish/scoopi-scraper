@@ -70,11 +70,11 @@ public class JsonNodeHelper {
      * @param arrayName,
      *            if null then node itself is the array else node is searched
      *            for named array
-     * @return
+     * @return null if no such array
      */
     public List<String> getArrayAsStrings(final JsonNode node,
             final String arrayName) {
-        List<String> values = new ArrayList<>();
+        List<String> values = null;
         JsonNode array = null;
         if (arrayName == null) {
             array = node;
@@ -82,6 +82,7 @@ public class JsonNodeHelper {
             array = node.path(arrayName);
         }
         if (array.isArray()) {
+            values = new ArrayList<>();
             Iterator<JsonNode> it = array.iterator();
             while (it.hasNext()) {
                 values.add(it.next().asText());

@@ -17,16 +17,21 @@ dataDefs:
           region: "table:contains(Sources Of Funds)"
           field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
         members: [ 
-          member: {name: year, indexRange: 2-3},
+          member: {name: year, indexRange: 2-6},
         ]  
       row:
         query:
           region: "table:contains(Sources Of Funds)"
           field: "tr:nth-child(%{row.index}) > td:nth-child(1)"      
         members: [ 
-          member: {name: item, index: 8, breakAfter: ["Secured Loans"] },
+          member: {name: item, index: 5, breakAfter: ["Book Value (Rs)"] },
         ]
-                                        
+        filters: [ 
+          filter: { type: value, pattern: "" },
+          filter: { type: value, pattern: "Sources Of Funds" },
+          filter: { type: value, pattern: "Application Of Funds" },
+        ]
+                                                            
 taskGroups:
 
   bs:

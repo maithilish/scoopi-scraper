@@ -139,6 +139,9 @@
 						},
 						{
 							"$ref": "#/definitions/membersNode"
+						},
+						{
+							"$ref": "#/definitions/filtersNode"
 						}
 					]
 				}
@@ -304,7 +307,7 @@
 				"filter": {
 					"type": "object",
 					"properties": {
-						"name": {
+						"type": {
 							"type": "string",
 							"minLength": 1
 						},
@@ -313,7 +316,7 @@
 						}
 					},
 					"required": [
-						"name",
+						"type",
 						"pattern"
 					]
 				}
@@ -361,8 +364,13 @@
 									"$ref": "#/definitions/taskStepsOverrideNode"
 								}
 							]
+						},
+						"live": {
+							"type": "string",
+							"minLength": 1
 						}
 					},
+					"additionalProperties": false,
 					"required": [
 						"dataDef"
 					]
@@ -374,18 +382,6 @@
 			"minLength": 1
 		},
 		"taskStepsOverrideNode": {
-			"type": "object",
-			"patternProperties": {
-				"^.+$": {
-					"allOf": [
-						{
-							"$ref": "#/definitions/stepNode"
-						}
-					]
-				}
-			}
-		},
-		"taskStepsNode": {
 			"type": "object",
 			"patternProperties": {
 				"^.+$": {

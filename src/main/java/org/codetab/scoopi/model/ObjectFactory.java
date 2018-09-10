@@ -97,4 +97,17 @@ public class ObjectFactory {
         dataDef.setDefJson(defJson);
         return dataDef;
     }
+
+    public DataDef createDataDef(final String name) {
+        DataDef dataDef = new DataDef();
+        dataDef.setName(name);
+        return dataDef;
+    }
+
+    public Filter createFilter(final String type, final String pattern) {
+        Filter filter = new Filter();
+        filter.setType(type);
+        filter.setPattern(pattern);
+        return filter;
+    }
 }

@@ -181,6 +181,7 @@ public class ValueProcessorTest {
         Map<String, String> queries = new HashMap<>();
 
         String value = "test";
+        String expectedValue = "p1test";
 
         Optional<List<String>> prefixes = Optional.of(Lists.newArrayList("p1"));
 
@@ -191,12 +192,12 @@ public class ValueProcessorTest {
         given(queryProcessor.query(queries, valueParser)).willReturn(value);
         given(prefixProcessor.getPrefixes(dataDef, AxisName.ROW))
                 .willReturn(prefixes);
+        given(prefixProcessor.prefixValue(value, prefixes.get()))
+                .willReturn(expectedValue);
 
         valueProcessor.setAxisValues(dataDef, member, valueParser);
 
-        assertThat(row.getValue()).isEqualTo(value);
-        verify(varSubstitutor).replaceVariables(queries, member.getAxisMap());
-        verify(prefixProcessor).prefixValue(value, prefixes.get());
+        assertThat(row.getValue()).isEqualTo(expectedValue);
     }
 
     @Test

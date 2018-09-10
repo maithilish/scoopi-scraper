@@ -21,13 +21,12 @@ import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
 import org.codetab.scoopi.metrics.SystemStat;
 import org.codetab.scoopi.misc.ShutdownHook;
-import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.StepInfo;
+import org.codetab.scoopi.model.helper.LocatorGroupHelper;
 import org.codetab.scoopi.shared.ConfigService;
 import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.step.TaskMediator;
@@ -40,6 +39,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import com.google.common.collect.Lists;
 
 public class ScoopiSystemTest {
 
@@ -69,6 +70,8 @@ public class ScoopiSystemTest {
     private SystemHelper systemHelper;
     @Mock
     private ObjectFactory factory;
+    @Mock
+    private LocatorGroupHelper locatorGroupHelper;
 
     @InjectMocks
     private ScoopiSystem sSystem;
@@ -155,110 +158,78 @@ public class ScoopiSystemTest {
     }
 
     @Test
-    public void testPushInitialPayload()
+    public void testSeedLocatorGroups()
             throws ConfigNotFoundException, InterruptedException {
         String stepName = "start";
-        String seederClassName = "seeder.class";
-        String undefined = "undefined";
+        String seederClzName = "seeder.class";
 
         List<LocatorGroup> lGroups = getTestLocatorGroups();
-        LocatorGroup lg1 = lGroups.get(0);
-        LocatorGroup lg2 = lGroups.get(1);
 
-        StepInfo stepInfo1 = Mockito.mock(StepInfo.class);
-        JobInfo jobInfo1 = Mockito.mock(JobInfo.class);
         Payload payload1 = Mockito.mock(Payload.class);
-
-        StepInfo stepInfo2 = Mockito.mock(StepInfo.class);
-        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
         Payload payload2 = Mockito.mock(Payload.class);
-
-        given(factory.createStepInfo(stepName, undefined, undefined,
-                seederClassName)).willReturn(stepInfo1).willReturn(stepInfo2);
-        given(factory.createJobInfo(0, undefined, lg1.getGroup(), undefined,
-                undefined)).willReturn(jobInfo1);
-        given(factory.createJobInfo(0, undefined, lg2.getGroup(), undefined,
-                undefined)).willReturn(jobInfo2);
-        given(factory.createPayload(jobInfo1, stepInfo1, lg1))
-                .willReturn(payload1);
-        given(factory.createPayload(jobInfo2, stepInfo2, lg2))
-                .willReturn(payload2);
+        List<Payload> payloads = Lists.newArrayList(payload1, payload2);
 
         given(configService.getConfig("scoopi.seederClass"))
-                .willReturn(seederClassName);
+                .willReturn(seederClzName);
         given(locatorDefs.getLocatorGroups()).willReturn(lGroups);
+        given(locatorGroupHelper.createSeedPayloads(lGroups, stepName,
+                seederClzName)).willReturn(payloads);
 
-        boolean result = sSystem.pushInitialPayload();
+        boolean result = sSystem.seedLocatorGroups();
 
         assertThat(result).isTrue();
 
-        InOrder inOrder = inOrder(payload1, payload2, taskMediator);
+        InOrder inOrder = inOrder(taskMediator);
 
         inOrder.verify(taskMediator).pushPayload(payload1);
         inOrder.verify(taskMediator).pushPayload(payload2);
-        verifyNoMoreInteractions(payload1, payload2, taskMediator);
+        verifyNoMoreInteractions(taskMediator);
     }
 
     @Test
-    public void testPushInitialPayloadInterrupted()
+    public void testSeedLocatorGroupsInterrupted()
             throws ConfigNotFoundException, InterruptedException {
         String stepName = "start";
-        String seederClassName = "seeder.class";
-        String undefined = "undefined";
+        String seederClzName = "seeder.class";
 
         List<LocatorGroup> lGroups = getTestLocatorGroups();
-        LocatorGroup lg1 = lGroups.get(0);
-        LocatorGroup lg2 = lGroups.get(1);
 
-        StepInfo stepInfo1 = Mockito.mock(StepInfo.class);
-        JobInfo jobInfo1 = Mockito.mock(JobInfo.class);
         Payload payload1 = Mockito.mock(Payload.class);
-
-        StepInfo stepInfo2 = Mockito.mock(StepInfo.class);
-        JobInfo jobInfo2 = Mockito.mock(JobInfo.class);
         Payload payload2 = Mockito.mock(Payload.class);
-
-        given(factory.createStepInfo(stepName, undefined, undefined,
-                seederClassName)).willReturn(stepInfo1).willReturn(stepInfo2);
-        given(factory.createJobInfo(0, undefined, lg1.getGroup(), undefined,
-                undefined)).willReturn(jobInfo1);
-        given(factory.createJobInfo(0, undefined, lg2.getGroup(), undefined,
-                undefined)).willReturn(jobInfo2);
-        given(factory.createPayload(jobInfo1, stepInfo1, lg1))
-                .willReturn(payload1);
-        given(factory.createPayload(jobInfo2, stepInfo2, lg2))
-                .willReturn(payload2);
+        List<Payload> payloads = Lists.newArrayList(payload1, payload2);
 
         given(configService.getConfig("scoopi.seederClass"))
-                .willReturn(seederClassName);
+                .willReturn(seederClzName);
         given(locatorDefs.getLocatorGroups()).willReturn(lGroups);
+        given(locatorGroupHelper.createSeedPayloads(lGroups, stepName,
+                seederClzName)).willReturn(payloads);
 
         given(taskMediator.pushPayload(payload1))
                 .willThrow(InterruptedException.class);
 
-        boolean result = sSystem.pushInitialPayload();
+        boolean result = sSystem.seedLocatorGroups();
 
         assertThat(result).isTrue();
 
-        InOrder inOrder =
-                inOrder(payload1, payload2, taskMediator, statService);
+        InOrder inOrder = inOrder(taskMediator, statService);
 
         inOrder.verify(taskMediator).pushPayload(payload1);
-        inOrder.verify(statService).log(eq(CAT.INTERNAL), any(String.class));
+        inOrder.verify(statService).log(eq(CAT.INTERNAL), any(String.class),
+                any(InterruptedException.class));
         inOrder.verify(taskMediator).pushPayload(payload2);
 
-        verifyNoMoreInteractions(payload1, payload2, taskMediator, statService);
+        verifyNoMoreInteractions(taskMediator, statService);
     }
 
     @Test
-    public void testPushInitialPayloadThrowsException()
+    public void testSeedLocatorGroupsThrowsException()
             throws ConfigNotFoundException, InterruptedException {
 
         given(configService.getConfig("scoopi.seederClass"))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(CriticalException.class);
-        sSystem.pushInitialPayload();
+        sSystem.seedLocatorGroups();
     }
 
     @Test

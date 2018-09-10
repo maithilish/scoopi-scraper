@@ -24,7 +24,11 @@ dataDefs:
           region: "table:contains(Sources Of Funds)"
           field: "tr:nth-child(%{row.index}) > td:nth-child(1)"      
         members: [ 
-          member: {name: item, index: 8, breakAfter: ["Secured Loans"] },
+          member: {name: item, index: 5, breakAfter: ["Reserves"] },
+        ]
+        filters: [ 
+          filter: { type: value, pattern: "" },
+          filter: { type: value, pattern: "Sources Of Funds" },                   
         ]
                                         
 taskGroups:
@@ -47,7 +51,9 @@ steps:
     parser:
       class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
       previous: loader
+      next: process
+    process:
+      class: "org.codetab.scoopi.step.convert.DataFilter"
+      previous: parser
       next: end
-      
-      
         

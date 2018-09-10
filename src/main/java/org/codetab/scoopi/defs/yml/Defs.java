@@ -2,12 +2,9 @@ package org.codetab.scoopi.defs.yml;
 
 import static java.util.Objects.isNull;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -15,16 +12,11 @@ import javax.inject.Singleton;
 
 import org.codetab.scoopi.defs.IDefs;
 import org.codetab.scoopi.defs.yml.helper.DefsHelper;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.exception.ValidationException;
-import org.codetab.scoopi.messages.Messages;
-import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.google.common.collect.Lists;
 
 @Singleton
@@ -60,11 +52,8 @@ public class Defs implements IDefs {
             effectiveDefs = defsHelper.createEffectiveDefs(definedDefs);
             LOGGER.debug("effective defs {}", defsHelper.pretty(effectiveDefs));
             defsHelper.validateEffectiveDefs(effectiveDefs);
-        } catch (ConfigNotFoundException | IOException | URISyntaxException
-                | ProcessingException | NoSuchElementException
-                | ValidationException e) {
-            throw new CriticalException(Messages.getString("BeanService.2"), //$NON-NLS-1$
-                    e);
+        } catch (Exception e) {
+            throw new CriticalException("initialize defs", e);
         }
     }
 
@@ -90,8 +79,8 @@ public class Defs implements IDefs {
         if (entry.isPresent()) {
             return entry.get().getValue();
         } else {
-            throw new CriticalException(Util.join("unable to initialize defs, ",
-                    key, " is not defined"));
+            throw new CriticalException(String.join(" ", "initialize defs: ",
+                    key, "is not defined"));
         }
     }
 }

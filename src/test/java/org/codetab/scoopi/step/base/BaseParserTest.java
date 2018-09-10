@@ -436,7 +436,6 @@ public class BaseParserTest {
                 factory.createDocument("acme", "url", new Date(), new Date());
         document.setDocumentObject("test doc");
 
-        Payload payload = factory.createPayload(jobInfo, stepInfo, document);
-        return payload;
+        return factory.createPayload(jobInfo, stepInfo, document);
     }
 }

@@ -15,12 +15,10 @@ import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
 import org.codetab.scoopi.metrics.SystemStat;
 import org.codetab.scoopi.misc.ShutdownHook;
-import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.StepInfo;
+import org.codetab.scoopi.model.helper.LocatorGroupHelper;
 import org.codetab.scoopi.shared.ConfigService;
 import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.step.TaskMediator;
@@ -48,6 +46,8 @@ public class ScoopiSystem {
     private MetricsHelper metricsHelper;
     @Inject
     private StatService statService;
+    @Inject
+    private LocatorGroupHelper locatorGroupHelper;
 
     @Inject
     private ShutdownHook shutdownHook;
@@ -58,8 +58,6 @@ public class ScoopiSystem {
     private SystemStat systemStat;
     @Inject
     private SystemHelper systemHelper;
-    @Inject
-    private ObjectFactory factory;
 
     public boolean startStatService() {
         statService.start();
@@ -92,14 +90,6 @@ public class ScoopiSystem {
         return true;
     }
 
-    public boolean initDataDefService() {
-        // dataDefService.init();
-        // int dataDefsCount = dataDefService.getCount();
-        // LOGGER.info(Messages.getString("ScoopiSystem.2"), dataDefsCount);
-        // //$NON-NLS-1$
-        return true;
-    }
-
     public boolean startMetricsServer() {
         metricsServer.start();
         metricsHelper.initMetrics();
@@ -115,35 +105,27 @@ public class ScoopiSystem {
     /*
      *
      */
-    public boolean pushInitialPayload() {
-        LOGGER.info(Messages.getString("ScoopiSystem.3")); //$NON-NLS-1$
+    public boolean seedLocatorGroups() {
+        String message = "seed defined locator groups";
+        LOGGER.info(message); // $NON-NLS-1$
+        String stepName = "start"; //$NON-NLS-1$
+        String seederClzName = null;
         try {
-            String stepName = "start";
-            String seederClassName =
-                    configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
-            String undefined = "undefined";
-            List<LocatorGroup> lGroups = locatorDefs.getLocatorGroups();
-            for (LocatorGroup lGroup : lGroups) {
-                // for init payload, only stepName, className and taskGroup are
-                // set. Next and previous steps, taskName, dataDef are undefined
-                StepInfo stepInfo = factory.createStepInfo(stepName, undefined,
-                        undefined, seederClassName);
-                JobInfo jobInfo = factory.createJobInfo(0, undefined,
-                        lGroup.getGroup(), undefined, undefined);
-                Payload payload =
-                        factory.createPayload(jobInfo, stepInfo, lGroup);
-                try {
-                    taskMediator.pushPayload(payload);
-                } catch (InterruptedException e) {
-                    String msg =
-                            Util.join(Messages.getString("ScoopiSystem.10"),
-                                    lGroup.toString());
-                    statService.log(CAT.INTERNAL, msg);
-                }
-            }
+            seederClzName = configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
         } catch (ConfigNotFoundException e) {
-            throw new CriticalException(Messages.getString("ScoopiSystem.4"), //$NON-NLS-1$
-                    e);
+            throw new CriticalException(message, e);
+        }
+        List<LocatorGroup> locatorGroups = locatorDefs.getLocatorGroups();
+        List<Payload> payloads = locatorGroupHelper
+                .createSeedPayloads(locatorGroups, stepName, seederClzName);
+        for (Payload payload : payloads) {
+            try {
+                taskMediator.pushPayload(payload);
+            } catch (InterruptedException e) {
+                LOGGER.error("{}: {}", message, e.getMessage());
+                LOGGER.debug("{}", message, e);
+                statService.log(CAT.INTERNAL, message, e);
+            }
         }
         return true;
     }

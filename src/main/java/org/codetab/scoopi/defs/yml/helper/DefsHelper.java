@@ -37,7 +37,14 @@ public class DefsHelper {
     public Collection<String> getDefsFiles()
             throws ConfigNotFoundException, IOException, URISyntaxException {
         String defsDir = configService.getConfig("scoopi.defs.dir"); //$NON-NLS-1$
-        return ioHelper.getFilesInDir(defsDir, new String[] {"yml", "yaml"});
+        Collection<String> defsFiles =
+                ioHelper.getFilesInDir(defsDir, new String[] {"yml", "yaml"});
+        if (defsFiles.isEmpty()) {
+            String message =
+                    String.join(" ", "no definitions file found in", defsDir);
+            throw new IllegalStateException(message);
+        }
+        return defsFiles;
     }
 
     public JsonNode loadDefinedDefs(final Collection<String> defsFiles)

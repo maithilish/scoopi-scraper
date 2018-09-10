@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
+import org.codetab.scoopi.model.Filter;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.util.TestUtils;
 import org.junit.Before;
@@ -31,6 +33,8 @@ public class AxisDefsHelperTest {
 
     @Spy
     private JsonNodeHelper jsonNodeHelper;
+    @Spy
+    private ObjectFactory objectFactory;
 
     @InjectMocks
     private AxisDefsHelper axisDefsHelper;
@@ -96,7 +100,7 @@ public class AxisDefsHelperTest {
         axis = factory.createAxis(AxisName.ROW, "Price");
 
         actual = axisDefsHelper.getBreakAfters(dataDef, axis);
-        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.isPresent()).isFalse();
     }
 
     @Test
@@ -138,20 +142,24 @@ public class AxisDefsHelperTest {
         assertThat(actual.get()).containsExactly("p1", "p2");
     }
 
-    // @Test
-    // public void testGetBreakAftersNotDefined() throws IOException {
-    // DataDef dataDef = getTestDataDef();
-    // Axis axis = factory.createAxis(AxisName.ROW, "Xyz");
-    //
-    // Optional<List<String>> actual =
-    // axisDefsHelper.getBreakAfters(dataDef, axis);
-    // assertThat(actual.isPresent()).isFalse();
-    //
-    // axis = factory.createAxis(AxisName.ROW, "Price");
-    //
-    // actual = axisDefsHelper.getBreakAfters(dataDef, axis);
-    // assertThat(actual.isPresent()).isTrue();
-    // }
+    @Test
+    public void testGetFilters() throws IOException {
+        DataDef dataDef = getTestDataDef();
+
+        Filter expected1 = factory.createFilter("value", "f1");
+        Filter expected2 = factory.createFilter("match", "f2");
+
+        Map<AxisName, List<Filter>> actual = axisDefsHelper.getFilters(dataDef);
+
+        assertThat(actual.size()).isEqualTo(3);
+
+        assertThat(actual.get(AxisName.FACT).size()).isEqualTo(0);
+        assertThat(actual.get(AxisName.COL).size()).isEqualTo(0);
+        assertThat(actual.get(AxisName.ROW).size()).isEqualTo(2);
+
+        assertThat(actual.get(AxisName.ROW)).containsExactly(expected1,
+                expected2);
+    }
 
     private DataDef getTestDataDef() throws IOException {
         Date runDate = new Date();
@@ -166,7 +174,10 @@ public class AxisDefsHelperTest {
                 .append("row:{query:{noQuery: ignored},")
                 .append("members:[{member:{name:Price,value:Price,index:2,order:12}},")
                 .append("{member:{name:High,match:High}}],")
-                .append("prefix: [ p1, p2 ] ").append("} }}").toString();
+                .append("prefix: [ p1, p2 ], ")
+                .append("filters: [{filter: {type: value, pattern: f1 }}, ")
+                .append("{filter: {type: match, pattern: f2} }]").append("} }}")
+                .toString();
         JsonNode def = mapper.readTree(TestUtils.parseJson(defJson));
         DataDef dataDef =
                 factory.createDataDef("price", fromDate, toDate, defJson);

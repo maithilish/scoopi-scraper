@@ -86,7 +86,8 @@ public class ValueProcessor {
                     Optional<List<String>> prefixes =
                             prefixProcessor.getPrefixes(dataDef, axisName);
                     if (prefixes.isPresent()) {
-                        prefixProcessor.prefixValue(value, prefixes.get());
+                        value = prefixProcessor.prefixValue(value,
+                                prefixes.get());
                     }
                 }
 

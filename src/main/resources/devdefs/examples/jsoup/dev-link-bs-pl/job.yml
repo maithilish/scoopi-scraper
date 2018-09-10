@@ -1,0 +1,124 @@
+locatorGroups:
+  quote:   
+    locators: [
+       { name: acme, url: "/defs/examples/page/acme-quote-links.html" }  
+    ]
+
+dataDefs:
+
+  links:
+    axis:
+      fact:
+        query:
+          region: "#page_links > table > tbody > tr > td:nth-child(4) > ul"  
+          field: "li:nth-child(%{row.index}) > a[href]"
+          attribute: "href"
+        prefix: [ "/defs/examples/page/" ]   
+      col:
+        query:
+          script: "configs.getRunDateTime()"                  
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          region: "#page_links > table > tbody > tr > td:nth-child(4) > ul"
+          field: "li:nth-child(%{row.index}) > a[href]"      
+        members: [ 
+          member: {name: bs, index: 2, linkGroup: bs},                   
+          member: {name: pl, index: 3, linkGroup: pl},
+        ]
+                              
+  bs:
+    axis:
+      fact:
+        query:
+          region: "table:contains(Sources Of Funds)"  
+          field: "tr:nth-child(%{row.index}) > td:nth-child(%{col.index})" 
+      col:
+        query:
+          region: "table:contains(Sources Of Funds)"
+          field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
+        members: [ 
+          member: {name: year, indexRange: 2-3},
+        ]  
+      row:
+        query:
+          region: "table:contains(Sources Of Funds)"
+          field: "tr:nth-child(%{row.index}) > td:nth-child(1)"      
+        members: [ 
+          member: {name: item, index: 5, breakAfter: ["Reserves"] },
+        ]
+        filters: [ 
+          filter: { type: value, pattern: "" },
+          filter: { type: value, pattern: "Sources Of Funds" },                   
+        ]
+
+  pl:
+    axis:
+      fact:
+        query:
+          region: "table:contains(Employee Cost)" 
+          field: "tr:nth-child(%{row.index}) > td:nth-child(%{col.index})" 
+      col:
+        query:
+          region: "table:contains(Employee Cost)"
+          field: "tr:nth-child(1) > td:nth-child(%{col.index})"      
+        members: [ 
+          member: {name: year, indexRange: 2-3},
+        ]  
+      row:
+        query:
+          region: "table:contains(Employee Cost)"
+          field: "tr:nth-child(%{row.index}) > td:nth-child(1)" 
+        members: [ 
+          member: {name: item, index: 6, breakAfter: ["Excise Duty"] },
+        ]
+        filters: [ 
+          filter: { type: value, pattern: "" },
+          filter: { type: value, pattern: "Expenditure" },                   
+        ]
+        
+                                        
+taskGroups:
+
+  quote:
+    linkTask:
+      dataDef: links
+      steps:
+        dev:
+          process:
+            class: "org.codetab.scoopi.step.convert.LocatorCreator"
+            previous: parser
+            next: seeder
+            
+  bs:
+    bsTask:
+      dataDef: bs
+      steps: dev
+
+  pl:
+    plTask:
+      dataDef: pl
+      steps: dev
+         
+steps: 
+  dev:
+    seeder:
+      class: "org.codetab.scoopi.step.extract.LocatorSeeder"
+      previous: start
+      next: loader
+    loader:
+      class: "org.codetab.scoopi.step.extract.URLLoader"
+      previous: seeder
+      next: parser
+    parser:
+      class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
+      previous: loader
+      next: process
+    process:
+      class: "org.codetab.scoopi.step.convert.DataFilter"
+      previous: parser
+      next: end
+      
+    

@@ -13,6 +13,7 @@ import org.codetab.scoopi.defs.yml.helper.AxisDefsHelper;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
+import org.codetab.scoopi.model.Filter;
 
 public class AxisDefsCache {
 
@@ -24,6 +25,8 @@ public class AxisDefsCache {
     private Map<String, Optional<List<String>>> breakAfterCache =
             new HashMap<>();
     private Map<String, Optional<Range<Integer>>> indexRangeCache =
+            new HashMap<>();
+    private Map<String, Map<AxisName, List<Filter>>> filterCache =
             new HashMap<>();
 
     public String getQuery(final DataDef dataDef, final AxisName axisName,
@@ -87,5 +90,24 @@ public class AxisDefsCache {
             }
         }
         return indexRangeCache.get(key);
+    }
+
+    public Map<AxisName, List<Filter>> getFilters(final DataDef dataDef) {
+        String key = dataDef.getName();
+        if (!filterCache.containsKey(key)) {
+            try {
+                Map<AxisName, List<Filter>> filters =
+                        axisDefsHelper.getFilters(dataDef);
+                filterCache.put(key, filters);
+            } catch (NoSuchElementException e) {
+                filterCache.put(key, new HashMap<>());
+            }
+        }
+        return filterCache.get(key);
+    }
+
+    public Optional<String> getLinkGroup(final DataDef dataDef,
+            final Axis axis) {
+        return axisDefsHelper.getLinkGroup(dataDef, axis);
     }
 }
