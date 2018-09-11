@@ -1,6 +1,9 @@
 package org.codetab.scoopi.model.helper;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.notNull;
+import static org.apache.commons.lang3.Validate.validState;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -17,14 +20,12 @@ import java.util.zip.DataFormatException;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
 import org.codetab.scoopi.util.MarkerUtil;
 import org.codetab.scoopi.util.Util;
@@ -42,7 +43,7 @@ public class DocumentHelper {
     /**
      * logger.
      */
-    static final Logger LOGGER = LoggerFactory.getLogger(Document.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(DocumentHelper.class);
 
     /**
      * ConfigService singleton.
@@ -72,10 +73,9 @@ public class DocumentHelper {
      *         input is empty or null.
      */
     public Long getActiveDocumentId(final List<Document> documents) {
-        Validate.validState(configService != null,
-                Messages.getString("DocumentHelper.0")); //$NON-NLS-1$
+        validState(nonNull(configService), "configService is not set");
 
-        if (documents == null) {
+        if (isNull(documents)) {
             return null;
         }
         Long activeDocumentId = null;
@@ -91,8 +91,7 @@ public class DocumentHelper {
     }
 
     public Document getActiveDocument(final List<Document> documents) {
-        Validate.validState(configService != null,
-                Messages.getString("DocumentHelper.0")); //$NON-NLS-1$
+        validState(nonNull(configService), "configService is not set");
 
         if (isNull(documents)) {
             return null;
@@ -115,6 +114,8 @@ public class DocumentHelper {
      * created
      */
     public boolean resetToDate(final Document document, final Date newToDate) {
+        validState(nonNull(configService), "configService is not set");
+
         document.setToDate(newToDate);
         // expired for new toDate
         if (newToDate.compareTo(configService.getRunDateTime()) < 0) {
@@ -143,7 +144,7 @@ public class DocumentHelper {
             }
         }
         throw new NoSuchElementException(
-                Util.join("no document with id [", String.valueOf(id), "]"));
+                String.join(" ", "no document with id:", String.valueOf(id)));
     }
 
     /**
@@ -168,12 +169,11 @@ public class DocumentHelper {
     public Date getToDate(final Date fromDate, final String live,
             final JobInfo jobInfo) {
 
-        Validate.notNull(fromDate, Messages.getString("DocumentHelper.1")); //$NON-NLS-1$
-        Validate.notNull(live, Messages.getString("DocumentHelper.2")); //$NON-NLS-1$
-        Validate.notNull(jobInfo, Messages.getString("DocumentHelper.4")); //$NON-NLS-1$
+        notNull(fromDate, "fromDate must not be null");
+        notNull(live, "live must not be null");
+        notNull(jobInfo, "jobInfo must not be null");
 
-        Validate.validState(configService != null,
-                Messages.getString("DocumentHelper.3")); //$NON-NLS-1$
+        validState(nonNull(configService), "configService is not set");
 
         // convert fromDate to DateTime
         ZonedDateTime fromDateTime = ZonedDateTime
@@ -200,7 +200,7 @@ public class DocumentHelper {
                 toDate = ZonedDateTime.ofInstant(td.toInstant(),
                         ZoneId.systemDefault());
             } catch (ParseException | ConfigNotFoundException pe) {
-                LOGGER.warn(Messages.getString("DocumentHelper.9"), //$NON-NLS-1$
+                LOGGER.warn("{} live is {} {}, defaults to 0 days",
                         jobInfo.getLabel(), documentlive, e);
                 TemporalAmount ta = Util.parseTemporalAmount("PT0S"); //$NON-NLS-1$
                 toDate = fromDateTime.plus(ta);
@@ -210,7 +210,7 @@ public class DocumentHelper {
         if (LOGGER.isTraceEnabled()) {
             Marker marker =
                     MarkerUtil.getMarker(jobInfo.getName(), jobInfo.getGroup());
-            LOGGER.trace(marker, "document.toDate. [live] {} [toDate]", //$NON-NLS-1$
+            LOGGER.trace(marker, "document.toDate. live: {} toDate:", //$NON-NLS-1$
                     documentlive, toDate);
         }
         return Date.from(Instant.from(toDate));
@@ -229,9 +229,9 @@ public class DocumentHelper {
      */
     public byte[] getDocumentObject(final Document document)
             throws DataFormatException, IOException {
-        Validate.notNull(document, Messages.getString("DocumentHelper.12")); //$NON-NLS-1$
-        Validate.notNull(document.getDocumentObject(),
-                Messages.getString("DocumentHelper.13")); //$NON-NLS-1$
+        notNull(document, "document must not be null");
+        validState(nonNull(document.getDocumentObject()),
+                "documentObject is null");
 
         final int bufferLength = 4086;
         return CompressionUtil.decompressByteArray(
@@ -251,15 +251,14 @@ public class DocumentHelper {
      */
     public boolean setDocumentObject(final Document document,
             final byte[] documentObject) throws IOException {
-        Validate.notNull(document, Messages.getString("DocumentHelper.14")); //$NON-NLS-1$
-        Validate.notNull(documentObject,
-                Messages.getString("DocumentHelper.15")); //$NON-NLS-1$
+        notNull(document, "document must not be null");
+        notNull(documentObject, "documentObject must not be null");
 
         final int bufferLength = 4086;
         byte[] compressedObject =
                 CompressionUtil.compressByteArray(documentObject, bufferLength);
         document.setDocumentObject(compressedObject);
-        LOGGER.debug(Messages.getString("DocumentHelper.21"), //$NON-NLS-1$
+        LOGGER.debug("documentObject size {} compressed size {}",
                 documentObject.length, compressedObject.length);
         return true;
     }
@@ -281,13 +280,10 @@ public class DocumentHelper {
      */
     public Document createDocument(final String name, final String url,
             final Date fromDate, final Date toDate) {
-        Validate.notNull(name, Messages.getString("DocumentHelper.16")); //$NON-NLS-1$
-        Validate.notNull(url, Messages.getString("DocumentHelper.17")); //$NON-NLS-1$
-        Validate.notNull(fromDate, Messages.getString("DocumentHelper.18")); //$NON-NLS-1$
-        Validate.notNull(toDate, Messages.getString("DocumentHelper.19")); //$NON-NLS-1$
-
-        Validate.validState(objectFactory != null,
-                Messages.getString("DocumentHelper.20")); //$NON-NLS-1$
+        notNull(name, "name must not be null");
+        notNull(url, "url must not be null");
+        notNull(fromDate, "fromDate must not be null");
+        notNull(toDate, "toDate must not be null");
 
         return objectFactory.createDocument(name, url, fromDate, toDate);
     }

@@ -27,7 +27,7 @@ public class JobInfo {
         this.group = group;
         this.task = task;
         this.dataDef = dataDef;
-        this.label = String.join(":", locator, group, dataDef);
+        this.label = String.join(":", locator, task, dataDef);
     }
 
     public long getId() {

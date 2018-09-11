@@ -1,10 +1,10 @@
 package org.codetab.scoopi.step.lite;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.validState;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -50,8 +50,8 @@ public class SeederStep extends Step {
     @Override
     public boolean handover() {
 
-        Validate.validState(nonNull(getOutput()), "data is null");
-        Validate.validState(isConsistent(), "step inconsistent");
+        validState(nonNull(getOutput()), "data is null");
+        validState(isConsistent(), "step inconsistent");
 
         LOGGER.info("handover");
         String taskGroup = getPayload().getJobInfo().getGroup();

@@ -1,6 +1,8 @@
 package org.codetab.scoopi.defs.yml.helper;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.notNull;
+import static org.apache.commons.lang3.Validate.validState;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,19 +16,16 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateUtils;
 import org.assertj.core.util.Lists;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.util.Util;
+import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +60,7 @@ public class DataDefHelper {
         List<DataDef> dataDefs = new ArrayList<>();
         ArrayList<String> names = Lists.newArrayList(defs.fieldNames());
         for (String name : names) {
-            String path = Util.join("/", name);
+            String path = String.join("/", "", name);
             JsonNode dataDefNode = defs.at(path);
             String defJson = yamlHelper.toJson(dataDefNode);
             Date fromDate = configService.getRunDateTime();
@@ -88,8 +87,8 @@ public class DataDefHelper {
      */
     public boolean markForUpdation(final List<DataDef> newDataDefs,
             final List<DataDef> oldDataDefs) {
-        Validate.notNull(newDataDefs, Messages.getString("DataDefHelper.1")); //$NON-NLS-1$
-        Validate.notNull(oldDataDefs, Messages.getString("DataDefHelper.0")); //$NON-NLS-1$
+        notNull(newDataDefs, "newDataDefs must not be null");
+        notNull(oldDataDefs, "oldDataDefs must not be null");
 
         boolean updates = false;
         for (DataDef newDataDef : newDataDefs) {
@@ -101,10 +100,10 @@ public class DataDefHelper {
                         .get();
                 if (oldDataDef.equalsForDef(newDataDef)) {
                     // no change
-                    message = Messages.getString("DataDefHelper.2"); //$NON-NLS-1$
+                    message = "no changes";
                 } else {
                     // changed - update old and insert changed
-                    message = Messages.getString("DataDefHelper.3"); //$NON-NLS-1$
+                    message = "changed, insert new version";
                     updates = true;
                     Date toDate = DateUtils
                             .addSeconds(configService.getRunDateTime(), -1);
@@ -113,12 +112,11 @@ public class DataDefHelper {
                 }
             } catch (NoSuchElementException e) {
                 // not exists - add new
-                message = Messages.getString("DataDefHelper.4"); //$NON-NLS-1$
+                message = "not in store, insert new version";
                 updates = true;
                 oldDataDefs.add(newDataDef);
             }
-            LOGGER.info(Messages.getString("DataDefHelper.5"), name, //$NON-NLS-1$
-                    message);
+            LOGGER.info("dataDef: {}, {}", name, message);
         }
         return updates;
     }
@@ -170,8 +168,7 @@ public class DataDefHelper {
      */
     public List<Set<Axis>> getAxisSets(final DataDef dataDef) {
 
-        Validate.validState(dataDef.getDef() instanceof JsonNode,
-                "def is not JsonNode");
+        validState(dataDef.getDef() instanceof JsonNode, "def is not JsonNode");
 
         JsonNode def = (JsonNode) dataDef.getDef();
         String path = String.join("/", "", "axis");

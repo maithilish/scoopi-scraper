@@ -16,7 +16,7 @@ import org.codetab.scoopi.dao.jdo.JdoDaoFactory;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

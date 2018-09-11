@@ -1,7 +1,5 @@
 package org.codetab.scoopi.exception;
 
-import org.codetab.scoopi.util.Util;
-
 /**
  * <p>
  * Exception thrown when by step when persistence error is encountered.
@@ -64,10 +62,6 @@ public class StepPersistenceException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        if (message == null) {
-            return message;
-        } else {
-            return Util.join("[", message, "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        return message;
     }
 }

@@ -12,8 +12,7 @@ import javax.jdo.PersistenceManagerFactory;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.messages.Messages;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,24 +88,25 @@ public class PMF {
      */
     public synchronized void init() {
         if (factory == null) {
-            logger.info(Messages.getString("PMF.0")); //$NON-NLS-1$
-            String configFile;
             try {
-                configFile = Util.join("/", //$NON-NLS-1$
-                        configService.getConfig("scoopi.datastore.configFile")); // $NON-NLS-2$
-            } catch (ConfigNotFoundException e) {
-                throw new CriticalException(Messages.getString("PMF.1"), e); //$NON-NLS-1$
-            }
-            try (InputStream propStream = ioHelper.getInputStream(configFile)) {
-                jdoProperties.load(propStream);
-                factory = JDOHelper.getPersistenceManagerFactory(jdoProperties);
+                logger.info("initalize JDO PMF");
+                String configFile = String.join("", "/",
+                        configService.getConfig("scoopi.datastore.configFile"));
+                try (InputStream propStream =
+                        ioHelper.getInputStream(configFile)) {
 
-                logger.info(Messages.getString("PMF.2")); //$NON-NLS-1$
-                logger.debug(Messages.getString("PMF.3"), //$NON-NLS-1$
-                        Util.getPropertiesAsString(jdoProperties));
-                logger.debug(Messages.getString("PMF.4")); //$NON-NLS-1$
-            } catch (IOException e) {
-                throw new CriticalException(Messages.getString("PMF.5"), e); //$NON-NLS-1$
+                    jdoProperties.load(propStream);
+                    factory = JDOHelper
+                            .getPersistenceManagerFactory(jdoProperties);
+
+                    logger.info(" initialized JDO PMF");
+                    logger.debug("PMF properties {}",
+                            Util.getPropertiesAsString(jdoProperties));
+                } catch (IOException e) {
+                    throw e;
+                }
+            } catch (ConfigNotFoundException | IOException e) {
+                throw new CriticalException("unable to initialize JDO PMF", e); //$NON-NLS-1$
             }
         }
     }

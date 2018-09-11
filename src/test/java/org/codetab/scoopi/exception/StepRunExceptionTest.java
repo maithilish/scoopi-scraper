@@ -17,11 +17,10 @@ public class StepRunExceptionTest {
     @Test
     public void testException() {
         String message = "xyz";
-        String expected = "[" + message + "]";
 
         ex = new StepRunException(message);
 
-        assertThat(ex.getMessage()).isEqualTo(expected);
+        assertThat(ex.getMessage()).isEqualTo(message);
     }
 
     @Test
@@ -37,11 +36,10 @@ public class StepRunExceptionTest {
     public void testCriticalExceptionWithMessageAndCause() {
         String message = "xyz";
         Throwable cause = new Throwable("x");
-        String expected = "[" + message + "]";
 
         ex = new StepRunException(message, cause);
 
         assertThat(ex.getCause()).isEqualTo(cause);
-        assertThat(ex.getMessage()).isEqualTo(expected);
+        assertThat(ex.getMessage()).isEqualTo(message);
     }
 }

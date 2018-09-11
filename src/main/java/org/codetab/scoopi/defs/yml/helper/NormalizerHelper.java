@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.assertj.core.util.Lists;
-import org.codetab.scoopi.util.Util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,10 +19,12 @@ public class NormalizerHelper {
     public Map<String, JsonNode> getTasks(final String group,
             final JsonNode taskGroups) {
         Map<String, JsonNode> taskMap = new HashMap<>();
-        JsonNode tasks = taskGroups.at("/" + group);
+        String path = String.join("/", "", group);
+        JsonNode tasks = taskGroups.at(path);
         ArrayList<String> taskNames = Lists.newArrayList(tasks.fieldNames());
         for (String taskName : taskNames) {
-            JsonNode task = tasks.at("/" + taskName);
+            path = String.join("/", "", taskName);
+            JsonNode task = tasks.at(path);
             taskMap.put(taskName, task);
         }
         return taskMap;
@@ -34,12 +35,14 @@ public class NormalizerHelper {
 
         ArrayList<String> groups = Lists.newArrayList(taskGroups.fieldNames());
         for (String group : groups) {
-            JsonNode tasks = taskGroups.at("/" + group);
+            String path = String.join("/", "", group);
+            JsonNode tasks = taskGroups.at(path);
             ArrayList<String> taskNames =
                     Lists.newArrayList(tasks.fieldNames());
             for (String taskName : taskNames) {
-                JsonNode task = tasks.at("/" + taskName);
-                String key = Util.join(group, "/", taskName);
+                path = String.join("/", "", taskName);
+                JsonNode task = tasks.at(path);
+                String key = String.join("/", group, taskName);
                 taskMap.put(key, task);
             }
         }
@@ -51,13 +54,15 @@ public class NormalizerHelper {
 
         ArrayList<String> groups = Lists.newArrayList(taskGroups.fieldNames());
         for (String group : groups) {
-            JsonNode tasks = taskGroups.at("/" + group);
+            String path = String.join("/", "", group);
+            JsonNode tasks = taskGroups.at(path);
             ArrayList<String> taskNames =
                     Lists.newArrayList(tasks.fieldNames());
             for (String taskName : taskNames) {
-                JsonNode task = tasks.at("/" + taskName);
+                path = String.join("/", "", taskName);
+                JsonNode task = tasks.at(path);
                 JsonNode steps = task.at("/steps");
-                String key = Util.join(group, "/", taskName);
+                String key = String.join("/", group, taskName);
                 stepsMap.put(key, steps);
             }
         }
@@ -89,8 +94,9 @@ public class NormalizerHelper {
     public Map<String, JsonNode> getOverridenSteps(final String stepsName,
             final JsonNode steps) {
         Map<String, JsonNode> overridenSteps = new HashMap<>();
+        String path = String.join("/", "", stepsName);
         ArrayList<Entry<String, JsonNode>> entries =
-                Lists.newArrayList(steps.at("/" + stepsName).fields());
+                Lists.newArrayList(steps.at(path).fields());
         for (Entry<String, JsonNode> entry : entries) {
             overridenSteps.put(entry.getKey(), entry.getValue());
         }
@@ -117,7 +123,8 @@ public class NormalizerHelper {
 
         ArrayList<String> stepsNames = Lists.newArrayList(steps.fieldNames());
         for (String stepsName : stepsNames) {
-            stepMap.put(stepsName, steps.at("/" + stepsName));
+            String path = String.join("/", "", stepsName);
+            stepMap.put(stepsName, steps.at(path));
         }
         return stepMap;
     }

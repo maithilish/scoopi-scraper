@@ -93,6 +93,7 @@ public class AxisDefsHelper {
         if (jMember.isPresent()) {
             String value = jMember.get().path("indexRange").asText();
             if (StringUtils.isNotBlank(value)) {
+                // TODO - extract Util.getRange() to separate class
                 indexRange = Optional.ofNullable(Util.getRange(value));
             }
         }

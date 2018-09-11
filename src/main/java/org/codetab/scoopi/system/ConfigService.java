@@ -1,4 +1,6 @@
-package org.codetab.scoopi.shared;
+package org.codetab.scoopi.system;
+
+import static java.util.Objects.isNull;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -23,7 +25,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class ConfigService {
     }
 
     public void init(final String userProvidedFile, final String defaultsFile) {
-        LOGGER.info(Messages.getString("ConfigService.0")); //$NON-NLS-1$
+        LOGGER.info("initialize config service");
 
         configs = new CompositeConfiguration();
 
@@ -57,16 +58,14 @@ public class ConfigService {
             configs.addConfiguration(userProvided);
         } catch (ConfigurationException e) {
             configs.addConfiguration(new PropertiesConfiguration());
-            LOGGER.info(e.getLocalizedMessage() + ". " //$NON-NLS-1$
-                    + Messages.getString("ConfigService.1")); //$NON-NLS-1$
+            LOGGER.info("{}, {}", e.getMessage(), "use default configs");
         }
 
         try {
             Configuration defaults = getXMLConfigs(defaultsFile);
             configs.addConfiguration(defaults);
         } catch (ConfigurationException e) {
-            throw new CriticalException(Messages.getString("ConfigService.2"), //$NON-NLS-1$
-                    e);
+            throw new CriticalException("unable to create config service", e);
         }
 
         addRunDate();
@@ -75,9 +74,10 @@ public class ConfigService {
         LOGGER.trace("{}", configsAsString(ConfigIndex.SYSTEM)); //$NON-NLS-1$
         LOGGER.debug("{}", configsAsString(ConfigIndex.PROVIDED)); //$NON-NLS-1$
         LOGGER.debug("{}", configsAsString(ConfigIndex.DEFAULTS)); //$NON-NLS-1$
-        LOGGER.debug(Messages.getString("ConfigService.3")); //$NON-NLS-1$
-        LOGGER.info(Messages.getString("ConfigService.4")); //$NON-NLS-1$
-        LOGGER.info(Messages.getString("ConfigService.5")); //$NON-NLS-1$
+        LOGGER.debug("config service initialized");
+        LOGGER.info("config precedence: system, user defined, deaults");
+        LOGGER.info(
+                "use scoopi.properties or system property to override defaults");
     }
 
     // when config not found, default value may be used in some cases
@@ -87,7 +87,6 @@ public class ConfigService {
     public String getConfig(final String key) throws ConfigNotFoundException {
         String value = configs.getString(key);
         if (value == null) {
-            LOGGER.warn(Messages.getString("ConfigService.6"), key); //$NON-NLS-1$
             throw new ConfigNotFoundException(key);
         }
         return value;
@@ -97,7 +96,6 @@ public class ConfigService {
             throws ConfigNotFoundException {
         String[] values = configs.getStringArray(key);
         if (values.length == 0) {
-            LOGGER.warn(Messages.getString("ConfigService.6"), key); //$NON-NLS-1$
             throw new ConfigNotFoundException(key);
         }
         return values;
@@ -116,44 +114,50 @@ public class ConfigService {
     }
 
     public Date getRunDate() {
-        try {
-            Date runDate = null;
-            String dateStr = getConfig("scoopi.runDate"); //$NON-NLS-1$
-            String patterns = getConfig("scoopi.dateParsePattern"); //$NON-NLS-1$
-            runDate = DateUtils.parseDate(dateStr, new String[] {patterns});
-            return runDate;
-        } catch (ParseException | ConfigNotFoundException e) {
-            throw new CriticalException(Messages.getString("ConfigService.7"), //$NON-NLS-1$
-                    e);
+        String key = "scoopi.parsed.runDate";
+        Date runDate = (Date) configs.getProperty(key);
+        if (isNull(runDate)) {
+            try {
+                String dateStr = getConfig("scoopi.runDate"); //$NON-NLS-1$
+                String patterns = getConfig("scoopi.dateParsePattern"); //$NON-NLS-1$
+                runDate = DateUtils.parseDate(dateStr, new String[] {patterns});
+                configs.setProperty(key, runDate);
+            } catch (ParseException | ConfigNotFoundException e) {
+                throw new CriticalException("unable to parse runDate", e);
+            }
         }
+        return runDate;
     }
 
     public Date getRunDateTime() {
-        try {
-            Date runDateTime = null;
-            String dateTimeStr = getConfig("scoopi.runDateTime"); //$NON-NLS-1$
-            String patterns = getConfig("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
-            runDateTime =
-                    DateUtils.parseDate(dateTimeStr, new String[] {patterns});
-            return runDateTime;
-        } catch (ParseException | ConfigNotFoundException e) {
-            throw new CriticalException(Messages.getString("ConfigService.7"), //$NON-NLS-1$
-                    e);
+        String key = "scoopi.parsed.runDateTime";
+        Date runDateTime = (Date) configs.getProperty(key);
+        if (isNull(runDateTime)) {
+            try {
+                String dateTimeStr = getConfig("scoopi.runDateTime"); //$NON-NLS-1$
+                String patterns = getConfig("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
+                runDateTime = DateUtils.parseDate(dateTimeStr,
+                        new String[] {patterns});
+                configs.setProperty(key, runDateTime);
+            } catch (ParseException | ConfigNotFoundException e) {
+                throw new CriticalException("unable to parse runDateTime", e);
+            }
         }
+        return runDateTime;
     }
 
     public Date getHighDate() {
+        String key = "scoopi.parsed.runHighDate";
+        Date highDate = (Date) configs.getProperty(key);
         try {
-            Date highDate = null;
             String dateStr = getConfig("scoopi.highDate"); //$NON-NLS-1$
             String[] patterns = getConfigArray("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
             highDate = DateUtils.parseDate(dateStr, patterns);
-            return highDate;
+            configs.setProperty(key, highDate);
         } catch (ParseException | ConfigNotFoundException e) {
-            throw new CriticalException(Messages.getString("ConfigService.7"), //$NON-NLS-1$
-                    e);
+            throw new CriticalException("unable to parse highDate", e);
         }
-
+        return highDate;
     }
 
     public ORM getOrmType() {
@@ -167,8 +171,8 @@ public class ConfigService {
                 orm = ORM.JPA;
             }
         } catch (ConfigNotFoundException e) {
-            LOGGER.error("{}", e.getMessage()); //$NON-NLS-1$
-            LOGGER.trace("", e); //$NON-NLS-1$
+            LOGGER.warn("{}", e.getMessage());
+            LOGGER.debug("", e);
         }
         return orm;
     }

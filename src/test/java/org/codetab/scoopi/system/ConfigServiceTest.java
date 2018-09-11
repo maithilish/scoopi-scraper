@@ -1,4 +1,4 @@
-package org.codetab.scoopi.shared;
+package org.codetab.scoopi.system;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertArrayEquals;
@@ -15,7 +15,7 @@ import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.shared.ConfigService.ConfigIndex;
+import org.codetab.scoopi.system.ConfigService.ConfigIndex;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

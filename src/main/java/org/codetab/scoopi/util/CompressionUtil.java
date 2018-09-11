@@ -1,13 +1,12 @@
 package org.codetab.scoopi.util;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-
-import org.codetab.scoopi.messages.Messages;
 
 /**
  * <p>
@@ -37,7 +36,7 @@ public final class CompressionUtil {
      */
     public static byte[] compressByteArray(final byte[] input,
             final int bufferLength) throws IOException {
-        Objects.requireNonNull(input, Messages.getString("CompressionUtil.0")); //$NON-NLS-1$
+        notNull(input, "input must not be null");
         // bufferLength is int, so it can't be null
 
         Deflater compressor = new Deflater();
@@ -76,14 +75,14 @@ public final class CompressionUtil {
      */
     public static byte[] decompressByteArray(final byte[] input,
             final int bufferLength) throws DataFormatException, IOException {
-        Objects.requireNonNull(input, Messages.getString("CompressionUtil.1")); //$NON-NLS-1$
+        notNull(input, "input must not be null");
         // bufferLength is int, so it can't be null
 
         final Inflater decompressor = new Inflater();
 
         decompressor.setInput(input);
 
-        // Create an expandable byte array to hold the decompressed data
+        // Create an expandable byte array to hold the decompress data
         final ByteArrayOutputStream baos =
                 new ByteArrayOutputStream(input.length);
 

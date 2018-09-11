@@ -45,7 +45,7 @@ public class IOHelper {
     public InputStream getInputStream(final String fileName)
             throws FileNotFoundException {
         InputStream stream = IOHelper.class.getResourceAsStream(fileName);
-        if (stream == null) {
+        if (isNull(stream)) {
             stream = ClassLoader.getSystemResourceAsStream(fileName);
             if (stream == null) {
                 stream = new FileInputStream(new File(fileName));
@@ -104,7 +104,7 @@ public class IOHelper {
      */
     public URL getResourceURL(final String fileName) {
         URL url = IOHelper.class.getResource(fileName);
-        if (url == null) {
+        if (isNull(url)) {
             url = ClassLoader.getSystemResource(fileName);
         }
         return url;

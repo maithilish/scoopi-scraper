@@ -1,10 +1,8 @@
-package org.codetab.scoopi.misc;
+package org.codetab.scoopi.system;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.messages.Messages;
-import org.codetab.scoopi.shared.StatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +24,7 @@ public class ShutdownHook extends Thread {
      * activity service.
      */
     @Inject
-    private StatService activityService;
+    private Stats stats;
 
     /**
      * <p>
@@ -35,7 +33,7 @@ public class ShutdownHook extends Thread {
     @Inject
     public ShutdownHook() {
         // cs - if private then class has to be final which is unable to mock
-        logger.info(Messages.getString("ShutdownHook.0")); //$NON-NLS-1$
+        logger.info("shutdown hook created");
     }
 
     /**
@@ -43,7 +41,7 @@ public class ShutdownHook extends Thread {
      */
     @Override
     public synchronized void start() {
-        activityService.outputLog();
-        activityService.logMemoryUsage();
+        stats.outputStats();
+        stats.outputMemStats();
     }
 }

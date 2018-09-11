@@ -18,7 +18,7 @@ import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;

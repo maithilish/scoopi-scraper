@@ -48,7 +48,7 @@ public class PayloadTest {
     @Test
     public void testHashCode() {
         int actual = payload.hashCode();
-        assertThat(actual).isEqualTo(-1887035587);
+        assertThat(actual).isEqualTo(1551795547);
     }
 
     @Test

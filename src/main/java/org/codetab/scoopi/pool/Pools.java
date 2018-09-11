@@ -1,5 +1,7 @@
 package org.codetab.scoopi.pool;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +15,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
-import org.codetab.scoopi.messages.Messages;
+import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.MarkerUtil;
-import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -79,6 +79,9 @@ public abstract class Pools {
     @GuardedBy("this")
     private List<NamedFuture> futures;
 
+    @Inject
+    private ThreadSleep threadSleep;
+
     /**
      * <p>
      * Constructor.
@@ -103,8 +106,8 @@ public abstract class Pools {
     public synchronized boolean submit(final String poolName,
             final Runnable task) throws RejectedExecutionException {
 
-        Validate.notNull(poolName, Messages.getString("Pools.0")); //$NON-NLS-1$
-        Validate.notNull(task, Messages.getString("Pools.1")); //$NON-NLS-1$
+        notNull(poolName, "poolName must not be null");
+        notNull(task, "task must not be null");
 
         ExecutorService pool = getPool(poolName);
         Future<?> f = pool.submit(task);
@@ -141,21 +144,13 @@ public abstract class Pools {
         Marker marker = MarkerUtil.getMarker("POOL_STATE"); //$NON-NLS-1$
         while (!isDone()) {
             LOGGER.info(marker, "{}", getPoolState()); //$NON-NLS-1$
-            try {
-                Thread.sleep(SLEEP_MILLIS);
-            } catch (InterruptedException e) {
-                LOGGER.warn(Messages.getString("Pools.3")); //$NON-NLS-1$
-            }
+            threadSleep.sleep(SLEEP_MILLIS);
         }
 
         shutdownAll();
 
         while (!isAllTerminated()) {
-            try {
-                Thread.sleep(SLEEP_MILLIS);
-            } catch (InterruptedException e) {
-                LOGGER.warn(Messages.getString("Pools.3")); //$NON-NLS-1$
-            }
+            threadSleep.sleep(SLEEP_MILLIS);
         }
         LOGGER.info("pools shutdown complete");
     }
@@ -187,11 +182,12 @@ public abstract class Pools {
                 String ps = configService.getConfig(key);
                 poolSize = Integer.valueOf(ps);
             } catch (NumberFormatException | ConfigNotFoundException e) {
-                LOGGER.warn(Messages.getString("Pools.2"), //$NON-NLS-1$
+                LOGGER.warn(
+                        "pool size not defined for pool: {}, defaults to {}",
                         key, POOL_SIZE);
             }
             executor = Executors.newFixedThreadPool(poolSize);
-            LOGGER.info(Messages.getString("Pools.4"), poolName, //$NON-NLS-1$
+            LOGGER.info("create executor pool: {}, size: {}", poolName, //$NON-NLS-1$
                     poolSize);
             executorsMap.put(poolName, executor);
             PoolStat poolStat = di.instance(PoolStat.class);
@@ -244,7 +240,7 @@ public abstract class Pools {
             sb.append("  ["); //$NON-NLS-1$
             sb.append(StringUtils
                     .substringAfter(executorsMap.get(key).toString(), "[")); //$NON-NLS-1$
-            sb.append(Util.LINE);
+            sb.append(System.lineSeparator());
 
         }
         return sb.toString();

@@ -2,10 +2,10 @@ package org.codetab.scoopi.step;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.validState;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.defs.ITaskDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
@@ -14,11 +14,8 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.shared.StatService;
-import org.codetab.scoopi.shared.StepService;
+import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.MarkerUtil;
-import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -35,13 +32,12 @@ public abstract class Step implements IStep {
     private Payload payload;
     private Marker marker;
     private boolean consistent = false;
+    private String stepLabel;
 
     @Inject
     protected ConfigService configService;
     @Inject
-    protected StepService stepService;
-    @Inject
-    protected StatService activityService;
+    protected TaskFactory taskFactory;
     @Inject
     protected MetricsHelper metricsHelper;
     @Inject
@@ -53,8 +49,9 @@ public abstract class Step implements IStep {
 
     @Override
     public boolean handover() {
-        Validate.validState(nonNull(output), "output is null");
-        Validate.validState(isConsistent(), "step inconsistent");
+        validState(nonNull(output), "output is null");
+        validState(isConsistent(), "step inconsistent");
+
         try {
             String group = getJobInfo().getGroup();
             String stepName = getStepInfo().getStepName();
@@ -132,17 +129,20 @@ public abstract class Step implements IStep {
     }
 
     /**
-     * get label with []
+     * get label with step name
      */
     @Override
     public String getLabel() {
-        String lable = payload.getJobInfo().getLabel();
-        return Util.join("[", lable, "]");
+        if (isNull(stepLabel)) {
+            stepLabel = String.join("", "step: ", getStepName(), ", job: [",
+                    payload.getJobInfo().getLabel(), "]");
+        }
+        return stepLabel;
     }
 
     @Override
     public String getLabeled(final String message) {
-        return String.join(" ", getLabel(), message); // $NON-NLS-1$
+        return String.join(", ", getLabel(), message);
     }
 
 }

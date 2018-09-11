@@ -2,6 +2,7 @@ package org.codetab.scoopi.defs.yml.helper;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Collection;
 
@@ -11,8 +12,7 @@ import org.codetab.scoopi.defs.yml.DefsNormalizer;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.ValidationException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.messages.Messages;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,22 +49,22 @@ public class DefsHelper {
 
     public JsonNode loadDefinedDefs(final Collection<String> defsFiles)
             throws ConfigNotFoundException, IOException, URISyntaxException {
-        LOGGER.info(Messages.getString("BeanService.0"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.info("load defined defs");
         JsonNode defs = yamlHelper.loadYamls(defsFiles);
-        LOGGER.debug(Messages.getString("BeanService.3"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.debug("defined defs loaded");
         return defs;
     }
 
     public JsonNode loadDefaultSteps()
             throws ConfigNotFoundException, IOException, URISyntaxException {
-        LOGGER.info(Messages.getString("BeanService.0"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.info("load default steps");
 
         String defaultStepsFile =
                 configService.getConfig("scoopi.defs.defaultSteps");
 
         JsonNode defaultSteps = yamlHelper.loadYaml(defaultStepsFile);
 
-        LOGGER.debug(Messages.getString("BeanService.3"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.debug("default steps loaded");
 
         return defaultSteps;
     }
@@ -86,29 +86,32 @@ public class DefsHelper {
     public void validateDefinedDefs(final JsonNode definedDefs)
             throws FileNotFoundException, ProcessingException, IOException,
             ConfigNotFoundException, ValidationException {
-        LOGGER.info(Messages.getString("BeanService.0"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.info("validate defined defs");
 
         String schema = configService.getConfig("scoopi.defs.definedSchema"); //$NON-NLS-1$
-        yamlHelper.validateSchema(schema, ioHelper.getInputStream(schema),
-                definedDefs);
 
-        LOGGER.debug(Messages.getString("BeanService.3"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
+        try (InputStream schemaStream = ioHelper.getInputStream(schema)) {
+            yamlHelper.validateSchema(schema, schemaStream, definedDefs);
+        }
+        LOGGER.debug("defined defs validated");
     }
 
     public void validateEffectiveDefs(final JsonNode effectiveDefs)
             throws FileNotFoundException, ProcessingException, IOException,
             ConfigNotFoundException, ValidationException {
-        LOGGER.info(Messages.getString("BeanService.0"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.info("validate effective defs");
 
         String schema = configService.getConfig("scoopi.defs.effectiveSchema"); //$NON-NLS-1$
         yamlHelper.validateSchema(schema, ioHelper.getInputStream(schema),
                 effectiveDefs);
 
-        LOGGER.debug(Messages.getString("BeanService.3"), "BeanService"); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.debug("effectvie defs validated");
     }
 
     public JsonNode createEffectiveDefs(final JsonNode defs)
             throws IOException {
+        LOGGER.info("create effective defs");
+
         JsonNode eDefs = defs.deepCopy();
         // !! don't change order of these methods !!
         defsNormalizer.addFactMember(eDefs);
@@ -119,6 +122,9 @@ public class DefsHelper {
         defsNormalizer.setDefaultSteps(eDefs);
         defsNormalizer.expandOverriddenSteps(eDefs);
         defsNormalizer.expandSteps(eDefs);
+
+        LOGGER.debug("effectvie defs create");
+
         return eDefs;
     }
 

@@ -11,10 +11,9 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.pool.TaskPoolService;
-import org.codetab.scoopi.shared.StatService;
-import org.codetab.scoopi.shared.StepService;
 import org.codetab.scoopi.step.TaskMediator.TaskRunnerThread;
 import org.codetab.scoopi.store.IStore;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,9 +30,9 @@ public class TaskRunnerTest {
     @Mock
     private IStore store;
     @Mock
-    private StepService stepService;
+    private TaskFactory taskFactory;
     @Mock
-    private StatService statService;
+    private ErrorLogger errorLogger;
     @Mock
     private AtomicInteger jobIdCounter;
 
@@ -71,7 +70,7 @@ public class TaskRunnerTest {
         given(poolService.isDone()).willReturn(true);
 
         given(store.takePayload()).willReturn(payload);
-        given(stepService.createTask(payload)).willReturn(task);
+        given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);
         given(step.getStepName()).willReturn(poolName);
 
@@ -94,7 +93,7 @@ public class TaskRunnerTest {
         given(poolService.isDone()).willReturn(false).willReturn(true);
 
         given(store.takePayload()).willReturn(payload);
-        given(stepService.createTask(payload)).willReturn(task);
+        given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);
         given(step.getStepName()).willReturn(poolName);
 
@@ -131,7 +130,7 @@ public class TaskRunnerTest {
         Payload payload = Mockito.mock(Payload.class);
 
         given(store.takePayload()).willReturn(payload);
-        given(stepService.createTask(payload))
+        given(taskFactory.createTask(payload))
                 .willThrow(ClassNotFoundException.class)
                 .willThrow(InstantiationException.class)
                 .willThrow(IllegalAccessException.class);
@@ -139,19 +138,19 @@ public class TaskRunnerTest {
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(false).willReturn(true);
         taskRunner.run();
-        verify(statService).log(eq(CAT.ERROR), any(String.class),
+        verify(errorLogger).log(eq(CAT.ERROR), any(String.class),
                 any(ClassNotFoundException.class));
 
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(false).willReturn(true);
         taskRunner.run();
-        verify(statService).log(eq(CAT.ERROR), any(String.class),
+        verify(errorLogger).log(eq(CAT.ERROR), any(String.class),
                 any(InstantiationException.class));
 
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(false).willReturn(true);
         taskRunner.run();
-        verify(statService).log(eq(CAT.ERROR), any(String.class),
+        verify(errorLogger).log(eq(CAT.ERROR), any(String.class),
                 any(IllegalAccessException.class));
     }
 
@@ -170,12 +169,12 @@ public class TaskRunnerTest {
 
         given(store.takePayload()).willThrow(InterruptedException.class)
                 .willReturn(payload);
-        given(stepService.createTask(payload)).willReturn(task);
+        given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);
         given(step.getStepName()).willReturn(poolName);
 
         taskRunner.run();
-        verify(statService).log(eq(CAT.ERROR), any(String.class),
+        verify(errorLogger).log(eq(CAT.ERROR), any(String.class),
                 any(InterruptedException.class));
         verify(poolService).submit(poolName, task);
     }

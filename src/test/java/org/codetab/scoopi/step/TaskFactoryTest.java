@@ -1,4 +1,4 @@
-package org.codetab.scoopi.shared;
+package org.codetab.scoopi.step;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -9,8 +9,6 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.step.IStep;
-import org.codetab.scoopi.step.Task;
 import org.codetab.scoopi.step.extract.URLLoader;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,12 +19,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class StepServiceTest {
+public class TaskFactoryTest {
 
     @Mock
     private DInjector dInjector;
     @InjectMocks
-    private StepService stepService;
+    private TaskFactory taskFactory;
 
     @Rule
     public ExpectedException testRule = ExpectedException.none();
@@ -36,16 +34,6 @@ public class StepServiceTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         clzName = "org.codetab.scoopi.step.extract.URLLoader";
-    }
-
-    @Test
-    public void testCreateInstance() throws ClassNotFoundException {
-        URLLoader step = Mockito.mock(URLLoader.class);
-        given(dInjector.instance(URLLoader.class)).willReturn(step);
-
-        Object actual = stepService.createInstance(clzName);
-
-        assertThat(actual).isSameAs(step);
     }
 
     @Test
@@ -64,7 +52,7 @@ public class StepServiceTest {
         given(dInjector.instance(URLLoader.class)).willReturn(step);
         given(dInjector.instance(Task.class)).willReturn(task);
 
-        Task actual = stepService.createTask(payload);
+        Task actual = taskFactory.createTask(payload);
 
         verify(step).setPayload(payload);
         verify(task).setStep(step);
@@ -78,7 +66,7 @@ public class StepServiceTest {
 
         given(dInjector.instance(Task.class)).willReturn(task);
 
-        Task actual = stepService.createTask(step);
+        Task actual = taskFactory.createTask(step);
 
         verify(task).setStep(step);
         assertThat(actual).isSameAs(task);
@@ -90,7 +78,7 @@ public class StepServiceTest {
         URLLoader step = Mockito.mock(URLLoader.class);
         given(dInjector.instance(URLLoader.class)).willReturn(step);
 
-        IStep actual = stepService.getStep(clzName);
+        IStep actual = taskFactory.createStep(clzName);
 
         assertThat(actual).isInstanceOf(IStep.class);
         assertThat(actual).isSameAs(step);
@@ -102,7 +90,7 @@ public class StepServiceTest {
         String notAStepClzName = "org.codetab.scoopi.model.Locator";
 
         testRule.expect(ClassCastException.class);
-        stepService.getStep(notAStepClzName);
+        taskFactory.createStep(notAStepClzName);
     }
 
     @Test
@@ -112,6 +100,6 @@ public class StepServiceTest {
         String invalidClzName = "org.codetab.scoopi.XYZ";
 
         testRule.expect(ClassNotFoundException.class);
-        stepService.getStep(invalidClzName);
+        taskFactory.createStep(invalidClzName);
     }
 }

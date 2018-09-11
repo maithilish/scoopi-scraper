@@ -1,10 +1,9 @@
-package org.codetab.scoopi.misc;
+package org.codetab.scoopi.system;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.inOrder;
 
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.shared.StatService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -21,7 +20,7 @@ import org.mockito.MockitoAnnotations;
 public class ShutdownHookTest {
 
     @Mock
-    private StatService statService;
+    private Stats stats;
 
     @InjectMocks
     private ShutdownHook shutdownHook;
@@ -36,9 +35,9 @@ public class ShutdownHookTest {
         shutdownHook.start();
         shutdownHook.join();
 
-        InOrder inOrder = inOrder(statService);
-        inOrder.verify(statService).outputLog();
-        inOrder.verify(statService).logMemoryUsage();
+        InOrder inOrder = inOrder(stats);
+        inOrder.verify(stats).outputStats();
+        inOrder.verify(stats).outputMemStats();
     }
 
     @Test

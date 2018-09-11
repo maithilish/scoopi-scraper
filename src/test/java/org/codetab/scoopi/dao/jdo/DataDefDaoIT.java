@@ -14,7 +14,7 @@ import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;

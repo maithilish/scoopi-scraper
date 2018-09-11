@@ -2,6 +2,7 @@ package org.codetab.scoopi.step.base;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.validState;
 
 import java.io.IOException;
 import java.util.Date;
@@ -9,17 +10,14 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DocumentPersistence;
 import org.codetab.scoopi.persistence.LocatorPersistence;
 import org.codetab.scoopi.step.Step;
-import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,17 +68,16 @@ public abstract class BaseLoader extends Step {
      */
     @Override
     public boolean initialize() {
-        Validate.validState(nonNull(getPayload()),
-                Messages.getString("BaseLoader.29")); //$NON-NLS-1$
-        Validate.validState(nonNull(getPayload().getData()),
-                Messages.getString("BaseLoader.30")); //$NON-NLS-1$
+        validState(nonNull(getPayload()), "payload is null");
+        validState(nonNull(getPayload().getData()), "payload data is null");
 
         Object pData = getPayload().getData();
         if (pData instanceof Locator) {
             this.locator = (Locator) pData;
         } else {
-            String message = Util.join(Messages.getString("BaseLoader.28"), //$NON-NLS-1$
-                    pData.getClass().getName());
+            String message =
+                    String.join(" ", "payload is not instance of Locator, but",
+                            pData.getClass().getName());
             throw new StepRunException(message);
         }
         return true;
@@ -96,8 +93,7 @@ public abstract class BaseLoader extends Step {
      */
     @Override
     public boolean load() {
-        Validate.validState(nonNull(locator),
-                Messages.getString("BaseLoader.1")); //$NON-NLS-1$
+        validState(nonNull(locator), "locator is null");
 
         Locator savedLocator = null;
 
@@ -110,7 +106,7 @@ public abstract class BaseLoader extends Step {
         if (isNull(savedLocator)) {
             // use the locator from payload passed to this step
             LOGGER.debug("{} {}", getLabel(), //$NON-NLS-1$
-                    Messages.getString("BaseLoader.3")); //$NON-NLS-1$
+                    "using locator read from file");
         } else {
             // update existing locator with new fields and URL
             savedLocator.setUrl(locator.getUrl());
@@ -119,9 +115,9 @@ public abstract class BaseLoader extends Step {
             locator = savedLocator;
 
             LOGGER.debug("{} {}", getLabel(), //$NON-NLS-1$
-                    Messages.getString("BaseLoader.5")); //$NON-NLS-1$
-            LOGGER.trace(getMarker(), Messages.getString("BaseLoader.6"), //$NON-NLS-1$
-                    Util.LINE, locator);
+                    "using locator loaded from store");
+            LOGGER.trace(getMarker(), "-- Locator loaded --{}{}",
+                    System.lineSeparator(), locator);
         }
         return true;
     }
@@ -156,8 +152,7 @@ public abstract class BaseLoader extends Step {
      */
     @Override
     public boolean process() {
-        Validate.validState(nonNull(locator),
-                Messages.getString("BaseLoader.7")); //$NON-NLS-1$
+        validState(nonNull(locator), "locator is null");
 
         String taskGroup = getJobInfo().getGroup();
         String taskName = getJobInfo().getTask();
@@ -195,7 +190,7 @@ public abstract class BaseLoader extends Step {
                 // fetch documentObject as byte[]
                 documentObject = fetchDocumentObject(locator.getUrl());
             } catch (IOException e) {
-                String message = Messages.getString("BaseLoader.8"); //$NON-NLS-1$
+                String message = "unable to fetch document page";
                 throw new StepRunException(message, e);
             }
 
@@ -212,7 +207,7 @@ public abstract class BaseLoader extends Step {
             try {
                 documentHelper.setDocumentObject(activeDoc, documentObject);
             } catch (IOException e) {
-                String message = Messages.getString("BaseLoader.9"); //$NON-NLS-1$
+                String message = "unable to compress document page";
                 throw new StepRunException(message, e);
             }
 
@@ -220,20 +215,18 @@ public abstract class BaseLoader extends Step {
             locator.getDocuments().add(document);
             setOutput(document);
             setConsistent(true);
-            LOGGER.info(Messages.getString("BaseLoader.2"), getLabel(), //$NON-NLS-1$
+            LOGGER.info("{} create new document, toDate={}", getLabel(),
                     document.getToDate());
-            LOGGER.trace(getMarker(), Messages.getString("BaseLoader.11"), //$NON-NLS-1$
-                    document);
+            LOGGER.trace(getMarker(), "{} create new document", document);
         } else {
             // as activeDoc comes from datastore it indicates that
             // datastore is active so load the activeDoc with doc object
             document = documentPersistence.loadDocument(activeDoc.getId());
             setOutput(document);
             setConsistent(true);
-            LOGGER.info(Messages.getString("BaseLoader.12"), getLabel(), //$NON-NLS-1$
+            LOGGER.info("{} use stored document, toDate={}", getLabel(),
                     document.getToDate());
-            LOGGER.trace(getMarker(), Messages.getString("BaseLoader.13"), //$NON-NLS-1$
-                    document);
+            LOGGER.trace(getMarker(), "use stored document {}", document);
         }
         return true;
     }
@@ -250,10 +243,8 @@ public abstract class BaseLoader extends Step {
      */
     @Override
     public boolean store() {
-        Validate.validState(nonNull(locator),
-                Messages.getString("BaseLoader.14")); //$NON-NLS-1$
-        Validate.validState(nonNull(document),
-                Messages.getString("BaseLoader.15")); //$NON-NLS-1$
+        validState(nonNull(locator), "locator is null");
+        validState(nonNull(document), "document is null");
 
         try {
             boolean persist = persist();
@@ -272,12 +263,12 @@ public abstract class BaseLoader extends Step {
                     document = tDocument;
                     setOutput(tDocument);
                 }
-                LOGGER.debug(Messages.getString("BaseLoader.16"), getLabel()); //$NON-NLS-1$
-                LOGGER.trace(getMarker(), Messages.getString("BaseLoader.17"), //$NON-NLS-1$
-                        Util.LINE, locator);
+                LOGGER.debug("{} locator and document stored", getLabel());
+                LOGGER.trace(getMarker(), "-- locator stored --{}{}",
+                        System.lineSeparator(), locator);
             }
         } catch (RuntimeException e) {
-            String message = Messages.getString("BaseLoader.18"); //$NON-NLS-1$
+            String message = "unable to store locator and document";
             throw new StepRunException(message, e);
         }
         return true;

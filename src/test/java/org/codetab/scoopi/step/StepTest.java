@@ -13,10 +13,9 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.shared.StatService;
-import org.codetab.scoopi.shared.StepService;
 import org.codetab.scoopi.step.extract.URLLoader;
+import org.codetab.scoopi.system.ConfigService;
+import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,9 +30,9 @@ public class StepTest {
     @Mock
     protected ConfigService configService;
     @Mock
-    protected StepService stepService;
+    protected TaskFactory taskFactory;
     @Mock
-    protected StatService activityService;
+    protected Stats activityService;
     @Mock
     protected MetricsHelper metricsHelper;
     @Mock
@@ -173,6 +172,7 @@ public class StepTest {
 
     @Test
     public void testIsConsistent() throws IllegalAccessException {
+        step.setOutput(null);
         step.setConsistent(true);
         assertThat(step.isConsistent()).isFalse();
         step.setConsistent(false);
@@ -180,6 +180,9 @@ public class StepTest {
 
         String data = "test data";
         step.setOutput(data);
+
+        step.setConsistent(false);
+        assertThat(step.isConsistent()).isFalse();
         step.setConsistent(true);
         assertThat(step.isConsistent()).isTrue();
     }
@@ -198,15 +201,15 @@ public class StepTest {
     public void testGetLabel() {
         String label = step.getLabel();
 
-        assertThat(label).isEqualTo("[locator1:group1:dataDef1]");
+        assertThat(label).isEqualTo("step: s1, job: [locator1:task1:dataDef1]");
     }
 
     @Test
     public void testGetLabeled() {
         String labeled = step.getLabeled("test message");
 
-        assertThat(labeled)
-                .isEqualTo("[locator1:group1:dataDef1] test message");
+        assertThat(labeled).isEqualTo(
+                "step: s1, job: [locator1:task1:dataDef1], test message");
     }
 
     private Payload getTestPayload() {

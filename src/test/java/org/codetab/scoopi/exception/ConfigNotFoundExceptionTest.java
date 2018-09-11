@@ -15,7 +15,7 @@ public class ConfigNotFoundExceptionTest {
     @Test
     public void testException() {
         String message = "xyz";
-        String expected = "[" + message + "]";
+        String expected = message;
 
         ConfigNotFoundException ex = new ConfigNotFoundException(message);
 

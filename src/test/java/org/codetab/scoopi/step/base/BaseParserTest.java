@@ -32,15 +32,15 @@ import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DataPersistence;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.shared.StatService;
-import org.codetab.scoopi.shared.StepService;
+import org.codetab.scoopi.step.TaskFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.step.parse.IValueParser;
 import org.codetab.scoopi.step.parse.MemberStack;
 import org.codetab.scoopi.step.parse.ValueProcessor;
 import org.codetab.scoopi.step.parse.jsoup.JSoupParser;
 import org.codetab.scoopi.step.parse.jsoup.JSoupValueParser;
+import org.codetab.scoopi.system.ConfigService;
+import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -59,9 +59,9 @@ public class BaseParserTest {
     @Mock
     private ConfigService configService;
     @Mock
-    private StepService stepService;
+    private TaskFactory taskFactory;
     @Mock
-    private StatService activityService;
+    private Stats activityService;
     @Mock
     private MetricsHelper metricsHelper;
     @Mock

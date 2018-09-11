@@ -1,5 +1,7 @@
 package org.codetab.scoopi.dao.jdo;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,12 +12,9 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.dao.IDataSetDao;
 import org.codetab.scoopi.exception.StepPersistenceException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.DataSet;
-import org.codetab.scoopi.util.Util;
 
 /**
  * <p>
@@ -37,7 +36,7 @@ public final class DataSetDao implements IDataSetDao {
      *            persistence manager factory
      */
     public DataSetDao(final PersistenceManagerFactory pmf) {
-        Validate.notNull(pmf, Messages.getString("DataSetDao.0")); //$NON-NLS-1$
+        notNull(pmf, "pmf must not be null");
         this.pmf = pmf;
     }
 
@@ -54,7 +53,7 @@ public final class DataSetDao implements IDataSetDao {
      */
     @Override
     public void storeDataSets(final List<DataSet> dataSets) {
-        Validate.notNull(dataSets, Messages.getString("DataSetDao.1")); //$NON-NLS-1$
+        notNull(dataSets, "dataSets must not be null");
 
         // TODO filter on col or row
         List<String> names = dataSets.stream().map(DataSet::getName).distinct()
@@ -63,7 +62,8 @@ public final class DataSetDao implements IDataSetDao {
                 .distinct().collect(Collectors.toList());
 
         if (names.size() != 1 || groups.size() != 1) {
-            String message = Util.join(Messages.getString("DataSetDao.2"), //$NON-NLS-1$
+            String message = String.join(" ",
+                    "unable persist dataset as name or group are not unique",
                     names.toString(), groups.toString());
             throw new StepPersistenceException(message);
         }

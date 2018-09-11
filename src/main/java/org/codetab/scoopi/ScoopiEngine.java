@@ -3,10 +3,9 @@ package org.codetab.scoopi;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ public class ScoopiEngine {
     @Inject
     private TaskMediator taskMediator;
     @Inject
-    private StatService statService;
+    private ErrorLogger errorLogger;
 
     /*
      * single thread env throws CriticalException and terminates the app and
@@ -30,9 +29,12 @@ public class ScoopiEngine {
     public void start() {
         try {
             // single thread
-            LOGGER.info(Messages.getString("ScoopiEngine.0")); //$NON-NLS-1$
+            LOGGER.info("Start scoopi ..."); //$NON-NLS-1$
 
-            scoopiSystem.startStatService();
+            LOGGER.info("initialize basic system");
+            scoopiSystem.startStats();
+
+            scoopiSystem.startErrorLogger();
 
             scoopiSystem.addShutdownHook();
 
@@ -46,13 +48,13 @@ public class ScoopiEngine {
 
             scoopiSystem.seedLocatorGroups();
 
-            LOGGER.info(Messages.getString("ScoopiEngine.1")); //$NON-NLS-1$
+            LOGGER.info("scoopi initialized");
 
             scoopiSystem.waitForHeapDump();
 
             // multi thread
 
-            LOGGER.info(Messages.getString("ScoopiEngine.2")); //$NON-NLS-1$
+            LOGGER.info("switch to multi thread enviornment");
 
             taskMediator.start();
 
@@ -60,16 +62,14 @@ public class ScoopiEngine {
 
             scoopiSystem.waitForHeapDump();
 
-            LOGGER.info(Messages.getString("ScoopiEngine.3")); //$NON-NLS-1$
+            LOGGER.info("shutdown ...");
         } catch (CriticalException e) {
-            LOGGER.error("{}", e.getMessage()); //$NON-NLS-1$
-            LOGGER.warn(Messages.getString("ScoopiEngine.4")); //$NON-NLS-1$
-            LOGGER.debug("{}", e); //$NON-NLS-1$
-            statService.log(CAT.FATAL, e.getMessage(), e);
+            String message = "terminate scoopi";
+            errorLogger.log(CAT.FATAL, message, e);
         } finally {
             scoopiSystem.stopMetricsServer();
-            scoopiSystem.stopStatService();
-            LOGGER.info(Messages.getString("ScoopiEngine.5")); //$NON-NLS-1$
+            scoopiSystem.stopStats();
+            LOGGER.info("scoopi completed");
         }
     }
 }

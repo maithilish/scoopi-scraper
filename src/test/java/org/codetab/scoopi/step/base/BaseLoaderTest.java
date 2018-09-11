@@ -30,11 +30,11 @@ import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DocumentPersistence;
 import org.codetab.scoopi.persistence.LocatorPersistence;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.shared.StatService;
-import org.codetab.scoopi.shared.StepService;
+import org.codetab.scoopi.step.TaskFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.step.extract.URLLoader;
+import org.codetab.scoopi.system.ConfigService;
+import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -58,9 +58,9 @@ public class BaseLoaderTest {
     @Mock
     private ConfigService configService;
     @Mock
-    private StepService stepService;
+    private TaskFactory taskFactory;
     @Mock
-    private StatService activityService;
+    private Stats activityService;
     @Mock
     private MetricsHelper metricsHelper;
     @Mock
@@ -120,7 +120,7 @@ public class BaseLoaderTest {
         try {
             loader.initialize();
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage()).isEqualTo("payload must not be null");
+            assertThat(e.getMessage()).isEqualTo("payload is null");
         }
 
         Payload payload = getTestPayload(null, null);
@@ -128,8 +128,7 @@ public class BaseLoaderTest {
         try {
             loader.initialize();
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage())
-                    .isEqualTo("payload data must not be null");
+            assertThat(e.getMessage()).isEqualTo("payload data is null");
         }
     }
 
@@ -183,8 +182,7 @@ public class BaseLoaderTest {
         try {
             loader.load();
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage())
-                    .isEqualTo("step input locator must not be null");
+            assertThat(e.getMessage()).isEqualTo("locator is null");
         }
     }
 

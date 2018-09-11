@@ -1,5 +1,7 @@
 package org.codetab.scoopi.dao.jdo;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +11,7 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.dao.IDataDefDao;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.DataDef;
 
 /**
@@ -34,7 +34,7 @@ public final class DataDefDao implements IDataDefDao {
      *            JDO PMF
      */
     public DataDefDao(final PersistenceManagerFactory pmf) {
-        Validate.notNull(pmf, Messages.getString("DataDefDao.0")); //$NON-NLS-1$
+        notNull(pmf, "pmf must not be null");
         this.pmf = pmf;
     }
 
@@ -45,7 +45,7 @@ public final class DataDefDao implements IDataDefDao {
      */
     @Override
     public void storeDataDef(final DataDef dataDef) {
-        Validate.notNull(dataDef, Messages.getString("DataDefDao.1")); //$NON-NLS-1$
+        notNull(dataDef, "dataDef must not be null");
 
         PersistenceManager pm = getPM();
         Transaction tx = pm.currentTransaction();
@@ -69,7 +69,7 @@ public final class DataDefDao implements IDataDefDao {
      */
     @Override
     public List<DataDef> getDataDefs(final Date date) {
-        Validate.notNull(date, Messages.getString("DataDefDao.3")); //$NON-NLS-1$
+        notNull(date, "date must not be null");
 
         List<DataDef> dataDefs = null;
         PersistenceManager pm = getPM();
@@ -101,7 +101,7 @@ public final class DataDefDao implements IDataDefDao {
      */
     @Override
     public List<DataDef> getDataDefs(final String name) {
-        Validate.notNull(name, Messages.getString("DataDefDao.2")); //$NON-NLS-1$
+        notNull(name, "name must not be null");
 
         List<DataDef> dataDefs = null;
         PersistenceManager pm = getPM();

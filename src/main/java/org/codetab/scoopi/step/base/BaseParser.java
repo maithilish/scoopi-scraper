@@ -24,7 +24,6 @@ import org.codetab.scoopi.step.Step;
 import org.codetab.scoopi.step.parse.IValueParser;
 import org.codetab.scoopi.step.parse.MemberStack;
 import org.codetab.scoopi.step.parse.ValueProcessor;
-import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +119,7 @@ public abstract class BaseParser extends Step {
             } catch (IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException | DataDefNotFoundException
                     | ScriptException e) {
-                String message = getLabeled("unable to parse data");
+                String message = "unable to parse data";
                 throw new StepRunException(message, e);
             }
         } else {
@@ -165,8 +164,9 @@ public abstract class BaseParser extends Step {
         }
 
         data.setMembers(members); // replace with expanded member list
-        LOGGER.trace(getMarker(), "-- data after parse --{}{}{}", Util.LINE,
-                getLabel(), Util.LINE, data);
+        String line = System.lineSeparator();
+        LOGGER.trace(getMarker(), "-- data after parse --{}{}{}", line,
+                getLabel(), line, data);
     }
 
     private boolean persist() {

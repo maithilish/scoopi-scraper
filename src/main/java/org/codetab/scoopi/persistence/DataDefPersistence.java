@@ -1,20 +1,19 @@
 package org.codetab.scoopi.persistence;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.IDataDefDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +58,10 @@ public class DataDefPersistence {
             IDataDefDao dao = daoFactory.getDataDefDao();
             List<DataDef> dataDefs =
                     dao.getDataDefs(configService.getRunDateTime());
-            LOGGER.debug(Messages.getString("DataDefPersistence.1"), //$NON-NLS-1$
-                    dataDefs.size());
+            LOGGER.debug("dataDefs loaded {}", dataDefs.size());
             return dataDefs;
         } catch (RuntimeException e) {
-            throw new CriticalException(
-                    Messages.getString("DataDefPersistence.2"), e); //$NON-NLS-1$
+            throw new CriticalException("unable to load dataDef", e);
         }
     }
 
@@ -77,22 +74,23 @@ public class DataDefPersistence {
      *             if any persistence error
      */
     public void storeDataDef(final DataDef dataDef) {
-        Validate.notNull(dataDef, Messages.getString("DataDefPersistence.3")); //$NON-NLS-1$
+        notNull(dataDef, "dataDef must not be null");
 
         try {
             ORM orm = configService.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
             IDataDefDao dao = daoFactory.getDataDefDao();
             String name = dataDef.getName();
-            LOGGER.debug(Messages.getString("DataDefPersistence.7")); //$NON-NLS-1$
+            LOGGER.debug("store datadef");
             dao.storeDataDef(dataDef);
             if (nonNull(dataDef.getId())) {
-                LOGGER.debug(Messages.getString("DataDefPersistence.8"), //$NON-NLS-1$
-                        dataDef.getId(), name);
+                LOGGER.debug("stored datadef: {}, id: {}", name,
+                        dataDef.getId());
             }
         } catch (RuntimeException e) {
-            throw new CriticalException(
-                    Messages.getString("DataDefPersistence.9"), e); //$NON-NLS-1$
+            String message = String.join(" ", "unable to store dataDef:",
+                    dataDef.getName());
+            throw new CriticalException(message, e);
         }
     }
 
@@ -105,7 +103,7 @@ public class DataDefPersistence {
      *             if any persistence error
      */
     public void storeDataDefs(final List<DataDef> dataDefs) {
-        Validate.notNull(dataDefs, Messages.getString("DataDefPersistence.3")); //$NON-NLS-1$
+        notNull(dataDefs, "dataDefs must not be null");
 
         try {
             ORM orm = configService.getOrmType();
@@ -113,16 +111,15 @@ public class DataDefPersistence {
             IDataDefDao dao = daoFactory.getDataDefDao();
             for (DataDef dataDef : dataDefs) {
                 String name = dataDef.getName();
-                LOGGER.debug(Messages.getString("DataDefPersistence.7")); //$NON-NLS-1$
+                LOGGER.debug("store datadef");
                 dao.storeDataDef(dataDef);
                 if (nonNull(dataDef.getId())) {
-                    LOGGER.debug(Messages.getString("DataDefPersistence.8"), //$NON-NLS-1$
-                            dataDef.getId(), name);
+                    LOGGER.debug("stored datadef: {}, id: {}", name,
+                            dataDef.getId());
                 }
             }
         } catch (RuntimeException e) {
-            throw new CriticalException(
-                    Messages.getString("DataDefPersistence.9"), e); //$NON-NLS-1$
+            throw new CriticalException("unable to store dataDefs", e);
         }
     }
 

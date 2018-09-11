@@ -1,5 +1,7 @@
 package org.codetab.scoopi;
 
+import static org.codetab.scoopi.util.Util.LINE;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,19 +12,18 @@ import org.codetab.scoopi.defs.yml.Defs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
 import org.codetab.scoopi.metrics.SystemStat;
-import org.codetab.scoopi.misc.ShutdownHook;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.LocatorGroupHelper;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.util.Util;
+import org.codetab.scoopi.system.ConfigService;
+import org.codetab.scoopi.system.ErrorLogger;
+import org.codetab.scoopi.system.ShutdownHook;
+import org.codetab.scoopi.system.Stats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +35,6 @@ public class ScoopiSystem {
     private ConfigService configService;
     @Inject
     private Defs defs;
-    // @Inject
-    // private DataDefService dataDefService;
     @Inject
     private TaskMediator taskMediator;
     @Inject
@@ -45,7 +44,9 @@ public class ScoopiSystem {
     @Inject
     private MetricsHelper metricsHelper;
     @Inject
-    private StatService statService;
+    private Stats stats;
+    @Inject
+    private ErrorLogger errorLogger;
     @Inject
     private LocatorGroupHelper locatorGroupHelper;
 
@@ -59,18 +60,22 @@ public class ScoopiSystem {
     @Inject
     private SystemHelper systemHelper;
 
-    public boolean startStatService() {
-        statService.start();
+    public boolean startStats() {
+        stats.start();
         return true;
     }
 
-    public boolean stopStatService() {
-        statService.stop();
+    public boolean stopStats() {
+        stats.stop();
+        return true;
+    }
+
+    public boolean startErrorLogger() {
+        errorLogger.start();
         return true;
     }
 
     public boolean addShutdownHook() {
-        LOGGER.info(Messages.getString("ScoopiSystem.0")); //$NON-NLS-1$
         runTime.addShutdownHook(shutdownHook);
         return true;
     }
@@ -79,8 +84,7 @@ public class ScoopiSystem {
             final String userConfigFile) {
         configService.init(userConfigFile, defaultConfigFile);
         LOGGER.info(getModeInfo());
-        LOGGER.info(Messages.getString("ScoopiSystem.1"), //$NON-NLS-1$
-                configService.getRunDate());
+        LOGGER.info("rundate {}", configService.getRunDate());
         return true;
     }
 
@@ -106,15 +110,16 @@ public class ScoopiSystem {
      *
      */
     public boolean seedLocatorGroups() {
-        String message = "seed defined locator groups";
-        LOGGER.info(message); // $NON-NLS-1$
+        LOGGER.info("seed defined locator groups");
         String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
         try {
             seederClzName = configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
         } catch (ConfigNotFoundException e) {
+            String message = "unable seed locator group";
             throw new CriticalException(message, e);
         }
+
         List<LocatorGroup> locatorGroups = locatorDefs.getLocatorGroups();
         List<Payload> payloads = locatorGroupHelper
                 .createSeedPayloads(locatorGroups, stepName, seederClzName);
@@ -122,9 +127,10 @@ public class ScoopiSystem {
             try {
                 taskMediator.pushPayload(payload);
             } catch (InterruptedException e) {
-                LOGGER.error("{}: {}", message, e.getMessage());
-                LOGGER.debug("{}", message, e);
-                statService.log(CAT.INTERNAL, message, e);
+                String group = payload.getJobInfo().getGroup();
+                String message =
+                        String.join(" ", "seed locator group: ", group);
+                errorLogger.log(CAT.INTERNAL, message, e);
             }
         }
         return true;
@@ -176,12 +182,12 @@ public class ScoopiSystem {
     }
 
     public String getModeInfo() {
-        String modeInfo = Messages.getString("ScoopiSystem.5"); //$NON-NLS-1$
+        String modeInfo = "mode: production";
         if (configService.isTestMode()) {
-            modeInfo = Messages.getString("ScoopiSystem.6"); //$NON-NLS-1$
+            modeInfo = "mode: test";
         }
         if (configService.isDevMode()) {
-            modeInfo = Messages.getString("ScoopiSystem.7"); //$NON-NLS-1$
+            modeInfo = "mode: dev";
         }
         return modeInfo;
     }
@@ -195,10 +201,9 @@ public class ScoopiSystem {
         if (wait.equalsIgnoreCase("true")) { //$NON-NLS-1$
             systemHelper.gc();
             systemHelper.printToConsole("%s%s", //$NON-NLS-1$
-                    Messages.getString("ScoopiSystem.8"), //$NON-NLS-1$
-                    Util.LINE);
+                    "wait to acquire heapdump", LINE);
             systemHelper.printToConsole("%s", //$NON-NLS-1$
-                    Messages.getString("ScoopiSystem.9")); //$NON-NLS-1$
+                    "Press enter to continue ...");
             systemHelper.readLine();
         }
     }

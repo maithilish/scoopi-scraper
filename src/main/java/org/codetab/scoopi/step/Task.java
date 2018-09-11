@@ -4,16 +4,13 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.shared.StatService;
-import org.codetab.scoopi.util.Util;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
-import com.codahale.metrics.Counter;
 import com.codahale.metrics.Timer.Context;
 
 public class Task implements Runnable {
@@ -21,7 +18,7 @@ public class Task implements Runnable {
     static final Logger LOGGER = LoggerFactory.getLogger(Task.class);
 
     @Inject
-    private StatService statService;
+    private ErrorLogger errorLogger;
     @Inject
     private MetricsHelper metricsHelper;
 
@@ -41,45 +38,26 @@ public class Task implements Runnable {
             Context taskTimer =
                     metricsHelper.getTimer(step, "task", "time").time();
             Marker marker = step.getMarker();
-            String label = step.getLabel();
-            String stepType = step.getStepName();
-
+            String stepLabel = step.getLabel();
             step.initialize();
 
-            LOGGER.trace(marker, Messages.getString("Task.0"), //$NON-NLS-1$
-                    label, stepType);
+            LOGGER.trace(marker, "execute {}", stepLabel);
 
             step.load();
             step.process();
             step.store();
             step.handover();
 
-            LOGGER.trace(marker, Messages.getString("Task.1"), //$NON-NLS-1$
-                    label, stepType);
+            LOGGER.trace(marker, "finish {}", stepLabel);
 
             taskTimer.stop();
 
         } catch (StepRunException | StepPersistenceException e) {
-            String label = step.getLabel();
-            String message =
-                    Util.join("[", step.getStepName(), "] ", e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-            LOGGER.error("[{}] {}", label, message); //$NON-NLS-1$
-            LOGGER.debug("[{}] [{}]", label, step.getStepName(), e); //$NON-NLS-1$
-            statService.log(CAT.ERROR, label, message, e);
-            countError();
+            String message = step.getLabeled(e.getMessage());
+            errorLogger.log(CAT.ERROR, message, e);
         } catch (Exception e) {
-            String label = step.getLabel();
-            String message =
-                    Util.join("[", step.getStepName(), "] ", e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-            LOGGER.error("[{}] {}", label, message); //$NON-NLS-1$
-            LOGGER.debug("[{}] [{}]", label, step.getStepName(), e); //$NON-NLS-1$
-            statService.log(CAT.INTERNAL, label, message, e);
-            countError();
+            String message = step.getLabeled(e.getMessage());
+            errorLogger.log(CAT.INTERNAL, message, e);
         }
-    }
-
-    private void countError() {
-        Counter counter = metricsHelper.getCounter(this, "system", "error");
-        counter.inc();
     }
 }

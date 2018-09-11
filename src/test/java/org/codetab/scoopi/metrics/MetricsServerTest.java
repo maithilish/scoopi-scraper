@@ -12,7 +12,8 @@ import java.net.URL;
 import org.codetab.scoopi.di.BasicFactory;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.Before;
@@ -32,6 +33,8 @@ public class MetricsServerTest {
     private ConfigService configService;
     @Mock
     private IOHelper ioHelper;
+    @Mock
+    private ErrorLogger errorLogger;
 
     @InjectMocks
     private MetricsServer metricsServer;

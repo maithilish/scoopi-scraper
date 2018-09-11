@@ -20,7 +20,7 @@ import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.TestUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;

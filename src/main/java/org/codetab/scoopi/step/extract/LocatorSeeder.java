@@ -1,27 +1,26 @@
 package org.codetab.scoopi.step.extract;
 
+import static org.apache.commons.lang3.Validate.validState;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.helper.ThreadSleep;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
+import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.base.BaseSeeder;
-import org.codetab.scoopi.util.MarkerUtil;
-import org.codetab.scoopi.util.Util;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 
 import com.codahale.metrics.Meter;
 
@@ -61,9 +60,12 @@ public final class LocatorSeeder extends BaseSeeder {
     @Inject
     private ObjectFactory factory;
 
+    @Inject
+    private ErrorLogger errorLogger;
+
     /**
      * <p>
-     * Initialise list of locators (or forked locators to load test).
+     * Initialise list of locators
      */
     @Override
     public boolean initialize() {
@@ -73,20 +75,13 @@ public final class LocatorSeeder extends BaseSeeder {
             setOutput(pData);
             setConsistent(true);
         } else {
-            String message = Util.join(Messages.getString("BaseLoader.28"), //$NON-NLS-1$
+            String message = String.join(" ",
+                    "payload data is not instance of locator, but",
                     pData.getClass().getName());
             throw new StepRunException(message);
         }
-        // fork for load test
-        // List<Locator> forkedLocators =
-        // locatorHelper.forkLocators(locatorList);
-        // if (forkedLocators.size() > 0) {
-        // locatorList = forkedLocators;
-        // }
         Meter meter = metricsHelper.getMeter(this, "locator", "provided");
         meter.mark(locatorGroup.getLocators().size());
-
-        logState(Messages.getString("LocatorSeeder.2")); //$NON-NLS-1$
         return true;
     }
 
@@ -96,9 +91,10 @@ public final class LocatorSeeder extends BaseSeeder {
      */
     @Override
     public boolean handover() {
-        Validate.validState(isConsistent(), "step inconsistent");
+        validState(isConsistent(), "step inconsistent");
 
-        LOGGER.info(Messages.getString("LocatorSeeder.5")); //$NON-NLS-1$
+        LOGGER.info("push locators to taskpool");
+
         Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
         int count = 0;
         for (Locator locator : locatorGroup.getLocators()) {
@@ -110,14 +106,16 @@ public final class LocatorSeeder extends BaseSeeder {
                     meter.mark();
                     count++;
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    String message = String.join(" ", "handover locator,",
+                            payload.toString());
+                    errorLogger.log(CAT.INTERNAL, message, e);
                 }
             }
             threadSleep.sleep(SLEEP_MILLIS);
         }
-        LOGGER.info(Messages.getString("LocatorSeeder.6"), //$NON-NLS-1$
-                locatorGroup.getLocators().size(), count);
+        LOGGER.info("locator group: {}, locators: {}, queued to taskpool: {}",
+                locatorGroup.getGroup(), locatorGroup.getLocators().size(),
+                count);
         return true;
     }
 
@@ -149,25 +147,12 @@ public final class LocatorSeeder extends BaseSeeder {
                     payloads.add(nextStepPayload);
                 }
             } catch (DefNotFoundException e) {
-                // TODO Auto-generated catch block
-                // don't throw Exception just log error
-                e.printStackTrace();
+                String message = String.join(" ",
+                        "unable to create payload for taskGroup:taskName ",
+                        taskGroup + ":" + taskName);
+                errorLogger.log(CAT.ERROR, message, e);
             }
         }
         return payloads;
-    }
-
-    /**
-     * <p>
-     * Logs trace with marker.
-     * @param message
-     *            - message to log {@link String}
-     */
-    private void logState(final String message) {
-        for (Locator locator : locatorGroup.getLocators()) {
-            Marker marker =
-                    MarkerUtil.getMarker(locator.getName(), locator.getGroup());
-            LOGGER.trace(marker, "-- {} --{}{}", message, Util.LINE, locator); //$NON-NLS-1$
-        }
     }
 }

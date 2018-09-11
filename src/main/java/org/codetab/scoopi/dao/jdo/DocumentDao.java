@@ -1,11 +1,11 @@
 package org.codetab.scoopi.dao.jdo;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.dao.IDocumentDao;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Document;
 
 /**
@@ -28,7 +28,7 @@ public final class DocumentDao implements IDocumentDao {
      *            JDO PMF
      */
     public DocumentDao(final PersistenceManagerFactory pmf) {
-        Validate.notNull(pmf, Messages.getString("DocumentDao.0")); //$NON-NLS-1$
+        notNull(pmf, "pmf must not be null");
         this.pmf = pmf;
     }
 

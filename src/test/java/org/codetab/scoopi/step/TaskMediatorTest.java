@@ -15,10 +15,9 @@ import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.pool.TaskPoolService;
-import org.codetab.scoopi.shared.StatService;
-import org.codetab.scoopi.shared.StepService;
 import org.codetab.scoopi.step.TaskMediator.TaskRunnerThread;
 import org.codetab.scoopi.store.IStore;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,9 +33,9 @@ public class TaskMediatorTest {
     @Mock
     private IStore store;
     @Mock
-    private StepService stepService;
+    private TaskFactory taskFactory;
     @Mock
-    private StatService statService;
+    private ErrorLogger errorLogger;
     @Mock
     private TaskRunnerThread taskRunner;
     @Mock
@@ -63,14 +62,14 @@ public class TaskMediatorTest {
     public void testWaitForFinish() throws InterruptedException {
         taskMediator.waitForFinish();
         verify(taskRunner).join();
-        verifyZeroInteractions(statService);
+        verifyZeroInteractions(errorLogger);
     }
 
     @Test
     public void testWaitForFinishThrowsException() throws InterruptedException {
         doThrow(InterruptedException.class).when(taskRunner).join();
         taskMediator.waitForFinish();
-        verify(statService).log(eq(CAT.INTERNAL), any(String.class),
+        verify(errorLogger).log(eq(CAT.INTERNAL), any(String.class),
                 any(InterruptedException.class));
     }
 

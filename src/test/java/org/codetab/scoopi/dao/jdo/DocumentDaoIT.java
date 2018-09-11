@@ -12,7 +12,7 @@ import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;

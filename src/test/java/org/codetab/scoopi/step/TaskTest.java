@@ -12,7 +12,7 @@ import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.shared.StatService;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -32,7 +32,7 @@ public class TaskTest {
     @Mock
     private MetricsHelper metricsHelper;
     @Mock
-    private StatService statService;
+    private ErrorLogger errorLogger;
     @InjectMocks
     private Task task;
 
@@ -56,7 +56,6 @@ public class TaskTest {
         InOrder inOrder = inOrder(step, context);
         inOrder.verify(step).getMarker();
         inOrder.verify(step).getLabel();
-        inOrder.verify(step).getStepName();
         inOrder.verify(step).initialize();
         inOrder.verify(step).load();
         inOrder.verify(step).process();
@@ -70,32 +69,38 @@ public class TaskTest {
     @Test
     public void testRunThrowsException() {
 
-        Counter counter = new Counter();
         Timer timer = Mockito.mock(Timer.class);
         Context context = Mockito.mock(Context.class);
         given(metricsHelper.getTimer(step, "task", "time")).willReturn(timer);
         given(timer.time()).willReturn(context);
-        given(metricsHelper.getCounter(task, "system", "error"))
-                .willReturn(counter);
 
-        given(step.getLabel()).willReturn("");
-        given(step.initialize()).willThrow(StepRunException.class)
-                .willThrow(StepPersistenceException.class)
-                .willThrow(IllegalStateException.class);
+        StepRunException stepRunException = new StepRunException("x");
+        StepPersistenceException stepPersistenceException =
+                new StepPersistenceException("x");
+        IllegalStateException illegalStateException =
+                new IllegalStateException("x");
+
+        given(step.getLabeled(stepRunException.getMessage())).willReturn("");
+        given(step.getLabeled(stepPersistenceException.getMessage()))
+                .willReturn("");
+        given(step.getLabeled(illegalStateException.getMessage()))
+                .willReturn("");
+
+        given(step.initialize()).willThrow(stepRunException)
+                .willThrow(stepPersistenceException)
+                .willThrow(illegalStateException);
 
         task.run();
-        verify(statService).log(eq(CAT.ERROR), any(String.class),
-                any(String.class), any(StepRunException.class));
+        verify(errorLogger).log(eq(CAT.ERROR), any(String.class),
+                any(StepRunException.class));
 
         task.run();
-        verify(statService).log(eq(CAT.ERROR), any(String.class),
-                any(String.class), any(StepPersistenceException.class));
+        verify(errorLogger).log(eq(CAT.ERROR), any(String.class),
+                any(StepPersistenceException.class));
 
         task.run();
-        verify(statService).log(eq(CAT.INTERNAL), any(String.class),
-                any(String.class), any(IllegalStateException.class));
-
-        assertThat(counter.getCount()).isEqualTo(3L);
+        verify(errorLogger).log(eq(CAT.INTERNAL), any(String.class),
+                any(IllegalStateException.class));
     }
 
     @Test

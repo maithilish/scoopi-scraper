@@ -23,8 +23,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
+import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,12 +53,14 @@ public class PoolsTest {
     private DInjector dInjector;
     @Mock
     private PoolStat poolStat;
+    @Mock
+    private ThreadSleep threadSleep;
 
     @InjectMocks
     private TaskPoolService pools;
 
     @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+    public ExpectedException testRule = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -317,7 +320,7 @@ public class PoolsTest {
 
         pools.submit("x", task1);
 
-        exceptionRule.expect(TestTimedOutException.class);
+        testRule.expect(TestTimedOutException.class);
         pools.waitForFinish();
     }
 

@@ -10,11 +10,9 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.exception.DefNotFoundException;
@@ -71,7 +69,7 @@ public class UtilTest {
             Util.deepClone(String.class, null);
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
-            assertThat(e.getMessage()).isEqualTo("object must not be null");
+            assertThat(e.getMessage()).isEqualTo("obj must not be null");
         }
     }
 
@@ -84,79 +82,6 @@ public class UtilTest {
         assertThat(Util.hasNulls(x, y)).isFalse();
         assertThat(Util.hasNulls(x, z)).isTrue();
         assertThat(Util.hasNulls(z)).isTrue();
-    }
-
-    @Test
-    public void testCartesianProduct() {
-        Set<String> x = new HashSet<String>();
-        x.add("x1");
-        x.add("x2");
-        Set<String> y = new HashSet<String>();
-        y.add("y1");
-        y.add("y2");
-        Set<String> z = new HashSet<String>();
-        z.add("z1");
-
-        Set<Set<Object>> xy = Util.cartesianProduct(x, y);
-        assertThat(4).isEqualTo(xy.size());
-        assertThat(xy.contains(getSet("y1", "x1"))).isTrue();
-        assertThat(xy.contains(getSet("y1", "x2"))).isTrue();
-        assertThat(xy.contains(getSet("y2", "x1"))).isTrue();
-        assertThat(xy.contains(getSet("y2", "x2"))).isTrue();
-
-        Set<Set<Object>> xyz = Util.cartesianProduct(x, y, z);
-        assertThat(4).isEqualTo(xyz.size());
-        assertThat(xyz.contains(getSet("y1", "x1", "z1"))).isTrue();
-        assertThat(xyz.contains(getSet("y1", "x2", "z1"))).isTrue();
-        assertThat(xyz.contains(getSet("y2", "x1", "z1"))).isTrue();
-        assertThat(xyz.contains(getSet("y2", "x2", "z1"))).isTrue();
-
-        Set<Set<Object>> xz = Util.cartesianProduct(x, z);
-        assertThat(2).isEqualTo(xz.size());
-        assertThat(xz.contains(getSet("x1", "z1"))).isTrue();
-        assertThat(xz.contains(getSet("x2", "z1"))).isTrue();
-    }
-
-    @Test
-    public void testCartesianProductEmptySet() {
-        Set<String> x = new HashSet<String>();
-        x.add("x1");
-        x.add("x2");
-        Set<String> emptySet = new HashSet<String>();
-
-        testRule.expect(IllegalStateException.class);
-        Util.cartesianProduct(x, emptySet);
-    }
-
-    @Test
-    public void testCartesianProductException() {
-        Set<String> x = new HashSet<String>();
-        x.add("x1");
-        x.add("x2");
-
-        testRule.expect(IllegalStateException.class);
-        Util.cartesianProduct(x);
-    }
-
-    @Test
-    public void testCartesianProductNoArg() {
-        testRule.expect(IllegalStateException.class);
-        Util.cartesianProduct();
-    }
-
-    @Test
-    public void testCartesianProductNullParams() {
-        Set<String> set = null;
-        testRule.expect(IllegalStateException.class);
-        Util.cartesianProduct(set);
-    }
-
-    private Set<String> getSet(final String... strs) {
-        Set<String> set = new HashSet<String>();
-        for (String str : strs) {
-            set.add(str);
-        }
-        return set;
     }
 
     @Test
@@ -186,7 +111,7 @@ public class UtilTest {
             Util.getJson(null, false);
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
-            assertThat(e.getMessage()).isEqualTo("object must not be null");
+            assertThat(e.getMessage()).isEqualTo("obj must not be null");
         }
     }
 
@@ -219,7 +144,7 @@ public class UtilTest {
             Util.getIndentedJson(null, false);
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
-            assertThat(e.getMessage()).isEqualTo("object must not be null");
+            assertThat(e.getMessage()).isEqualTo("obj must not be null");
         }
     }
 
@@ -355,7 +280,7 @@ public class UtilTest {
 
     @Test
     public void testGetMessage() {
-        String expected = "DefNotFoundException: [test]";
+        String expected = "DefNotFoundException: test";
         String actual = Util.getMessage(new DefNotFoundException("test"));
         assertThat(actual).isEqualTo(expected);
     }
@@ -476,7 +401,7 @@ public class UtilTest {
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
             assertThat(e.getMessage())
-                    .isEqualTo("input string must not be null");
+                    .isEqualTo("input must not be null");
         }
 
         try {

@@ -20,17 +20,19 @@ import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
 import org.codetab.scoopi.metrics.SystemStat;
-import org.codetab.scoopi.misc.ShutdownHook;
+import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.LocatorGroupHelper;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.system.ConfigService;
+import org.codetab.scoopi.system.ErrorLogger;
+import org.codetab.scoopi.system.ShutdownHook;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -59,7 +61,7 @@ public class ScoopiSystemTest {
     @Mock
     private MetricsHelper metricsHelper;
     @Mock
-    private StatService statService;
+    private ErrorLogger errorLogger;
     @Mock
     private ShutdownHook shutdownHook;
     @Mock
@@ -69,15 +71,22 @@ public class ScoopiSystemTest {
     @Mock
     private SystemHelper systemHelper;
     @Mock
-    private ObjectFactory factory;
+    private ObjectFactory objectFactory;
     @Mock
     private LocatorGroupHelper locatorGroupHelper;
 
     @InjectMocks
     private ScoopiSystem sSystem;
 
+    private static ObjectFactory factory;
+
     @Rule
     public ExpectedException testRule = ExpectedException.none();
+
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        factory = new ObjectFactory();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -85,19 +94,11 @@ public class ScoopiSystemTest {
     }
 
     @Test
-    public void teststartStatService() {
-        boolean result = sSystem.startStatService();
+    public void testStartErrorLogger() {
+        boolean result = sSystem.startErrorLogger();
 
         assertThat(result).isTrue();
-        verify(statService).start();
-    }
-
-    @Test
-    public void teststopStatService() {
-        boolean result = sSystem.stopStatService();
-
-        assertThat(result).isTrue();
-        verify(statService).stop();
+        verify(errorLogger).start();
     }
 
     @Test
@@ -194,8 +195,12 @@ public class ScoopiSystemTest {
 
         List<LocatorGroup> lGroups = getTestLocatorGroups();
 
-        Payload payload1 = Mockito.mock(Payload.class);
-        Payload payload2 = Mockito.mock(Payload.class);
+        JobInfo jobInfo1 =
+                factory.createJobInfo(0, "acme", "group1", "task1", "def1");
+        JobInfo jobInfo2 =
+                factory.createJobInfo(0, "acme", "group2", "task2", "def2");
+        Payload payload1 = factory.createPayload(jobInfo1, null, null);
+        Payload payload2 = factory.createPayload(jobInfo2, null, null);
         List<Payload> payloads = Lists.newArrayList(payload1, payload2);
 
         given(configService.getConfig("scoopi.seederClass"))
@@ -211,14 +216,14 @@ public class ScoopiSystemTest {
 
         assertThat(result).isTrue();
 
-        InOrder inOrder = inOrder(taskMediator, statService);
+        InOrder inOrder = inOrder(taskMediator, errorLogger);
 
         inOrder.verify(taskMediator).pushPayload(payload1);
-        inOrder.verify(statService).log(eq(CAT.INTERNAL), any(String.class),
+        inOrder.verify(errorLogger).log(eq(CAT.INTERNAL), any(String.class),
                 any(InterruptedException.class));
         inOrder.verify(taskMediator).pushPayload(payload2);
 
-        verifyNoMoreInteractions(taskMediator, statService);
+        verifyNoMoreInteractions(taskMediator, errorLogger);
     }
 
     @Test
@@ -255,14 +260,14 @@ public class ScoopiSystemTest {
     @Test
     public void testGetModeInfo() {
         given(configService.isTestMode()).willReturn(true);
-        assertThat(sSystem.getModeInfo()).isEqualTo("mode : Test");
+        assertThat(sSystem.getModeInfo()).isEqualTo("mode: test");
 
         given(configService.isDevMode()).willReturn(true);
-        assertThat(sSystem.getModeInfo()).isEqualTo("mode : Dev");
+        assertThat(sSystem.getModeInfo()).isEqualTo("mode: dev");
 
         given(configService.isTestMode()).willReturn(false);
         given(configService.isDevMode()).willReturn(false);
-        assertThat(sSystem.getModeInfo()).isEqualTo("mode : Production");
+        assertThat(sSystem.getModeInfo()).isEqualTo("mode: production");
     }
 
     @Test

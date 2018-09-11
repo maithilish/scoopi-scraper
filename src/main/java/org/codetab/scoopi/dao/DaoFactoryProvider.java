@@ -3,7 +3,6 @@ package org.codetab.scoopi.dao;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.messages.Messages;
 
 /**
  * <p>
@@ -49,8 +48,7 @@ public class DaoFactoryProvider {
                     .instance(org.codetab.scoopi.dao.jdo.JdoDaoFactory.class);
             break;
         case JPA:
-            throw new UnsupportedOperationException(
-                    Messages.getString("DaoFactoryProvider.0")); //$NON-NLS-1$
+            throw new UnsupportedOperationException("JPA not yet supported");
         default:
             instance = dInjector
                     .instance(org.codetab.scoopi.dao.jdo.JdoDaoFactory.class);

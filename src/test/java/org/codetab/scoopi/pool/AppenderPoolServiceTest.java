@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

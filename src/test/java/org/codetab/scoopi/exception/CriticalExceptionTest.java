@@ -17,7 +17,7 @@ public class CriticalExceptionTest {
     @Test
     public void testException() {
         String message = "xyz";
-        String expected = "[" + message + "]";
+        String expected = message;
 
         ex = new CriticalException(message);
 
@@ -37,7 +37,7 @@ public class CriticalExceptionTest {
     public void testCriticalExceptionWithMessageAndCause() {
         String message = "xyz";
         Throwable cause = new Throwable("x");
-        String expected = "[" + message + "]";
+        String expected = message;
 
         ex = new CriticalException(message, cause);
 

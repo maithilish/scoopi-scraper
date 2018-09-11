@@ -18,7 +18,7 @@ import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
 import org.junit.Before;
 import org.junit.Rule;
@@ -132,7 +132,7 @@ public class DocumentHelperTest {
             documentHelper.getActiveDocumentId(new ArrayList<>());
             fail("should throw IllegalStateException");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage()).isEqualTo("configService is null");
+            assertThat(e.getMessage()).isEqualTo("configService is not set");
         }
     }
 
@@ -252,7 +252,7 @@ public class DocumentHelperTest {
             documentHelper.getToDate(new Date(), "", jobInfo);
             fail("should throw IllegalStateException");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage()).isEqualTo("configService is null");
+            assertThat(e.getMessage()).isEqualTo("configService is not set");
         }
     }
 
@@ -303,9 +303,8 @@ public class DocumentHelperTest {
             // document without documentObject
             documentHelper.getDocumentObject(document);
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage())
-                    .isEqualTo("documentObject must not be null");
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage()).isEqualTo("documentObject is null");
         }
     }
 
@@ -333,19 +332,6 @@ public class DocumentHelperTest {
                 documentHelper.createDocument("name", "url", fromDate, toDate);
 
         assertThat(actual).isSameAs(document);
-    }
-
-    @Test
-    public void testCreateDocumentObjectIllegalState()
-            throws IllegalAccessException {
-        FieldUtils.writeDeclaredField(documentHelper, "objectFactory", null,
-                true);
-        try {
-            documentHelper.createDocument("x", "y", new Date(), new Date());
-            fail("should throw IllegalStateException");
-        } catch (IllegalStateException e) {
-            assertThat(e.getMessage()).isEqualTo("objectFactory is null");
-        }
     }
 
     @Test

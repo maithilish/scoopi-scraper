@@ -41,7 +41,7 @@ public class JobInfoTest {
 
     @Test
     public void testGetLabel() {
-        assertThat(jobInfo.getLabel()).isEqualTo("locator:group:dataDef");
+        assertThat(jobInfo.getLabel()).isEqualTo("locator:task:dataDef");
     }
 
     @Test
@@ -53,7 +53,7 @@ public class JobInfoTest {
     @Test
     public void testHashCode() {
         int actual = jobInfo.hashCode();
-        assertThat(actual).isEqualTo(-1162997337);
+        assertThat(actual).isEqualTo(-696164619);
     }
 
     @Test

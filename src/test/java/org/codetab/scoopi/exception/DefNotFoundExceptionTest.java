@@ -9,10 +9,9 @@ public class DefNotFoundExceptionTest {
     @Test
     public void testException() {
         String message = "xyz";
-        String expected = "[" + message + "]";
 
         DefNotFoundException ex = new DefNotFoundException(message);
 
-        assertThat(ex.getMessage()).isEqualTo(expected);
+        assertThat(ex.getMessage()).isEqualTo(message);
     }
 }

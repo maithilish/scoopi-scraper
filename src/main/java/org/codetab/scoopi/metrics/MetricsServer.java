@@ -1,19 +1,19 @@
 package org.codetab.scoopi.metrics;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.codetab.scoopi.di.BasicFactory;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.messages.Messages;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.system.ConfigService;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Singleton;
 
 @Singleton
 public class MetricsServer {
@@ -25,13 +25,15 @@ public class MetricsServer {
     @Inject
     private IOHelper ioHelper;
     @Inject
+    private ErrorLogger errorLogger;
+    @Inject
     private BasicFactory factory;
 
     private Server server;
 
     public void start() {
         if (!isEnable()) {
-            LOGGER.info(Messages.getString("MetricsServer.5")); //$NON-NLS-1$
+            LOGGER.info("metrics server is disabled");
             return;
         }
 
@@ -55,11 +57,10 @@ public class MetricsServer {
 
             server.setHandler(webapp);
             server.start();
-            LOGGER.info(Messages.getString("MetricsServer.3"), port); //$NON-NLS-1$
+            LOGGER.info("metrics server started at port: {}", port);
             // no server.join() - don't wait
         } catch (Exception e) {
-            throw new CriticalException(Messages.getString("MetricsServer.1"), //$NON-NLS-1$
-                    e);
+            throw new CriticalException("unable to start metrics server", e);
         }
     }
 
@@ -67,12 +68,10 @@ public class MetricsServer {
         if (server != null) {
             try {
                 server.stop();
-                LOGGER.info(Messages.getString("MetricsServer.4")); //$NON-NLS-1$
+                LOGGER.info("metrics server stopped");
             } catch (Exception e) {
                 // don't throw e as stop is outside the try in ScoopiEngine
-                LOGGER.error("{}", e.getMessage()); //$NON-NLS-1$
-                LOGGER.warn("{}", e.getMessage()); //$NON-NLS-1$
-                LOGGER.debug("{}", e); //$NON-NLS-1$
+                errorLogger.log(CAT.ERROR, "stop metrics server", e);
             }
         }
     }

@@ -1,15 +1,15 @@
 package org.codetab.scoopi.dao.jdo;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.IDataDao;
 import org.codetab.scoopi.dao.IDataDefDao;
 import org.codetab.scoopi.dao.IDataSetDao;
 import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.dao.ILocatorDao;
-import org.codetab.scoopi.messages.Messages;
 
 /**
  * <p>
@@ -42,7 +42,7 @@ public class JdoDaoFactory implements IDaoFactory {
      */
     @Inject
     public void setPmf(final PMF pmf) {
-        Validate.notNull(pmf, Messages.getString("JdoDaoFactory.0")); //$NON-NLS-1$
+        notNull(pmf, "pmf must not be null");
 
         if (pmf.getFactory() == null) {
             pmf.init();

@@ -1,7 +1,7 @@
 package org.codetab.scoopi.defs.yml;
 
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,7 +21,6 @@ import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.persistence.DataDefPersistence;
-import org.codetab.scoopi.util.Util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -46,7 +45,7 @@ public class DataDefDefs implements IDataDefDefs {
      */
     public void init(final JsonNode dataDefDefs) {
 
-        requireNonNull(dataDefDefs, "dataDefDefs must not be null");
+        notNull(dataDefDefs, "dataDefDefs must not be null");
 
         if (consistent) {
             return;
@@ -116,14 +115,14 @@ public class DataDefDefs implements IDataDefDefs {
 
     @Override
     public Data getDataTemplate(final String dataDef) {
-        requireNonNull(dataDef, "dataDefName must not be null");
+        notNull(dataDef, "dataDefName must not be null");
 
         Data data = dataTemplateMap.get(dataDef);
         if (nonNull(data)) {
             return data.copy();
         } else {
             throw new NoSuchElementException(
-                    Util.join("data template for datadef: ", dataDef));
+                    String.join(" ", "data template for datadef:", dataDef));
         }
     }
 }

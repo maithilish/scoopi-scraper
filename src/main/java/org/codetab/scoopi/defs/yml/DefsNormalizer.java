@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import org.assertj.core.util.Lists;
 import org.codetab.scoopi.defs.yml.helper.NormalizerHelper;
-import org.codetab.scoopi.util.Util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,7 +76,7 @@ public class DefsNormalizer {
         JsonNode dataDefs = nodes.at("/dataDefs");
         ArrayList<String> names = Lists.newArrayList(dataDefs.fieldNames());
         for (String name : names) {
-            String path = Util.join("/", name + "/axis/fact");
+            String path = String.join("/", "", name, "axis", "fact");
             JsonNode fact = dataDefs.at(path);
             String memberYml = "[{\"member\": {\"name\": \"fact\"}}]";
             JsonNode member = mapper.readTree(memberYml);

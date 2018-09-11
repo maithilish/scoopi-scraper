@@ -1,39 +1,25 @@
-package org.codetab.scoopi.shared;
+package org.codetab.scoopi.step;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.step.IStep;
-import org.codetab.scoopi.step.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class StepService {
+public class TaskFactory {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(StepService.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(TaskFactory.class);
 
     @Inject
     private DInjector dInjector;
 
     @Inject
-    private StepService() {
-    }
-
-    /**
-     * Safely create instance from clzName string using DI. Steps should use
-     * this method to create any objects such as converters etc.
-     * @param clzName
-     * @return
-     * @throws ClassNotFoundException
-     */
-    public Object createInstance(final String clzName)
-            throws ClassNotFoundException {
-        Class<?> clz = Class.forName(clzName);
-        return dInjector.instance(clz);
+    private TaskFactory() {
     }
 
     /**
@@ -59,7 +45,10 @@ public class StepService {
      */
     public Task createTask(final Payload payload) throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        IStep step = getStep(payload.getStepInfo().getClassName());
+
+        notNull(payload, "payload must not be null");
+
+        IStep step = createStep(payload.getStepInfo().getClassName());
         step.setPayload(payload);
         Task task = createTask(step);
         return task;
@@ -72,21 +61,27 @@ public class StepService {
      * @return task
      */
     public Task createTask(final IStep step) {
+
+        notNull(step, "step must not be null");
+
         Task task = dInjector.instance(Task.class);
         task.setStep(step);
         return task;
     }
 
-    public IStep getStep(final String clzName) throws ClassNotFoundException,
+    public IStep createStep(final String clzName) throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
+
+        notNull(clzName, "clzName must not be null");
+
         IStep step = null;
         Class<?> stepClass = Class.forName(clzName);
         Object obj = dInjector.instance(stepClass);
         if (obj instanceof IStep) {
             step = (IStep) obj;
         } else {
-            throw new ClassCastException(Messages.getString("StepService.0") //$NON-NLS-1$
-                    + clzName + Messages.getString("StepService.1")); //$NON-NLS-1$
+            throw new ClassCastException(String.join(" ", "step class:",
+                    clzName, "is not IStep type"));
         }
         return step;
     }

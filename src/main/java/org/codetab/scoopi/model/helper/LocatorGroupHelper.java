@@ -20,7 +20,7 @@ import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.shared.StatService;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class LocatorGroupHelper {
     @Inject
     private ObjectFactory objectFactory;
     @Inject
-    private StatService statService;
+    private ErrorLogger errorLogger;
 
     public List<LocatorGroup> createLocatorGroups(final DataDef dataDef,
             final List<Member> members, final String locatorName) {
@@ -63,8 +63,7 @@ public class LocatorGroupHelper {
                 String message = String.join(" ",
                         "create locator from link, no linkGroup defined for member:",
                         label);
-                LOGGER.error("{}", message);
-                statService.log(CAT.ERROR, message);
+                errorLogger.log(CAT.ERROR, message);
             }
         }
         return Lists.newArrayList(lgs.values());

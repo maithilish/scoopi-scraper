@@ -15,10 +15,9 @@ public class DataDefNotFoundExceptionTest {
     @Test
     public void testException() {
         String message = "xyz";
-        String expected = "[" + message + "]";
 
         DataDefNotFoundException ex = new DataDefNotFoundException(message);
 
-        assertThat(ex.getMessage()).isEqualTo(expected);
+        assertThat(ex.getMessage()).isEqualTo(message);
     }
 }

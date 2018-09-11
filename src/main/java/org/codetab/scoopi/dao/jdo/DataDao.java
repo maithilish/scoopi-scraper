@@ -1,5 +1,7 @@
 package org.codetab.scoopi.dao.jdo;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.List;
 
 import javax.jdo.Extent;
@@ -8,9 +10,7 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.dao.IDataDao;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Data;
 
 /**
@@ -33,7 +33,7 @@ public final class DataDao implements IDataDao {
      *            persistence manager factory
      */
     public DataDao(final PersistenceManagerFactory pmf) {
-        Validate.notNull(pmf, Messages.getString("DataDao.0")); //$NON-NLS-1$
+        notNull(pmf, "pmf must not be null");
         this.pmf = pmf;
     }
 
@@ -45,7 +45,7 @@ public final class DataDao implements IDataDao {
      */
     @Override
     public void storeData(final Data data) {
-        Validate.notNull(data, Messages.getString("DataDao.1")); //$NON-NLS-1$
+        notNull(data, "data must not be null");
 
         PersistenceManager pm = getPM();
         Transaction tx = pm.currentTransaction();
@@ -96,8 +96,10 @@ public final class DataDao implements IDataDao {
         case 1:
             return data.get(0);
         default:
-            throw new IllegalStateException(Messages.getString("DataDao.2") //$NON-NLS-1$
-                    + documentId + "][" + dataDefId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalStateException(
+                    String.join(" ", "found multiple data for documentId:",
+                            String.valueOf(documentId), "dataDefId:",
+                            String.valueOf(dataDefId)));
         }
     }
 

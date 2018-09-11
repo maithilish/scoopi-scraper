@@ -7,10 +7,8 @@ import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.StepPersistenceException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Document;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.util.Util;
+import org.codetab.scoopi.system.ConfigService;
 
 /**
  * <p>
@@ -48,9 +46,8 @@ public class DocumentPersistence {
             IDocumentDao dao = daoFactory.getDocumentDao();
             return dao.getDocument(id);
         } catch (RuntimeException e) {
-            String message =
-                    Util.join(Messages.getString("DocumentPersistence.1"), //$NON-NLS-1$
-                            String.valueOf(id), "]"); //$NON-NLS-1$
+            String message = String.join(" ", "unable to load document, id:",
+                    String.valueOf(id));
             throw new StepPersistenceException(message, e);
         }
     }

@@ -1,7 +1,5 @@
 package org.codetab.scoopi.exception;
 
-import org.codetab.scoopi.util.Util;
-
 /**
  * <p>
  * Exception thrown when config not found.
@@ -29,7 +27,7 @@ public class ConfigNotFoundException extends Exception {
 
     @Override
     public String getMessage() {
-        return Util.join("[", key, "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        return key;
     }
 
 }

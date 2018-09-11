@@ -9,10 +9,9 @@ public class ValidationExceptionTest {
     @Test
     public void testException() {
         String message = "xyz";
-        String expected = "[" + message + "]";
 
         ValidationException ex = new ValidationException(message);
 
-        assertThat(ex.getMessage()).isEqualTo(expected);
+        assertThat(ex.getMessage()).isEqualTo(message);
     }
 }

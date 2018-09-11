@@ -53,7 +53,7 @@ public class Defs implements IDefs {
             LOGGER.debug("effective defs {}", defsHelper.pretty(effectiveDefs));
             defsHelper.validateEffectiveDefs(effectiveDefs);
         } catch (Exception e) {
-            throw new CriticalException("initialize defs", e);
+            throw new CriticalException("unable to initialize defs", e);
         }
     }
 
@@ -79,8 +79,8 @@ public class Defs implements IDefs {
         if (entry.isPresent()) {
             return entry.get().getValue();
         } else {
-            throw new CriticalException(String.join(" ", "initialize defs: ",
-                    key, "is not defined"));
+            throw new CriticalException(String.join(" ",
+                    "initialize defs, def:", key, "is not defined"));
         }
     }
 }

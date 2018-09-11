@@ -1,5 +1,7 @@
 package org.codetab.scoopi.dao.jdo;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.List;
 
 import javax.jdo.Extent;
@@ -8,9 +10,7 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.dao.ILocatorDao;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Locator;
 
 /**
@@ -41,7 +41,7 @@ public final class LocatorDao implements ILocatorDao {
      *            JDO PMF
      */
     public LocatorDao(final PersistenceManagerFactory pmf) {
-        Validate.notNull(pmf, Messages.getString("LocatorDao.0")); //$NON-NLS-1$
+        notNull(pmf, "pmf must not be null");
         this.pmf = pmf;
     }
 
@@ -60,8 +60,8 @@ public final class LocatorDao implements ILocatorDao {
      */
     @Override
     public Locator getLocator(final String name, final String group) {
-        Validate.notNull(name, Messages.getString("LocatorDao.1")); //$NON-NLS-1$
-        Validate.notNull(group, Messages.getString("LocatorDao.2")); //$NON-NLS-1$
+        notNull(name, "name must not be null");
+        notNull(group, "group must not be null");
 
         PersistenceManager pm = getPM();
         try {
@@ -83,8 +83,8 @@ public final class LocatorDao implements ILocatorDao {
                 return locators.get(0);
             default:
                 throw new IllegalStateException(
-                        Messages.getString("LocatorDao.3") + name //$NON-NLS-1$
-                                + "][" + group + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                        String.join(" ", "found multiple locators for name:",
+                                name, "group:", group));
             }
         } finally {
             pm.close();
@@ -97,7 +97,7 @@ public final class LocatorDao implements ILocatorDao {
      */
     @Override
     public void storeLocator(final Locator locator) {
-        Validate.notNull(locator, Messages.getString("LocatorDao.4")); //$NON-NLS-1$
+        notNull(locator, "locator must not be null");
 
         PersistenceManager pm = getPM();
         Transaction tx = pm.currentTransaction();

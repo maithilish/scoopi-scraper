@@ -15,7 +15,7 @@ import org.codetab.scoopi.dao.jdo.JdoDaoFactory;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.shared.ConfigService;
+import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

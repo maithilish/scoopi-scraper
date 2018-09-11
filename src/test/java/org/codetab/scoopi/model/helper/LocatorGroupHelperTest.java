@@ -22,7 +22,7 @@ import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.shared.StatService;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -41,7 +41,7 @@ public class LocatorGroupHelperTest {
     @Mock
     private ObjectFactory objectFactory;
     @Mock
-    private StatService statService;
+    private ErrorLogger errorLogger;
 
     @InjectMocks
     private LocatorGroupHelper locatorGroupHelper;
@@ -151,7 +151,7 @@ public class LocatorGroupHelperTest {
 
         assertThat(actual.size()).isEqualTo(0);
 
-        verify(statService).log(eq(CAT.ERROR), any(String.class));
+        verify(errorLogger).log(eq(CAT.ERROR), any(String.class));
     }
 
     @Test

@@ -1,9 +1,10 @@
 package org.codetab.scoopi.store.basic;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.IStore;
 
@@ -21,7 +22,7 @@ public class BasicStore implements IStore {
 
     @Override
     public void putPayload(final Payload payload) throws InterruptedException {
-        Validate.notNull(payload, "payload must not be null");
+        notNull(payload, "payload must not be null");
         payloads.put(payload);
     }
 

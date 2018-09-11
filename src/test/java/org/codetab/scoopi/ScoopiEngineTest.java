@@ -8,8 +8,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -22,7 +22,7 @@ public class ScoopiEngineTest {
     @Mock
     private ScoopiSystem scoopiSystem;
     @Mock
-    private StatService statService;
+    private ErrorLogger errorLogger;
     @Mock
     private TaskMediator taskMediator;
 
@@ -47,7 +47,8 @@ public class ScoopiEngineTest {
 
         // then
         InOrder inOrder = inOrder(scoopiSystem, taskMediator);
-        inOrder.verify(scoopiSystem).startStatService();
+        inOrder.verify(scoopiSystem).startStats();
+        inOrder.verify(scoopiSystem).startErrorLogger();
         inOrder.verify(scoopiSystem).addShutdownHook();
         inOrder.verify(scoopiSystem).getPropertyFileName();
         inOrder.verify(scoopiSystem).initConfigService(defaultConfigFile,
@@ -62,7 +63,7 @@ public class ScoopiEngineTest {
         inOrder.verify(scoopiSystem).waitForHeapDump();
 
         inOrder.verify(scoopiSystem).stopMetricsServer();
-        inOrder.verify(scoopiSystem).stopStatService();
+        inOrder.verify(scoopiSystem).stopStats();
         verifyNoMoreInteractions(scoopiSystem, taskMediator);
     }
 
@@ -70,17 +71,17 @@ public class ScoopiEngineTest {
     public void testStartShouldCatchException() {
         CriticalException ex = new CriticalException("fatal");
         // given
-        given(scoopiSystem.startStatService()).willThrow(ex);
+        given(scoopiSystem.startStats()).willThrow(ex);
 
         scoopiEngine.start();
 
         // then
-        InOrder inOrder = inOrder(scoopiSystem, statService);
-        inOrder.verify(scoopiSystem).startStatService();
-        inOrder.verify(statService).log(eq(CAT.FATAL), any(String.class),
+        InOrder inOrder = inOrder(scoopiSystem, errorLogger);
+        inOrder.verify(scoopiSystem).startStats();
+        inOrder.verify(errorLogger).log(eq(CAT.FATAL), any(String.class),
                 eq(ex));
         inOrder.verify(scoopiSystem).stopMetricsServer();
-        inOrder.verify(scoopiSystem).stopStatService();
-        verifyNoMoreInteractions(scoopiSystem, statService);
+        inOrder.verify(scoopiSystem).stopStats();
+        verifyNoMoreInteractions(scoopiSystem, errorLogger);
     }
 }

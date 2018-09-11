@@ -1,12 +1,12 @@
 package org.codetab.scoopi.step.convert;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.Validate.validState;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.defs.IDataDefDefs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
@@ -16,8 +16,8 @@ import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.LocatorGroupHelper;
-import org.codetab.scoopi.shared.StatService;
 import org.codetab.scoopi.step.base.BaseConverter;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public class LocatorCreator extends BaseConverter {
     @Inject
     private IDataDefDefs dataDefDefs;
     @Inject
-    private StatService statService;
+    private ErrorLogger errorLogger;
 
     private List<LocatorGroup> locatorGroups;
 
@@ -53,9 +53,9 @@ public class LocatorCreator extends BaseConverter {
 
     @Override
     public boolean handover() {
-        Validate.validState(nonNull(getOutput()), "output is null");
-        Validate.validState(isConsistent(), "step inconsistent");
-        Validate.validState(nonNull(locatorGroups), "locatorGroups is null");
+        validState(nonNull(getOutput()), "output is null");
+        validState(isConsistent(), "step inconsistent");
+        validState(nonNull(locatorGroups), "locatorGroups is null");
 
         String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
@@ -71,10 +71,9 @@ public class LocatorCreator extends BaseConverter {
             try {
                 taskMediator.pushPayload(payload);
             } catch (InterruptedException e) {
-                String message = getLabeled("handover link locators");
-                LOGGER.error("{}: {}", message, e.getMessage());
-                LOGGER.debug("{}", message, e);
-                statService.log(CAT.INTERNAL, message, e);
+                String message = String.join(" ", "handover link locators,",
+                        payload.toString());
+                errorLogger.log(CAT.INTERNAL, message, e);
             }
         }
         return true;

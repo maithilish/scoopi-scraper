@@ -1,19 +1,18 @@
 package org.codetab.scoopi.persistence;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.ILocatorDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.StepPersistenceException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Locator;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.util.Util;
+import org.codetab.scoopi.system.ConfigService;
 
 /**
  * <p>
@@ -47,8 +46,9 @@ public class LocatorPersistence {
      *             if persistence error
      */
     public Locator loadLocator(final String name, final String group) {
-        Validate.notNull(name, Messages.getString("LocatorPersistence.0")); //$NON-NLS-1$
-        Validate.notNull(group, Messages.getString("LocatorPersistence.1")); //$NON-NLS-1$
+        notNull(name, "name must not be null");
+        notNull(group, "group must not be null");
+
         try {
             ORM orm = configService.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
@@ -56,9 +56,8 @@ public class LocatorPersistence {
             Locator existingLocator = dao.getLocator(name, group);
             return existingLocator;
         } catch (RuntimeException e) {
-            String message =
-                    Util.join(Messages.getString("LocatorPersistence.2"), name, //$NON-NLS-1$
-                            ":", group, "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            String message = String.join(" ", "unable to load locator, name:",
+                    name, "group:", group);
             throw new StepPersistenceException(message, e);
         }
     }
@@ -79,9 +78,8 @@ public class LocatorPersistence {
             ILocatorDao dao = daoFactory.getLocatorDao();
             return dao.getLocator(id);
         } catch (RuntimeException e) {
-            String message =
-                    Util.join(Messages.getString("LocatorPersistence.3"), //$NON-NLS-1$
-                            String.valueOf(id), "]"); //$NON-NLS-1$
+            String message = String.join(" ", "unable to load locator, id:",
+                    String.valueOf(id));
             throw new StepPersistenceException(message, e);
         }
     }
@@ -95,7 +93,7 @@ public class LocatorPersistence {
      *             if persistence error
      */
     public boolean storeLocator(final Locator locator) {
-        Validate.notNull(locator, Messages.getString("LocatorPersistence.4")); //$NON-NLS-1$
+        notNull(locator, "locator must not be null");
         try {
             ORM orm = configService.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
@@ -103,9 +101,8 @@ public class LocatorPersistence {
             dao.storeLocator(locator);
             return true;
         } catch (RuntimeException e) {
-            String message =
-                    Util.join(Messages.getString("LocatorPersistence.5"), //$NON-NLS-1$
-                            locator.getName(), ":", locator.getGroup(), "]"); //$NON-NLS-1$//$NON-NLS-2$
+            String message = String.join(" ", "unable to store locator, name:",
+                    locator.getName(), "group:", locator.getGroup());
             throw new StepPersistenceException(message, e);
         }
     }

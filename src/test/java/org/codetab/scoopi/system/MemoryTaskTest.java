@@ -1,8 +1,7 @@
-package org.codetab.scoopi.misc;
+package org.codetab.scoopi.system;
 
 import static org.mockito.Mockito.verify;
 
-import org.codetab.scoopi.shared.StatService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -18,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 public class MemoryTaskTest {
 
     @Mock
-    private StatService statService;
+    private Stats stats;
 
     @InjectMocks
     private MemoryTask memoryTask;
@@ -34,6 +33,6 @@ public class MemoryTaskTest {
         t.start();
         t.join();
 
-        verify(statService).collectMemoryStat();
+        verify(stats).collectMemStats();
     }
 }

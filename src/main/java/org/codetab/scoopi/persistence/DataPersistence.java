@@ -1,6 +1,6 @@
 package org.codetab.scoopi.persistence;
 
-import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.Optional;
 
@@ -11,10 +11,8 @@ import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.IDataDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.StepPersistenceException;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.model.Data;
-import org.codetab.scoopi.shared.ConfigService;
-import org.codetab.scoopi.util.Util;
+import org.codetab.scoopi.system.ConfigService;
 
 /**
  * <p>
@@ -55,8 +53,8 @@ public class DataPersistence {
             Data data = dao.getData(documentId, dataDefId);
             return data;
         } catch (RuntimeException e) {
-            String message = String.join(" ", "unable to load data for",
-                    "dataDefId:", String.valueOf(dataDefId), ",documentId:",
+            String message = String.join(" ", "unable to load data, dataDefId:",
+                    String.valueOf(dataDefId), ", documentId:",
                     String.valueOf(documentId));
             throw new StepPersistenceException(message, e);
         }
@@ -79,9 +77,8 @@ public class DataPersistence {
             Data data = dao.getData(id);
             return data;
         } catch (RuntimeException e) {
-            String message =
-                    Util.join(Messages.getString("DataPersistence.5"), "id=", //$NON-NLS-1$ //$NON-NLS-2$
-                            String.valueOf(id));
+            String message = String.join(" ", "unable to load data, id:",
+                    String.valueOf(id));
             throw new StepPersistenceException(message, e);
         }
     }
@@ -96,7 +93,7 @@ public class DataPersistence {
      *             on persistence error
      */
     public boolean storeData(final Data data) {
-        requireNonNull(data, Messages.getString("DataPersistence.7")); //$NON-NLS-1$
+        notNull(data, "data must not be null");
 
         try {
             ORM orm = configService.getOrmType();
@@ -105,8 +102,8 @@ public class DataPersistence {
             dao.storeData(data);
             return true;
         } catch (RuntimeException e) {
-            String message = Util.join(Messages.getString("DataPersistence.12"), //$NON-NLS-1$
-                    data.getName(), "]"); //$NON-NLS-1$
+            String message =
+                    String.join(" ", "unable to store data:", data.getName());
             throw new StepPersistenceException(message, e);
         }
     }

@@ -44,8 +44,11 @@ public class YamlHelper {
     public JsonNode loadYaml(final String file)
             throws JsonProcessingException, IOException {
         LOGGER.info("load defs {} ", file);
-        InputStream ymlStream = ioHelper.getInputStream(file);
-        return mapper.readTree(ymlStream);
+        try (InputStream ymlStream = ioHelper.getInputStream(file)) {
+            JsonNode node = mapper.readTree(ymlStream);
+            LOGGER.debug(String.join(" ", file, "loaded"));
+            return node;
+        }
     }
 
     public JsonNode mergeNodes(final List<JsonNode> nodes) {
@@ -55,7 +58,7 @@ public class YamlHelper {
             ObjectNode copy = node.deepCopy();
             mNode.setAll(copy);
         }
-        LOGGER.debug("merged defs");
+        LOGGER.debug("defs merged");
         return mNode;
     }
 

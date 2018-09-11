@@ -1,5 +1,7 @@
 package org.codetab.scoopi.step;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.concurrent.GuardedBy;
@@ -9,9 +11,8 @@ import javax.inject.Singleton;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.pool.TaskPoolService;
-import org.codetab.scoopi.shared.StatService;
-import org.codetab.scoopi.shared.StepService;
 import org.codetab.scoopi.store.IStore;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +26,9 @@ public class TaskMediator {
     @Inject
     private IStore store;
     @Inject
-    private StepService stepService;
+    private TaskFactory taskFactory;
     @Inject
-    private StatService statService;
+    private ErrorLogger errorLogger;
 
     private TaskRunnerThread taskRunner = new TaskRunnerThread();
     private AtomicInteger jobIdCounter = new AtomicInteger();
@@ -44,14 +45,15 @@ public class TaskMediator {
             taskRunner.join();
         } catch (InterruptedException e) {
             String message = "wait for finish interrupted";
-            LOGGER.error("{}", message);
-            LOGGER.debug("{}", message, e);
-            statService.log(CAT.INTERNAL, message, e);
+            errorLogger.log(CAT.INTERNAL, message, e);
         }
     }
 
     public boolean pushPayload(final Payload payload)
             throws InterruptedException {
+
+        notNull(payload, "payload must not be null");
+
         synchronized (this) {
             ++reservations;
         }
@@ -70,7 +72,7 @@ public class TaskMediator {
         synchronized (this) {
             --reservations;
         }
-        Task task = stepService.createTask(payload);
+        Task task = taskFactory.createTask(payload);
         String poolName = task.getStep().getStepName();
         poolService.submit(poolName, task);
     }
@@ -92,10 +94,8 @@ public class TaskMediator {
                     }
                 } catch (ClassNotFoundException | InstantiationException
                         | IllegalAccessException | InterruptedException e) {
-                    String message = "initiate task";
-                    LOGGER.error("{}", message);
-                    LOGGER.debug("{}", message, e);
-                    statService.log(CAT.ERROR, message, e);
+                    String message = "unable to initiate task";
+                    errorLogger.log(CAT.ERROR, message, e);
                 }
             }
         }

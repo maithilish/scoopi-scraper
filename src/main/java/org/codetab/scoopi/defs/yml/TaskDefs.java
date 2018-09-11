@@ -12,7 +12,6 @@ import org.codetab.scoopi.defs.ITaskDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.util.Util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
@@ -67,8 +66,8 @@ public class TaskDefs implements ITaskDefs {
             }
         }
         throw new DefNotFoundException(
-                Util.join("next step for taskGroup: ", taskGroup, " taskName: ",
-                        taskName, " stepName: ", currentStepName));
+                String.join(" ", "next step for taskGroup:", taskGroup,
+                        "taskName:", taskName, "stepName:", currentStepName));
     }
 
     @Override
@@ -80,7 +79,8 @@ public class TaskDefs implements ITaskDefs {
         if (it.hasNext()) {
             return it.next();
         } else {
-            throw new DefNotFoundException(Util.join("step name at ", path));
+            throw new DefNotFoundException(
+                    String.join(" ", "step at path:", path));
         }
     }
 
@@ -92,7 +92,8 @@ public class TaskDefs implements ITaskDefs {
                 String.join("/", "", taskGroup, taskName, "steps", stepName);
         JsonNode steps = defs.at(path);
         if (steps.isMissingNode()) {
-            throw new DefNotFoundException(Util.join("steps at ", path));
+            throw new DefNotFoundException(
+                    String.join(" ", "steps at path:", path));
         } else {
             return Lists.newArrayList(steps.fields());
         }

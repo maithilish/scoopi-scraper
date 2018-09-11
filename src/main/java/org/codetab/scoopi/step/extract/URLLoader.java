@@ -9,10 +9,8 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.URLConnectionHelper;
-import org.codetab.scoopi.messages.Messages;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.step.base.BaseLoader;
-import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,60 +65,60 @@ public final class URLLoader extends BaseLoader {
 
         String protocol = ucHelper.getProtocol(urlSpec);
         if (protocol.equals("resource")) {
-            LOGGER.info(Messages.getString("URLLoader.9"), urlSpec); //$NON-NLS-1$
+            LOGGER.info("fetch resource: {}", urlSpec);
             try {
                 URL fileURL = URLLoader.class.getResource(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
-                LOGGER.debug(Messages.getString("URLLoader.10"), urlSpec); //$NON-NLS-1$
+                LOGGER.debug("fetched resource: {}", urlSpec);
                 return bytes;
             } catch (IOException e1) {
                 throw new IOException(
-                        Util.join("file not found [", urlSpec, "]"));
+                        String.join(" ", "file not found: ", urlSpec));
             }
         }
 
         if (protocol.equals("file")) {
-            LOGGER.info(Messages.getString("URLLoader.3"), urlSpec); //$NON-NLS-1$
+            LOGGER.info("fetch file: {}", urlSpec);
             try {
-                URL fileURL = new URL(urlSpec); // $NON-NLS-1$
+                URL fileURL = new URL(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "file").inc();
-                LOGGER.debug(Messages.getString("URLLoader.5"), urlSpec); //$NON-NLS-1$
+                LOGGER.debug("fetched file: {}", urlSpec);
                 return bytes;
             } catch (IOException | NullPointerException e) {
                 throw new IOException(
-                        Util.join("file not found [", urlSpec, "]"));
+                        String.join(" ", "file not found: ", urlSpec));
             }
         }
 
         if (protocol.equals("http") || protocol.equals("https")) {
 
             String urlSpecEscaped = ucHelper.escapeUrl(urlSpec);
-            LOGGER.info(Messages.getString("URLLoader.0"), urlSpecEscaped); //$NON-NLS-1$
+            LOGGER.info("fetch web resource: {}", urlSpecEscaped);
 
             HttpURLConnection uc = (HttpURLConnection) ucHelper
                     .getURLConnection(urlSpecEscaped);
             int timeout = getTimeout();
             uc.setConnectTimeout(timeout);
             uc.setReadTimeout(timeout);
-            ucHelper.setRequestProperty(uc, "User-Agent", getUserAgent()); //$NON-NLS-1$
+            ucHelper.setRequestProperty(uc, "User-Agent", getUserAgent());
 
             uc.connect();
             int respCode = uc.getResponseCode();
             if (respCode != HttpURLConnection.HTTP_OK) {
-                throw new IOException(Util.join(
-                        "HTTP response : " + respCode + ", URL : ", urlSpec));
+                throw new IOException(String.join(" ",
+                        "HTTP response:" + respCode + ", URL:", urlSpec));
             }
 
             bytes = ucHelper.getContent(uc);
             metricsHelper.getCounter(this, "fetch", "web").inc();
-            LOGGER.debug(Messages.getString("URLLoader.2"), urlSpecEscaped, //$NON-NLS-1$
+            LOGGER.debug("fetched: {}, length: {}", urlSpecEscaped,
                     bytes.length);
             return bytes;
         }
 
-        throw new IOException(Util.join("unknown protocol [", urlSpec, "]"));
+        throw new IOException(String.join(" ", "unknown protocol:", urlSpec));
     }
 
     /**
@@ -135,14 +133,14 @@ public final class URLLoader extends BaseLoader {
      */
     private int getTimeout() {
         int timeout = TIMEOUT_MILLIS;
-        String key = "gotz.webClient.timeout"; //$NON-NLS-1$
+        String key = "gotz.webClient.timeout";
         try {
             timeout = Integer.parseInt(configService.getConfig(key));
         } catch (NumberFormatException | ConfigNotFoundException e) {
             // TODO add activity or update config with default
-            String msg = Util.join(Messages.getString("URLLoader.7"), key, //$NON-NLS-1$
-                    Messages.getString("URLLoader.8"), String.valueOf(timeout)); //$NON-NLS-1$
-            LOGGER.debug("{}. {}", e, msg); //$NON-NLS-1$
+            String message = String.join(" ", "config not found:", key,
+                    ", defaults to: ", String.valueOf(timeout), "millis");
+            LOGGER.debug("{}, {}", e, message);
         }
         return timeout;
     }
@@ -161,13 +159,13 @@ public final class URLLoader extends BaseLoader {
     private String getUserAgent() {
         String userAgent =
                 "Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0"; //$NON-NLS-1$
-        String key = "gotz.webClient.userAgent"; //$NON-NLS-1$
+        String key = "gotz.webClient.userAgent";
         try {
             userAgent = configService.getConfig(key);
         } catch (ConfigNotFoundException e) {
-            String msg = Util.join(Messages.getString("URLLoader.1"), key, //$NON-NLS-1$
-                    Messages.getString("URLLoader.4"), userAgent); //$NON-NLS-1$
-            LOGGER.debug("{}. {}", e, msg); //$NON-NLS-1$
+            String message = String.join(" ", "config not found:", key,
+                    ", defaults to: ", userAgent);
+            LOGGER.debug("{}, {}", e, message);
         }
         return userAgent;
     }
