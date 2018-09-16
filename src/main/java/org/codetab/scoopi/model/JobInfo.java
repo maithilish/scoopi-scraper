@@ -3,6 +3,8 @@ package org.codetab.scoopi.model;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class JobInfo {
 
@@ -12,6 +14,7 @@ public class JobInfo {
     private final String task;
     private final String dataDef;
     private final String label;
+    private final Marker marker;
 
     JobInfo(final long id, final String locator, final String group,
             final String task, final String dataDef) {
@@ -28,6 +31,9 @@ public class JobInfo {
         this.task = task;
         this.dataDef = dataDef;
         this.label = String.join(":", locator, task, dataDef);
+
+        String markerName = String.join("-", "task", locator, group, task);
+        marker = MarkerFactory.getMarker(markerName);
     }
 
     public long getId() {
@@ -52,6 +58,10 @@ public class JobInfo {
 
     public String getLabel() {
         return label;
+    }
+
+    public Marker getMarker() {
+        return marker;
     }
 
     @Override

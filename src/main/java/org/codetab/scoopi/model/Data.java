@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public final class Data implements Serializable {
 
@@ -102,6 +104,20 @@ public final class Data implements Serializable {
         String[] excludes =
                 {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
         return HashCodeBuilder.reflectionHashCode(this, excludes);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", name).append("dataDef", dataDef)
+                .append("dataDefId", dataDefId).append("documentId", documentId)
+                .toString();
+    }
+
+    public String toTraceString() {
+        String line = System.lineSeparator();
+        String str = toString();
+        return String.join(line, str, "members:", members.toString(), line);
     }
 
     public String toStringIds() {

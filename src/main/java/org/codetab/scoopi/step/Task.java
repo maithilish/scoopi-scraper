@@ -6,6 +6,7 @@ import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.model.TaskInfo;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,8 @@ public class Task implements Runnable {
     private ErrorLogger errorLogger;
     @Inject
     private MetricsHelper metricsHelper;
+    @Inject
+    private TaskInfo taskInfo;
 
     private IStep step;
 
@@ -34,11 +37,16 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
+
+        Marker marker = step.getMarker();
+        String stepLabel = step.getLabel();
+        taskInfo.setJobInfo(step.getJobInfo());
+
         try {
             Context taskTimer =
                     metricsHelper.getTimer(step, "task", "time").time();
-            Marker marker = step.getMarker();
-            String stepLabel = step.getLabel();
+
+            step.setup();
             step.initialize();
 
             LOGGER.trace(marker, "execute {}", stepLabel);
@@ -54,10 +62,10 @@ public class Task implements Runnable {
 
         } catch (StepRunException | StepPersistenceException e) {
             String message = step.getLabeled(e.getMessage());
-            errorLogger.log(CAT.ERROR, message, e);
+            errorLogger.log(marker, CAT.ERROR, message, e);
         } catch (Exception e) {
             String message = step.getLabeled(e.getMessage());
-            errorLogger.log(CAT.INTERNAL, message, e);
+            errorLogger.log(marker, CAT.INTERNAL, message, e);
         }
     }
 }

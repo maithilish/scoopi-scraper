@@ -17,6 +17,7 @@ import java.util.zip.DataFormatException;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.codetab.scoopi.defs.IDataDefDefs;
 import org.codetab.scoopi.defs.ITaskDefs;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
@@ -84,6 +85,8 @@ public class BaseParserTest {
     private JSoupValueParser jsoupValueParser;
     @Mock
     private DocumentHelper documentHelper;
+    @Mock
+    private StopWatch timer;
 
     @InjectMocks
     private JSoupParser parser;

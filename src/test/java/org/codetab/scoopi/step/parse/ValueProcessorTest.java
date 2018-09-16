@@ -24,6 +24,7 @@ import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
+import org.codetab.scoopi.model.TaskInfo;
 import org.codetab.scoopi.step.parse.jsoup.JSoupValueParser;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -47,6 +48,8 @@ public class ValueProcessorTest {
     private QueryVarSubstitutor varSubstitutor;
     @Mock
     private AxisDefs axisDefs;
+    @Mock
+    private TaskInfo taskInfo;
 
     @InjectMocks
     private ValueProcessor valueProcessor;

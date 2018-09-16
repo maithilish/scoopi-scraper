@@ -3,7 +3,6 @@ package org.codetab.scoopi.model;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.util.Util;
 import org.junit.Test;
 
 public class LogTest {
@@ -88,7 +87,7 @@ public class LogTest {
         sb.append(message);
         sb.append("]");
         if (throwable != null) {
-            sb.append(Util.LINE);
+            sb.append(System.lineSeparator());
             sb.append("          throwable=");
             sb.append(throwable);
         }

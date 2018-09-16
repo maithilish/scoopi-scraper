@@ -9,6 +9,7 @@ import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Log.CAT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 
 import com.codahale.metrics.Counter;
 
@@ -48,6 +49,24 @@ public class ErrorLogger {
             LOGGER.error("cause: {} : {}", exName, exMessage);
         }
         LOGGER.debug("{} {}", type, message, throwable);
+        errorCounter.inc();
+    }
+
+    public void log(final Marker marker, final CAT type, final String message,
+            final Throwable throwable) {
+
+        LOGGER.error("type: {} message: {}", type, message);
+
+        String exMessage = throwable.getMessage();
+        String exName = throwable.getClass().getSimpleName();
+        LOGGER.error(marker, "exception: {} : {}", exName, exMessage);
+        Throwable cause = throwable.getCause();
+        if (nonNull(cause)) {
+            exName = cause.getClass().getSimpleName();
+            exMessage = cause.getMessage();
+            LOGGER.error(marker, "cause: {} : {}", exName, exMessage);
+        }
+        LOGGER.debug(marker, "{} {}", type, message, throwable);
         errorCounter.inc();
     }
 

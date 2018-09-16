@@ -94,14 +94,14 @@ public final class Member implements Serializable {
     }
 
     public StringBuilder traceMember() {
-        String nl = System.lineSeparator();
+        String line = System.lineSeparator();
         StringBuilder sb = new StringBuilder();
         sb.append("Member=[name=");
         sb.append(getName());
         sb.append(",group=");
         sb.append(getGroup());
         sb.append("]");
-        sb.append(nl);
+        sb.append(line);
         axes.stream().forEach(sb::append);
         return sb;
     }

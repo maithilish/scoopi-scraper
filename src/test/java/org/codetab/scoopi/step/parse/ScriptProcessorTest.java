@@ -17,6 +17,7 @@ import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
+import org.codetab.scoopi.model.TaskInfo;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -34,6 +35,8 @@ public class ScriptProcessorTest {
     private ScriptParser scriptParser;
     @Mock
     private ParserCache parserCache;
+    @Mock
+    private TaskInfo taskInfo;
 
     @InjectMocks
     private ScriptProcessor scriptProcessor;

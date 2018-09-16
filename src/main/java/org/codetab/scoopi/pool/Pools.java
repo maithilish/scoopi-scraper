@@ -14,16 +14,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.system.ConfigService;
-import org.codetab.scoopi.util.MarkerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
@@ -141,9 +138,7 @@ public abstract class Pools {
      * <p>
      */
     public void waitForFinish() {
-        Marker marker = MarkerUtil.getMarker("POOL_STATE"); //$NON-NLS-1$
         while (!isDone()) {
-            LOGGER.info(marker, "{}", getPoolState()); //$NON-NLS-1$
             threadSleep.sleep(SLEEP_MILLIS);
         }
 
@@ -219,30 +214,4 @@ public abstract class Pools {
                 .allMatch(ExecutorService::isTerminated);
     }
 
-    /**
-     * <p>
-     * Get pool state summary.
-     * <p>
-     *
-     * <pre>
-     * seeder : [Running, pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 1]
-     * parser : [Running, pool size = 3, active threads = 2, queued tasks = 0, completed tasks = 1]
-     * loader : [Running, pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 1]
-     * </pre>
-     *
-     * @return pool wise summary of state.
-     */
-    private String getPoolState() {
-        final int padLength = 10;
-        StringBuilder sb = new StringBuilder();
-        for (String key : executorsMap.keySet()) {
-            sb.append(StringUtils.rightPad(key, padLength));
-            sb.append("  ["); //$NON-NLS-1$
-            sb.append(StringUtils
-                    .substringAfter(executorsMap.get(key).toString(), "[")); //$NON-NLS-1$
-            sb.append(System.lineSeparator());
-
-        }
-        return sb.toString();
-    }
 }

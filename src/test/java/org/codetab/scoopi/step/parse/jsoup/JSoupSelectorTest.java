@@ -5,16 +5,21 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import org.codetab.scoopi.model.TaskInfo;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public class JSoupSelectorTest {
+
+    @Mock
+    private TaskInfo taskInfo;
 
     @InjectMocks
     private JSoupSelector jSoupSelector;
@@ -62,6 +67,8 @@ public class JSoupSelectorTest {
 
         given(elements.select(selector)).willReturn(subElements);
         given(element2.attr(attribute)).willReturn(value);
+        given(element1.outerHtml()).willReturn("html1");
+        given(element2.outerHtml()).willReturn("html2");
 
         String actual =
                 jSoupSelector.selectField(elements, selector, attribute);
@@ -84,6 +91,8 @@ public class JSoupSelectorTest {
 
         given(elements.select(selector)).willReturn(subElements);
         given(element2.ownText()).willReturn(value);
+        given(element1.outerHtml()).willReturn("html1");
+        given(element2.outerHtml()).willReturn("html2");
 
         String actual =
                 jSoupSelector.selectField(elements, selector, attribute);

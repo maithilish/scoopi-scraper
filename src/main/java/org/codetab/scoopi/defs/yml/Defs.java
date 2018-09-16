@@ -1,6 +1,7 @@
 package org.codetab.scoopi.defs.yml;
 
 import static java.util.Objects.isNull;
+import static org.codetab.scoopi.util.Util.LINE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,11 +47,15 @@ public class Defs implements IDefs {
             definedDefs = defsHelper.loadDefinedDefs(defsFiles);
             JsonNode defaultSteps = defsHelper.loadDefaultSteps();
             defsHelper.mergeDefaultSteps(definedDefs, defaultSteps);
-            LOGGER.debug("defined defs {}", defsHelper.pretty(definedDefs));
+            LOGGER.debug("--- defined defs ---{}{}", LINE,
+                    defsHelper.pretty(definedDefs));
+
             defsHelper.validateDefinedDefs(definedDefs);
 
             effectiveDefs = defsHelper.createEffectiveDefs(definedDefs);
-            LOGGER.debug("effective defs {}", defsHelper.pretty(effectiveDefs));
+            LOGGER.debug("--- effective defs ---{}{}", LINE,
+                    defsHelper.pretty(effectiveDefs));
+
             defsHelper.validateEffectiveDefs(effectiveDefs);
         } catch (Exception e) {
             throw new CriticalException("unable to initialize defs", e);

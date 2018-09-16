@@ -63,6 +63,9 @@ public class DataDefDefs implements IDataDefDefs {
             dataDefHelper.setDefs(dataDefs);
             dataDefMap = dataDefHelper.toMap(dataDefs);
             createAndCacheDataTemplate();
+
+            dataDefHelper.traceDataDefs(dataDefMap, dataTemplateMap);
+
             consistent = true;
         } catch (IOException e) {
             throw new CriticalException("unable to create datadefs", e);

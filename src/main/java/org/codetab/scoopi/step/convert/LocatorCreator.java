@@ -73,7 +73,7 @@ public class LocatorCreator extends BaseConverter {
             } catch (InterruptedException e) {
                 String message = String.join(" ", "handover link locators,",
                         payload.toString());
-                errorLogger.log(CAT.INTERNAL, message, e);
+                errorLogger.log(marker, CAT.INTERNAL, message, e);
             }
         }
         return true;

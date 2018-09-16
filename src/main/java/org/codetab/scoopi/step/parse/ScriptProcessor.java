@@ -15,6 +15,7 @@ import org.codetab.scoopi.cache.ParserCache;
 import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
+import org.codetab.scoopi.model.TaskInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,8 @@ public class ScriptProcessor {
     private ScriptParser scriptParser;
     @Inject
     private ParserCache parserCache;
+    @Inject
+    private TaskInfo taskInfo;
 
     public void init(final Map<String, Object> scriptObjectMap) {
         notNull(scriptObjectMap, "scriptObjectMap must not be null");
@@ -54,6 +57,8 @@ public class ScriptProcessor {
             value = ConvertUtils.convert(val);
             parserCache.put(key, value);
         }
+        LOGGER.trace(taskInfo.getMarker(), "[{}], value: {}",
+                taskInfo.getLabel(), value);
         return value;
     }
 

@@ -27,7 +27,6 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
-import org.codetab.scoopi.util.MarkerUtil;
 import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,8 +207,7 @@ public class DocumentHelper {
         }
 
         if (LOGGER.isTraceEnabled()) {
-            Marker marker =
-                    MarkerUtil.getMarker(jobInfo.getName(), jobInfo.getGroup());
+            Marker marker = jobInfo.getMarker();
             LOGGER.trace(marker, "document.toDate. live: {} toDate:", //$NON-NLS-1$
                     documentlive, toDate);
         }

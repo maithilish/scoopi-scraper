@@ -15,6 +15,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.codetab.scoopi.exception.CriticalException;
+import org.codetab.scoopi.model.TaskInfo;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,6 +28,8 @@ public class ScriptParserTest {
 
     @Mock
     private ScriptEngineManager scriptEngineMgr;
+    @Mock
+    private TaskInfo taskInfo;
 
     @InjectMocks
     private ScriptParser scriptParser;

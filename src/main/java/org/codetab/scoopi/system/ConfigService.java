@@ -1,6 +1,7 @@
 package org.codetab.scoopi.system;
 
 import static java.util.Objects.isNull;
+import static org.codetab.scoopi.util.Util.LINE;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -260,14 +261,14 @@ public class ConfigService {
 
         StringBuilder sb = new StringBuilder();
         sb.append(index);
-        sb.append(System.lineSeparator());
+        sb.append(LINE);
         while (keys.hasNext()) {
             String key = keys.next();
             sb.append(Util.logIndent());
             sb.append(key);
             sb.append(" = "); //$NON-NLS-1$
             sb.append(configs.getProperty(key));
-            sb.append(System.lineSeparator());
+            sb.append(LINE);
         }
         return sb.toString();
     }

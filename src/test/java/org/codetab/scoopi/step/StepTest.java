@@ -17,6 +17,7 @@ import org.codetab.scoopi.step.extract.URLLoader;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -40,15 +41,22 @@ public class StepTest {
     @Mock
     protected TaskMediator taskMediator;
     @Mock
-    private ObjectFactory factory;
+    private ObjectFactory objectFactory;
 
     @InjectMocks
     private URLLoader step;
 
     private Payload payload;
 
+    private static ObjectFactory factory;
+
     @Rule
     public ExpectedException testRule = ExpectedException.none();
+
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        factory = new ObjectFactory();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -65,17 +73,15 @@ public class StepTest {
         String taskName = step.getJobInfo().getTask();
         String output = "test output";
 
-        ObjectFactory objectFactory = new ObjectFactory();
-        StepInfo nextStep =
-                objectFactory.createStepInfo("s2", "s1", "s3", "class2");
-        Payload nextStepPayload = objectFactory.createPayload(step.getJobInfo(),
-                nextStep, output);
+        StepInfo nextStep = factory.createStepInfo("s2", "s1", "s3", "class2");
+        Payload nextStepPayload =
+                factory.createPayload(step.getJobInfo(), nextStep, output);
         step.setOutput(output);
         step.setConsistent(true);
 
         given(taskDefs.getNextStep(group, taskName, stepName))
                 .willReturn(nextStep);
-        given(factory.createPayload(step.getJobInfo(), nextStep, output))
+        given(objectFactory.createPayload(step.getJobInfo(), nextStep, output))
                 .willReturn(nextStepPayload);
 
         boolean actual = step.handover();
@@ -87,11 +93,9 @@ public class StepTest {
     @Test
     public void testHandoverNextStepIsEnd() throws DefNotFoundException,
             InterruptedException, IllegalAccessException {
-        ObjectFactory objectFactory = new ObjectFactory();
         // next step is end - case ignored
-        StepInfo stepInfo =
-                objectFactory.createStepInfo("s2", "s1", "ENd", "class2");
-        payload = objectFactory.createPayload(step.getJobInfo(), stepInfo,
+        StepInfo stepInfo = factory.createStepInfo("s2", "s1", "ENd", "class2");
+        payload = factory.createPayload(step.getJobInfo(), stepInfo,
                 step.getOutput());
         String output = "test output";
         step.setPayload(payload);
@@ -102,7 +106,7 @@ public class StepTest {
 
         assertThat(actual).isTrue();
 
-        verifyZeroInteractions(taskMediator, factory, taskDefs);
+        verifyZeroInteractions(taskMediator, objectFactory, taskDefs);
     }
 
     @Test
@@ -189,12 +193,19 @@ public class StepTest {
 
     @Test
     public void testGetMarker() {
+        JobInfo jobInfo =
+                factory.createJobInfo(0, "acme", "bs", "bsTask", "bs");
+        StepInfo stepInfo = factory.createStepInfo("s1", "s0", "s2", "cls");
+        Payload payload1 = factory.createPayload(jobInfo, stepInfo, "data");
+        step.setPayload(payload1);
+
         Marker marker = step.getMarker();
+        assertThat(marker).isNull();
 
-        assertThat(marker.toString()).isEqualTo("LOG_LOCATOR1_GROUP1_TASK1");
+        step.setup();
+        marker = step.getMarker();
 
-        marker = step.getMarker(); // existing marker - coverage
-        assertThat(marker.toString()).isEqualTo("LOG_LOCATOR1_GROUP1_TASK1");
+        assertThat(marker.toString()).isEqualTo("task-acme-bs-bsTask");
     }
 
     @Test
@@ -213,13 +224,12 @@ public class StepTest {
     }
 
     private Payload getTestPayload() {
-        ObjectFactory objectFactory = new ObjectFactory();
-        JobInfo jobInfo = objectFactory.createJobInfo(0, "locator1", "group1",
+        JobInfo jobInfo = factory.createJobInfo(0, "locator1", "group1",
                 "task1", "dataDef1");
         StepInfo stepInfo =
-                objectFactory.createStepInfo("s1", "s0", "s2", "clzName1");
+                factory.createStepInfo("s1", "s0", "s2", "clzName1");
         String data = "data";
-        return objectFactory.createPayload(jobInfo, stepInfo, data);
+        return factory.createPayload(jobInfo, stepInfo, data);
     }
 
 }

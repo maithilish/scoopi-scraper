@@ -2,6 +2,7 @@ package org.codetab.scoopi.step.parse;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.codetab.scoopi.util.Util.LINE;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -19,8 +20,13 @@ import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.TaskInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ValueProcessor {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(ValueProcessor.class);
 
     @Inject
     private ScriptProcessor scriptProcessor;
@@ -32,6 +38,8 @@ public class ValueProcessor {
     private QueryVarSubstitutor varSubstitutor;
     @Inject
     private AxisDefs axisDefs;
+    @Inject
+    private TaskInfo taskInfo;
 
     private Map<String, Object> scriptObjectMap = new HashMap<>();
 
@@ -62,21 +70,35 @@ public class ValueProcessor {
             if (axis.getValue() == null) {
                 String value = null;
                 try {
+                    StringBuilder trace = new StringBuilder();
                     scriptProcessor.init(scriptObjectMap); // lazy
                     Map<String, String> scripts =
                             scriptProcessor.getScripts(dataDef, axisName);
+                    appendQueryTrace(trace, "", scripts);
+
                     varSubstitutor.replaceVariables(scripts,
                             member.getAxisMap());
+                    appendQueryTrace(trace, "    >>>", scripts);
+
+                    logQueryTrace(axisName, trace);
+
                     value = scriptProcessor.query(scripts);
                 } catch (NoSuchElementException e) {
                 }
 
                 if (isNull(value)) {
                     try {
+                        StringBuilder trace = new StringBuilder();
                         Map<String, String> queries =
                                 queryProcessor.getQueries(dataDef, axisName);
+                        appendQueryTrace(trace, "", queries);
+
                         varSubstitutor.replaceVariables(queries,
                                 member.getAxisMap());
+                        appendQueryTrace(trace, "    >>>", queries);
+
+                        logQueryTrace(axisName, trace);
+
                         value = queryProcessor.query(queries, valueParser);
                     } catch (NoSuchElementException e) {
                     }
@@ -88,6 +110,8 @@ public class ValueProcessor {
                     if (prefixes.isPresent()) {
                         value = prefixProcessor.prefixValue(value,
                                 prefixes.get());
+                        LOGGER.trace(taskInfo.getMarker(), "prefixed value: {}",
+                                value);
                     }
                 }
 
@@ -99,4 +123,32 @@ public class ValueProcessor {
     public void addScriptObject(final String key, final Object value) {
         scriptObjectMap.put(key, value);
     }
+
+    private void appendQueryTrace(final StringBuilder trace,
+            final String message, final Map<String, String> queries) {
+        if (!LOGGER.isTraceEnabled()) {
+            return;
+        }
+        String[] keys = new String[] {"script", "region", "field", "attribute"};
+        String line = LINE;
+        trace.append(message);
+        trace.append(line);
+        for (String key : keys) {
+            String value = queries.get(key);
+            if (nonNull(value)) {
+                trace.append("  ");
+                trace.append(key);
+                trace.append(": ");
+                trace.append(queries.get(key));
+                trace.append(line);
+            }
+        }
+    }
+
+    private void logQueryTrace(final AxisName axisName,
+            final StringBuilder trace) {
+        LOGGER.trace(taskInfo.getMarker(), "[{}]:{} query{}{}",
+                taskInfo.getLabel(), axisName, LINE, trace.toString());
+    }
+
 }

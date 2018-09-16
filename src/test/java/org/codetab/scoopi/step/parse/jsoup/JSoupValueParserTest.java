@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codetab.scoopi.model.TaskInfo;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.Before;
@@ -18,6 +19,8 @@ public class JSoupValueParserTest {
 
     @Mock
     private JSoupSelector jsoupSelector;
+    @Mock
+    private TaskInfo taskInfo;
 
     @InjectMocks
     private JSoupValueParser jSoupValueParser;

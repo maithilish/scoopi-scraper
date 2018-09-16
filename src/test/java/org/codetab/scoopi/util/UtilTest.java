@@ -97,7 +97,7 @@ public class UtilTest {
     public void testGetgetJsonPrettyPrint() {
 
         String line = System.lineSeparator();
-        String expected = Util.join("{", line, "  \"name\": \"x\",", line,
+        String expected = String.join("", "{", line, "  \"name\": \"x\",", line,
                 "  \"value\": \"y\"", line, "}");
         TestBean bean = new TestBean("x", "y");
         String actual = Util.getJson(bean, true);
@@ -130,8 +130,8 @@ public class UtilTest {
         String line = System.lineSeparator();
         String indent = "\t\t\t";
         String expected =
-                Util.join(indent, "{", line, indent, "  \"name\": \"x\",", line,
-                        indent, "  \"value\": \"y\"", line, indent, "}");
+                String.join("", indent, "{", line, indent, "  \"name\": \"x\",",
+                        line, indent, "  \"value\": \"y\"", line, indent, "}");
         TestBean bean = new TestBean("x", "y");
         String actual = Util.getIndentedJson(bean, true);
 
@@ -146,21 +146,6 @@ public class UtilTest {
         } catch (NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("obj must not be null");
         }
-    }
-
-    @Test
-    public void testBuildString() {
-        assertThat("a").isEqualTo(Util.join("a"));
-        assertThat("ab").isEqualTo(Util.join("a", "b"));
-    }
-
-    @Test
-    public void testBuildStringNullParams() {
-        String str = null;
-
-        String actual = Util.join(str);
-
-        assertThat(actual).isEqualTo("null");
     }
 
     @Test
@@ -186,26 +171,19 @@ public class UtilTest {
     }
 
     @Test
-    public void testStripe() {
-        String str = Util.stripe("test", 2, null, null);
+    public void testStrip() {
+        String str = Util.strip("test", 2);
         assertThat(StringUtils.startsWith(str, "test")).isTrue();
         assertThat(StringUtils.endsWith(str, "test")).isTrue();
         assertThat(0).isEqualTo(StringUtils.countMatches(str, newLine));
 
-        str = Util.stripe("test", 2, "prefix", "suffix");
-        assertThat("prefixtestsuffix").isEqualTo(str);
-        assertThat(0).isEqualTo(StringUtils.countMatches(str, newLine));
-
         String inStr = String.join(newLine, "line1", "line2", "line3", "line4");
-        str = Util.stripe(inStr, 1, null, null);
+        str = Util.strip(inStr, 1);
         assertThat(2).isEqualTo(StringUtils.countMatches(str, newLine)); // head
-                                                                         // 1
-                                                                         // dots
-                                                                         // 1
 
         inStr = String.join(newLine, "line1", "line2", "line3", "line4",
                 "line5", "line6");
-        str = Util.stripe(inStr, 2, null, null);
+        str = Util.strip(inStr, 2);
         assertThat(4).isEqualTo(StringUtils.countMatches(str, newLine)); // head
                                                                          // 2
                                                                          // dots
@@ -216,10 +194,10 @@ public class UtilTest {
     @Test
     public void testStripeNullParams() {
         try {
-            Util.stripe(null, 1, "prefix", "suffix");
+            Util.strip(null, 1);
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
-            assertThat(e.getMessage()).isEqualTo("string must not be null");
+            assertThat(e.getMessage()).isEqualTo("lines must not be null");
         }
     }
 
@@ -245,7 +223,7 @@ public class UtilTest {
             Util.head(null, 1);
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
-            assertThat(e.getMessage()).isEqualTo("string must not be null");
+            assertThat(e.getMessage()).isEqualTo("lines must not be null");
         }
     }
 
@@ -274,7 +252,7 @@ public class UtilTest {
             Util.tail(null, 1);
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
-            assertThat(e.getMessage()).isEqualTo("string must not be null");
+            assertThat(e.getMessage()).isEqualTo("lines must not be null");
         }
     }
 
@@ -303,8 +281,9 @@ public class UtilTest {
 
         String actual = Util.getPropertiesAsString(props);
 
-        String expected = Util.LINE + Util.logIndent() + "x=xv" + Util.LINE
-                + Util.logIndent() + "y=yv" + Util.LINE;
+        String expected = System.lineSeparator() + Util.logIndent() + "x=xv"
+                + System.lineSeparator() + Util.logIndent() + "y=yv"
+                + System.lineSeparator();
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -400,8 +379,7 @@ public class UtilTest {
             Util.split(null, ":", " ");
             fail("should throw NullPointerException");
         } catch (NullPointerException e) {
-            assertThat(e.getMessage())
-                    .isEqualTo("input must not be null");
+            assertThat(e.getMessage()).isEqualTo("input must not be null");
         }
 
         try {

@@ -31,9 +31,6 @@ import com.google.gson.GsonBuilder;
  */
 public final class Util {
 
-    /**
-     * Line separator.
-     */
     public static final String LINE = System.lineSeparator();
 
     /**
@@ -93,7 +90,7 @@ public final class Util {
     /**
      * <p>
      * Stripe array of lines to count. Also, append suffix and prefix.
-     * @param string
+     * @param lines
      *            lines, not null
      * @param noOfLines
      *            stripe length
@@ -103,26 +100,21 @@ public final class Util {
      *            suffix to append
      * @return striped lines
      */
-    public static String stripe(final String string, final int noOfLines,
-            final String prefix, final String suffix) {
+    public static String strip(final String lines, final int noOfLines) {
 
-        notNull(string, "string must not be null");
+        notNull(lines, "lines must not be null");
+
+        String newLine = LINE;
 
         StringBuffer sb = new StringBuffer();
-        if (prefix != null) {
-            sb.append(prefix);
-        }
-        if (StringUtils.countMatches(string, LINE) <= noOfLines) {
-            sb.append(string);
+        if (StringUtils.countMatches(lines, newLine) <= noOfLines) {
+            sb.append(lines);
         } else {
-            sb.append(head(string, noOfLines));
-            sb.append(LINE);
-            sb.append("      ..."); //$NON-NLS-1$
-            sb.append(LINE);
-            sb.append(tail(string, noOfLines));
-        }
-        if (suffix != null) {
-            sb.append(suffix);
+            sb.append(head(lines, noOfLines));
+            sb.append(newLine);
+            sb.append("      ...");
+            sb.append(newLine);
+            sb.append(tail(lines, noOfLines));
         }
         return sb.toString();
     }
@@ -130,45 +122,50 @@ public final class Util {
     /**
      * <p>
      * Get head of lines.
-     * @param string
+     * @param lines
      *            lines
      * @param noOfLines
      *            number of lines
      * @return head of lines
      */
-    public static String head(final String string, final int noOfLines) {
+    public static String head(final String lines, final int noOfLines) {
 
-        notNull(string, "string must not be null");
+        notNull(lines, "lines must not be null");
+
+        String newLine = LINE;
 
         int n = noOfLines;
         if (n < 1) {
             n = 1;
         }
-        return string.substring(0, StringUtils.ordinalIndexOf(string, LINE, n)); // $NON-NLS-1$
+        return lines.substring(0,
+                StringUtils.ordinalIndexOf(lines, newLine, n));
     }
 
     /**
      * <p>
      * Get tail of lines.
-     * @param string
+     * @param lines
      *            lines
      * @param noOfLines
      *            number to lines
      * @return tail of lines
      */
-    public static String tail(final String string, final int noOfLines) {
+    public static String tail(final String lines, final int noOfLines) {
 
-        notNull(string, "string must not be null");
+        notNull(lines, "lines must not be null");
+
+        String newLine = LINE;
 
         int n = noOfLines;
         if (n < 1) {
             n = 1;
         }
-        if (StringUtils.endsWith(string, LINE)) { // $NON-NLS-1$
+        if (StringUtils.endsWith(lines, newLine)) {
             n++;
         }
-        return string
-                .substring(StringUtils.lastOrdinalIndexOf(string, LINE, n) + 1); // $NON-NLS-1$
+        return lines.substring(
+                StringUtils.lastOrdinalIndexOf(lines, newLine, n) + 1);
     }
 
     /**
@@ -223,19 +220,8 @@ public final class Util {
         return "\t\t\t"; //$NON-NLS-1$
     }
 
-    /**
-     * <p>
-     * Concat strings delimited with space.
-     * @param strings
-     *            strings to merge
-     * @return merged string
-     */
-    public static String join(final String... strings) {
-        StringBuilder sb = new StringBuilder();
-        for (String str : strings) {
-            sb.append(str);
-        }
-        return sb.toString();
+    public static String indent(final String lines, final String indent) {
+        return lines.replaceAll("(?m)^", indent);
     }
 
     /**
@@ -288,7 +274,7 @@ public final class Util {
 
         notNull(properties, "properties must not be null");
 
-        String line = System.lineSeparator();
+        String line = LINE;
         StringBuilder sb = new StringBuilder();
         sb.append(line);
         for (Entry<Object, Object> entry : properties.entrySet()) {

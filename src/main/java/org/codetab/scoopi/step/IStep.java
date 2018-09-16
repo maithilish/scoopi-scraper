@@ -7,6 +7,8 @@ import org.slf4j.Marker;
 
 public interface IStep {
 
+    boolean setup();
+
     boolean initialize();
 
     boolean load();

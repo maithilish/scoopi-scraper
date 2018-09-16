@@ -3,6 +3,7 @@ package org.codetab.scoopi.defs.yml.helper;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
+import static org.codetab.scoopi.util.Util.LINE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -217,7 +220,7 @@ public class DataDefHelper {
     }
 
     public Data getData(final DataDef dataDef, final List<Set<Axis>> axisSets) {
-        Data data = objectFactory.createData("price");
+        Data data = objectFactory.createData(dataDef.getName());
         Set<List<Axis>> axesSets = Sets.cartesianProduct(axisSets);
         for (List<Axis> axes : axesSets) {
             Member member = objectFactory.createMember();
@@ -233,5 +236,19 @@ public class DataDefHelper {
             dataDefMap.put(dataDef.getName(), dataDef);
         }
         return dataDefMap;
+    }
+
+    public void traceDataDefs(final Map<String, DataDef> dataDefMap,
+            final Map<String, Data> dataTemplateMap) {
+        LOGGER.trace("--- datadefs and data templates ---");
+        for (String dataDefName : dataDefMap.keySet()) {
+            String markerName = String.join("-", "datadef", dataDefName);
+            Marker marker = MarkerFactory.getMarker(markerName);
+            DataDef dataDef = dataDefMap.get(dataDefName);
+            Data dataTemplate = dataTemplateMap.get(dataDefName);
+            LOGGER.trace(marker, "{}{}{}", dataDef, LINE, dataDef.getDefJson());
+            LOGGER.trace(marker, "data template:{}{}", LINE,
+                    dataTemplate.toTraceString());
+        }
     }
 }

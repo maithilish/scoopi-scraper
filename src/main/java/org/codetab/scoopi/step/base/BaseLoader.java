@@ -3,6 +3,7 @@ package org.codetab.scoopi.step.base;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
+import static org.codetab.scoopi.util.Util.LINE;
 
 import java.io.IOException;
 import java.util.Date;
@@ -105,19 +106,18 @@ public abstract class BaseLoader extends Step {
 
         if (isNull(savedLocator)) {
             // use the locator from payload passed to this step
-            LOGGER.debug("{} {}", getLabel(), //$NON-NLS-1$
-                    "using locator read from file");
+            String message = getLabeled("use locator defined in defs");
+            LOGGER.debug(marker, "{}", message);
+            LOGGER.trace(marker, "defined locator:{}{}", LINE, locator);
         } else {
             // update existing locator with new fields and URL
             savedLocator.setUrl(locator.getUrl());
 
             // switch locator to persisted locator (detached locator)
             locator = savedLocator;
-
-            LOGGER.debug("{} {}", getLabel(), //$NON-NLS-1$
-                    "using locator loaded from store");
-            LOGGER.trace(getMarker(), "-- Locator loaded --{}{}",
-                    System.lineSeparator(), locator);
+            String message = getLabeled("use locator loaded from store");
+            LOGGER.debug(marker, "{}", message);
+            LOGGER.trace(marker, "loaded locator:{}{}", LINE, locator);
         }
         return true;
     }
@@ -215,18 +215,18 @@ public abstract class BaseLoader extends Step {
             locator.getDocuments().add(document);
             setOutput(document);
             setConsistent(true);
-            LOGGER.info("{} create new document, toDate={}", getLabel(),
-                    document.getToDate());
-            LOGGER.trace(getMarker(), "{} create new document", document);
+            LOGGER.info(marker, "{} create new document, toDate: {}",
+                    getLabel(), document.getToDate());
+            LOGGER.trace(marker, "create new document{}{}", LINE, document);
         } else {
             // as activeDoc comes from datastore it indicates that
             // datastore is active so load the activeDoc with doc object
             document = documentPersistence.loadDocument(activeDoc.getId());
             setOutput(document);
             setConsistent(true);
-            LOGGER.info("{} use stored document, toDate={}", getLabel(),
-                    document.getToDate());
-            LOGGER.trace(getMarker(), "use stored document {}", document);
+            LOGGER.info(marker, "{}, use stored document, toDate: {}",
+                    getLabel(), document.getToDate());
+            LOGGER.trace(marker, "use stored document {}", document);
         }
         return true;
     }
@@ -263,9 +263,9 @@ public abstract class BaseLoader extends Step {
                     document = tDocument;
                     setOutput(tDocument);
                 }
-                LOGGER.debug("{} locator and document stored", getLabel());
-                LOGGER.trace(getMarker(), "-- locator stored --{}{}",
-                        System.lineSeparator(), locator);
+                LOGGER.debug(marker, "locator and document stored, {}",
+                        getLabel());
+                LOGGER.trace(marker, "stored locator{}{}", LINE, locator);
             }
         } catch (RuntimeException e) {
             String message = "unable to store locator and document";

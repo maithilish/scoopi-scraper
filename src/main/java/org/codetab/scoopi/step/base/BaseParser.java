@@ -2,6 +2,7 @@ package org.codetab.scoopi.step.base;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
+import static org.codetab.scoopi.util.Util.LINE;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public abstract class BaseParser extends Step {
     private DataPersistence dataPersistence;
     @Inject
     private IDataDefDefs dataDefDefs;
+    @Inject
+    private StopWatch timer;
 
     private Data data;
     protected Document document;
@@ -50,12 +53,12 @@ public abstract class BaseParser extends Step {
      */
     private IValueParser valueParser;
 
-    private StopWatch sw = StopWatch.createStarted();
-
     @Override
     public boolean initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
+
+        timer.start();
 
         Object pData = getPayload().getData();
         if (pData instanceof Document) {
@@ -66,6 +69,7 @@ public abstract class BaseParser extends Step {
                             pData.getClass().getName());
             throw new StepRunException(message);
         }
+
         // TODO move this to load as loadPage()
         return postInitialize();
     }
@@ -93,10 +97,10 @@ public abstract class BaseParser extends Step {
         if (persist()) {
             if (dataPersistence.storeData(data)) {
                 data = dataPersistence.loadData(data.getId());
-                LOGGER.debug(getLabeled("data stored"));
+                LOGGER.debug(marker, getLabeled("data stored"));
             }
         } else {
-            LOGGER.debug(getLabeled("persist false, data not stored"));
+            LOGGER.debug(marker, getLabeled("persist false, data not stored"));
         }
         return true;
     }
@@ -108,7 +112,7 @@ public abstract class BaseParser extends Step {
         Counter dataReuseCounter =
                 metricsHelper.getCounter(this, "data", "reuse");
         if (data == null) {
-            LOGGER.info("{}", getLabeled("parse data"));
+            LOGGER.info(marker, "{}", getLabeled("parse data"));
             String dataDefName = getJobInfo().getDataDef();
             data = dataDefDefs.getDataTemplate(dataDefName);
 
@@ -125,15 +129,17 @@ public abstract class BaseParser extends Step {
         } else {
             setConsistent(true);
             dataReuseCounter.inc();
-            LOGGER.info("{}", getLabeled("data exists, reuse"));
+            LOGGER.info(marker, "{}", getLabeled("data exists, reuse"));
         }
 
-        // TODO - remove this
-        sw.stop();
-        LOGGER.info(data.getMembers().toString());
-        LOGGER.info("parse time : ", sw);
+        // TODO remove this
+        LOGGER.info(marker, data.getMembers().toString());
 
         setOutput(data);
+
+        timer.stop();
+        LOGGER.trace(marker, "parse time: {}", timer.toString());
+
         return true;
     }
 
@@ -164,9 +170,9 @@ public abstract class BaseParser extends Step {
         }
 
         data.setMembers(members); // replace with expanded member list
-        String line = System.lineSeparator();
-        LOGGER.trace(getMarker(), "-- data after parse --{}{}{}", line,
-                getLabel(), line, data);
+
+        LOGGER.trace(marker, "-- data after parse --{}{}{}", LINE, getLabel(),
+                LINE, data);
     }
 
     private boolean persist() {

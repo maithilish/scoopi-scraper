@@ -53,7 +53,7 @@ public class JobInfoTest {
     @Test
     public void testHashCode() {
         int actual = jobInfo.hashCode();
-        assertThat(actual).isEqualTo(-696164619);
+        assertThat(actual).isEqualTo(221479003);
     }
 
     @Test

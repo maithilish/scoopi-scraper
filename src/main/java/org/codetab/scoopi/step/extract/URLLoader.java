@@ -65,12 +65,12 @@ public final class URLLoader extends BaseLoader {
 
         String protocol = ucHelper.getProtocol(urlSpec);
         if (protocol.equals("resource")) {
-            LOGGER.info("fetch resource: {}", urlSpec);
+            LOGGER.info(marker, "fetch resource: {}", urlSpec);
             try {
                 URL fileURL = URLLoader.class.getResource(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
-                LOGGER.debug("fetched resource: {}", urlSpec);
+                LOGGER.debug(marker, "fetched resource: {}", urlSpec);
                 return bytes;
             } catch (IOException e1) {
                 throw new IOException(
@@ -79,12 +79,12 @@ public final class URLLoader extends BaseLoader {
         }
 
         if (protocol.equals("file")) {
-            LOGGER.info("fetch file: {}", urlSpec);
+            LOGGER.info(marker, "fetch file: {}", urlSpec);
             try {
                 URL fileURL = new URL(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "file").inc();
-                LOGGER.debug("fetched file: {}", urlSpec);
+                LOGGER.debug(marker, "fetched file: {}", urlSpec);
                 return bytes;
             } catch (IOException | NullPointerException e) {
                 throw new IOException(
@@ -95,7 +95,7 @@ public final class URLLoader extends BaseLoader {
         if (protocol.equals("http") || protocol.equals("https")) {
 
             String urlSpecEscaped = ucHelper.escapeUrl(urlSpec);
-            LOGGER.info("fetch web resource: {}", urlSpecEscaped);
+            LOGGER.info(marker, "fetch web resource: {}", urlSpecEscaped);
 
             HttpURLConnection uc = (HttpURLConnection) ucHelper
                     .getURLConnection(urlSpecEscaped);
@@ -113,7 +113,7 @@ public final class URLLoader extends BaseLoader {
 
             bytes = ucHelper.getContent(uc);
             metricsHelper.getCounter(this, "fetch", "web").inc();
-            LOGGER.debug("fetched: {}, length: {}", urlSpecEscaped,
+            LOGGER.debug(marker, "fetched: {}, length: {}", urlSpecEscaped,
                     bytes.length);
             return bytes;
         }
@@ -140,7 +140,7 @@ public final class URLLoader extends BaseLoader {
             // TODO add activity or update config with default
             String message = String.join(" ", "config not found:", key,
                     ", defaults to: ", String.valueOf(timeout), "millis");
-            LOGGER.debug("{}, {}", e, message);
+            LOGGER.debug(marker, "{}, {}", e, message);
         }
         return timeout;
     }
@@ -165,7 +165,7 @@ public final class URLLoader extends BaseLoader {
         } catch (ConfigNotFoundException e) {
             String message = String.join(" ", "config not found:", key,
                     ", defaults to: ", userAgent);
-            LOGGER.debug("{}, {}", e, message);
+            LOGGER.debug(marker, "{}, {}", e, message);
         }
         return userAgent;
     }

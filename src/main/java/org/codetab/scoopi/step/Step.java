@@ -15,7 +15,6 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.system.ConfigService;
-import org.codetab.scoopi.util.MarkerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -30,9 +29,9 @@ public abstract class Step implements IStep {
 
     private Object output;
     private Payload payload;
-    private Marker marker;
     private boolean consistent = false;
     private String stepLabel;
+    protected Marker marker;
 
     @Inject
     protected ConfigService configService;
@@ -46,6 +45,12 @@ public abstract class Step implements IStep {
     protected TaskMediator taskMediator;
     @Inject
     protected ObjectFactory factory;
+
+    @Override
+    public boolean setup() {
+        marker = getJobInfo().getMarker();
+        return true;
+    }
 
     @Override
     public boolean handover() {
@@ -63,7 +68,8 @@ public abstract class Step implements IStep {
                 Payload nextStepPayload =
                         factory.createPayload(getJobInfo(), nextStep, output);
                 taskMediator.pushPayload(nextStepPayload);
-                LOGGER.info("handover to step: " + nextStep.getStepName());
+                LOGGER.info(marker, "handover to step: {}",
+                        nextStep.getStepName());
             }
         } catch (DefNotFoundException | InterruptedException
                 | IllegalStateException e) {
@@ -119,12 +125,6 @@ public abstract class Step implements IStep {
 
     @Override
     public Marker getMarker() {
-        if (isNull(marker)) {
-            String name = getJobInfo().getName();
-            String group = getJobInfo().getGroup();
-            String task = getJobInfo().getTask();
-            marker = MarkerUtil.getMarker(name, group, task);
-        }
         return marker;
     }
 
