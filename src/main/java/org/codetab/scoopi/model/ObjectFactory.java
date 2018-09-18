@@ -110,4 +110,9 @@ public class ObjectFactory {
         filter.setPattern(pattern);
         return filter;
     }
+
+    public Plugin createPlugin(final String taskGroup, final String taskName,
+            final String stepName, final String defJson, final Object def) {
+        return new Plugin(taskGroup, taskName, stepName, defJson, def);
+    }
 }

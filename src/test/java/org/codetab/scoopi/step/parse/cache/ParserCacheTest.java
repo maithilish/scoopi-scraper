@@ -1,4 +1,4 @@
-package org.codetab.scoopi.cache;
+package org.codetab.scoopi.step.parse.cache;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.codahale.metrics.Counter;
+import com.codahale.metrics.Meter;
 
 public class ParserCacheTest {
 
@@ -38,11 +39,14 @@ public class ParserCacheTest {
     public void testGet() {
         Counter miss = new Counter();
         Counter hit = new Counter();
+        Meter meter = new Meter();
 
         given(metricsHelper.getCounter(cache, "parser", "cache", "miss"))
                 .willReturn(miss);
         given(metricsHelper.getCounter(cache, "parser", "cache", "hit"))
                 .willReturn(hit);
+        given(metricsHelper.getMeter(cache, "parser", "cache"))
+                .willReturn(meter);
 
         String value = "test";
         int key = 1;
@@ -61,11 +65,14 @@ public class ParserCacheTest {
     public void testPut() {
         Counter miss = new Counter();
         Counter hit = new Counter();
+        Meter meter = new Meter();
 
         given(metricsHelper.getCounter(cache, "parser", "cache", "miss"))
                 .willReturn(miss);
         given(metricsHelper.getCounter(cache, "parser", "cache", "hit"))
                 .willReturn(hit);
+        given(metricsHelper.getMeter(cache, "parser", "cache"))
+                .willReturn(meter);
 
         String value = null;
         int key = 1;

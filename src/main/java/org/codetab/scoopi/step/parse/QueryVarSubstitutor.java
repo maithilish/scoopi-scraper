@@ -42,7 +42,7 @@ public class QueryVarSubstitutor {
         notNull(queries, "queries must not be null");
         notNull(axisMap, "axisMap must not be null");
 
-        // TODO perf - create single value map for all strings in queries
+        // TODO optimise: create single value map for all strings in queries
         // one of the option is member can return value map of its
         // axes (can't cache as value may change)
         for (String key : queries.keySet()) {

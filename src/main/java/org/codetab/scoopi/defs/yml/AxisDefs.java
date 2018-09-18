@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang3.Range;
 import org.codetab.scoopi.defs.IAxisDefs;
@@ -14,6 +15,7 @@ import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Filter;
 
+@Singleton
 public class AxisDefs implements IAxisDefs {
 
     @Inject

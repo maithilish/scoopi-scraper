@@ -25,7 +25,7 @@ public interface ITaskDefs {
     StepInfo getNextStep(String taskGroup, String taskName,
             String currentStepName) throws DefNotFoundException;
 
-    ArrayList<Entry<String, JsonNode>> getSteps(String taskGroup,
+    ArrayList<Entry<String, JsonNode>> getStepsList(String taskGroup,
             String taskName, String stepName) throws DefNotFoundException;
 
     String getStepsName(String taskGroup, String taskName)

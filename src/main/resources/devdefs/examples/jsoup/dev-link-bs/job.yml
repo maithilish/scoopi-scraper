@@ -68,8 +68,22 @@ taskGroups:
   bs:
     bsTask:
       dataDef: bs
-      steps: dev
-         
+      steps:
+        dev:
+          converter:
+            class: "org.codetab.scoopi.step.convert.DataConverter"
+            previous: process
+            next: end           
+            plugins: [
+              plugin: { 
+                     name: converter, 
+                     class: "org.codetab.scoopi.plugin.converter.DateRoller", 
+                     axis: col, 
+                     inPattern: "MMM ''YY", 
+                     outPattern: "yyyy-MM-dd", 
+                     roll: "DAY_OF_MONTH=ceil" }            
+           ]
+                                     
 steps: 
   dev:
     seeder:
@@ -87,6 +101,10 @@ steps:
     process:
       class: "org.codetab.scoopi.step.convert.DataFilter"
       previous: parser
+      next: converter
+    converter:
+      class: "org.codetab.scoopi.step.convert.DataFilter"
+      previous: process
       next: end
       
     

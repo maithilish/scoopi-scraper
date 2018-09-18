@@ -410,6 +410,13 @@
 						"next": {
 							"type": "string",
 							"minLength": 1
+						},
+						"plugins": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/pluginsNode"
+								}
+							]
 						}
 					},
 					"required": [
@@ -419,6 +426,43 @@
 					]
 				}
 			}
+		},
+		"pluginsNode": {
+			"type": "array",
+			"uniqueItems": true,
+			"minItems": 1,
+			"items": {
+				"oneOf": [
+					{
+						"$ref": "#/definitions/pluginNode"
+					}
+				]
+			}
+		},
+		"pluginNode": {
+			"type": "object",
+			"properties": {
+				"plugin": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1
+						},
+						"class": {
+							"type": "string",
+							"minLength": 1
+						}
+					},
+					"required": [
+						"name",
+						"class"
+					]
+				}
+			},
+			"required": [
+				"plugin"
+			]
 		},
 		"stepsNode": {
 			"_comment": "for top level steps such as default steps or user defined steps",

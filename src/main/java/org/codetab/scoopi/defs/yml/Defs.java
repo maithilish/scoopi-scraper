@@ -33,6 +33,8 @@ public class Defs implements IDefs {
     private DataDefDefs dataDefDefs;
     @Inject
     private TaskDefs taskDefs;
+    @Inject
+    private PluginDefs pluginDefs;
 
     private JsonNode definedDefs;
     private JsonNode effectiveDefs;
@@ -70,6 +72,7 @@ public class Defs implements IDefs {
         locatorDefs.init(getDefs("locatorGroups", defsMap));
         dataDefDefs.init(getDefs("dataDefs", defsMap));
         taskDefs.init(getDefs("taskGroups", defsMap));
+        pluginDefs.init(getDefs("taskGroups", defsMap));
     }
 
     @Override

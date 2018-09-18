@@ -6,7 +6,7 @@ package org.codetab.scoopi.exception;
  * <p>
  * Checked exception : recoverable
  */
-public class InvalidDataDefException extends Exception {
+public class InvalidDefException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,7 +26,7 @@ public class InvalidDataDefException extends Exception {
      * @param message
      *            exception message
      */
-    public InvalidDataDefException(final String message) {
+    public InvalidDefException(final String message) {
         super(message);
         this.message = message;
         this.cause = null;
@@ -40,8 +40,7 @@ public class InvalidDataDefException extends Exception {
      * @param cause
      *            exception cause
      */
-    public InvalidDataDefException(final String message,
-            final Throwable cause) {
+    public InvalidDefException(final String message, final Throwable cause) {
         super(message, cause);
         this.message = message;
         this.cause = cause;
@@ -53,7 +52,7 @@ public class InvalidDataDefException extends Exception {
      * @param cause
      *            exception cause
      */
-    public InvalidDataDefException(final Throwable cause) {
+    public InvalidDefException(final Throwable cause) {
         super(cause);
         this.message = null;
         this.cause = cause;

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -20,19 +21,19 @@ public class AxisDefsCache {
     @Inject
     private AxisDefsHelper axisDefsHelper;
 
-    private Map<String, String> queryCache = new HashMap<>();
-    private Map<String, Optional<List<String>>> prefixCache = new HashMap<>();
-    private Map<String, Optional<List<String>>> breakAfterCache =
+    private Map<Integer, String> queryCache = new HashMap<>();
+    private Map<Integer, Optional<List<String>>> prefixCache = new HashMap<>();
+    private Map<Integer, Optional<List<String>>> breakAfterCache =
             new HashMap<>();
-    private Map<String, Optional<Range<Integer>>> indexRangeCache =
+    private Map<Integer, Optional<Range<Integer>>> indexRangeCache =
             new HashMap<>();
-    private Map<String, Map<AxisName, List<Filter>>> filterCache =
+    private Map<Integer, Map<AxisName, List<Filter>>> filterCache =
             new HashMap<>();
 
     public String getQuery(final DataDef dataDef, final AxisName axisName,
             final String queryType) {
-        String key = String.join("-", dataDef.getName(), axisName.toString(),
-                queryType);
+        int key =
+                Objects.hash(dataDef.getName(), axisName.toString(), queryType);
         if (!queryCache.containsKey(key)) {
             try {
                 String query =
@@ -47,7 +48,7 @@ public class AxisDefsCache {
 
     public Optional<List<String>> getPrefixes(final DataDef dataDef,
             final AxisName axisName) {
-        String key = String.join("-", dataDef.getName(), axisName.toString());
+        int key = Objects.hash(dataDef.getName(), axisName.toString());
         if (!prefixCache.containsKey(key)) {
             try {
                 Optional<List<String>> prefixes =
@@ -62,8 +63,8 @@ public class AxisDefsCache {
 
     public Optional<List<String>> getBreakAfters(final DataDef dataDef,
             final Axis axis) {
-        String key = String.join("-", dataDef.getName(),
-                axis.getName().toString(), axis.getMemberName());
+        int key = Objects.hash(dataDef.getName(), axis.getName().toString(),
+                axis.getMemberName());
         if (!breakAfterCache.containsKey(key)) {
             try {
                 Optional<List<String>> breakAfters =
@@ -78,8 +79,8 @@ public class AxisDefsCache {
 
     public Optional<Range<Integer>> getIndexRange(final DataDef dataDef,
             final Axis axis) {
-        String key = String.join("-", dataDef.getName(),
-                axis.getName().toString(), axis.getMemberName());
+        int key = Objects.hash(dataDef.getName(), axis.getName().toString(),
+                axis.getMemberName());
         if (!indexRangeCache.containsKey(key)) {
             try {
                 Optional<Range<Integer>> indexRange =
@@ -93,7 +94,7 @@ public class AxisDefsCache {
     }
 
     public Map<AxisName, List<Filter>> getFilters(final DataDef dataDef) {
-        String key = dataDef.getName();
+        int key = Objects.hash(dataDef.getName());
         if (!filterCache.containsKey(key)) {
             try {
                 Map<AxisName, List<Filter>> filters =

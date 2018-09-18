@@ -1,4 +1,4 @@
-package org.codetab.scoopi.cache;
+package org.codetab.scoopi.step.parse.cache;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -22,9 +22,9 @@ public class ParserCache {
     public String get(final int key) {
         String value = cache.get(key);
         if (isNull(value)) {
-            count("miss");
+            metricsHelper.getCounter(this, "parser", "cache", "miss").inc();
         } else {
-            count("hit");
+            metricsHelper.getCounter(this, "parser", "cache", "hit").inc();
         }
         return value;
     }
@@ -32,16 +32,13 @@ public class ParserCache {
     public void put(final int key, final String value) {
         if (nonNull(value)) {
             cache.put(key, value);
+            metricsHelper.getMeter(this, "parser", "cache").mark();
         }
     }
 
-    // TODO - perf
+    // TODO optimise
     public int getKey(final Map<String, String> map) {
         notNull(map, "map must not be null");
         return Arrays.hashCode(map.values().toArray());
-    }
-
-    private void count(final String type) {
-        metricsHelper.getCounter(this, "parser", "cache", type).inc();
     }
 }

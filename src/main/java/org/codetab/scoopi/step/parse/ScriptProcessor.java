@@ -11,11 +11,11 @@ import javax.inject.Inject;
 import javax.script.ScriptException;
 
 import org.apache.commons.beanutils.ConvertUtils;
-import org.codetab.scoopi.cache.ParserCache;
 import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.TaskInfo;
+import org.codetab.scoopi.step.parse.cache.ParserCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
