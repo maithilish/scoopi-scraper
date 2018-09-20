@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.codetab.scoopi.exception.DefNotFoundException;
@@ -60,7 +59,7 @@ public class PluginHelperTest {
     }
 
     @Test
-    public void testGetPluginField() throws IOException {
+    public void testGetPluginField() throws IOException, DefNotFoundException {
         Plugin plugin = getTestPlugin();
 
         String actual = pluginDefsHelper.getPluginField(plugin, "inPattern");
@@ -85,10 +84,10 @@ public class PluginHelperTest {
         String plugin1Json = TestUtils.parseJson("{ name: x, class: xclz }");
         String plugin2Json = TestUtils.parseJson("{ name: y, class: yclz }");
 
-        Plugin plugin1 =
-                getTestPlugin(taskGroup, taskName, stepName, plugin1Json);
-        Plugin plugin2 =
-                getTestPlugin(taskGroup, taskName, stepName, plugin2Json);
+        Plugin plugin1 = getTestPlugin("x", "xclz", taskGroup, taskName,
+                stepName, plugin1Json);
+        Plugin plugin2 = getTestPlugin("y", "yclz", taskGroup, taskName,
+                stepName, plugin2Json);
 
         given(yamlHelper.toJson(eq((JsonNode) plugin1.getDef())))
                 .willReturn(plugin1Json);
@@ -138,8 +137,8 @@ public class PluginHelperTest {
 
         String plugin1Json = TestUtils.parseJson("{ name: x, class: xclz }");
 
-        Plugin plugin1 =
-                getTestPlugin(taskGroup, taskName, stepName, plugin1Json);
+        Plugin plugin1 = getTestPlugin("x", "xclz", taskGroup, taskName,
+                stepName, plugin1Json);
 
         given(yamlHelper.toJson(eq((JsonNode) plugin1.getDef())))
                 .willThrow(JsonProcessingException.class);
@@ -149,10 +148,11 @@ public class PluginHelperTest {
     }
 
     @Test
-    public void testGetPluginFieldShouldThrowException() throws IOException {
+    public void testGetPluginFieldShouldThrowException()
+            throws IOException, DefNotFoundException {
         Plugin plugin = getTestEmptyPlugin();
 
-        testRule.expect(NoSuchElementException.class);
+        testRule.expect(DefNotFoundException.class);
         pluginDefsHelper.getPluginField(plugin, "inPattern");
     }
 
@@ -164,13 +164,15 @@ public class PluginHelperTest {
                 .append("roll: \"DAY_OF_MONTH=ceil\" } ").toString();
 
         JsonNode def = objectMapper.readTree(TestUtils.parseJson(defJson));
-        return factory.createPlugin("bs", "bsTask", "converter", defJson, def);
+        return factory.createPlugin("pluginName", "pluginClass", "bs", "bsTask",
+                "converter", defJson, def);
     }
 
     private Plugin getTestEmptyPlugin() throws IOException {
         String defJson = new StringBuilder().append("{ }").toString();
         JsonNode def = objectMapper.readTree(TestUtils.parseJson(defJson));
-        return factory.createPlugin("bs", "bsTask", "converter", defJson, def);
+        return factory.createPlugin("pluginName", "pluginClass", "bs", "bsTask",
+                "converter", defJson, def);
     }
 
     private Entry<String, JsonNode> getTestSteps() throws IOException {
@@ -186,9 +188,11 @@ public class PluginHelperTest {
         return Lists.newArrayList(map.entrySet()).get(0);
     }
 
-    private Plugin getTestPlugin(final String taskGroup, final String taskName,
+    private Plugin getTestPlugin(final String name, final String clz,
+            final String taskGroup, final String taskName,
             final String stepName, final String json) throws IOException {
         JsonNode def = objectMapper.readTree(json);
-        return factory.createPlugin(taskGroup, taskName, stepName, json, def);
+        return factory.createPlugin(name, clz, taskGroup, taskName, stepName,
+                json, def);
     }
 }

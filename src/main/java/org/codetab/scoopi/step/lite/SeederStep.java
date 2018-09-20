@@ -56,6 +56,7 @@ public class SeederStep extends Step {
         LOGGER.info("handover");
         String taskGroup = getPayload().getJobInfo().getGroup();
         String stepName = getPayload().getStepInfo().getStepName();
+        String stepsName = "steps1";
         for (String taskName : taskDefs.getTaskNames(taskGroup)) {
             try {
                 String dataDefName =
@@ -63,7 +64,7 @@ public class SeederStep extends Step {
                 StepInfo nextStep =
                         taskDefs.getNextStep(taskGroup, taskName, stepName);
                 JobInfo jobInfo = factory.createJobInfo(taskMediator.getJobId(),
-                        "locator", taskGroup, taskName, dataDefName);
+                        "locator", taskGroup, taskName, stepsName, dataDefName);
                 Payload nextStepPayload =
                         factory.createPayload(jobInfo, nextStep, getOutput());
                 taskMediator.pushPayload(nextStepPayload);

@@ -171,26 +171,26 @@ public class LocatorGroupHelperTest {
         StepInfo stepInfo1 =
                 factory.createStepInfo(stepName, undefined, undefined, clzName);
         JobInfo jobInfo1 = factory.createJobInfo(0, undefined, group1,
-                undefined, undefined);
+                undefined, undefined, undefined);
         Payload payload1 = factory.createPayload(jobInfo1, stepInfo1, "data1");
 
         StepInfo stepInfo2 =
                 factory.createStepInfo(stepName, undefined, undefined, clzName);
         JobInfo jobInfo2 = factory.createJobInfo(0, undefined, group2,
-                undefined, undefined);
+                undefined, undefined, undefined);
         Payload payload2 = factory.createPayload(jobInfo2, stepInfo2, "data2");
 
         given(objectFactory.createStepInfo(stepName, undefined, undefined,
                 clzName)).willReturn(stepInfo1);
         given(objectFactory.createJobInfo(0, undefined, group1, undefined,
-                undefined)).willReturn(jobInfo1);
+                undefined, undefined)).willReturn(jobInfo1);
         given(objectFactory.createPayload(jobInfo1, stepInfo1, locatorGroup1))
                 .willReturn(payload1);
 
         given(objectFactory.createStepInfo(stepName, undefined, undefined,
                 clzName)).willReturn(stepInfo2);
         given(objectFactory.createJobInfo(0, undefined, group2, undefined,
-                undefined)).willReturn(jobInfo2);
+                undefined, undefined)).willReturn(jobInfo2);
         given(objectFactory.createPayload(jobInfo2, stepInfo2, locatorGroup2))
                 .willReturn(payload2);
 

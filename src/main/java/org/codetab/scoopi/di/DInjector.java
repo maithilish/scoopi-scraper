@@ -23,4 +23,11 @@ public class DInjector {
     public <T> T instance(final Class<T> clz) {
         return injector.getInstance(clz);
     }
+
+    public <T> T instance(final String clzName, final Class<T> clz)
+            throws ClassNotFoundException {
+        Class<?> clzz = Class.forName(clzName);
+        Object obj = injector.getInstance(clzz);
+        return clz.cast(obj);
+    }
 }

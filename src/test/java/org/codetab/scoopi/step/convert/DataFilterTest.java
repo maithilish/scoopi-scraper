@@ -91,8 +91,8 @@ public class DataFilterTest {
     }
 
     public Payload getTestPayload() {
-        JobInfo jobInfo =
-                factory.createJobInfo(0, "acme", "quote", "price", "price");
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "price",
+                "steps", "price");
         return factory.createPayload(jobInfo, null, null);
     }
 }

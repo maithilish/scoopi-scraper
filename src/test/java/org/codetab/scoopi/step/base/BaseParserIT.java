@@ -198,7 +198,8 @@ public class BaseParserIT {
     }
 
     private Payload getTestPayload(final StepInfo stepInfo, final Object data) {
-        JobInfo jobInfo = factory.createJobInfo(0, "acme", "bs", "bs", "bs");
+        JobInfo jobInfo =
+                factory.createJobInfo(0, "acme", "bs", "bs", "steps", "bs");
         return factory.createPayload(jobInfo, stepInfo, data);
     }
 

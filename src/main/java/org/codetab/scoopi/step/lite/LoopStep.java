@@ -55,6 +55,7 @@ public class LoopStep extends Step {
             validState(isConsistent(), "step inconsistent");
 
             String group = "lite1";
+            String stepsName = "steps1";
             String stepName = "step1";
             String taskName = "simpleTask";
 
@@ -63,7 +64,7 @@ public class LoopStep extends Step {
                 StepInfo nextStep =
                         taskDefs.getNextStep(group, taskName, stepName);
                 JobInfo jobInfo = factory.createJobInfo(0, "acme", group,
-                        taskName, getJobInfo().getDataDef());
+                        taskName, stepsName, getJobInfo().getDataDef());
                 Payload nextStepPayload =
                         factory.createPayload(jobInfo, nextStep, getOutput());
                 taskMediator.pushPayload(nextStepPayload);

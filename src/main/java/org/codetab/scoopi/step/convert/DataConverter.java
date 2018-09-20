@@ -16,7 +16,7 @@ import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.Plugin;
-import org.codetab.scoopi.plugin.converter.ConverterFactory;
+import org.codetab.scoopi.plugin.converter.Converters;
 import org.codetab.scoopi.plugin.converter.IConverter;
 import org.codetab.scoopi.step.base.BaseConverter;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public final class DataConverter extends BaseConverter {
     @Inject
     private IPluginDefs pluginDefs;
     @Inject
-    private ConverterFactory converterFactory;
+    private Converters converters;
 
     /**
      * to trace changes
@@ -59,13 +59,12 @@ public final class DataConverter extends BaseConverter {
         String taskName = getPayload().getJobInfo().getTask();
         String stepName = getStepName();
 
-        Optional<List<Plugin>> plugins;
         try {
-            plugins = pluginDefs.getPlugins(taskGroup, taskName, stepName);
+            Optional<List<Plugin>> plugins =
+                    pluginDefs.getPlugins(taskGroup, taskName, stepName);
             if (plugins.isPresent()) {
 
-                Map<AxisName, List<IConverter>> converters =
-                        converterFactory.getConverters(plugins.get());
+                converters.createConverters(plugins.get());
 
                 // apply converters
                 for (Member member : data.getMembers()) {
@@ -94,10 +93,10 @@ public final class DataConverter extends BaseConverter {
     }
 
     private String convert(final String value,
-            final List<IConverter> converters) throws Exception {
+            final List<IConverter> axisConverters) throws Exception {
         String iValue = value;
         String rvalue = value;
-        for (IConverter converter : converters) {
+        for (IConverter converter : axisConverters) {
             rvalue = converter.convert(rvalue);
         }
         if (LOGGER.isTraceEnabled() && !StringUtils.equals(rvalue, iValue)) {

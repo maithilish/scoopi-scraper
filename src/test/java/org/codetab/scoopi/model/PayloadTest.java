@@ -14,7 +14,8 @@ public class PayloadTest {
 
     @Before
     public void setUp() throws Exception {
-        jobInfo = new JobInfo(1, "locator", "group", "task", "dataDef");
+        jobInfo =
+                new JobInfo(1, "locator", "group", "task", "steps", "dataDef");
         stepInfo = new StepInfo("stepName", "priviousStepName", "nextStepName",
                 "className");
         data = "data";
@@ -40,7 +41,7 @@ public class PayloadTest {
     public void testToString() {
         StringBuilder expected = new StringBuilder().append(
                 "Payload [jobInfo=JobInfo [id=1, locator=locator, group=group, ")
-                .append("task=task, dataDef=dataDef], stepInfo=StepInfo [stepName=stepName, ")
+                .append("task=task, steps=steps, dataDef=dataDef], stepInfo=StepInfo [stepName=stepName, ")
                 .append("priviousStepName=priviousStepName, nextStepName=nextStepName]]");
         assertThat(payload.toString()).isEqualTo(expected.toString());
     }
@@ -48,12 +49,13 @@ public class PayloadTest {
     @Test
     public void testHashCode() {
         int actual = payload.hashCode();
-        assertThat(actual).isEqualTo(-619503663);
+        assertThat(actual).isEqualTo(1753122452);
     }
 
     @Test
     public void testEqual() {
-        JobInfo aj = new JobInfo(1, "locator", "group", "task", "dataDef");
+        JobInfo aj =
+                new JobInfo(1, "locator", "group", "task", "steps", "dataDef");
         StepInfo as = new StepInfo("stepName", "priviousStepName",
                 "nextStepName", "className");
         Object ad = "data";

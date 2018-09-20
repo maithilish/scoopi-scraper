@@ -431,8 +431,8 @@ public class BaseParserTest {
     }
 
     public Payload getTestPayload() {
-        JobInfo jobInfo =
-                factory.createJobInfo(0, "acme", "quote", "price", "price");
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "price",
+                "steps", "price");
         StepInfo stepInfo = factory.createStepInfo("s1", "s0", "s2", "clzName");
 
         Document document =

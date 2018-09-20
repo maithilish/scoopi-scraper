@@ -47,18 +47,26 @@ public class PluginDefs implements IPluginDefs {
     }
 
     @Override
-    public String getPluginClass(final Plugin plugin) {
+    public Optional<List<Plugin>> getPlugins(final Plugin plugin)
+            throws InvalidDefException {
+        return pluginDefsHelper.getPlugins(plugin);
+    }
+
+    @Override
+    public String getPluginClass(final Plugin plugin)
+            throws DefNotFoundException {
         return pluginDefsHelper.getPluginField(plugin, "class");
     }
 
     @Override
-    public String getPluginName(final Plugin plugin) {
+    public String getPluginName(final Plugin plugin)
+            throws DefNotFoundException {
         return pluginDefsHelper.getPluginField(plugin, "name");
     }
 
     @Override
-    public String getValue(final Plugin plugin, final String field) {
+    public String getValue(final Plugin plugin, final String field)
+            throws DefNotFoundException {
         return pluginDefsHelper.getPluginField(plugin, field);
     }
-
 }

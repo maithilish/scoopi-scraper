@@ -80,7 +80,7 @@ public class LocatorGroupHelper {
             StepInfo stepInfo = objectFactory.createStepInfo(stepName,
                     undefined, undefined, seederClzName);
             JobInfo jobInfo = objectFactory.createJobInfo(0, undefined,
-                    locatorGroup.getGroup(), undefined, undefined);
+                    locatorGroup.getGroup(), undefined, undefined, undefined);
             Payload payload = objectFactory.createPayload(jobInfo, stepInfo,
                     locatorGroup);
             payloads.add(payload);

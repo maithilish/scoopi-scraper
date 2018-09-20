@@ -56,7 +56,7 @@ public class DocumentHelperTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         jobInfo = factory.createJobInfo(0, "locator1", "group1", "task1",
-                "dataDef1");
+                "steps1", "dataDef1");
         document =
                 factory.createDocument("name", "url", new Date(), new Date());
     }

@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.defs.IPluginDefs;
+import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Plugin;
 
 /**
@@ -32,9 +33,11 @@ public class DateFormater implements IConverter {
      * @return date parsed date rounded off to month end.
      * @throws ParseException
      *             if parse error
+     * @throws DefNotFoundException
      */
     @Override
-    public String convert(final String input) throws ParseException {
+    public String convert(final String input)
+            throws ParseException, DefNotFoundException {
         notNull(input, "input must not be null");
 
         String patternIn = pluginDefs.getValue(plugin, "patternIn");

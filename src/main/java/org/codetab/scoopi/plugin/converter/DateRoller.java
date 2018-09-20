@@ -13,6 +13,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.defs.IPluginDefs;
+import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.util.Util;
 
@@ -48,12 +49,13 @@ public class DateRoller implements IConverter {
      *             if parse error
      * @throws IllegalAccessException
      *             if no such Calendar field
+     * @throws DefNotFoundException
      * @see java.text.SimpleDateFormat
      * @see Calendar
      */
     @Override
-    public String convert(final String input)
-            throws ParseException, IllegalAccessException {
+    public String convert(final String input) throws ParseException,
+            IllegalAccessException, DefNotFoundException {
         notNull(input, "input must not be null");
 
         // TODO optimise: add PluginCache and get value from it

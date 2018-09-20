@@ -21,7 +21,7 @@ public class BlankStepTest {
         StepInfo stepInfo =
                 objectFactory.createStepInfo("s1", "s2", "s3", "clz");
         JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
-                "task1", "dataDef1");
+                "task1", "steps1", "dataDef1");
         Payload payload =
                 objectFactory.createPayload(jobInfo, stepInfo, "data");
         step.setPayload(payload);

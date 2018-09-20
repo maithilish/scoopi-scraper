@@ -12,12 +12,13 @@ public class JobInfo {
     private final String locator;
     private final String group;
     private final String task;
+    private final String steps;
     private final String dataDef;
     private final String label;
     private final Marker marker;
 
     JobInfo(final long id, final String locator, final String group,
-            final String task, final String dataDef) {
+            final String task, final String steps, final String dataDef) {
 
         Validate.notNull(id, "id must not be null");
         Validate.notNull(locator, "locator name must not be null");
@@ -29,6 +30,7 @@ public class JobInfo {
         this.locator = locator;
         this.group = group;
         this.task = task;
+        this.steps = steps;
         this.dataDef = dataDef;
         this.label = String.join(":", locator, task, dataDef);
 
@@ -50,6 +52,10 @@ public class JobInfo {
 
     public String getTask() {
         return task;
+    }
+
+    public String getSteps() {
+        return steps;
     }
 
     public String getDataDef() {
@@ -77,6 +83,7 @@ public class JobInfo {
     @Override
     public String toString() {
         return "JobInfo [id=" + id + ", locator=" + locator + ", group=" + group
-                + ", task=" + task + ", dataDef=" + dataDef + "]";
+                + ", task=" + task + ", steps=" + steps + ", dataDef=" + dataDef
+                + "]";
     }
 }

@@ -11,4 +11,29 @@ steps:
     parser:
       class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
       previous: loader
+      next: process
+    process:
+      class: "org.codetab.scoopi.step.convert.DataFilter"
+      previous: parser
+      next: converter
+    converter:
+      class: "org.codetab.scoopi.step.convert.DataConverter"
+      previous: process
+      next: appender
+    appender:
+      class: "org.codetab.scoopi.step.load.DataAppender"
+      previous: converter
       next: end
+      plugins: [
+        plugin: { 
+          name: file, 
+          class: "org.codetab.scoopi.plugin.appender.FileAppender",
+          file: "output/data.txt", 
+          plugins: [ 
+             plugin: { 
+               name: csv,
+               class: "org.codetab.scoopi.plugin.encoder.CsvEncoder"
+             } 
+          ]
+        }          
+      ]

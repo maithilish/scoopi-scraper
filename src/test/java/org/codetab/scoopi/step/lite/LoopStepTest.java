@@ -28,12 +28,12 @@ public class LoopStepTest {
     @Mock
     private TaskDefs taskDefs;
     @Mock
-    private ObjectFactory factory;
+    private ObjectFactory objectFactory;
 
     @InjectMocks
     private LoopStep step;
 
-    private ObjectFactory objectFactory;
+    private ObjectFactory factory;
 
     @Rule
     public ExpectedException testRule = ExpectedException.none();
@@ -42,13 +42,11 @@ public class LoopStepTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        objectFactory = new ObjectFactory();
-        StepInfo stepInfo =
-                objectFactory.createStepInfo("s1", "s2", "s3", "clz");
-        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
-                "task1", "dataDef1");
-        Payload payload =
-                objectFactory.createPayload(jobInfo, stepInfo, "data");
+        factory = new ObjectFactory();
+        StepInfo stepInfo = factory.createStepInfo("s1", "s2", "s3", "clz");
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "group1", "task1",
+                "steps1", "dataDef1");
+        Payload payload = factory.createPayload(jobInfo, stepInfo, "data");
         step.setPayload(payload);
     }
 
@@ -85,18 +83,19 @@ public class LoopStepTest {
         String taskName = "simpleTask";
 
         StepInfo nextStep =
-                objectFactory.createStepInfo("step1", "step0", "step2", "clz");
-        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
-                "task1", "dataDef1");
+                factory.createStepInfo("step1", "step0", "step2", "clz");
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "group1", "task1",
+                "steps1", "dataDef1");
         Payload nextStepPayload =
-                objectFactory.createPayload(jobInfo, nextStep, "data");
+                factory.createPayload(jobInfo, nextStep, "data");
 
         given(taskDefs.getNextStep(group, taskName, stepName))
                 .willReturn(nextStep);
-        given(factory.createJobInfo(0, "acme", group, taskName,
+        given(objectFactory.createJobInfo(0, "acme", group, taskName,
+                step.getPayload().getJobInfo().getSteps(),
                 step.getPayload().getJobInfo().getDataDef()))
                         .willReturn(jobInfo);
-        given(factory.createPayload(jobInfo, nextStep, step.getOutput()))
+        given(objectFactory.createPayload(jobInfo, nextStep, step.getOutput()))
                 .willReturn(nextStepPayload);
 
         boolean actual = step.handover();
@@ -111,19 +110,17 @@ public class LoopStepTest {
             throws DefNotFoundException, InterruptedException {
         step.process();
 
-        StepInfo stepInfo =
-                objectFactory.createStepInfo("s1", "s2", "end", "clz");
-        JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
-                "task1", "dataDef1");
-        Payload payload =
-                objectFactory.createPayload(jobInfo, stepInfo, "data");
+        StepInfo stepInfo = factory.createStepInfo("s1", "s2", "end", "clz");
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "group1", "task1",
+                "steps1", "dataDef1");
+        Payload payload = factory.createPayload(jobInfo, stepInfo, "data");
         step.setPayload(payload);
 
         boolean actual = step.handover();
 
         assertThat(actual).isTrue();
 
-        verifyZeroInteractions(taskMediator, factory, taskDefs);
+        verifyZeroInteractions(taskMediator, objectFactory, taskDefs);
     }
 
     @Test

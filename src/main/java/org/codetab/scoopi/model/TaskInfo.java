@@ -20,4 +20,12 @@ public class TaskInfo {
     public String getLabel() {
         return jobInfo.get().getLabel();
     }
+
+    public String getName() {
+        return jobInfo.get().getName();
+    }
+
+    public String getGroup() {
+        return jobInfo.get().getGroup();
+    }
 }

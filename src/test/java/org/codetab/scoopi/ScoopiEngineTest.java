@@ -60,6 +60,7 @@ public class ScoopiEngineTest {
 
         inOrder.verify(taskMediator).start();
         inOrder.verify(taskMediator).waitForFinish();
+        inOrder.verify(scoopiSystem).waitForFinish();
         inOrder.verify(scoopiSystem).waitForHeapDump();
 
         inOrder.verify(scoopiSystem).stopMetricsServer();

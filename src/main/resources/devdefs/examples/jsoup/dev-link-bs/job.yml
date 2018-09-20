@@ -59,7 +59,7 @@ taskGroups:
     linkTask:
       dataDef: links
       steps:
-        dev:
+        dev-default:
           process:
             class: "org.codetab.scoopi.step.convert.LocatorCreator"
             previous: parser
@@ -69,11 +69,11 @@ taskGroups:
     bsTask:
       dataDef: bs
       steps:
-        dev:
+        dev-default:
           converter:
             class: "org.codetab.scoopi.step.convert.DataConverter"
             previous: process
-            next: end           
+            next: appender           
             plugins: [
               plugin: { 
                      name: converter, 
@@ -83,9 +83,9 @@ taskGroups:
                      outPattern: "yyyy-MM-dd", 
                      roll: "DAY_OF_MONTH=ceil" }            
            ]
-                                     
+
 steps: 
-  dev:
+  dev-default:
     seeder:
       class: "org.codetab.scoopi.step.extract.LocatorSeeder"
       previous: start
@@ -103,8 +103,36 @@ steps:
       previous: parser
       next: converter
     converter:
-      class: "org.codetab.scoopi.step.convert.DataFilter"
+      class: "org.codetab.scoopi.step.convert.DataConverter"
       previous: process
+      next: appender
+    appender:
+      class: "org.codetab.scoopi.step.load.DataAppender"
+      previous: converter
       next: end
-      
-    
+      plugins: [
+        plugin: { 
+          name: file, 
+          class: "org.codetab.scoopi.plugin.appender.FileAppender",
+          file: "output/data.txt", 
+          plugins: [ 
+             plugin: { 
+               name: csv,
+               class: "org.codetab.scoopi.plugin.encoder.CsvEncoder"
+             } 
+          ]
+        },
+        plugin: { 
+          name: dumpfile, 
+          class: "org.codetab.scoopi.plugin.appender.FileAppender",
+          file: "output/dump.txt", 
+          plugins: [ 
+             plugin: { 
+               name: dump,
+               class: "org.codetab.scoopi.plugin.encoder.CsvEncoder",
+               delimiter: "|"
+             } 
+          ]
+        }          
+      ]
+

@@ -27,8 +27,9 @@ public class ObjectFactory {
     }
 
     public JobInfo createJobInfo(final long id, final String locator,
-            final String group, final String task, final String dataDef) {
-        return new JobInfo(id, locator, group, task, dataDef);
+            final String group, final String task, final String steps,
+            final String dataDef) {
+        return new JobInfo(id, locator, group, task, steps, dataDef);
     }
 
     public Payload createPayload(final JobInfo jobInfo, final StepInfo stepInfo,
@@ -111,8 +112,10 @@ public class ObjectFactory {
         return filter;
     }
 
-    public Plugin createPlugin(final String taskGroup, final String taskName,
+    public Plugin createPlugin(final String name, final String clzName,
+            final String taskGroup, final String taskName,
             final String stepName, final String defJson, final Object def) {
-        return new Plugin(taskGroup, taskName, stepName, defJson, def);
+        return new Plugin(name, clzName, taskGroup, taskName, stepName, defJson,
+                def);
     }
 }

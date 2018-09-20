@@ -19,6 +19,8 @@ import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.LocatorGroupHelper;
+import org.codetab.scoopi.plugin.appender.AppenderMediator;
+import org.codetab.scoopi.pool.AppenderPoolService;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
@@ -49,6 +51,10 @@ public class ScoopiSystem {
     private ErrorLogger errorLogger;
     @Inject
     private LocatorGroupHelper locatorGroupHelper;
+    @Inject
+    private AppenderPoolService appenderPoolService;
+    @Inject
+    private AppenderMediator appenderMediator;
 
     @Inject
     private ShutdownHook shutdownHook;
@@ -206,5 +212,10 @@ public class ScoopiSystem {
                     "Press enter to continue ...");
             systemHelper.readLine();
         }
+    }
+
+    public void waitForFinish() {
+        appenderMediator.closeAll();
+        appenderPoolService.waitForFinish();
     }
 }

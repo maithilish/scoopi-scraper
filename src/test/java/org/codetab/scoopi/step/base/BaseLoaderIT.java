@@ -225,10 +225,10 @@ public class BaseLoaderIT {
 
         StepInfo stepInfo =
                 factory.createStepInfo("loader", "seeder", "parser", clzName);
-        JobInfo jobInfo =
-                factory.createJobInfo(0, "acme", "quote", "task2", "task2"); // live
-                                                                             // 1
-                                                                             // day
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "task2",
+                "steps2", "task2"); // live
+        // 1
+        // day
         Payload inPayload = factory.createPayload(jobInfo, stepInfo, locator);
         loader.setPayload(inPayload);
 
@@ -290,10 +290,10 @@ public class BaseLoaderIT {
 
         StepInfo stepInfo =
                 factory.createStepInfo("loader", "seeder", "parser", clzName);
-        JobInfo jobInfo =
-                factory.createJobInfo(0, "acme", "quote", "task3", "task3"); // live
-                                                                             // 3
-                                                                             // day
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "task3",
+                "steps3", "task3"); // live
+        // 3
+        // day
         Payload inPayload = factory.createPayload(jobInfo, stepInfo, locator);
         loader.setPayload(inPayload);
 
@@ -342,8 +342,8 @@ public class BaseLoaderIT {
     }
 
     private Payload getTestPayload(final StepInfo stepInfo, final Object data) {
-        JobInfo jobInfo =
-                factory.createJobInfo(0, "acme", "quote", "task1", "task1");
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "task1",
+                "steps1", "task1");
         return factory.createPayload(jobInfo, stepInfo, data);
     }
 

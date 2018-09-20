@@ -195,10 +195,10 @@ public class ScoopiSystemTest {
 
         List<LocatorGroup> lGroups = getTestLocatorGroups();
 
-        JobInfo jobInfo1 =
-                factory.createJobInfo(0, "acme", "group1", "task1", "def1");
-        JobInfo jobInfo2 =
-                factory.createJobInfo(0, "acme", "group2", "task2", "def2");
+        JobInfo jobInfo1 = factory.createJobInfo(0, "acme", "group1", "task1",
+                "steps", "def1");
+        JobInfo jobInfo2 = factory.createJobInfo(0, "acme", "group2", "task2",
+                "steps", "def2");
         Payload payload1 = factory.createPayload(jobInfo1, null, null);
         Payload payload2 = factory.createPayload(jobInfo2, null, null);
         List<Payload> payloads = Lists.newArrayList(payload1, payload2);

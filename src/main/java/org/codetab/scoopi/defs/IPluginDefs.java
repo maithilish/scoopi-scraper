@@ -12,9 +12,11 @@ public interface IPluginDefs {
     Optional<List<Plugin>> getPlugins(String taskGroup, String taskName,
             String stepName) throws DefNotFoundException, InvalidDefException;
 
-    String getPluginClass(Plugin plugin);
+    Optional<List<Plugin>> getPlugins(Plugin plugin) throws InvalidDefException;
 
-    String getPluginName(Plugin plugin);
+    String getPluginClass(Plugin plugin) throws DefNotFoundException;
 
-    String getValue(Plugin plugin, String field);
+    String getPluginName(Plugin plugin) throws DefNotFoundException;
+
+    String getValue(Plugin plugin, String field) throws DefNotFoundException;
 }

@@ -135,13 +135,15 @@ public final class LocatorSeeder extends BaseSeeder {
                             getStepName());
                 }
                 if (!thisStep.getNextStepName().equalsIgnoreCase("end")) {
+                    String stepsName =
+                            taskDefs.getStepsName(taskGroup, taskName);
                     String dataDefName = taskDefs.getFieldValue(taskGroup,
                             taskName, "dataDef");
                     StepInfo nextStep = taskDefs.getNextStep(taskGroup,
                             taskName, thisStep.getStepName());
                     JobInfo jobInfo = factory.createJobInfo(
                             taskMediator.getJobId(), locator.getName(),
-                            taskGroup, taskName, dataDefName);
+                            taskGroup, taskName, stepsName, dataDefName);
                     Payload nextStepPayload =
                             factory.createPayload(jobInfo, nextStep, locator);
                     payloads.add(nextStepPayload);

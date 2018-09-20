@@ -60,6 +60,8 @@ public class ScoopiEngine {
 
             taskMediator.waitForFinish();
 
+            scoopiSystem.waitForFinish();
+
             scoopiSystem.waitForHeapDump();
 
             LOGGER.info("shutdown ...");

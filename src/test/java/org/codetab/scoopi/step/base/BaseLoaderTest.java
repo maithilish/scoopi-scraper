@@ -533,8 +533,8 @@ public class BaseLoaderTest {
     }
 
     private Payload getTestPayload(final StepInfo stepInfo, final Object data) {
-        JobInfo jobInfo =
-                factory.createJobInfo(0, "acme", "quote", "task1", "task1");
+        JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "task1",
+                "steps1", "task1");
         return factory.createPayload(jobInfo, stepInfo, data);
     }
 

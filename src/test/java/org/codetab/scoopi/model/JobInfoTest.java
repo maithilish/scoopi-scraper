@@ -11,7 +11,8 @@ public class JobInfoTest {
 
     @Before
     public void setUp() throws Exception {
-        jobInfo = new JobInfo(1, "locator", "group", "task", "dataDef");
+        jobInfo =
+                new JobInfo(1, "locator", "group", "task", "steps", "dataDef");
     }
 
     @Test
@@ -47,18 +48,19 @@ public class JobInfoTest {
     @Test
     public void testToString() {
         assertThat(jobInfo.toString()).isEqualTo(
-                "JobInfo [id=1, locator=locator, group=group, task=task, dataDef=dataDef]");
+                "JobInfo [id=1, locator=locator, group=group, task=task, steps=steps, dataDef=dataDef]");
     }
 
     @Test
     public void testHashCode() {
         int actual = jobInfo.hashCode();
-        assertThat(actual).isEqualTo(221479003);
+        assertThat(actual).isEqualTo(1945591254);
     }
 
     @Test
     public void testEqual() {
-        JobInfo another = new JobInfo(1, "locator", "group", "task", "dataDef");
+        JobInfo another =
+                new JobInfo(1, "locator", "group", "task", "steps", "dataDef");
         assertThat(jobInfo).isEqualTo(another);
     }
 }

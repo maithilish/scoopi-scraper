@@ -48,7 +48,7 @@ public class SeederStepTest {
         StepInfo stepInfo =
                 objectFactory.createStepInfo("s1", "s2", "s3", "clz");
         JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
-                "task1", "dataDef1");
+                "task1", "steps1", "dataDef1");
         Payload payload =
                 objectFactory.createPayload(jobInfo, stepInfo, "data");
         step.setPayload(payload);
@@ -88,7 +88,7 @@ public class SeederStepTest {
         StepInfo nextStep =
                 objectFactory.createStepInfo("step1", "step0", "step2", "clz");
         JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
-                "task1", "dataDef1");
+                "task1", "steps1", "dataDef1");
         Payload nextStepPayload =
                 objectFactory.createPayload(jobInfo, nextStep, "data");
 
@@ -104,9 +104,9 @@ public class SeederStepTest {
         given(taskDefs.getNextStep(taskGroup, "task2", stepName))
                 .willReturn(nextStep);
         given(factory.createJobInfo(taskMediator.getJobId(), "locator",
-                taskGroup, "task1", "dataDef1")).willReturn(jobInfo);
+                taskGroup, "task1", "steps1", "dataDef1")).willReturn(jobInfo);
         given(factory.createJobInfo(taskMediator.getJobId(), "locator",
-                taskGroup, "task2", "dataDef2")).willReturn(jobInfo);
+                taskGroup, "task2", "steps1", "dataDef2")).willReturn(jobInfo);
 
         given(factory.createPayload(jobInfo, nextStep, step.getOutput()))
                 .willReturn(nextStepPayload).willReturn(nextStepPayload);
@@ -129,7 +129,7 @@ public class SeederStepTest {
         StepInfo nextStep =
                 objectFactory.createStepInfo("step1", "step0", "step2", "clz");
         JobInfo jobInfo = objectFactory.createJobInfo(0, "acme", "group1",
-                "task1", "dataDef1");
+                "task1", "steps1", "dataDef1");
         Payload nextStepPayload =
                 objectFactory.createPayload(jobInfo, nextStep, "data");
 
@@ -145,9 +145,9 @@ public class SeederStepTest {
         given(taskDefs.getNextStep(taskGroup, "task2", stepName))
                 .willReturn(nextStep);
         given(factory.createJobInfo(taskMediator.getJobId(), "locator",
-                taskGroup, "task1", "dataDef1")).willReturn(jobInfo);
+                taskGroup, "task1", "steps1", "dataDef1")).willReturn(jobInfo);
         given(factory.createJobInfo(taskMediator.getJobId(), "locator",
-                taskGroup, "task2", "dataDef2")).willReturn(jobInfo);
+                taskGroup, "task2", "steps1", "dataDef2")).willReturn(jobInfo);
 
         given(factory.createPayload(jobInfo, nextStep, step.getOutput()))
                 .willReturn(nextStepPayload).willReturn(nextStepPayload);

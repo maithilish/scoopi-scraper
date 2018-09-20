@@ -40,8 +40,8 @@ public class TaskFactoryTest {
     public void testCreateTaskFromPayload() throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
         ObjectFactory mf = new ObjectFactory();
-        JobInfo jobInfo =
-                mf.createJobInfo(0, "locator", "group", "task", "dataDef");
+        JobInfo jobInfo = mf.createJobInfo(0, "locator", "group", "task",
+                "steps", "dataDef");
         StepInfo stepInfo = mf.createStepInfo("s1", "s0", "s2", clzName);
         String data = "data";
         Payload payload = mf.createPayload(jobInfo, stepInfo, data);

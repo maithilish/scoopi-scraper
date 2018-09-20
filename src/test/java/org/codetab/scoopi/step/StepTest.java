@@ -194,7 +194,7 @@ public class StepTest {
     @Test
     public void testGetMarker() {
         JobInfo jobInfo =
-                factory.createJobInfo(0, "acme", "bs", "bsTask", "bs");
+                factory.createJobInfo(0, "acme", "bs", "bsTask", "steps", "bs");
         StepInfo stepInfo = factory.createStepInfo("s1", "s0", "s2", "cls");
         Payload payload1 = factory.createPayload(jobInfo, stepInfo, "data");
         step.setPayload(payload1);
@@ -225,7 +225,7 @@ public class StepTest {
 
     private Payload getTestPayload() {
         JobInfo jobInfo = factory.createJobInfo(0, "locator1", "group1",
-                "task1", "dataDef1");
+                "task1", "steps1", "dataDef1");
         StepInfo stepInfo =
                 factory.createStepInfo("s1", "s0", "s2", "clzName1");
         String data = "data";
