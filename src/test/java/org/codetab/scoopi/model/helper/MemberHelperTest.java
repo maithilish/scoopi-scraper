@@ -3,6 +3,7 @@ package org.codetab.scoopi.model.helper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Range;
@@ -59,15 +60,35 @@ public class MemberHelperTest {
     }
 
     @Test
-    public void testGetMemberIndexes() {
+    public void testGetNextMemberIndexesKey() {
         Member member = createTestMember();
 
-        Integer[] actual = memberHelper.getMemberIndexes(member);
+        // indexes: fact 10, col 20, row 30, page 0
 
-        assertThat(actual[AxisName.FACT.ordinal()]).isEqualTo(10);
-        assertThat(actual[AxisName.COL.ordinal()]).isEqualTo(20);
-        assertThat(actual[AxisName.ROW.ordinal()]).isEqualTo(30);
-        assertThat(actual[AxisName.PAGE.ordinal()]).isEqualTo(0);
+        String actual = memberHelper.getNextMemberIndexesAsKey(member,
+                member.getAxis(AxisName.FACT));
+
+        assertThat(actual).isEqualTo("1120300");
+
+        actual = memberHelper.getNextMemberIndexesAsKey(member,
+                member.getAxis(AxisName.COL));
+
+        assertThat(actual).isEqualTo("1021300");
+
+        actual = memberHelper.getNextMemberIndexesAsKey(member,
+                member.getAxis(AxisName.ROW));
+
+        assertThat(actual).isEqualTo("1020310");
+    }
+
+    @Test
+    public void testGetNextMemberIndexesKeyShouldThrowException() {
+        Member member = createTestMember();
+
+        // indexes: fact 10, col 20, row 30, page 0
+        testRule.expect(NoSuchElementException.class);
+        memberHelper.getNextMemberIndexesAsKey(member,
+                member.getAxis(AxisName.PAGE));
     }
 
     @Test
@@ -75,12 +96,10 @@ public class MemberHelperTest {
         Member member = createTestMember();
         member.getAxis(AxisName.COL).setIndex(null);
 
-        Integer[] actual = memberHelper.getMemberIndexes(member);
-
-        assertThat(actual[AxisName.FACT.ordinal()]).isEqualTo(10);
-        assertThat(actual[AxisName.ROW.ordinal()]).isEqualTo(30);
-        assertThat(actual[AxisName.COL.ordinal()]).isEqualTo(0);
-        assertThat(actual[AxisName.PAGE.ordinal()]).isEqualTo(0);
+        // indexes: fact 10, col null, row 30, page 0
+        String actual = memberHelper.getNextMemberIndexesAsKey(member,
+                member.getAxis(AxisName.COL));
+        assertThat(actual).isEqualTo("101300");
     }
 
     @Test

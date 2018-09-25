@@ -15,15 +15,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class JSoupValueParserTest {
+public class ValueParserTest {
 
     @Mock
-    private JSoupSelector jsoupSelector;
+    private NodeSelector jsoupSelector;
     @Mock
     private TaskInfo taskInfo;
 
     @InjectMocks
-    private JSoupValueParser jSoupValueParser;
+    private ValueParser valueParser;
 
     @Before
     public void setUp() throws Exception {
@@ -33,7 +33,7 @@ public class JSoupValueParserTest {
     @Test
     public void testParseValue() {
         Document page = new Document("test uri");
-        jSoupValueParser.setPage(page);
+        valueParser.setPage(page);
 
         String regionSelector = "test region";
         String fieldSelector = "test field";
@@ -53,7 +53,7 @@ public class JSoupValueParserTest {
         given(jsoupSelector.selectField(regionElements, fieldSelector,
                 attribute)).willReturn(value);
 
-        String actual = jSoupValueParser.parseValue(queries);
+        String actual = valueParser.parseValue(queries);
 
         assertThat(actual).isEqualTo(value);
     }

@@ -77,8 +77,9 @@ public class NormalizerHelper {
         return task.get("steps") != null;
     }
 
-    public void setDefaultSteps(final JsonNode task) {
-        ((ObjectNode) task).put("steps", "default");
+    public void setDefaultSteps(final JsonNode task,
+            final String defaultStepsName) {
+        ((ObjectNode) task).put("steps", defaultStepsName);
     }
 
     public String getOverriddenStepsName(final JsonNode steps) {

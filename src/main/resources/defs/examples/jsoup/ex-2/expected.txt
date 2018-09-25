@@ -1,0 +1,10 @@
+acme|quoteGroup|%{documentFromDate}|P/C|-
+acme|quoteGroup|%{documentFromDate}|FACE VALUE (Rs)|1.00
+acme|quoteGroup|%{documentFromDate}|BOOK VALUE (Rs)|27.89
+acme|quoteGroup|%{documentFromDate}|DIV (%)|850.00%
+acme|quoteGroup|%{documentFromDate}|PRICE/BOOK|11.29
+acme|quoteGroup|%{documentFromDate}|P/E|-
+acme|quoteGroup|%{documentFromDate}|INDUSTRY P/E|37.06
+acme|quoteGroup|%{documentFromDate}|MARKET CAP (Rs Cr)|382,642.57
+acme|quoteGroup|%{documentFromDate}|EPS (TTM)|-
+acme|quoteGroup|%{documentFromDate}|DIV YIELD.(%)|2.70%

@@ -28,7 +28,7 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.Task;
-import org.codetab.scoopi.step.parse.jsoup.JSoupParser;
+import org.codetab.scoopi.step.parse.jsoup.Parser;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
@@ -85,7 +85,7 @@ public class BaseParserIT {
     @Before
     public void setUp() throws Exception {
         store = di.instance(IStore.class);
-        parser = di.instance(JSoupParser.class);
+        parser = di.instance(Parser.class);
         task = di.instance(Task.class);
         task.setStep(parser);
 

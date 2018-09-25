@@ -23,15 +23,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
-public class JSoupParserTest {
+public class ParserTest {
 
     @Spy
-    private JSoupValueParser jsoupValueParser;
+    private ValueParser jsoupValueParser;
     @Mock
     private DocumentHelper documentHelper;
 
     @InjectMocks
-    private JSoupParser parser;
+    private Parser parser;
 
     private ObjectFactory factory;
 

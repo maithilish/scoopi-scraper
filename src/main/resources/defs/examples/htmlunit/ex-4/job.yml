@@ -1,5 +1,4 @@
 locatorGroups:
-  
   bsGroup:   
     locators: [
        { name: acme, url: "/defs/examples/page/acme-bs.html" }  
@@ -17,19 +16,20 @@ dataDefs:
     axis:
       fact:
         query:
-          region: "table:contains(Sources Of Funds)"  
-          field: "tr:nth-child(%{row.index}) > td:nth-child(%{col.index})" 
+          region: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]"   
+          field: "*//*[.='%{row.value}']/following-sibling::td[%{col.index}-1]"  
       col:
         query:
-          region: "table:contains(Sources Of Funds)"
-          field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
+          region: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]"
+          field: "*//tr[1]/td[%{col.index}]"        
         members: [ 
           member: {name: year, indexRange: 2-6},
         ]  
       row:
         query:
-          region: "table:contains(Sources Of Funds)"
-          field: "tr:nth-child(%{row.index}) > td:nth-child(1)"      
+          region: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]" 
+          field: "*//tr[%{row.index}+1]/td[1]"      
         members: [ 
           member: {name: item, index: 5, breakAfter: ["Book Value (Rs)"] },
         ]
+          

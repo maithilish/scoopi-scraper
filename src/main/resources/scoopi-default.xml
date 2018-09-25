@@ -6,12 +6,14 @@
 
         <defs>
             <dir>/defs/examples/jsoup/ex-1</dir>
-            <defaultSteps>/steps-default.yml</defaultSteps>
+            <defaultStepsFile>/steps-default.yml</defaultStepsFile>
+            <defaultSteps>jsoupDefault</defaultSteps>
             <definedSchema>/schema/defs-defined.json</definedSchema>
             <effectiveSchema>/schema/defs-effective.json</effectiveSchema>
         </defs>
 
-        <seederClass>org.codetab.scoopi.step.extract.LocatorSeeder</seederClass>
+        <seederClass>org.codetab.scoopi.step.extract.LocatorSeeder
+        </seederClass>
         <poolsize>
             <seeder>6</seeder>
             <loader>4</loader>

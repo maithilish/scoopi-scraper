@@ -47,7 +47,6 @@ public class MemberStack {
 
     public void pushAdjacentMembers(final DataDef dataDef,
             final Member member) {
-        Integer[] indexes = memberHelper.getMemberIndexes(member);
 
         for (AxisName axisName : AxisName.values()) {
             Axis axis = null;
@@ -65,13 +64,13 @@ public class MemberStack {
             Optional<Range<Integer>> indexRange =
                     axisDefs.getIndexRange(dataDef, axis);
             if (memberHelper.isAxisWithinRange(axis, breakAfters, indexRange)) {
-                Integer[] nextMemberIndexes =
-                        memberMatrix.nextMemberIndexes(indexes, axis);
+                String nextMemberIndexesKey =
+                        memberHelper.getNextMemberIndexesAsKey(member, axis);
                 // if not already created, create and push adjacent member
                 // for this axis
-                if (memberMatrix.notYetCreated(nextMemberIndexes)) {
-                    Member newMember =
-                            memberMatrix.createAdjacentMember(member, axis);
+                if (memberMatrix.notYetCreated(nextMemberIndexesKey)) {
+                    Member newMember = memberMatrix.createAdjacentMember(member,
+                            axis, nextMemberIndexesKey);
                     mStack.addFirst(newMember); // push
                 }
             }

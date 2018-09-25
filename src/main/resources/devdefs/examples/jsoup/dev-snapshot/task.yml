@@ -19,7 +19,7 @@ steps:
       previous: seeder
       next: parser
     parser:
-      class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
+      class: "org.codetab.scoopi.step.parse.jsoup.Parser"
       previous: loader
       next: process
     process:

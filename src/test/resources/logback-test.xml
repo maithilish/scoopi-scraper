@@ -1,9 +1,11 @@
 <configuration>
 
-    <appender name="tracefile" class="ch.qos.logback.core.FileAppender">
+    <appender name="tracefile"
+        class="ch.qos.logback.core.FileAppender">
         <file>logs/trace.log</file>
         <append>false</append>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <filter
+            class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>trace</level>
         </filter>
         <encoder>
@@ -12,10 +14,12 @@
         </encoder>
     </appender>
 
-    <appender name="debugfile" class="ch.qos.logback.core.FileAppender">
+    <appender name="debugfile"
+        class="ch.qos.logback.core.FileAppender">
         <file>logs/debug.log</file>
         <append>false</append>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <filter
+            class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>debug</level>
         </filter>
         <encoder>
@@ -24,8 +28,10 @@
         </encoder>
     </appender>
 
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+    <appender name="console"
+        class="ch.qos.logback.core.ConsoleAppender">
+        <filter
+            class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>off</level>
         </filter>
         <encoder>
@@ -33,6 +39,9 @@
             </pattern>
         </encoder>
     </appender>
+
+    <logger name="DataNucleus.JDO" level="OFF" />
+    <logger name="org.eclipse.jetty" level="WARN" />
 
     <root level="trace">
         <appender-ref ref="console" />

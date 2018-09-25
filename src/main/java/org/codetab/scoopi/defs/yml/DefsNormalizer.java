@@ -113,12 +113,13 @@ public class DefsNormalizer {
      * If steps is not defined for the task, then add field - steps: default
      * @param defs
      */
-    public void setDefaultSteps(final JsonNode defs) {
+    public void setDefaultSteps(final JsonNode defs,
+            final String defaultStepsName) {
         JsonNode taskGroups = nzHelper.getTaskGroups(defs);
         Map<String, JsonNode> tasks = nzHelper.getTasks(taskGroups);
         for (JsonNode task : tasks.values()) {
             if (!nzHelper.isStepsDefined(task)) {
-                nzHelper.setDefaultSteps(task);
+                nzHelper.setDefaultSteps(task, defaultStepsName);
             }
         }
     }

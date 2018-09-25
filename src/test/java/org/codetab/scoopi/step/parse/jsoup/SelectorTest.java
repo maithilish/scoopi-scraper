@@ -16,13 +16,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class JSoupSelectorTest {
+public class SelectorTest {
 
     @Mock
     private TaskInfo taskInfo;
 
     @InjectMocks
-    private JSoupSelector jSoupSelector;
+    private NodeSelector nodeSelector;
 
     @Before
     public void setUp() throws Exception {
@@ -42,11 +42,11 @@ public class JSoupSelectorTest {
 
         given(page.select(selector)).willReturn(elements);
 
-        Elements actual = jSoupSelector.selectRegion(page, selector);
+        Elements actual = nodeSelector.selectRegion(page, selector);
 
         assertThat(actual).isEqualTo(elements);
 
-        actual = jSoupSelector.selectRegion(page, selector);
+        actual = nodeSelector.selectRegion(page, selector);
         assertThat(actual).isEqualTo(elements);
 
         verify(page, times(1)).select(selector);
@@ -70,8 +70,7 @@ public class JSoupSelectorTest {
         given(element1.outerHtml()).willReturn("html1");
         given(element2.outerHtml()).willReturn("html2");
 
-        String actual =
-                jSoupSelector.selectField(elements, selector, attribute);
+        String actual = nodeSelector.selectField(elements, selector, attribute);
 
         assertThat(actual).isEqualTo(value);
     }
@@ -94,8 +93,7 @@ public class JSoupSelectorTest {
         given(element1.outerHtml()).willReturn("html1");
         given(element2.outerHtml()).willReturn("html2");
 
-        String actual =
-                jSoupSelector.selectField(elements, selector, attribute);
+        String actual = nodeSelector.selectField(elements, selector, attribute);
 
         assertThat(actual).isEqualTo(value);
     }

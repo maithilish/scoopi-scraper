@@ -17,8 +17,8 @@ dataDefs:
     axis:
       fact:
         query:
-          region: "div#price_tick"  
-          field: "*"
+          region: "//*[@id='price_tick_span']"  
+          field: "strong"
       col:
         query:
           script: configs.getRunDateTime()        

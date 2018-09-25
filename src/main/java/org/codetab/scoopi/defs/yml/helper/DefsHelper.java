@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.inject.Inject;
 
@@ -60,7 +61,7 @@ public class DefsHelper {
         LOGGER.info("load default steps");
 
         String defaultStepsFile =
-                configService.getConfig("scoopi.defs.defaultSteps");
+                configService.getConfig("scoopi.defs.defaultStepsFile");
 
         JsonNode defaultSteps = yamlHelper.loadYaml(defaultStepsFile);
 
@@ -71,15 +72,20 @@ public class DefsHelper {
 
     public void mergeDefaultSteps(final JsonNode defs,
             final JsonNode defaultSteps) {
-        JsonNode defaultStepsCopy =
-                defaultSteps.at("/steps/default").deepCopy();
-        JsonNode steps = defs.at("/steps");
-        if (steps.isMissingNode()) {
-            ObjectNode node =
-                    yamlHelper.createObjectNode("default", defaultStepsCopy);
-            ((ObjectNode) defs).set("steps", node);
-        } else {
-            ((ObjectNode) steps).set("default", defaultStepsCopy);
+        Iterator<String> it = defaultSteps.at("/steps").fieldNames();
+        while (it.hasNext()) {
+            String stepsName = it.next();
+            String path = String.join("/", "", "steps", stepsName);
+            JsonNode stepsCopy = defaultSteps.at(path).deepCopy();
+            // add it to defs steps node
+            JsonNode defsSteps = defs.at("/steps");
+            if (defsSteps.isMissingNode()) {
+                ObjectNode node =
+                        yamlHelper.createObjectNode(stepsName, stepsCopy);
+                ((ObjectNode) defs).set("steps", node);
+            } else {
+                ((ObjectNode) defsSteps).set(stepsName, stepsCopy);
+            }
         }
     }
 
@@ -112,6 +118,14 @@ public class DefsHelper {
             throws IOException {
         LOGGER.info("create effective defs");
 
+        String defaultStepsName;
+        try {
+            defaultStepsName =
+                    configService.getConfig("scoopi.defs.defaultSteps");
+        } catch (ConfigNotFoundException e) {
+            defaultStepsName = "jsoupDefault";
+        }
+
         JsonNode eDefs = defs.deepCopy();
         // !! don't change order of these methods !!
         defsNormalizer.addFactMember(eDefs);
@@ -119,7 +133,7 @@ public class DefsHelper {
         defsNormalizer.addMemberOrder(eDefs);
         defsNormalizer.addNoQuery(eDefs);
 
-        defsNormalizer.setDefaultSteps(eDefs);
+        defsNormalizer.setDefaultSteps(eDefs, defaultStepsName);
         defsNormalizer.expandOverriddenSteps(eDefs);
         defsNormalizer.expandSteps(eDefs);
 

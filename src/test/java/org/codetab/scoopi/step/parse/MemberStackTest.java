@@ -80,20 +80,24 @@ public class MemberStackTest {
                 Optional.of(Lists.newArrayList("x", "y"));
         Optional<Range<Integer>> indexRange = Optional.of(Range.between(1, 3));
 
-        Integer[] indexes = new Integer[] {1, 2};
-        Integer[] nextMemberIndexes = new Integer[] {3, 4, 5};
+        // Integer[] indexes = new Integer[] {1, 2};
+        // Integer[] nextMemberIndexes = new Integer[] {3, 4, 5};
+        String nextMemberIndexesKey = "345";
         Member memberCopy = Mockito.mock(Member.class);
 
-        given(memberHelper.getMemberIndexes(member)).willReturn(indexes);
+        // given(memberHelper.getMemberIndexesKey(member)).willReturn(indexes);
         given(axisDefs.getBreakAfters(dataDef, col)).willReturn(breakAfters);
         given(axisDefs.getIndexRange(dataDef, col)).willReturn(indexRange);
         given(memberHelper.isAxisWithinRange(col, breakAfters, indexRange))
                 .willReturn(true);
-        given(memberMatrix.nextMemberIndexes(indexes, col))
-                .willReturn(nextMemberIndexes);
-        given(memberMatrix.notYetCreated(nextMemberIndexes)).willReturn(true);
-        given(memberMatrix.createAdjacentMember(member, col))
-                .willReturn(memberCopy);
+        // given(memberMatrix.nextMemberIndexes(indexes, col))
+        // .willReturn(nextMemberIndexes);
+        given(memberHelper.getNextMemberIndexesAsKey(member, col))
+                .willReturn(nextMemberIndexesKey);
+        given(memberMatrix.notYetCreated(nextMemberIndexesKey))
+                .willReturn(true);
+        given(memberMatrix.createAdjacentMember(member, col,
+                nextMemberIndexesKey)).willReturn(memberCopy);
 
         stack.pushAdjacentMembers(dataDef, member);
 
@@ -122,17 +126,21 @@ public class MemberStackTest {
                 Optional.of(Lists.newArrayList("x", "y"));
         Optional<Range<Integer>> indexRange = Optional.of(Range.between(1, 3));
 
-        Integer[] indexes = new Integer[] {1, 2};
-        Integer[] nextMemberIndexes = new Integer[] {3, 4, 5};
+        // Integer[] indexes = new Integer[] {1, 2};
+        // Integer[] nextMemberIndexes = new Integer[] {3, 4, 5};
+        String nextMemberIndexesKey = "345";
 
-        given(memberHelper.getMemberIndexes(member)).willReturn(indexes);
+        // given(memberHelper.getMemberIndexesKey(member)).willReturn(indexes);
         given(axisDefs.getBreakAfters(dataDef, col)).willReturn(breakAfters);
         given(axisDefs.getIndexRange(dataDef, col)).willReturn(indexRange);
         given(memberHelper.isAxisWithinRange(col, breakAfters, indexRange))
                 .willReturn(true);
-        given(memberMatrix.nextMemberIndexes(indexes, col))
-                .willReturn(nextMemberIndexes);
-        given(memberMatrix.notYetCreated(nextMemberIndexes)).willReturn(false);
+        // given(memberMatrix.nextMemberIndexes(indexes, col))
+        // .willReturn(nextMemberIndexes);
+        given(memberHelper.getNextMemberIndexesAsKey(member, col))
+                .willReturn(nextMemberIndexesKey);
+        given(memberMatrix.notYetCreated(nextMemberIndexesKey))
+                .willReturn(false);
 
         stack.pushAdjacentMembers(dataDef, member);
 
@@ -140,7 +148,8 @@ public class MemberStackTest {
 
         assertThat(actual).isSameAs(dummyMember);
 
-        verify(memberMatrix, never()).createAdjacentMember(member, col);
+        verify(memberMatrix, never()).createAdjacentMember(member, col,
+                nextMemberIndexesKey);
     }
 
     @Test
@@ -165,9 +174,9 @@ public class MemberStackTest {
                 Optional.of(Lists.newArrayList("x", "y"));
         Optional<Range<Integer>> indexRange = Optional.of(Range.between(1, 3));
 
-        Integer[] indexes = new Integer[] {1, 2};
+        // Integer[] indexes = new Integer[] {1, 2};
 
-        given(memberHelper.getMemberIndexes(member)).willReturn(indexes);
+        // given(memberHelper.getMemberIndexesKey(member)).willReturn(indexes);
         given(axisDefs.getBreakAfters(dataDef, col)).willReturn(breakAfters);
         given(axisDefs.getIndexRange(dataDef, col)).willReturn(indexRange);
         given(memberHelper.isAxisWithinRange(col, breakAfters, indexRange))

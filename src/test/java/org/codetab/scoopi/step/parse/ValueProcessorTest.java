@@ -25,7 +25,7 @@ import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.TaskInfo;
-import org.codetab.scoopi.step.parse.jsoup.JSoupValueParser;
+import org.codetab.scoopi.step.parse.jsoup.ValueParser;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -123,7 +123,7 @@ public class ValueProcessorTest {
         Member member = factory.createMember();
         member.addAxis(row);
 
-        IValueParser valueParser = Mockito.mock(JSoupValueParser.class);
+        IValueParser valueParser = Mockito.mock(ValueParser.class);
         Map<String, String> queries = new HashMap<>();
 
         String value = "test";
@@ -180,7 +180,7 @@ public class ValueProcessorTest {
         Member member = factory.createMember();
         member.addAxis(row);
 
-        IValueParser valueParser = Mockito.mock(JSoupValueParser.class);
+        IValueParser valueParser = Mockito.mock(ValueParser.class);
         Map<String, String> queries = new HashMap<>();
 
         String value = "test";
@@ -214,7 +214,7 @@ public class ValueProcessorTest {
         Member member = factory.createMember();
         member.addAxis(row);
 
-        IValueParser valueParser = Mockito.mock(JSoupValueParser.class);
+        IValueParser valueParser = Mockito.mock(ValueParser.class);
 
         given(scriptProcessor.getScripts(dataDef, row.getName()))
                 .willThrow(NoSuchElementException.class);

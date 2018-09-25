@@ -1,5 +1,5 @@
 steps: 
-  default:
+  jsoupDefault:
     seeder:
       class: "org.codetab.scoopi.step.extract.LocatorSeeder"
       previous: start
@@ -9,7 +9,7 @@ steps:
       previous: seeder
       next: parser
     parser:
-      class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
+      class: "org.codetab.scoopi.step.parse.jsoup.Parser"
       previous: loader
       next: process
     process:
@@ -32,8 +32,50 @@ steps:
           plugins: [ 
              plugin: { 
                name: csv,
+               delimiter: "|",
                class: "org.codetab.scoopi.plugin.encoder.CsvEncoder"
              } 
           ]
         }          
       ]
+
+  htmlUnitDefault:
+    seeder:
+      class: "org.codetab.scoopi.step.extract.LocatorSeeder"
+      previous: start
+      next: loader
+    loader:
+      class: "org.codetab.scoopi.step.extract.URLLoader"
+      previous: seeder
+      next: parser
+    parser:
+      class: "org.codetab.scoopi.step.parse.htmlunit.Parser"
+      previous: loader
+      next: process
+    process:
+      class: "org.codetab.scoopi.step.convert.DataFilter"
+      previous: parser
+      next: converter
+    converter:
+      class: "org.codetab.scoopi.step.convert.DataConverter"
+      previous: process
+      next: appender
+    appender:
+      class: "org.codetab.scoopi.step.load.DataAppender"
+      previous: converter
+      next: end
+      plugins: [
+        plugin: { 
+          name: file, 
+          class: "org.codetab.scoopi.plugin.appender.FileAppender",
+          file: "output/data.txt", 
+          plugins: [ 
+             plugin: { 
+               name: csv,
+               delimiter: "|",
+               class: "org.codetab.scoopi.plugin.encoder.CsvEncoder"
+             } 
+          ]
+        }          
+      ]
+      

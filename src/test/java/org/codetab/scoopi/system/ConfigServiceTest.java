@@ -26,7 +26,7 @@ import org.mockito.MockitoAnnotations;
 
 public class ConfigServiceTest {
 
-    private static final int DEFAULT_CONFIGS_COUNT = 29;
+    private static final int DEFAULT_CONFIGS_COUNT = 30;
 
     private static final int USER_CONFIGS_COUNT = 2;
 
@@ -289,8 +289,10 @@ public class ConfigServiceTest {
 
         assertThat(defaultConfigs.getString("scoopi.defs.dir"))
                 .isEqualTo("/defs/examples/jsoup/ex-1");
-        assertThat(defaultConfigs.getString("scoopi.defs.defaultSteps"))
+        assertThat(defaultConfigs.getString("scoopi.defs.defaultStepsFile"))
                 .isEqualTo("/steps-default.yml");
+        assertThat(defaultConfigs.getString("scoopi.defs.defaultSteps"))
+                .isEqualTo("jsoupDefault");
         assertThat(defaultConfigs.getString("scoopi.defs.definedSchema"))
                 .isEqualTo("/schema/defs-defined.json");
         assertThat(defaultConfigs.getString("scoopi.defs.effectiveSchema"))

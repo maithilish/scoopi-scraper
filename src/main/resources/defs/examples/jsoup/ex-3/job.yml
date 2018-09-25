@@ -1,8 +1,15 @@
 locatorGroups:
-  bs:   
+  
+  bsGroup:   
     locators: [
        { name: acme, url: "/defs/examples/page/acme-bs.html" }  
     ]
+                                        
+taskGroups:
+
+  bsGroup:
+    bsTask:
+      dataDef: bs
 
 dataDefs:
 
@@ -26,28 +33,3 @@ dataDefs:
         members: [ 
           member: {name: item, indexRange: 7-9 },
         ]
-                                        
-taskGroups:
-
-  bs:
-    bs:
-      dataDef: bs
-      steps: dev
-         
-steps: 
-  dev:
-    seeder:
-      class: "org.codetab.scoopi.step.extract.LocatorSeeder"
-      previous: start
-      next: loader
-    loader:
-      class: "org.codetab.scoopi.step.extract.URLLoader"
-      previous: seeder
-      next: parser
-    parser:
-      class: "org.codetab.scoopi.step.parse.jsoup.JSoupParser"
-      previous: loader
-      next: end
-      
-      
-        

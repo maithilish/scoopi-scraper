@@ -19,13 +19,12 @@ import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JSoupParser extends BaseParser {
+public class Parser extends BaseParser {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(JSoupParser.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
 
     @Inject
-    private JSoupValueParser jsoupValueParser;
-
+    private ValueParser jsoupValueParser;
     @Inject
     private DocumentHelper documentHelper;
 

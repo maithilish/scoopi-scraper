@@ -1,5 +1,7 @@
 package org.codetab.scoopi.plugin.appender;
 
+import static java.util.Objects.isNull;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,6 +30,10 @@ public class Appenders extends HashMap<String, Appender> {
                         String.join("-", stepsName, stepName, plugin.getName());
                 Appender appender =
                         appenderMediator.getAppender(appenderName, plugin);
+                if (isNull(appender)) {
+                    appender = appenderMediator.createAppender(appenderName,
+                            plugin);
+                }
                 put(appenderName, appender);
             } catch (ClassCastException | IllegalStateException
                     | ClassNotFoundException | DefNotFoundException e) {

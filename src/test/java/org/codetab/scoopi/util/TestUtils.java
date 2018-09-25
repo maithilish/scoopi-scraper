@@ -1,10 +1,15 @@
 package org.codetab.scoopi.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 
 import com.google.gson.JsonParser;
@@ -14,6 +19,15 @@ public class TestUtils {
     private static JsonParser jsonParser = new JsonParser();
 
     private TestUtils() {
+    }
+
+    public static List<String> readFileAsList(final String fileName) {
+        try {
+            InputStream is = TestUtils.class.getResourceAsStream(fileName);
+            return IOUtils.readLines(is, "UTF-8");
+        } catch (IOException e) {
+            return new ArrayList<String>();
+        }
     }
 
     public static void assertUtilityClassWellDefined(final Class<?> clazz)

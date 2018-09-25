@@ -1,0 +1,1 @@
+acme|quoteGroup|%{runDateTime}|Price|315.25

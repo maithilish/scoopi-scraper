@@ -17,7 +17,7 @@ import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.step.parse.cache.ParserCache;
-import org.codetab.scoopi.step.parse.jsoup.JSoupValueParser;
+import org.codetab.scoopi.step.parse.jsoup.ValueParser;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -133,7 +133,7 @@ public class QueryProcessorTest {
         Map<String, String> queries = new HashMap<>();
         int key = 5;
         String value = "test";
-        IValueParser valueParser = Mockito.mock(JSoupValueParser.class);
+        IValueParser valueParser = Mockito.mock(ValueParser.class);
 
         given(parserCache.getKey(queries)).willReturn(key);
         given(parserCache.get(key)).willReturn(null);
@@ -151,7 +151,7 @@ public class QueryProcessorTest {
         Map<String, String> queries = new HashMap<>();
         int key = 5;
         String value = "test";
-        IValueParser valueParser = Mockito.mock(JSoupValueParser.class);
+        IValueParser valueParser = Mockito.mock(ValueParser.class);
 
         given(parserCache.getKey(queries)).willReturn(key);
         given(parserCache.get(key)).willReturn(value);

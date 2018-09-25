@@ -3,7 +3,6 @@ package org.codetab.scoopi.step.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -35,82 +34,62 @@ public class MemberMatrixTest {
     }
 
     @Test
-    public void testNextMemberIndexes() {
-        Axis col = factory.createAxis(AxisName.COL, "date");
-        Integer[] indexes = new Integer[] {0, 1, 2, 0};
-        Integer[] actual = memberMatrix.nextMemberIndexes(indexes, col);
-
-        Integer[] expected = new Integer[] {0, 2, 2, 0};
-        assertThat(actual).isNotSameAs(indexes);
-        assertThat(actual).isNotEqualTo(indexes);
-        assertThat(actual).isEqualTo(expected);
-
-        Axis row = factory.createAxis(AxisName.ROW, "item");
-        indexes = new Integer[] {0, 1, 2, 0};
-        actual = memberMatrix.nextMemberIndexes(indexes, row);
-
-        expected = new Integer[] {0, 1, 3, 0};
-        assertThat(actual).isNotSameAs(indexes);
-        assertThat(actual).isNotEqualTo(indexes);
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testCreateMember() {
+    public void testCreateAdjacentMember() throws IllegalAccessException {
         Axis col = factory.createAxis(AxisName.COL, "date");
         col.setValue("c");
         col.setIndex(1);
-        col.setOrder(1);
+        col.setOrder(2);
 
         Axis row = factory.createAxis(AxisName.ROW, "price");
         row.setValue("r");
         row.setIndex(10);
-        row.setOrder(10);
+        row.setOrder(11);
 
         Member member = factory.createMember();
         member.addAxis(col);
         member.addAxis(row);
 
+        // value is null in expected axis
         Axis expectedCol = factory.createAxis(AxisName.COL, "date");
         expectedCol.setIndex(2);
-        expectedCol.setOrder(2);
+        expectedCol.setOrder(3);
 
         Axis expectedRow = factory.createAxis(AxisName.ROW, "price");
         expectedRow.setIndex(10);
-        expectedRow.setOrder(10);
+        expectedRow.setOrder(11);
 
         Member copy = member.copy();
 
-        Integer[] indexes = new Integer[] {0, 2, 0, 0};
+        String nextMemberIndexesKey = "1020300";
 
         given(memberHelper.copy(member)).willReturn(copy);
-        given(memberHelper.getMemberIndexes(copy)).willReturn(indexes);
 
-        Member actual = memberMatrix.createAdjacentMember(member, col);
+        assertThat(memberMatrix.notYetCreated(nextMemberIndexesKey)).isTrue();
 
-        assertThat(memberMatrix.notYetCreated(indexes)).isFalse();
+        Member actual = memberMatrix.createAdjacentMember(member, col,
+                nextMemberIndexesKey);
+
         assertThat(actual).isSameAs(copy);
         assertThat(actual.getAxis(AxisName.COL)).isEqualTo(expectedCol);
         assertThat(actual.getAxis(AxisName.ROW)).isEqualTo(expectedRow);
+
+        assertThat(memberMatrix.notYetCreated(nextMemberIndexesKey)).isFalse();
     }
 
     @Test
     public void testNotYetCreated() throws IllegalAccessException {
-        Integer[] indexes = new Integer[] {1, 2, 3};
 
-        boolean actual = memberMatrix.notYetCreated(indexes);
-
-        assertThat(actual).isTrue();
+        String nextMemberIndexesKey = "1020300";
 
         @SuppressWarnings("unchecked")
-        Set<Integer> createdSet = (Set<Integer>) FieldUtils
+        Set<String> createdSet = (Set<String>) FieldUtils
                 .readField(memberMatrix, "createdSet", true);
-        int hash = Arrays.hashCode(indexes);
-        createdSet.add(hash);
 
-        actual = memberMatrix.notYetCreated(indexes);
+        assertThat(memberMatrix.notYetCreated(nextMemberIndexesKey)).isTrue();
 
-        assertThat(actual).isFalse();
+        createdSet.add(nextMemberIndexesKey);
+
+        assertThat(memberMatrix.notYetCreated(nextMemberIndexesKey)).isFalse();
     }
 
 }

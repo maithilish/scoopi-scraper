@@ -3,9 +3,10 @@ package org.codetab.scoopi.plugin.appender;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -27,9 +28,15 @@ public class AppenderMediator {
     protected ErrorLogger errorLogger;
 
     private final Map<String, Appender> appenders =
-            new HashMap<String, Appender>();
+            new ConcurrentHashMap<String, Appender>();
 
-    public synchronized Appender getAppender(final String appenderName,
+    public Appender getAppender(final String appenderName,
+            final Plugin plugin) {
+        return appenders.get(appenderName);
+    }
+
+    @GuardedBy("this")
+    public synchronized Appender createAppender(final String appenderName,
             final Plugin plugin) throws ClassCastException,
             ClassNotFoundException, DefNotFoundException {
         Appender appender = appenders.get(appenderName);
@@ -41,13 +48,15 @@ public class AppenderMediator {
         return appender;
     }
 
+    @GuardedBy("this")
     public synchronized void closeAll() {
         for (String name : appenders.keySet()) {
             close(name);
         }
     }
 
-    public void close(final String appenderName) {
+    @GuardedBy("this")
+    private void close(final String appenderName) {
         Appender appender = appenders.get(appenderName);
         if (nonNull(appender)) {
             try {

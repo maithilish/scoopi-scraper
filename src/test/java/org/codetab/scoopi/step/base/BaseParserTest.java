@@ -38,8 +38,8 @@ import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.step.parse.IValueParser;
 import org.codetab.scoopi.step.parse.MemberStack;
 import org.codetab.scoopi.step.parse.ValueProcessor;
-import org.codetab.scoopi.step.parse.jsoup.JSoupParser;
-import org.codetab.scoopi.step.parse.jsoup.JSoupValueParser;
+import org.codetab.scoopi.step.parse.jsoup.Parser;
+import org.codetab.scoopi.step.parse.jsoup.ValueParser;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
@@ -82,14 +82,14 @@ public class BaseParserTest {
     private IDataDefDefs dataDefDefs;
 
     @Spy
-    private JSoupValueParser jsoupValueParser;
+    private ValueParser valueParser;
     @Mock
     private DocumentHelper documentHelper;
     @Mock
     private StopWatch timer;
 
     @InjectMocks
-    private JSoupParser parser;
+    private Parser parser;
 
     private static ObjectFactory factory;
 
@@ -120,13 +120,13 @@ public class BaseParserTest {
 
         boolean actual = parser.initialize();
 
-        IValueParser valueParser = (IValueParser) FieldUtils.readField(parser,
+        IValueParser valParser = (IValueParser) FieldUtils.readField(parser,
                 "valueParser", true);
         org.jsoup.nodes.Document page = (org.jsoup.nodes.Document) FieldUtils
-                .readField(jsoupValueParser, "page", true);
+                .readField(valParser, "page", true);
 
         assertThat(actual).isTrue();
-        assertThat(valueParser).isSameAs(jsoupValueParser);
+        assertThat(valueParser).isSameAs(valParser);
         assertThat(page.text()).isEqualTo("test html");
     }
 
@@ -248,13 +248,13 @@ public class BaseParserTest {
 
     @Test
     public void testSetValueParser() throws IllegalAccessException {
-        IValueParser valueParser = new JSoupValueParser();
-        parser.setValueParser(valueParser);
+        IValueParser valParser = new ValueParser();
+        parser.setValueParser(valParser);
 
         IValueParser actual = (IValueParser) FieldUtils.readField(parser,
                 "valueParser", true);
 
-        assertThat(actual).isSameAs(valueParser);
+        assertThat(actual).isSameAs(valParser);
     }
 
     @Test
@@ -264,8 +264,8 @@ public class BaseParserTest {
         Document document = (Document) parser.getPayload().getData();
         FieldUtils.writeField(parser, "document", document, true);
 
-        IValueParser valueParser = new JSoupValueParser();
-        parser.setValueParser(valueParser);
+        IValueParser valParser = new ValueParser();
+        parser.setValueParser(valParser);
 
         Counter parseCounter = Mockito.mock(Counter.class);
         Counter reuseCounter = Mockito.mock(Counter.class);
@@ -304,9 +304,9 @@ public class BaseParserTest {
         verify(valueProcessor).addScriptObject("document", document);
         verify(valueProcessor).addScriptObject("configs", configService);
         verify(memberStack).pushMembers(data.getMembers());
-        verify(valueProcessor).setAxisValues(dataDef, member1, valueParser);
+        verify(valueProcessor).setAxisValues(dataDef, member1, valParser);
         verify(memberStack).pushAdjacentMembers(dataDef, member1);
-        verify(valueProcessor).setAxisValues(dataDef, member2, valueParser);
+        verify(valueProcessor).setAxisValues(dataDef, member2, valParser);
         verify(memberStack).pushAdjacentMembers(dataDef, member2);
         verify(parseCounter).inc();
 
