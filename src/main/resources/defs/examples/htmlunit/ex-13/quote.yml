@@ -1,0 +1,95 @@
+locatorGroups:
+
+  quoteGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/page/acme-quote-links.html" }  
+    ]
+
+taskGroups:
+
+  quoteGroup:
+    
+    linkTask:
+      dataDef: links
+      steps:
+        htmlUnitDefault:
+          process:
+            class: "org.codetab.scoopi.step.convert.LocatorCreator"
+            previous: parser
+            next: seeder
+
+    priceTask:
+      dataDef: price
+      
+    snapshotTask:
+      dataDef: snapshot        
+
+dataDefs:
+
+  links:
+    axis:
+      fact:
+        query:
+          region: "//div[@id='page_links']/table" 
+          field: "tbody/tr/td[4]/ul/li[%{row.index}]/a/@href"                  
+        prefix: [ "/defs/examples/page/" ]   
+      col:
+        query:
+          script: "configs.getRunDateTime()"                  
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          region: "//*[@id='page_links']/table"
+          field: "tbody/tr/td[4]/ul/li[%{row.index}]/a"      
+        members: [ 
+          member: {name: bs, index: 2, linkGroup: bsGroup},                   
+          member: {name: pl, index: 3, linkGroup: plGroup},
+        ]
+
+  price:
+    axis:
+      fact:
+        query:
+          region: "//*[@id='price_tick_span']"  
+          field: "strong"
+      col:
+        query:
+          script: configs.getRunDateTime()        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        members: [ 
+          member: {name: Price, value: Price},
+        ]
+
+  snapshot:
+    axis:
+      fact:
+        query:
+          region: "//*[@id='snapshot']"  
+          field: "div/div/div[starts-with(child::text(),'%{row.match}')]/following-sibling::div[1]"          
+      col:
+        query:
+          script: "document.getFromDate()"        
+        members: [ 
+          member: {name: date},
+        ]
+      row:
+        query:
+          region: "//*[@id='snapshot']"
+          field: "div/div/div[starts-with(child::text(),'%{row.match}')]/child::text()"      
+        members: [ 
+          member: { name: "MC", match: "MARKET CAP" },
+          member: { name: "EPS", match: "EPS (TTM)" },
+          member: { name: "PE", match: "P/E" },
+          member: { name: "PC", match: "P/C" },
+          member: { name: "BV", match: "BOOK VALUE" },
+          member: { name: "PB", match: "PRICE/BOOK" },
+          member: { name: "DIV", match: "DIV (%)" },
+          member: { name: "DY", match: "DIV YIELD" },
+          member: { name: "FV", match: "FACE VALUE" },
+          member: { name: "IND PE", match: "INDUSTRY P/E" },
+        ]

@@ -27,3 +27,9 @@ npm modules
 npm install angular-in-memory-web-api --save-dev
 npm install --save  bootstrap
   ( add bootstrap css to styles array in angular.json )
+
+Install the npm packages
+------------------------
+
+npm install
+

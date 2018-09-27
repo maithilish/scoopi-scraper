@@ -385,3 +385,20 @@ Validate param for null or illegal argument (not required for private methods). 
   Set detachable as true in package.jdo for the class.
 
   In case detached object is persisted again and detachable is not true for the class then instead of update jdo inserts new object. If this results in constraint violation then jdo throws NullPointerExcetpion.
+  
+###### Jackson
+
+find field in node or child nodes
+
+	findValue(String fieldName) - JsonNode or null 
+	findPath(String fieldName) - JsonNode or MissingNode
+
+find direct field 
+
+	get(String fieldName) - JsonNode or null
+	path(String fieldName) - JsonNode or MissingNode
+
+set nodes
+
+	set(fieldName, node) - add field and set node 
+	setAll(node) - add node directly 

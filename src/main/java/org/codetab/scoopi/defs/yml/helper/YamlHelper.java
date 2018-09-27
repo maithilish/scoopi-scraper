@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,13 +33,13 @@ public class YamlHelper {
     @Inject
     private IOHelper ioHelper;
 
-    public JsonNode loadYamls(final Collection<String> files)
+    public List<JsonNode> loadYamls(final Collection<String> files)
             throws JsonProcessingException, IOException {
         List<JsonNode> nodes = new ArrayList<>();
         for (String file : files) {
             nodes.add(loadYaml(file));
         }
-        return mergeNodes(nodes);
+        return nodes;
     }
 
     public JsonNode loadYaml(final String file)
@@ -51,15 +52,32 @@ public class YamlHelper {
         }
     }
 
-    public JsonNode mergeNodes(final List<JsonNode> nodes) {
+    public JsonNode mergeNodes(final List<JsonNode> nodesList) {
         LOGGER.info("merge defs");
-        ObjectNode mNode = (ObjectNode) mapper.createObjectNode();
-        for (JsonNode node : nodes) {
-            ObjectNode copy = node.deepCopy();
-            mNode.setAll(copy);
+        ObjectNode mergedNodes = (ObjectNode) mapper.createObjectNode();
+        for (JsonNode nodes : nodesList) {
+            Iterator<String> fieldNames = nodes.fieldNames();
+            while (fieldNames.hasNext()) {
+                String fieldName = fieldNames.next();
+                // existing node - if any or missing node
+                JsonNode existingNode = mergedNodes.path(fieldName);
+
+                // node copy to merge
+                JsonNode node = nodes.path(fieldName);
+                ObjectNode nodeCopy = node.deepCopy();
+
+                if (existingNode.isMissingNode()) {
+                    // add new field and node copy
+                    mergedNodes.set(fieldName, nodeCopy);
+                } else {
+                    // add node copy to existing field
+                    ObjectNode eNode = (ObjectNode) existingNode;
+                    eNode.setAll(nodeCopy);
+                }
+            }
         }
         LOGGER.debug("defs merged");
-        return mNode;
+        return mergedNodes;
     }
 
     public boolean validateSchema(final String schemaName,

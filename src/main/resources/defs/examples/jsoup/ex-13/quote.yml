@@ -1,0 +1,96 @@
+locatorGroups:
+
+  quoteGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/page/acme-quote-links.html" }  
+    ]
+
+taskGroups:
+
+  quoteGroup:
+    
+    linkTask:
+      dataDef: links
+      steps:
+        jsoupDefault:
+          process:
+            class: "org.codetab.scoopi.step.convert.LocatorCreator"
+            previous: parser
+            next: seeder
+
+    priceTask:
+      dataDef: price
+      
+    snapshotTask:
+      dataDef: snapshot        
+
+dataDefs:
+
+  links:
+    axis:
+      fact:
+        query:
+          region: "#page_links > table > tbody > tr > td:nth-child(4) > ul"  
+          field: "li:nth-child(%{row.index}) > a[href]"
+          attribute: "href"
+        prefix: [ "/defs/examples/page/" ]   
+      col:
+        query:
+          script: "configs.getRunDateTime()"                  
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          region: "#page_links > table > tbody > tr > td:nth-child(4) > ul"
+          field: "li:nth-child(%{row.index}) > a[href]"      
+        members: [ 
+          member: {name: bs, index: 2, linkGroup: bsGroup},                   
+          member: {name: pl, index: 3, linkGroup: plGroup},
+        ]
+
+  price:
+    axis:
+      fact:
+        query:
+          region: "div#price_tick"  
+          field: "*"
+      col:
+        query:
+          script: configs.getRunDateTime()        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        members: [ 
+          member: {name: Price, value: Price},
+        ]
+  
+  snapshot:
+    axis:
+      fact:
+        query:
+          region: "div#snapshot"  
+          field: "div:matchesOwn(^%{row.match}) + div"
+      col:
+        query:
+          script: "document.getFromDate()"        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          region: "div#snapshot"
+          field: "div:matchesOwn(^%{row.match})"      
+        members: [ 
+          member: { name: "MC", match: "MARKET CAP" },
+          member: { name: "EPS", match: "EPS \\(TTM\\)" },
+          member: { name: "PE", match: "P/E" },
+          member: { name: "PC", match: "P/C" },
+          member: { name: "BV", match: "BOOK VALUE" },
+          member: { name: "PB", match: "PRICE/BOOK" },
+          member: { name: "DIV", match: "DIV \\(%\\)" },
+          member: { name: "DY", match: "DIV YIELD" },
+          member: { name: "FV", match: "FACE VALUE" },
+          member: { name: "IND PE", match: "INDUSTRY P/E" },
+        ]

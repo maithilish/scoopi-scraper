@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -51,7 +52,8 @@ public class DefsHelper {
     public JsonNode loadDefinedDefs(final Collection<String> defsFiles)
             throws ConfigNotFoundException, IOException, URISyntaxException {
         LOGGER.info("load defined defs");
-        JsonNode defs = yamlHelper.loadYamls(defsFiles);
+        List<JsonNode> nodesList = yamlHelper.loadYamls(defsFiles);
+        JsonNode defs = yamlHelper.mergeNodes(nodesList);
         LOGGER.debug("defined defs loaded");
         return defs;
     }
