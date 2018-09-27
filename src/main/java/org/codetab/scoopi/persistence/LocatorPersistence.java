@@ -124,13 +124,13 @@ public class LocatorPersistence {
      * <ul>
      * <li>scoopi.useDatastore=false, don't persist anything</li>
      * <li>scoopi.persist.locator=false, don't persist any locator</li>
-     * <li>task/persist is false, don't persist that locator</li>
+     * <li>locator persist is false, don't persist the locator</li>
      * </ul>
      * </p>
-     * @param taskLevelPersistence
+     * @param locatorLevelPersistence
      * @return true or false
      */
-    public boolean persist(final Optional<Boolean> taskLevelPersistence) {
+    public boolean persist(final Optional<Boolean> locatorLevelPersistence) {
         if (!configService.useDataStore()) {
             // disabled at global level
             return false;
@@ -139,12 +139,12 @@ public class LocatorPersistence {
             // enabled at global but disabled at model level
             return false;
         }
-        if (taskLevelPersistence.isPresent()) {
+        if (locatorLevelPersistence.isPresent()) {
             // enabled at global and model level
-            // enabled or disabled at task level
-            return taskLevelPersistence.get();
+            // enabled or disabled at locator level
+            return locatorLevelPersistence.get();
         } else {
-            // undefined at task level
+            // undefined at locator level
             return true;
         }
     }

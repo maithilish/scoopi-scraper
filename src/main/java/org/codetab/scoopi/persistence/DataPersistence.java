@@ -125,7 +125,8 @@ public class DataPersistence {
      * <ul>
      * <li>scoopi.useDatastore=false, don't persist anything</li>
      * <li>scoopi.persist.data=false, don't persist any data</li>
-     * <li>task/persist is false, don't persist the data owned by task</li>
+     * <li>task/persist/data is false, don't persist the data owned by the
+     * task</li>
      * </ul>
      * </p>
      * @param taskLevelPersistence

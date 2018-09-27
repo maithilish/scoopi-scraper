@@ -135,7 +135,7 @@ public class DataDefPersistence {
      * this with
      * <ul>
      * <li>scoopi.useDatastore=false, don't persist anything</li>
-     * <li>scoopi.persist.dataDef=false, don't persist any locator</li>
+     * <li>scoopi.persist.dataDef=false, don't persist any dataDef</li>
      * </ul>
      * </p>
      * *

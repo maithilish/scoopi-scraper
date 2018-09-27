@@ -177,8 +177,8 @@ public abstract class BaseParser extends Step {
 
     private boolean persist() {
         // TODO code and move it to yaml
-        Optional<Boolean> taskLevelPersistenceDefined =
-                Optional.ofNullable(true);
-        return dataPersistence.persist(taskLevelPersistenceDefined);
+        // write itest and verify Ex-12
+        Optional<Boolean> taskLevelPersistence = Optional.ofNullable(true);
+        return dataPersistence.persist(taskLevelPersistence);
     }
 }

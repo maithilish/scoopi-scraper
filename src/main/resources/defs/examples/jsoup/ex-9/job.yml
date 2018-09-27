@@ -1,0 +1,137 @@
+locatorGroups:
+
+  quoteGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/page/acme-quote-links.html" }  
+    ]
+
+taskGroups:
+
+  quoteGroup:
+    
+    linkTask:
+      dataDef: links
+      steps:
+        jsoupDefault:
+          process:
+            class: "org.codetab.scoopi.step.convert.LocatorCreator"
+            previous: parser
+            next: seeder
+
+  bsGroup:
+
+    bsTask:
+      dataDef: bs
+      steps:
+        jsoupDefault:
+          converter:
+            class: "org.codetab.scoopi.step.convert.DataConverter"
+            previous: process
+            next: appender           
+            plugins: [
+              plugin: { 
+                     name: converter, 
+                     class: "org.codetab.scoopi.plugin.converter.DateRoller", 
+                     axis: col, 
+                     inPattern: "MMM ''YY", 
+                     outPattern: "yyyy-MM-dd", 
+                     roll: "DAY_OF_MONTH=ceil" }            
+           ]
+
+  plGroup:
+
+    plTask:
+      dataDef: pl
+      steps:
+        jsoupDefault:
+          converter:
+            class: "org.codetab.scoopi.step.convert.DataConverter"
+            previous: process
+            next: appender           
+            plugins: [
+              plugin: { 
+                     name: converter, 
+                     class: "org.codetab.scoopi.plugin.converter.DateRoller", 
+                     axis: col, 
+                     inPattern: "MMM ''YY", 
+                     outPattern: "yyyy-MM-dd", 
+                     roll: "DAY_OF_MONTH=ceil" }            
+           ]      
+                 
+
+dataDefs:
+
+  links:
+    axis:
+      fact:
+        query:
+          region: "#page_links > table > tbody > tr > td:nth-child(4) > ul"  
+          field: "li:nth-child(%{row.index}) > a[href]"
+          attribute: "href"
+        prefix: [ "/defs/examples/page/" ]   
+      col:
+        query:
+          script: "configs.getRunDateTime()"                  
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        query:
+          region: "#page_links > table > tbody > tr > td:nth-child(4) > ul"
+          field: "li:nth-child(%{row.index}) > a[href]"      
+        members: [ 
+          member: {name: bs, index: 2, linkGroup: bsGroup},                   
+          member: {name: pl, index: 3, linkGroup: plGroup},
+        ]
+
+  bs:
+    axis:
+      fact:
+        query:
+          region: "table:contains(Sources Of Funds)"  
+          field: "tr:nth-child(%{row.index}) > td:nth-child(%{col.index})" 
+      col:
+        query:
+          region: "table:contains(Sources Of Funds)"
+          field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
+        members: [ 
+          member: {name: year, indexRange: 2-6},
+        ]  
+      row:
+        query:
+          region: "table:contains(Sources Of Funds)"
+          field: "tr:nth-child(%{row.index}) > td:nth-child(1)"      
+        members: [ 
+          member: {name: item, index: 5, breakAfter: ["Book Value (Rs)"] },
+        ]
+        filters: [ 
+          filter: { type: value, pattern: "" },
+          filter: { type: value, pattern: "Sources Of Funds" },
+          filter: { type: value, pattern: "Application Of Funds" },                   
+        ]
+
+  pl:
+    axis:
+      fact:
+        query:
+          region: "table:contains(Employee Cost)" 
+          field: "tr:nth-child(%{row.index}) > td:nth-child(%{col.index})" 
+      col:
+        query:
+          region: "table:contains(Employee Cost)"
+          field: "tr:nth-child(1) > td:nth-child(%{col.index})"      
+        members: [ 
+          member: {name: year, indexRange: 2-6},
+        ]  
+      row:
+        query:
+          region: "table:contains(Employee Cost)"
+          field: "tr:nth-child(%{row.index}) > td:nth-child(1)" 
+        members: [ 
+          member: {name: item, index: 6, breakAfter: ["Book Value (Rs)"] },
+        ]
+        filters: [ 
+          filter: { type: value, pattern: "" },
+          filter: { type: value, pattern: "Expenditure" },
+          filter: { type: value, pattern: "Per share data (annualised)" },       
+        ]        

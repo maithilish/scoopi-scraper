@@ -382,6 +382,13 @@
 						"live": {
 							"type": "string",
 							"minLength": 1
+						},
+						"persist": {
+							"oneOf": [
+								{
+									"$ref": "#/definitions/taskPersistNode"
+								}
+							]
 						}
 					},
 					"additionalProperties": false,
@@ -402,6 +409,17 @@
 					]
 				}
 			}
+		},
+		"taskPersistNode": {
+			"type": "object",
+			"properties": {
+				"data": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"data"
+			]
 		},
 		"stepNode": {
 			"type": "object",

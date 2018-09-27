@@ -276,10 +276,9 @@ public abstract class BaseLoader extends Step {
 
     private boolean persist() {
         // TODO code and move it to yaml
-        Optional<Boolean> taskLevelPersistenceDefined =
-                Optional.ofNullable(true);
-        boolean persist =
-                locatorPersistence.persist(taskLevelPersistenceDefined);
+        // write itest and verify Ex-12
+        Optional<Boolean> locatorLevelPersistence = Optional.ofNullable(true);
+        boolean persist = locatorPersistence.persist(locatorLevelPersistence);
         return persist;
     }
 

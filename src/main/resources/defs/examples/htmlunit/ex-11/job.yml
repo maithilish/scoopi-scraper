@@ -1,0 +1,66 @@
+locatorGroups:
+
+  quoteGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/page/acme-quote.html" }  
+    ]
+
+taskGroups:
+
+  quoteGroup:
+    priceTask:
+      dataDef: price
+      live: P1D
+
+    snapshotTask:
+      dataDef: snapshot
+      live: P1W        
+      
+dataDefs:
+
+  price:
+    axis:
+      fact:
+        query:
+          region: "//*[@id='price_tick_span']"  
+          field: "strong"
+      col:
+        query:
+          script: configs.getRunDateTime()        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        members: [ 
+          member: {name: Price, value: Price},
+        ]
+
+  snapshot:
+    axis:
+      fact:
+        query:
+          region: "//*[@id='snapshot']"  
+          field: "div/div/div[starts-with(child::text(),'%{row.match}')]/following-sibling::div[1]"          
+      col:
+        query:
+          script: "document.getFromDate()"        
+        members: [ 
+          member: {name: date},
+        ]
+      row:
+        query:
+          region: "//*[@id='snapshot']"
+          field: "div/div/div[starts-with(child::text(),'%{row.match}')]/child::text()"      
+        members: [ 
+          member: { name: "MC", match: "MARKET CAP" },
+          member: { name: "EPS", match: "EPS (TTM)" },
+          member: { name: "PE", match: "P/E" },
+          member: { name: "PC", match: "P/C" },
+          member: { name: "BV", match: "BOOK VALUE" },
+          member: { name: "PB", match: "PRICE/BOOK" },
+          member: { name: "DIV", match: "DIV (%)" },
+          member: { name: "DY", match: "DIV YIELD" },
+          member: { name: "FV", match: "FACE VALUE" },
+          member: { name: "IND PE", match: "INDUSTRY P/E" },
+        ]
+        

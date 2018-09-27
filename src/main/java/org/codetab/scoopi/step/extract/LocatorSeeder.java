@@ -58,7 +58,7 @@ public final class LocatorSeeder extends BaseSeeder {
      * model factory
      */
     @Inject
-    private ObjectFactory factory;
+    private ObjectFactory objectFactory;
 
     @Inject
     private ErrorLogger errorLogger;
@@ -110,8 +110,8 @@ public final class LocatorSeeder extends BaseSeeder {
                             payload.toString());
                     errorLogger.log(CAT.INTERNAL, message, e);
                 }
+                threadSleep.sleep(SLEEP_MILLIS);
             }
-            threadSleep.sleep(SLEEP_MILLIS);
         }
         LOGGER.info("locator group: {}, locators: {}, queued to taskpool: {}",
                 locatorGroup.getGroup(), locatorGroup.getLocators().size(),
@@ -141,11 +141,11 @@ public final class LocatorSeeder extends BaseSeeder {
                             taskName, "dataDef");
                     StepInfo nextStep = taskDefs.getNextStep(taskGroup,
                             taskName, thisStep.getStepName());
-                    JobInfo jobInfo = factory.createJobInfo(
+                    JobInfo jobInfo = objectFactory.createJobInfo(
                             taskMediator.getJobId(), locator.getName(),
                             taskGroup, taskName, stepsName, dataDefName);
-                    Payload nextStepPayload =
-                            factory.createPayload(jobInfo, nextStep, locator);
+                    Payload nextStepPayload = objectFactory
+                            .createPayload(jobInfo, nextStep, locator);
                     payloads.add(nextStepPayload);
                 }
             } catch (DefNotFoundException e) {

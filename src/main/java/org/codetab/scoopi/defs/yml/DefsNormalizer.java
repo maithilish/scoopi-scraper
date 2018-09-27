@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.assertj.core.util.Lists;
 import org.codetab.scoopi.defs.yml.helper.NormalizerHelper;
+import org.codetab.scoopi.exception.CriticalException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -140,6 +141,11 @@ public class DefsNormalizer {
         for (JsonNode steps : allSteps.values()) {
             if (steps.isObject()) {
                 String stepsName = nzHelper.getOverriddenStepsName(steps);
+                if (isNull(stepsMap.get(stepsName))) {
+                    String message = String.join(" ", "steps:", stepsName,
+                            "not defined");
+                    throw new CriticalException(message);
+                }
                 Map<String, JsonNode> overriddenSteps =
                         nzHelper.getOverridenSteps(stepsName, steps);
                 ObjectNode expandedSteps =
