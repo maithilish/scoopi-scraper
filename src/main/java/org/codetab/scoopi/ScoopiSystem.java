@@ -198,10 +198,10 @@ public class ScoopiSystem {
         return modeInfo;
     }
 
-    public void waitForHeapDump() {
+    public void waitForInput() {
         String wait = "false"; //$NON-NLS-1$
         try {
-            wait = configService.getConfig("scoopi.waitForHeapDump"); //$NON-NLS-1$
+            wait = configService.getConfig("scoopi.wait"); //$NON-NLS-1$
         } catch (ConfigNotFoundException e) {
         }
         if (wait.equalsIgnoreCase("true")) { //$NON-NLS-1$

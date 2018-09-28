@@ -50,7 +50,7 @@ public class ScoopiEngine {
 
             LOGGER.info("scoopi initialized");
 
-            scoopiSystem.waitForHeapDump();
+            scoopiSystem.waitForInput();
 
             // multi thread
 
@@ -62,7 +62,7 @@ public class ScoopiEngine {
 
             scoopiSystem.waitForFinish();
 
-            scoopiSystem.waitForHeapDump();
+            scoopiSystem.waitForInput();
 
             LOGGER.info("shutdown ...");
         } catch (CriticalException e) {

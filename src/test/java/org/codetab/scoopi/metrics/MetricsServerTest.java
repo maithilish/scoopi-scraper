@@ -9,12 +9,12 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
-import org.codetab.scoopi.di.BasicFactory;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.IOHelper;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,7 +28,7 @@ import org.mockito.MockitoAnnotations;
 public class MetricsServerTest {
 
     @Mock
-    private BasicFactory factory;
+    private ServerFactory factory;
     @Mock
     private ConfigService configService;
     @Mock
@@ -52,17 +52,22 @@ public class MetricsServerTest {
         String port = "10000";
         Server server = Mockito.mock(Server.class);
         WebAppContext webAppContext = Mockito.mock(WebAppContext.class);
+        ServerConnector[] connector =
+                new ServerConnector[] {Mockito.mock(ServerConnector.class)};
 
         URL webAppBase = new URL("file://scoopi/web");
-        String webAppDescriptor = webAppBase.toString() + "WEB-INF/web.xml";
+        String webAppDescriptor =
+                String.join("/", webAppBase.toString(), "WEB-INF/web.xml");
 
         given(configService.getConfig("scoopi.metrics.server.port"))
                 .willReturn(port);
         given(configService.getConfig("scoopi.metrics.server.enable"))
                 .willReturn("true");
-        given(factory.getServer(Integer.parseInt(port))).willReturn(server);
-        given(factory.getWebAppContext()).willReturn(webAppContext);
+        given(factory.createServer(Integer.parseInt(port))).willReturn(server);
+        given(factory.createWebAppContext()).willReturn(webAppContext);
         given(ioHelper.getURL("/webapp")).willReturn(webAppBase);
+        given(server.getConnectors()).willReturn(connector);
+        given(connector[0].getLocalPort()).willReturn(Integer.parseInt(port));
 
         metricsServer.start();
 
@@ -78,17 +83,22 @@ public class MetricsServerTest {
         String port = "9010";
         Server server = Mockito.mock(Server.class);
         WebAppContext webAppContext = Mockito.mock(WebAppContext.class);
+        ServerConnector[] connector =
+                new ServerConnector[] {Mockito.mock(ServerConnector.class)};
 
         URL webAppBase = new URL("file://scoopi/web");
-        String webAppDescriptor = webAppBase.toString() + "WEB-INF/web.xml";
+        String webAppDescriptor =
+                String.join("/", webAppBase.toString(), "WEB-INF/web.xml");
 
         given(configService.getConfig("scoopi.metrics.server.port"))
                 .willThrow(ConfigNotFoundException.class);
         given(configService.getConfig("scoopi.metrics.server.enable"))
                 .willReturn("true");
-        given(factory.getServer(Integer.parseInt(port))).willReturn(server);
-        given(factory.getWebAppContext()).willReturn(webAppContext);
+        given(factory.createServer(Integer.parseInt(port))).willReturn(server);
+        given(factory.createWebAppContext()).willReturn(webAppContext);
         given(ioHelper.getURL("/webapp")).willReturn(webAppBase);
+        given(server.getConnectors()).willReturn(connector);
+        given(connector[0].getLocalPort()).willReturn(Integer.parseInt(port));
 
         metricsServer.start();
 
@@ -142,6 +152,8 @@ public class MetricsServerTest {
         String port = "10000";
         Server server = Mockito.mock(Server.class);
         WebAppContext webAppContext = Mockito.mock(WebAppContext.class);
+        ServerConnector[] connector =
+                new ServerConnector[] {Mockito.mock(ServerConnector.class)};
 
         URL webAppBase = new URL("file://scoopi/web");
 
@@ -149,9 +161,11 @@ public class MetricsServerTest {
                 .willReturn(port);
         given(configService.getConfig("scoopi.metrics.server.enable"))
                 .willReturn("true");
-        given(factory.getServer(Integer.parseInt(port))).willReturn(server);
-        given(factory.getWebAppContext()).willReturn(webAppContext);
+        given(factory.createServer(Integer.parseInt(port))).willReturn(server);
+        given(factory.createWebAppContext()).willReturn(webAppContext);
         given(ioHelper.getURL("/webapp")).willReturn(webAppBase);
+        given(server.getConnectors()).willReturn(connector);
+        given(connector[0].getLocalPort()).willReturn(Integer.parseInt(port));
 
         metricsServer.start();
 

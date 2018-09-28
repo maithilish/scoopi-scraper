@@ -56,12 +56,12 @@ public class ScoopiEngineTest {
         inOrder.verify(scoopiSystem).startMetricsServer();
         inOrder.verify(scoopiSystem).initDefs();
         inOrder.verify(scoopiSystem).seedLocatorGroups();
-        inOrder.verify(scoopiSystem).waitForHeapDump();
+        inOrder.verify(scoopiSystem).waitForInput();
 
         inOrder.verify(taskMediator).start();
         inOrder.verify(taskMediator).waitForFinish();
         inOrder.verify(scoopiSystem).waitForFinish();
-        inOrder.verify(scoopiSystem).waitForHeapDump();
+        inOrder.verify(scoopiSystem).waitForInput();
 
         inOrder.verify(scoopiSystem).stopMetricsServer();
         inOrder.verify(scoopiSystem).stopStats();

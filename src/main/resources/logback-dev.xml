@@ -75,7 +75,7 @@
     <logger name="DataNucleus.JDO" level="OFF" />
     <logger name="org.eclipse.jetty" level="WARN" />
 
-    <root level="info">
+    <root level="trace">
         <appender-ref ref="console" />
         <appender-ref ref="errorlog" />
 

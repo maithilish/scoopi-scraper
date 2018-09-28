@@ -271,14 +271,13 @@ public class ScoopiSystemTest {
     }
 
     @Test
-    public void testWaitForHeapDump() throws ConfigNotFoundException {
-        given(configService.getConfig("scoopi.waitForHeapDump"))
-                .willReturn("false").willThrow(ConfigNotFoundException.class)
-                .willReturn("true");
-        sSystem.waitForHeapDump();
-        sSystem.waitForHeapDump();
+    public void testWaitForInput() throws ConfigNotFoundException {
+        given(configService.getConfig("scoopi.wait")).willReturn("false")
+                .willThrow(ConfigNotFoundException.class).willReturn("true");
+        sSystem.waitForInput();
+        sSystem.waitForInput();
 
-        sSystem.waitForHeapDump();
+        sSystem.waitForInput();
         verify(systemHelper).gc();
         verify(systemHelper).readLine();
     }

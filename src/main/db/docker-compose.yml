@@ -1,8 +1,8 @@
 version: "3"
 services:
-  scoopitestdb:
+  scoopidevdb:
       image: mariadb:latest
-      container_name: scoopi-test-db 
+      container_name: scoopi-dev-db 
       command: 
           --log_warnings=1
           --lower_case_table_names=1 
@@ -10,7 +10,7 @@ services:
           --innodb_compression_algorithm=zlib
       environment:
           - MYSQL_ROOT_PASSWORD=root
-          - MYSQL_DATABASE=scoopitest
+          - MYSQL_DATABASE=scoopidev
       ports:
           - "3306:3306"
       volumes:

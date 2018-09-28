@@ -39,7 +39,6 @@ public class DataFilter extends BaseConverter {
             filterHelper.filter(data.getMembers(), filterMembers);
             setOutput(data);
             setConsistent(true);
-            LOGGER.info(marker, "{}", data.getMembers());
         } catch (DataDefNotFoundException e) {
             String message = "unable to apply filters";
             throw new StepRunException(message, e);

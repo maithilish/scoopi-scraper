@@ -132,9 +132,6 @@ public abstract class BaseParser extends Step {
             LOGGER.info(marker, "{}", getLabeled("data exists, reuse"));
         }
 
-        // TODO remove this
-        LOGGER.info(marker, data.getMembers().toString());
-
         setOutput(data);
 
         timer.stop();

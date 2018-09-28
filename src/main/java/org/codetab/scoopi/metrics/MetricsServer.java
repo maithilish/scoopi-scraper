@@ -3,7 +3,6 @@ package org.codetab.scoopi.metrics;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.di.BasicFactory;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.IOHelper;
@@ -11,6 +10,7 @@ import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class MetricsServer {
     @Inject
     private ErrorLogger errorLogger;
     @Inject
-    private BasicFactory factory;
+    private ServerFactory factory;
 
     private Server server;
 
@@ -46,19 +46,25 @@ public class MetricsServer {
         }
 
         try {
-            server = factory.getServer(port);
-            WebAppContext webapp = factory.getWebAppContext();
-            webapp.setContextPath("/");
-
             String webappBase = ioHelper.getURL("/webapp").toString();
-            String descriptorPath = webappBase + "WEB-INF/web.xml";
-            webapp.setResourceBase(webappBase);
-            webapp.setDescriptor(descriptorPath);
+            String descriptorPath =
+                    String.join("/", webappBase, "WEB-INF/web.xml");
 
-            server.setHandler(webapp);
+            WebAppContext webappContext = factory.createWebAppContext();
+            webappContext.setContextPath("/");
+            webappContext.setResourceBase(webappBase);
+            webappContext.setDescriptor(descriptorPath);
+
+            server = factory.createServer(port);
+            server.setHandler(webappContext);
             server.start();
-            LOGGER.info("metrics server started at port: {}", port);
+
+            int serverPort = ((ServerConnector) server.getConnectors()[0])
+                    .getLocalPort();
+            LOGGER.info("metrics server started at port: {}", serverPort);
+
             // no server.join() - don't wait
+
         } catch (Exception e) {
             throw new CriticalException("unable to start metrics server", e);
         }
