@@ -1,6 +1,5 @@
-package org.codetab.scoopi.model.helper;
+package org.codetab.scoopi.model.factory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,24 +11,21 @@ import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class LocatorGroupHelper {
+public class LocatorGroupFactory {
 
     static final Logger LOGGER =
-            LoggerFactory.getLogger(LocatorGroupHelper.class);
+            LoggerFactory.getLogger(LocatorGroupFactory.class);
 
     @Inject
     private IAxisDefs axisDefs;
@@ -67,24 +63,5 @@ public class LocatorGroupHelper {
             }
         }
         return Lists.newArrayList(lgs.values());
-    }
-
-    public List<Payload> createSeedPayloads(
-            final List<LocatorGroup> locatorGroups, final String stepName,
-            final String seederClzName) {
-        List<Payload> payloads = new ArrayList<>();
-        for (LocatorGroup locatorGroup : locatorGroups) {
-            // for init payload, only stepName, className and taskGroup are
-            // set. Next and previous steps, taskName, dataDef are undefined
-            String undefined = "undefined";
-            StepInfo stepInfo = objectFactory.createStepInfo(stepName,
-                    undefined, undefined, seederClzName);
-            JobInfo jobInfo = objectFactory.createJobInfo(0, undefined,
-                    locatorGroup.getGroup(), undefined, undefined, undefined);
-            Payload payload = objectFactory.createPayload(jobInfo, stepInfo,
-                    locatorGroup);
-            payloads.add(payload);
-        }
-        return payloads;
     }
 }

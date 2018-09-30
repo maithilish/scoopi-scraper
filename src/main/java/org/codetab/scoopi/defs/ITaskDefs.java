@@ -3,6 +3,7 @@ package org.codetab.scoopi.defs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.StepInfo;
@@ -15,6 +16,8 @@ public interface ITaskDefs {
      * Tasks routine
      */
     List<String> getTaskNames(String group);
+
+    Optional<String> getFirstTaskName(String taskGroup);
 
     String getFieldValue(String taskGroup, String taskName, String fieldName)
             throws DefNotFoundException;

@@ -15,7 +15,8 @@ import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.helper.LocatorGroupHelper;
+import org.codetab.scoopi.model.factory.LocatorGroupFactory;
+import org.codetab.scoopi.model.factory.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseConverter;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
@@ -26,7 +27,9 @@ public class LocatorCreator extends BaseConverter {
     static final Logger LOGGER = LoggerFactory.getLogger(LocatorCreator.class);
 
     @Inject
-    private LocatorGroupHelper locatorGroupHelper;
+    private LocatorGroupFactory locatorGroupFactory;
+    @Inject
+    private PayloadFactory payloadFactory;
     @Inject
     private IDataDefDefs dataDefDefs;
     @Inject
@@ -40,7 +43,7 @@ public class LocatorCreator extends BaseConverter {
             String locatorName = getPayload().getJobInfo().getName();
             String dataDefName = getPayload().getJobInfo().getDataDef();
             DataDef dataDef = dataDefDefs.getDataDef(dataDefName);
-            locatorGroups = locatorGroupHelper.createLocatorGroups(dataDef,
+            locatorGroups = locatorGroupFactory.createLocatorGroups(dataDef,
                     data.getMembers(), locatorName);
             setOutput(locatorGroups);
             setConsistent(true);
@@ -65,7 +68,7 @@ public class LocatorCreator extends BaseConverter {
             throw new StepRunException("unable to handover", e);
         }
 
-        List<Payload> payloads = locatorGroupHelper
+        List<Payload> payloads = payloadFactory
                 .createSeedPayloads(locatorGroups, stepName, seederClzName);
         for (Payload payload : payloads) {
             try {

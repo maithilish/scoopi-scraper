@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -23,6 +25,7 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.Task;
+import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.step.extract.URLLoader;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.system.ConfigService;
@@ -47,6 +50,7 @@ public class BaseLoaderIT {
     private BaseLoader loader;
     private Task task;
     private IStore store;
+    private TaskMediator taskMediator;
     private String pageUrl;
     private String clzName;
 
@@ -80,6 +84,7 @@ public class BaseLoaderIT {
 
     @Before
     public void setUp() throws Exception {
+        taskMediator = di.instance(TaskMediator.class);
         store = di.instance(IStore.class);
         loader = di.instance(URLLoader.class);
         task = di.instance(Task.class);
@@ -112,6 +117,9 @@ public class BaseLoaderIT {
 
         loader.setPayload(payload);
 
+        store.clear();
+        resetJobId();
+
         task.run(); // run loader task
 
         // test persistence
@@ -137,13 +145,15 @@ public class BaseLoaderIT {
         assertThat(actualDocument).isEqualTo(expectedDocument);
 
         // test handed over payload
+        List<Payload> expectedPayloads = getTestPayloads(expectedDocument);
+
+        assertThat(store.getPayloadsCount()).isEqualTo(3);
         Payload actualPayload = store.takePayload();
-
-        StepInfo nextStepInfo =
-                factory.createStepInfo("parser", "loader", "end", clzName);
-        Payload expectedPayload = getTestPayload(nextStepInfo, actualDocument);
-
-        assertThat(actualPayload).isEqualTo(expectedPayload);
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(0));
+        actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(1));
+        actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(2));
     }
 
     /**
@@ -168,6 +178,9 @@ public class BaseLoaderIT {
         Payload inPayload = getTestPayload(stepInfo, locator);
 
         loader.setPayload(inPayload);
+
+        store.clear();
+        resetJobId();
 
         task.run(); // run loader task
 
@@ -199,13 +212,15 @@ public class BaseLoaderIT {
         assertThat(actualDocument).isEqualTo(expectedDocument);
 
         // test handed over payload
-        Payload outPayload = store.takePayload();
+        List<Payload> expectedPayloads = getTestPayloads(expectedDocument);
 
-        StepInfo nextStepInfo =
-                factory.createStepInfo("parser", "loader", "end", clzName);
-        Payload expectedPayload = getTestPayload(nextStepInfo, actualDocument);
-
-        assertThat(outPayload).isEqualTo(expectedPayload);
+        assertThat(store.getPayloadsCount()).isEqualTo(3);
+        Payload actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(0));
+        actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(1));
+        actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(2));
     }
 
     /**
@@ -227,10 +242,12 @@ public class BaseLoaderIT {
                 factory.createStepInfo("loader", "seeder", "parser", clzName);
         JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "task2",
                 "steps2", "task2"); // live
-        // 1
-        // day
+        // 1 day
         Payload inPayload = factory.createPayload(jobInfo, stepInfo, locator);
         loader.setPayload(inPayload);
+
+        store.clear();
+        resetJobId();
 
         task.run(); // run loader task
 
@@ -265,14 +282,15 @@ public class BaseLoaderIT {
                 .isEqualTo(getTestDocument().getDocumentObject());
 
         // test handed over payload
+        List<Payload> expectedPayloads = getTestPayloads(newDocument);
+
+        assertThat(store.getPayloadsCount()).isEqualTo(3);
         Payload actualPayload = store.takePayload();
-
-        StepInfo nextStepInfo =
-                factory.createStepInfo("parser", "loader", "end", clzName);
-        Payload expectedPayload =
-                factory.createPayload(jobInfo, nextStepInfo, newDocument);
-
-        assertThat(actualPayload).isEqualTo(expectedPayload);
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(0));
+        actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(1));
+        actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(2));
     }
 
     /**
@@ -292,10 +310,12 @@ public class BaseLoaderIT {
                 factory.createStepInfo("loader", "seeder", "parser", clzName);
         JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "task3",
                 "steps3", "task3"); // live
-        // 3
-        // day
+        // 3 day
         Payload inPayload = factory.createPayload(jobInfo, stepInfo, locator);
         loader.setPayload(inPayload);
+
+        store.clear();
+        resetJobId();
 
         task.run(); // run loader task
 
@@ -318,15 +338,15 @@ public class BaseLoaderIT {
         assertThat(existingDocument).isEqualTo(expectedDocument);
 
         // test handed over payload
+        List<Payload> expectedPayloads = getTestPayloads(expectedDocument);
+
+        assertThat(store.getPayloadsCount()).isEqualTo(3);
         Payload actualPayload = store.takePayload();
-
-        StepInfo nextStepInfo =
-                factory.createStepInfo("parser", "loader", "end", clzName);
-        Payload expectedPayload =
-                factory.createPayload(jobInfo, nextStepInfo, existingDocument);
-
-        assertThat(actualPayload.getData())
-                .isEqualTo(expectedPayload.getData());
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(0));
+        actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(1));
+        actualPayload = store.takePayload();
+        assertThat(actualPayload).isEqualTo(expectedPayloads.get(2));
     }
 
     private Document getTestDocument() throws IOException {
@@ -345,6 +365,29 @@ public class BaseLoaderIT {
         JobInfo jobInfo = factory.createJobInfo(0, "acme", "quote", "task1",
                 "steps1", "task1");
         return factory.createPayload(jobInfo, stepInfo, data);
+    }
+
+    private List<Payload> getTestPayloads(final Object payloadData) {
+        List<Payload> payloads = new ArrayList<>();
+        StepInfo stepInfo =
+                factory.createStepInfo("parser", "loader", "end", clzName);
+
+        JobInfo jobInfo = factory.createJobInfo(1, "acme", "quote", "task1",
+                "devSteps", "task1");
+        Payload payload = factory.createPayload(jobInfo, stepInfo, payloadData);
+        payloads.add(payload);
+
+        jobInfo = factory.createJobInfo(2, "acme", "quote", "task2", "devSteps",
+                "task2");
+        payload = factory.createPayload(jobInfo, stepInfo, payloadData);
+        payloads.add(payload);
+
+        jobInfo = factory.createJobInfo(3, "acme", "quote", "task3", "devSteps",
+                "task3");
+        payload = factory.createPayload(jobInfo, stepInfo, payloadData);
+        payloads.add(payload);
+
+        return payloads;
     }
 
     private Document insertActiveDocument(final int fromDateOffset,
@@ -370,6 +413,12 @@ public class BaseLoaderIT {
         loaderStep.store();
 
         return document;
+    }
+
+    private void resetJobId() throws IllegalAccessException {
+        AtomicInteger counter = (AtomicInteger) FieldUtils
+                .readField(taskMediator, "jobIdCounter", true);
+        counter.set(0);
     }
 
 }

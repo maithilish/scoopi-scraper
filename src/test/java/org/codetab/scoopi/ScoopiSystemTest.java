@@ -26,7 +26,7 @@ import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.helper.LocatorGroupHelper;
+import org.codetab.scoopi.model.factory.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
@@ -73,7 +73,7 @@ public class ScoopiSystemTest {
     @Mock
     private ObjectFactory objectFactory;
     @Mock
-    private LocatorGroupHelper locatorGroupHelper;
+    private PayloadFactory payloadFactory;
 
     @InjectMocks
     private ScoopiSystem sSystem;
@@ -173,7 +173,7 @@ public class ScoopiSystemTest {
         given(configService.getConfig("scoopi.seederClass"))
                 .willReturn(seederClzName);
         given(locatorDefs.getLocatorGroups()).willReturn(lGroups);
-        given(locatorGroupHelper.createSeedPayloads(lGroups, stepName,
+        given(payloadFactory.createSeedPayloads(lGroups, stepName,
                 seederClzName)).willReturn(payloads);
 
         boolean result = sSystem.seedLocatorGroups();
@@ -206,7 +206,7 @@ public class ScoopiSystemTest {
         given(configService.getConfig("scoopi.seederClass"))
                 .willReturn(seederClzName);
         given(locatorDefs.getLocatorGroups()).willReturn(lGroups);
-        given(locatorGroupHelper.createSeedPayloads(lGroups, stepName,
+        given(payloadFactory.createSeedPayloads(lGroups, stepName,
                 seederClzName)).willReturn(payloads);
 
         given(taskMediator.pushPayload(payload1))

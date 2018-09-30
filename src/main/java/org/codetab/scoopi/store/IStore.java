@@ -10,4 +10,6 @@ public interface IStore {
 
     int getPayloadsCount();
 
+    void clear();
+
 }

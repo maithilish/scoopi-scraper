@@ -1,6 +1,8 @@
+## dev and test db
+
 version: "3"
 services:
-  scoopidevdb:
+  scoopi-dev-db:
       image: mariadb:latest
       container_name: scoopi-dev-db 
       command: 

@@ -3,6 +3,7 @@ package org.codetab.scoopi.defs.yml;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -44,6 +45,16 @@ public class TaskDefs implements ITaskDefs {
     public List<String> getTaskNames(final String taskGroup) {
         String path = "/" + taskGroup;
         return Lists.newArrayList(defs.at(path).fieldNames());
+    }
+
+    @Override
+    public Optional<String> getFirstTaskName(final String taskGroup) {
+        List<String> taskNames = getTaskNames(taskGroup);
+        if (taskNames.size() > 0) {
+            return Optional.of(taskNames.get(0));
+        } else {
+            return Optional.empty();
+        }
     }
 
     /*

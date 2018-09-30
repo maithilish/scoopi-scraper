@@ -1,0 +1,91 @@
+package org.codetab.scoopi.model.factory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.codetab.scoopi.defs.ITaskDefs;
+import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.model.JobInfo;
+import org.codetab.scoopi.model.LocatorGroup;
+import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.model.ObjectFactory;
+import org.codetab.scoopi.model.Payload;
+import org.codetab.scoopi.model.StepInfo;
+import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.system.ErrorLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PayloadFactory {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(PayloadFactory.class);
+
+    @Inject
+    private ITaskDefs taskDefs;
+    @Inject
+    private TaskMediator taskMediator;
+    @Inject
+    private ObjectFactory objectFactory;
+    @Inject
+    private ErrorLogger errorLogger;
+
+    public List<Payload> createSeedPayloads(
+            final List<LocatorGroup> locatorGroups, final String stepName,
+            final String seederClzName) {
+        List<Payload> payloads = new ArrayList<>();
+        for (LocatorGroup locatorGroup : locatorGroups) {
+            // for init payload, only stepName, className and taskGroup are
+            // set. Next and previous steps, taskName, dataDef are undefined
+            String undefined = "undefined";
+            StepInfo stepInfo = objectFactory.createStepInfo(stepName,
+                    undefined, undefined, seederClzName);
+            JobInfo jobInfo = objectFactory.createJobInfo(0, undefined,
+                    locatorGroup.getGroup(), undefined, undefined, undefined);
+            Payload payload = objectFactory.createPayload(jobInfo, stepInfo,
+                    locatorGroup);
+            payloads.add(payload);
+        }
+        return payloads;
+    }
+
+    public List<Payload> createPayloads(final String taskGroup,
+            final List<String> taskNames, final StepInfo stepInfo,
+            final String jobName, final Object payloadData) {
+        List<Payload> payloads = new ArrayList<>();
+        for (String taskName : taskNames) {
+            try {
+                StepInfo thisStep = stepInfo;
+                /*
+                 * !!! if stepName is start then StepInfo is not fully
+                 * constructed and get proper stepInfo where previous=start
+                 */
+                if (stepInfo.getStepName().equalsIgnoreCase("start")) {
+                    thisStep = taskDefs.getNextStep(taskGroup, taskName,
+                            stepInfo.getStepName());
+                }
+                if (!thisStep.getNextStepName().equalsIgnoreCase("end")) {
+                    String stepsName =
+                            taskDefs.getStepsName(taskGroup, taskName);
+                    String dataDefName = taskDefs.getFieldValue(taskGroup,
+                            taskName, "dataDef");
+                    StepInfo nextStep = taskDefs.getNextStep(taskGroup,
+                            taskName, thisStep.getStepName());
+                    JobInfo jobInfo = objectFactory.createJobInfo(
+                            taskMediator.getJobId(), jobName, taskGroup,
+                            taskName, stepsName, dataDefName);
+                    Payload nextStepPayload = objectFactory
+                            .createPayload(jobInfo, nextStep, payloadData);
+                    payloads.add(nextStepPayload);
+                }
+            } catch (DefNotFoundException e) {
+                String message = String.join(" ",
+                        "unable to create payload for taskGroup:taskName ",
+                        taskGroup + ":" + taskName);
+                errorLogger.log(CAT.ERROR, message, e);
+            }
+        }
+        return payloads;
+    }
+}

@@ -116,6 +116,10 @@ public class DataDefDefs implements IDataDefDefs {
         return getDataDef(name).getId();
     }
 
+    /**
+     * don't directly call this instead use DataFactory to create data from
+     * template
+     */
     @Override
     public Data getDataTemplate(final String dataDef) {
         notNull(dataDef, "dataDefName must not be null");

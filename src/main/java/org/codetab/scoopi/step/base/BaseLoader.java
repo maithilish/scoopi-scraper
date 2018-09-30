@@ -7,6 +7,7 @@ import static org.codetab.scoopi.util.Util.LINE;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -15,10 +16,14 @@ import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Locator;
+import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.model.Payload;
+import org.codetab.scoopi.model.factory.PayloadFactory;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DocumentPersistence;
 import org.codetab.scoopi.persistence.LocatorPersistence;
 import org.codetab.scoopi.step.Step;
+import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +66,10 @@ public abstract class BaseLoader extends Step {
      */
     @Inject
     private DocumentHelper documentHelper;
+    @Inject
+    private PayloadFactory payloadFactory;
+    @Inject
+    private ErrorLogger errorLogger;
 
     /**
      * Creates log marker from locator name and group.
@@ -270,6 +279,29 @@ public abstract class BaseLoader extends Step {
         } catch (RuntimeException e) {
             String message = "unable to store locator and document";
             throw new StepRunException(message, e);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean handover() {
+        validState(isConsistent(), "step inconsistent");
+
+        LOGGER.info("push document tasks to taskpool");
+        String group = getJobInfo().getGroup();
+
+        List<String> taskNames = taskDefs.getTaskNames(group);
+        List<Payload> payloads = payloadFactory.createPayloads(group, taskNames,
+                getStepInfo(), getJobInfo().getName(), getOutput());
+
+        for (Payload payload : payloads) {
+            try {
+                taskMediator.pushPayload(payload);
+            } catch (InterruptedException e) {
+                String message = String.join(" ", "handover document,",
+                        payload.toString());
+                errorLogger.log(CAT.INTERNAL, message, e);
+            }
         }
         return true;
     }

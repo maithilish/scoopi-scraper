@@ -69,31 +69,19 @@ download JavaDoc and source
     mvn dependency:resolve -Dclassifier=JavaDoc
     mvn dependency:sources
     
-## DB setup
+## Docker Mariadb DB 
 
-Mariadb is used for dev and integration tests
+Mariadb docker container is used for dev and integration tests. Unit tests doesn't require db. 
+ 
+    $ cd src/main/db
+    $ docker-compose up 
 
-for integration test 
+This creates three databases, scoopidev, scoopitest and scoopi with required user and privileges. The scoopi database is used to test the release and it is not for production as container data is deleted on shutdown.
 
-    # cd src/test/db
-    # docker-compose up db 
+To login, use
 
-- data is not persisted
-
-for dev 
-
-    # cofi/stage
-    # docker-compose up db
-
-- data is not persisted in data directory
-    
-one time setup for dev
-
-    # mysql -proot -u root -h 127.0.0.1 -P 3306
-    > create database scoopidev;
-    > GRANT ALL PRIVILEGES ON scoopidev.* TO 'foo'@'localhost';
-    > GRANT ALL PRIVILEGES ON scoopidev.* TO 'foo'@'%'; 
-
+    $ mysql -p -u foo -h 127.0.0.1 -P 3306 scoopidev
+ 
 ## Eclipse setup
 
 For Scoopi development, eclipse requires some setup.

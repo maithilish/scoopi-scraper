@@ -20,6 +20,7 @@ import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.factory.DataFactory;
 import org.codetab.scoopi.persistence.DataPersistence;
 import org.codetab.scoopi.step.Step;
 import org.codetab.scoopi.step.parse.IValueParser;
@@ -40,6 +41,8 @@ public abstract class BaseParser extends Step {
     private ValueProcessor valueProcessor;
     @Inject
     private DataPersistence dataPersistence;
+    @Inject
+    private DataFactory dataFactory;
     @Inject
     private IDataDefDefs dataDefDefs;
     @Inject
@@ -80,7 +83,7 @@ public abstract class BaseParser extends Step {
     public boolean load() {
         try {
             String dataDefName = getJobInfo().getDataDef();
-            Long dataDefId = dataDefDefs.getDataDef(dataDefName).getId();
+            Long dataDefId = dataDefDefs.getDataDefId(dataDefName);
             Long documentId = document.getId();
             if (nonNull(documentId) && nonNull(dataDefId)) {
                 data = dataPersistence.loadData(dataDefId, documentId);
@@ -97,6 +100,7 @@ public abstract class BaseParser extends Step {
         if (persist()) {
             if (dataPersistence.storeData(data)) {
                 data = dataPersistence.loadData(data.getId());
+                setOutput(data);
                 LOGGER.debug(marker, getLabeled("data stored"));
             }
         } else {
@@ -112,11 +116,11 @@ public abstract class BaseParser extends Step {
         Counter dataReuseCounter =
                 metricsHelper.getCounter(this, "data", "reuse");
         if (data == null) {
-            LOGGER.info(marker, "{}", getLabeled("parse data"));
-            String dataDefName = getJobInfo().getDataDef();
-            data = dataDefDefs.getDataTemplate(dataDefName);
-
             try {
+                LOGGER.info(marker, "{}", getLabeled("parse data"));
+                String dataDefName = getJobInfo().getDataDef();
+                data = dataFactory.createData(dataDefName, document.getId(),
+                        getJobInfo().getLabel());
                 parse();
                 setConsistent(true);
                 dataParseCounter.inc();

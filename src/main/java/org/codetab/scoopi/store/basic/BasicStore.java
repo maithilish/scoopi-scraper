@@ -30,4 +30,9 @@ public class BasicStore implements IStore {
     public int getPayloadsCount() {
         return payloads.size();
     }
+
+    @Override
+    public void clear() {
+        payloads.clear();
+    }
 }

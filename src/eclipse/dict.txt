@@ -126,3 +126,11 @@ cd
 github
 travis
 zip
+src
+emma
+ecl
+cs
+dclassifier
+dnf
+openjdk
+fedora

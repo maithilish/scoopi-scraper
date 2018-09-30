@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
-public class DataDefProviderTest {
+public class DataDefDefsTest {
 
     @Mock
     private DataDefHelper dataDefHelper;

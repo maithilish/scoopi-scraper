@@ -13,7 +13,7 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.step.extract.URLLoader;
+import org.codetab.scoopi.step.convert.DataFilter;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
@@ -44,7 +44,7 @@ public class StepTest {
     private ObjectFactory objectFactory;
 
     @InjectMocks
-    private URLLoader step;
+    private DataFilter step;
 
     private Payload payload;
 

@@ -31,6 +31,7 @@ import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
+import org.codetab.scoopi.model.factory.DataFactory;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DataPersistence;
 import org.codetab.scoopi.step.TaskFactory;
@@ -71,6 +72,8 @@ public class BaseParserTest {
     private TaskMediator taskMediator;
     @Mock
     private ObjectFactory objectFactory;
+    @Mock
+    private DataFactory dataFactory;
 
     @Mock
     private MemberStack memberStack;
@@ -171,14 +174,10 @@ public class BaseParserTest {
 
         long dataDefId = 10L;
         String dataDefName = parser.getJobInfo().getDataDef();
-        Date now = new Date();
-        DataDef dataDef =
-                factory.createDataDef(dataDefName, now, now, "defJson");
-        dataDef.setId(dataDefId);
 
         Data loadedData = factory.createData(dataDefName);
 
-        given(dataDefDefs.getDataDef(dataDefName)).willReturn(dataDef);
+        given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
         given(dataPersistence.loadData(dataDefId, documentId))
                 .willReturn(loadedData);
 
@@ -203,7 +202,7 @@ public class BaseParserTest {
                 factory.createDataDef(dataDefName, now, now, "defJson");
         dataDef.setId(dataDefId);
 
-        given(dataDefDefs.getDataDef(dataDefName)).willReturn(dataDef);
+        given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
 
         boolean actual = parser.load();
         Data actualData = (Data) FieldUtils.readField(parser, "data", true);
@@ -226,7 +225,7 @@ public class BaseParserTest {
                 factory.createDataDef(dataDefName, now, now, "defJson");
         dataDef.setId(dataDefId);
 
-        given(dataDefDefs.getDataDef(dataDefName)).willReturn(dataDef);
+        given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
 
         boolean actual = parser.load();
         Data actualData = (Data) FieldUtils.readField(parser, "data", true);
@@ -239,7 +238,7 @@ public class BaseParserTest {
     public void testLoadShouldThrowException()
             throws IllegalAccessException, DataDefNotFoundException {
         String dataDefName = parser.getJobInfo().getDataDef();
-        given(dataDefDefs.getDataDef(dataDefName))
+        given(dataDefDefs.getDataDefId(dataDefName))
                 .willThrow(DataDefNotFoundException.class);
 
         testRule.expect(StepRunException.class);
@@ -262,6 +261,7 @@ public class BaseParserTest {
             throws DataDefNotFoundException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException, ScriptException {
         Document document = (Document) parser.getPayload().getData();
+        Long documentId = document.getId();
         FieldUtils.writeField(parser, "document", document, true);
 
         IValueParser valParser = new ValueParser();
@@ -272,7 +272,11 @@ public class BaseParserTest {
 
         Date now = new Date();
         String dataDefName = parser.getJobInfo().getDataDef();
+        Long dataDefId = 10L;
         DataDef dataDef = factory.createDataDef(dataDefName, now, now, "def");
+        dataDef.setId(dataDefId);
+
+        String label = parser.getJobInfo().getLabel();
 
         Member member1 = factory.createMember();
         member1.setName("m1");
@@ -280,6 +284,9 @@ public class BaseParserTest {
         member1.setName("m2");
 
         Data data = factory.createData(dataDefName);
+        data.setDocumentId(documentId);
+        data.setDataDefId(dataDefId);
+
         data.addMember(member1);
         data.addMember(member2);
 
@@ -287,8 +294,10 @@ public class BaseParserTest {
                 .willReturn(parseCounter);
         given(metricsHelper.getCounter(parser, "data", "reuse"))
                 .willReturn(reuseCounter);
-        given(dataDefDefs.getDataTemplate(dataDefName)).willReturn(data);
+        given(dataFactory.createData(dataDefName, documentId, label))
+                .willReturn(data);
         given(dataDefDefs.getDataDef(dataDefName)).willReturn(dataDef);
+        given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
         given(memberStack.isEmpty()).willReturn(false, false, true);
         given(memberStack.popMember()).willReturn(member1, member2);
 
@@ -348,6 +357,7 @@ public class BaseParserTest {
             throws DataDefNotFoundException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException, ScriptException {
         Document document = (Document) parser.getPayload().getData();
+        Long documentId = document.getId();
         FieldUtils.writeField(parser, "document", document, true);
 
         Counter parseCounter = Mockito.mock(Counter.class);
@@ -356,12 +366,15 @@ public class BaseParserTest {
         String dataDefName = parser.getJobInfo().getDataDef();
         Data data = factory.createData(dataDefName);
 
+        String label = parser.getJobInfo().getLabel();
+
         given(metricsHelper.getCounter(parser, "data", "parse"))
                 .willReturn(parseCounter);
         given(metricsHelper.getCounter(parser, "data", "reuse"))
                 .willReturn(reuseCounter);
-        given(dataDefDefs.getDataTemplate(dataDefName)).willReturn(data);
-        given(dataDefDefs.getDataDef(dataDefName))
+        given(dataFactory.createData(dataDefName, documentId, label))
+                .willReturn(data);
+        given(dataFactory.createData(dataDefName, documentId, label))
                 .willThrow(DataDefNotFoundException.class);
         given(memberStack.isEmpty()).willReturn(false, false, true);
 
@@ -389,8 +402,10 @@ public class BaseParserTest {
         assertThat(actual).isTrue();
 
         Data actualData = (Data) FieldUtils.readField(parser, "data", true);
+        Object actualOutput = parser.getOutput();
 
         assertThat(actualData).isSameAs(loadedData);
+        assertThat(actualOutput).isSameAs(loadedData);
     }
 
     @Test

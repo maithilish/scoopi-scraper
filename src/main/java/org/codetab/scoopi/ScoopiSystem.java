@@ -18,7 +18,7 @@ import org.codetab.scoopi.metrics.SystemStat;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.helper.LocatorGroupHelper;
+import org.codetab.scoopi.model.factory.PayloadFactory;
 import org.codetab.scoopi.plugin.appender.AppenderMediator;
 import org.codetab.scoopi.pool.AppenderPoolService;
 import org.codetab.scoopi.step.TaskMediator;
@@ -50,7 +50,7 @@ public class ScoopiSystem {
     @Inject
     private ErrorLogger errorLogger;
     @Inject
-    private LocatorGroupHelper locatorGroupHelper;
+    private PayloadFactory payloadFactory;
     @Inject
     private AppenderPoolService appenderPoolService;
     @Inject
@@ -127,7 +127,7 @@ public class ScoopiSystem {
         }
 
         List<LocatorGroup> locatorGroups = locatorDefs.getLocatorGroups();
-        List<Payload> payloads = locatorGroupHelper
+        List<Payload> payloads = payloadFactory
                 .createSeedPayloads(locatorGroups, stepName, seederClzName);
         for (Payload payload : payloads) {
             try {
