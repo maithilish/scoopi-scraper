@@ -203,8 +203,7 @@ public class BaseLoaderTest {
                 factory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskDefs.getFieldValue("quote", "task1", "live"))
-                .willReturn(live);
+        given(taskDefs.getLive("quote")).willReturn(live);
         given(ucHelper.getProtocol(url)).willReturn("resource");
         given(configService.getRunDateTime()).willReturn(fromDate);
         given(documentHelper.getToDate(fromDate, live, loader.getJobInfo()))
@@ -246,8 +245,7 @@ public class BaseLoaderTest {
                 factory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskDefs.getFieldValue("quote", "task1", "live"))
-                .willReturn(live);
+        given(taskDefs.getLive("quote")).willReturn(live);
         given(ucHelper.getProtocol(invalidUrl)).willReturn("file");
 
         try {
@@ -331,8 +329,7 @@ public class BaseLoaderTest {
                 factory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskDefs.getFieldValue("quote", "task1", "live"))
-                .willThrow(DefNotFoundException.class);
+        given(taskDefs.getLive("quote")).willThrow(DefNotFoundException.class);
         given(documentHelper.getActiveDocument(locator.getDocuments()))
                 .willReturn(document);
         given(documentHelper.getToDate(document.getFromDate(), live,

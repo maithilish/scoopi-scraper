@@ -10,12 +10,12 @@ taskGroups:
   quoteGroup:
     priceTask:
       dataDef: price
-      live: P1D
 
     snapshotTask:
-      dataDef: snapshot
-      live: P1W        
-      
+      dataDef: snapshot           
+
+    live: P1W
+          
 dataDefs:
 
   price:

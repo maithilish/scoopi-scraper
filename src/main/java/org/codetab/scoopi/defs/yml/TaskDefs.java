@@ -1,6 +1,7 @@
 package org.codetab.scoopi.defs.yml;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -15,7 +16,6 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.StepInfo;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 
 @Singleton
 public class TaskDefs implements ITaskDefs {
@@ -43,8 +43,16 @@ public class TaskDefs implements ITaskDefs {
 
     @Override
     public List<String> getTaskNames(final String taskGroup) {
+        List<String> taskNames = new ArrayList<>();
         String path = "/" + taskGroup;
-        return Lists.newArrayList(defs.at(path).fieldNames());
+        Iterator<Entry<String, JsonNode>> it = defs.at(path).fields();
+        while (it.hasNext()) {
+            Entry<String, JsonNode> entry = it.next();
+            if (entry.getValue().isObject()) {
+                taskNames.add(entry.getKey());
+            }
+        }
+        return taskNames;
     }
 
     @Override
@@ -102,6 +110,17 @@ public class TaskDefs implements ITaskDefs {
     public String getFieldValue(final String taskGroup, final String taskName,
             final String fieldName) throws DefNotFoundException {
         String path = String.join("/", "", taskGroup, taskName, fieldName);
+        JsonNode live = defs.at(path);
+        if (live.isMissingNode()) {
+            throw new DefNotFoundException(path);
+        } else {
+            return live.asText();
+        }
+    }
+
+    @Override
+    public String getLive(final String taskGroup) throws DefNotFoundException {
+        String path = String.join("/", "", taskGroup, "live");
         JsonNode live = defs.at(path);
         if (live.isMissingNode()) {
             throw new DefNotFoundException(path);

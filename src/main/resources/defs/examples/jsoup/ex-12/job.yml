@@ -6,19 +6,21 @@ locatorGroups:
     ]
 
 taskGroups:
-
-  quoteGroup:
     
+  quoteGroup:
+            
     priceTask:
-      dataDef: price
-      live: P1D
+      dataDef: price      
       persist:
         data: false
-      
+              
     snapshotTask:
       dataDef: snapshot
-      live: P1W        
-      
+      persist:
+        data: true
+
+    live: P1W
+                
 dataDefs:
 
   price:

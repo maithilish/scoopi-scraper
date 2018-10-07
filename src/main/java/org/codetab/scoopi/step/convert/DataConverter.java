@@ -53,7 +53,7 @@ public final class DataConverter extends BaseConverter {
     public boolean process() {
         validState(nonNull(data), "data not set");
 
-        LOGGER.info(getMarker(), getLabeled("convert values"));
+        LOGGER.debug(getMarker(), getLabeled("convert values"));
 
         String taskGroup = getPayload().getJobInfo().getGroup();
         String taskName = getPayload().getJobInfo().getTask();

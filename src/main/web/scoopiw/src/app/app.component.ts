@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
   metrics: Metric[] = [];
 
   constructor(private dataService: DataService) {
-    this.title = 'Gotz Metrics';
+    this.title = 'Scoopi Metrics';
   }
 
   ngOnInit() {

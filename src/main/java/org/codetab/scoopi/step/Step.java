@@ -62,13 +62,16 @@ public abstract class Step implements IStep {
             String stepName = getStepInfo().getStepName();
             String taskName = getJobInfo().getTask();
 
-            if (!getStepInfo().getNextStepName().equalsIgnoreCase("end")) {
+            if (getStepInfo().getNextStepName().equalsIgnoreCase("end")) {
+                LOGGER.info(marker, "job: {} finished",
+                        getJobInfo().getLabel());
+            } else {
                 StepInfo nextStep =
                         taskDefs.getNextStep(group, taskName, stepName);
                 Payload nextStepPayload =
                         factory.createPayload(getJobInfo(), nextStep, output);
                 taskMediator.pushPayload(nextStepPayload);
-                LOGGER.info(marker, "handover to step: {}",
+                LOGGER.debug(marker, "{} handover to step: {}", getLabel(),
                         nextStep.getStepName());
             }
         } catch (DefNotFoundException | InterruptedException

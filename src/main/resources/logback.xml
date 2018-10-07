@@ -52,7 +52,10 @@
             class="ch.qos.logback.core.filter.EvaluatorFilter">
             <evaluator
                 class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
-                <marker>acme-quote-linkTask</marker>
+                <marker>task-acme-quoteGroup-linkTask</marker>
+                <marker>task-acme-bsGroup-bsTask</marker>
+                <marker>datadef-links</marker>
+                <marker>datadef-bs</marker>
             </evaluator>
             <onMismatch>DENY</onMismatch>
             <onMatch>NEUTRAL</onMatch>

@@ -10,18 +10,20 @@ export class Metric {
 }
 
 export const nameLabelMap = [
-    { name: 'JSoupHtmlParser.data.parse', label: 'Parse' },
-    { name: 'JSoupHtmlParser.data.reuse', label: 'Reuse data' },
+    { name: 'Parser.data.parse', label: 'Parse' },
+    { name: 'Parser.data.reuse', label: 'Reuse data' },
     { name: 'ParserCache.parser.cache.hit', label: 'Parse cache hit' },
     { name: 'ParserCache.parser.cache.miss', label: 'Parse cache miss' },
     { name: 'URLLoader.fetch.web', label: 'Web fetch ' },
+    { name: 'URLLoader.fetch.resource', label: 'Resource fetch ' },
+    { name: 'URLLoader.fetch.local', label: 'local fetch ' },
     { name: 'LocatorSeeder.locator.provided', label: 'Provided by user' },
     { name: 'LocatorSeeder.locator.parsed', label: 'Parsed from pages' },
     { name: 'LocatorSeeder.locator.seeded', label: 'Pushed to queue' },
     { name: 'DataAppender.task.time', label: 'Data appender' },
     { name: 'DataConverter.task.time', label: 'Data converter' },
     { name: 'DataFilter.task.time', label: 'Data filter' },
-    { name: 'JSoupHtmlParser.task.time', label: 'Parser' },
+    { name: 'Parser.task.time', label: 'Parser' },
     { name: 'LocatorCreator.task.time', label: 'Locator creator' },
     { name: 'LocatorSeeder.task.time', label: 'Locator seeder' },
     { name: 'URLLoader.task.time', label: 'Document fetch and load' },
@@ -37,6 +39,7 @@ export const nameLabelMap = [
     { name: 'TaskPoolService.pool.parser', label: 'Parser TaskPool' },
     { name: 'TaskPoolService.pool.process', label: 'Process TaskPool' },
     { name: 'TaskPoolService.pool.seeder', label: 'Seeder TaskPool' },
+    { name: 'TaskPoolService.pool.start', label: 'Start TaskPool' },
 ];
 
 export class MetricDataConverter {

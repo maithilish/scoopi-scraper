@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.dao.jdo.DataDao;
 import org.codetab.scoopi.dao.jdo.JdoDaoUtilFactory;
@@ -57,6 +58,9 @@ public class BaseParserIT {
 
     @Rule
     public ExpectedException testRule = ExpectedException.none();
+
+    // TODO - review step itest, cover only persistence and handover and write
+    // tests when useDataStore is false
 
     // don't move this to base class, tests fail in cli
     @BeforeClass
@@ -152,11 +156,14 @@ public class BaseParserIT {
         assertThat(actualPayload).isNotNull();
 
         assertThat(actualPayload.getData()).isEqualTo(aData);
+
+        aData = (Data) FieldUtils.readField(parser, "data", true);
+        assertThat(actualPayload.getData()).isSameAs(aData);
     }
 
     @Test
-    public void testDataExistsReuseData()
-            throws DataDefNotFoundException, IOException, InterruptedException {
+    public void testDataExistsReuseData() throws DataDefNotFoundException,
+            IOException, InterruptedException, IllegalAccessException {
         DataDefDefs dataDefDefs = di.instance(DataDefDefs.class);
         DataDef dataDef = dataDefDefs.getDataDef("bs");
 
@@ -183,6 +190,9 @@ public class BaseParserIT {
         assertThat(actualPayload).isNotNull();
 
         assertThat(actualPayload.getData()).isEqualTo(existingData);
+
+        Data aData = (Data) FieldUtils.readField(parser, "data", true);
+        assertThat(actualPayload.getData()).isSameAs(aData);
     }
 
     private Document getTestDocument() throws IOException {

@@ -164,10 +164,9 @@ public abstract class BaseLoader extends Step {
         validState(nonNull(locator), "locator is null");
 
         String taskGroup = getJobInfo().getGroup();
-        String taskName = getJobInfo().getTask();
         String live;
         try {
-            live = taskDefs.getFieldValue(taskGroup, taskName, "live");
+            live = taskDefs.getLive(taskGroup);
         } catch (DefNotFoundException e1) {
             live = "PT0S";
         }
@@ -224,7 +223,7 @@ public abstract class BaseLoader extends Step {
             locator.getDocuments().add(document);
             setOutput(document);
             setConsistent(true);
-            LOGGER.info(marker, "{} create new document, toDate: {}",
+            LOGGER.debug(marker, "{} create new document, toDate: {}",
                     getLabel(), document.getToDate());
             LOGGER.trace(marker, "create new document{}{}", LINE, document);
         } else {
@@ -233,7 +232,7 @@ public abstract class BaseLoader extends Step {
             document = documentPersistence.loadDocument(activeDoc.getId());
             setOutput(document);
             setConsistent(true);
-            LOGGER.info(marker, "{}, use stored document, toDate: {}",
+            LOGGER.debug(marker, "{}, use stored document, toDate: {}",
                     getLabel(), document.getToDate());
             LOGGER.trace(marker, "use stored document {}", document);
         }
@@ -287,7 +286,7 @@ public abstract class BaseLoader extends Step {
     public boolean handover() {
         validState(isConsistent(), "step inconsistent");
 
-        LOGGER.info("push document tasks to taskpool");
+        LOGGER.debug("push document tasks to taskpool");
         String group = getJobInfo().getGroup();
 
         List<String> taskNames = taskDefs.getTaskNames(group);

@@ -54,7 +54,7 @@ public class ScoopiEngine {
 
             // multi thread
 
-            LOGGER.info("switch to multi thread enviornment");
+            LOGGER.info("--- switch to multi thread system ---");
 
             taskMediator.start();
 

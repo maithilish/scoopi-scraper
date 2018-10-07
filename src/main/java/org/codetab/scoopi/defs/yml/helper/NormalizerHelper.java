@@ -42,8 +42,10 @@ public class NormalizerHelper {
             for (String taskName : taskNames) {
                 path = String.join("/", "", taskName);
                 JsonNode task = tasks.at(path);
-                String key = String.join("/", group, taskName);
-                taskMap.put(key, task);
+                if (task.isObject()) {
+                    String key = String.join("/", group, taskName);
+                    taskMap.put(key, task);
+                }
             }
         }
         return taskMap;

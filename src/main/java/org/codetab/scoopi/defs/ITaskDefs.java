@@ -22,6 +22,8 @@ public interface ITaskDefs {
     String getFieldValue(String taskGroup, String taskName, String fieldName)
             throws DefNotFoundException;
 
+    String getLive(String taskGroup) throws DefNotFoundException;
+
     /*
      * steps routines
      */

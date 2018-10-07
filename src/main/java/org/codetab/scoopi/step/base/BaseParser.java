@@ -117,7 +117,7 @@ public abstract class BaseParser extends Step {
                 metricsHelper.getCounter(this, "data", "reuse");
         if (data == null) {
             try {
-                LOGGER.info(marker, "{}", getLabeled("parse data"));
+                LOGGER.debug(marker, "{}", getLabeled("parse data"));
                 String dataDefName = getJobInfo().getDataDef();
                 data = dataFactory.createData(dataDefName, document.getId(),
                         getJobInfo().getLabel());
@@ -133,7 +133,7 @@ public abstract class BaseParser extends Step {
         } else {
             setConsistent(true);
             dataReuseCounter.inc();
-            LOGGER.info(marker, "{}", getLabeled("data exists, reuse"));
+            LOGGER.debug(marker, "{}", getLabeled("data exists, reuse"));
         }
 
         setOutput(data);

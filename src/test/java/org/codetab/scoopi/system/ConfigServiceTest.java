@@ -26,7 +26,7 @@ import org.mockito.MockitoAnnotations;
 
 public class ConfigServiceTest {
 
-    private static final int DEFAULT_CONFIGS_COUNT = 30;
+    private static final int DEFAULT_CONFIGS_COUNT = 31;
 
     private static final int USER_CONFIGS_COUNT = 2;
 
@@ -300,6 +300,8 @@ public class ConfigServiceTest {
         assertThat(defaultConfigs.getString("scoopi.seederClass"))
                 .isEqualTo("org.codetab.scoopi.step.extract.LocatorSeeder");
 
+        assertThat(defaultConfigs.getString("scoopi.poolsize.start"))
+                .isEqualTo("2");
         assertThat(defaultConfigs.getString("scoopi.poolsize.seeder"))
                 .isEqualTo("6");
         assertThat(defaultConfigs.getString("scoopi.poolsize.loader"))

@@ -15,6 +15,7 @@
         <seederClass>org.codetab.scoopi.step.extract.LocatorSeeder
         </seederClass>
         <poolsize>
+            <start>2</start>
             <seeder>6</seeder>
             <loader>4</loader>
             <parser>4</parser>

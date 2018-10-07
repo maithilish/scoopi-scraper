@@ -60,10 +60,11 @@ public class DateRoller implements IConverter {
 
         // TODO optimise: add PluginCache and get value from it
         String inPattern = pluginDefs.getValue(plugin, "inPattern");
+        String[] inPatterns = inPattern.split("\\|");
         String outPattern = pluginDefs.getValue(plugin, "outPattern");
 
         Calendar cal = GregorianCalendar.getInstance();
-        cal.setTime(DateUtils.parseDate(input, inPattern));
+        cal.setTime(DateUtils.parseDate(input, inPatterns));
 
         // get map of calendar fields to roll
         String rollStr = pluginDefs.getValue(plugin, "roll");

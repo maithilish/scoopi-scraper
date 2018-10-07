@@ -345,10 +345,11 @@
 				"taskGroups"
 			]
 		},
-		"taskNode": {
+		"taskNode": {		    
+		    "_comment": "regex matches anything except live",
 			"type": "object",
-			"patternProperties": {
-				"^.+$": {
+			"patternProperties": {			    
+				"^(?!(live)$).+$": {
 					"type": "object",
 					"properties": {
 						"dataDef": {
@@ -365,10 +366,6 @@
 								}
 							]
 						},
-						"live": {
-							"type": "string",
-							"minLength": 1
-						},
 						"persist": {
 							"oneOf": [
 								{
@@ -381,6 +378,12 @@
 					"required": [
 						"dataDef"
 					]
+				}
+			},
+			"properties": {
+				"live": {
+					"type": "string",
+					"minLength": 1
 				}
 			}
 		},

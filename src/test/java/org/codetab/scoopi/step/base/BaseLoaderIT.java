@@ -142,6 +142,9 @@ public class BaseLoaderIT {
         Document actualDocument = actual.getDocuments().get(0);
         Document expectedDocument = getTestDocument();
         expectedDocument.setId(actualDocument.getId());
+        expectedDocument.setToDate(
+                DateUtils.addDays(expectedDocument.getFromDate(), 1));
+
         assertThat(actualDocument).isEqualTo(expectedDocument);
 
         // test handed over payload
@@ -208,6 +211,8 @@ public class BaseLoaderIT {
         Document actualDocument = actual.getDocuments().get(1);
         Document expectedDocument = getTestDocument();
         expectedDocument.setId(actualDocument.getId());
+        expectedDocument.setToDate(
+                DateUtils.addDays(expectedDocument.getFromDate(), 1));
 
         assertThat(actualDocument).isEqualTo(expectedDocument);
 
@@ -334,7 +339,7 @@ public class BaseLoaderIT {
         Document existingDocument = actual.getDocuments().get(0);
         expectedDocument.setId(existingDocument.getId());
         expectedDocument.setToDate(
-                DateUtils.addDays(expectedDocument.getFromDate(), 3));
+                DateUtils.addDays(expectedDocument.getFromDate(), 1));
         assertThat(existingDocument).isEqualTo(expectedDocument);
 
         // test handed over payload

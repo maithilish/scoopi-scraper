@@ -86,7 +86,7 @@ public final class LocatorSeeder extends BaseSeeder {
 
         Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
 
-        LOGGER.info("push locators to taskpool");
+        LOGGER.debug("push locators to taskpool");
         String group = locatorGroup.getGroup();
 
         for (Locator locator : locatorGroup.getLocators()) {
@@ -125,7 +125,7 @@ public final class LocatorSeeder extends BaseSeeder {
             }
             threadSleep.sleep(SLEEP_MILLIS);
         }
-        LOGGER.info("locator group: {}, locators: {}, queued to taskpool",
+        LOGGER.debug("locator group: {}, locators: {}, queued to taskpool",
                 locatorGroup.getGroup(), locatorGroup.getLocators().size());
         return true;
     }

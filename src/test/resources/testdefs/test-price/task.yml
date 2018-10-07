@@ -1,17 +1,19 @@
 taskGroups:
 
   quote:
+  
+    live: P1D
+        
     task1:
-      dataDef: task1
-      live: PT0S
+      dataDef: task1    
       steps: devSteps
+      
     task2:
       dataDef: task2
-      live: P1D
-      steps: devSteps      
+      steps: devSteps
+            
     task3:
       dataDef: task3
-      live: P3D
       steps: devSteps      
         
 steps: 

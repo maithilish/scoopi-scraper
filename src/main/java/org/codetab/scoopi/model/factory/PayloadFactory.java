@@ -58,8 +58,12 @@ public class PayloadFactory {
             try {
                 StepInfo thisStep = stepInfo;
                 /*
-                 * !!! if stepName is start then StepInfo is not fully
-                 * constructed and get proper stepInfo where previous=start
+                 * if stepName is start then it means this stepInfo is not fully
+                 * constructed. We have to get proper stepInfo which has
+                 * previous=start which normally is the first step. To get that
+                 * we use getNextStep() which returns step which has
+                 * previous=start. We use it to get proper this step and not the
+                 * next step!
                  */
                 if (stepInfo.getStepName().equalsIgnoreCase("start")) {
                     thisStep = taskDefs.getNextStep(taskGroup, taskName,

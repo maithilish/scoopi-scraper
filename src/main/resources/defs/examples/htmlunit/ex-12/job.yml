@@ -11,14 +11,13 @@ taskGroups:
     
     priceTask:
       dataDef: price
-      live: P1D
       persist:
         data: false
       
     snapshotTask:
       dataDef: snapshot
-      live: P1W        
-        
+  
+    live: P1W        
       
 dataDefs:
 

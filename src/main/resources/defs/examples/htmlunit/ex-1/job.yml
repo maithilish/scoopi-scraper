@@ -1,9 +1,9 @@
 locatorGroups:
 
   quoteGroup:   
-    locators: [
-       { name: acme, url: "/defs/examples/page/acme-quote.html" }  
-    ]
+    locators:         
+       - name: acme
+         url: "/defs/examples/page/acme-quote.html"  
 
 taskGroups:
 
