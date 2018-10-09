@@ -15,6 +15,7 @@ import javax.script.ScriptException;
 import org.apache.commons.lang3.time.StopWatch;
 import org.codetab.scoopi.defs.IDataDefDefs;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
+import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
@@ -179,7 +180,16 @@ public abstract class BaseParser extends Step {
     private boolean persist() {
         // TODO code and move it to yaml
         // write itest and verify Ex-12
-        Optional<Boolean> taskLevelPersistence = Optional.ofNullable(true);
+        String taskGroup = getJobInfo().getGroup();
+        String taskName = getJobInfo().getTask();
+        boolean persistData = true;
+        try {
+            persistData = Boolean.valueOf(taskDefs.getFieldValue(taskGroup,
+                    taskName, "persist", "data"));
+        } catch (DefNotFoundException e) {
+        }
+        Optional<Boolean> taskLevelPersistence =
+                Optional.ofNullable(persistData);
         return dataPersistence.persist(taskLevelPersistence);
     }
 }

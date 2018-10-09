@@ -115,16 +115,15 @@ public class LocatorPersistence {
      * scoopi.persist.locator is false, then return false
      * </p>
      * <p>
-     * otherwise, if taskLevelPersistence is defined then its value and if not
-     * then true
+     * locator level control of persistence is not enabled at present and the
+     * argument locatorLevelPersistence is set to true by calling code.
      * </p>
      * <p>
      * By default, scoopi persists all model objects. However, user can override
      * this
      * <ul>
      * <li>scoopi.useDatastore=false, don't persist anything</li>
-     * <li>scoopi.persist.locator=false, don't persist any locator</li>
-     * <li>locator persist is false, don't persist the locator</li>
+     * <li>scoopi.persist.locator=false, don't persist any locator</li> *
      * </ul>
      * </p>
      * @param locatorLevelPersistence

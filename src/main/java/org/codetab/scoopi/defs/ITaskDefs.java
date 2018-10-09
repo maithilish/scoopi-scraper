@@ -19,8 +19,8 @@ public interface ITaskDefs {
 
     Optional<String> getFirstTaskName(String taskGroup);
 
-    String getFieldValue(String taskGroup, String taskName, String fieldName)
-            throws DefNotFoundException;
+    String getFieldValue(String taskGroup, String taskName,
+            String... fieldNames) throws DefNotFoundException;
 
     String getLive(String taskGroup) throws DefNotFoundException;
 

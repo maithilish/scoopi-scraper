@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -108,8 +109,13 @@ public class TaskDefs implements ITaskDefs {
 
     @Override
     public String getFieldValue(final String taskGroup, final String taskName,
-            final String fieldName) throws DefNotFoundException {
-        String path = String.join("/", "", taskGroup, taskName, fieldName);
+            final String... fieldNames) throws DefNotFoundException {
+        StringJoiner joiner =
+                new StringJoiner("/").add("").add(taskGroup).add(taskName);
+        for (String field : fieldNames) {
+            joiner.add(field);
+        }
+        String path = joiner.toString();
         JsonNode live = defs.at(path);
         if (live.isMissingNode()) {
             throw new DefNotFoundException(path);

@@ -2,6 +2,7 @@ package org.codetab.scoopi.step.base;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.codetab.scoopi.defs.IDataDefDefs;
 import org.codetab.scoopi.defs.ITaskDefs;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
+import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Data;
@@ -383,7 +385,8 @@ public class BaseParserTest {
     }
 
     @Test
-    public void testStore() throws IllegalAccessException {
+    public void testStore()
+            throws IllegalAccessException, DefNotFoundException {
         Data data = factory.createData("price");
         data.setId(1L);
         Data loadedData = factory.createData("price");
@@ -392,6 +395,8 @@ public class BaseParserTest {
         Optional<Boolean> taskLevelPersistenceDefined = Optional.of(true);
 
         FieldUtils.writeField(parser, "data", data, true);
+        given(taskDefs.getFieldValue("quote", "price", "persist", "data"))
+                .willReturn("true");
         given(dataPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);
         given(dataPersistence.storeData(data)).willReturn(true);
@@ -409,12 +414,15 @@ public class BaseParserTest {
     }
 
     @Test
-    public void testStoreStoreDataFalse() throws IllegalAccessException {
+    public void testStoreStoreDataFalse()
+            throws IllegalAccessException, DefNotFoundException {
         Data data = factory.createData("price");
         data.setId(1L);
 
-        Optional<Boolean> taskLevelPersistenceDefined = Optional.of(true);
+        Optional<Boolean> taskLevelPersistenceDefined = Optional.of(false);
         FieldUtils.writeField(parser, "data", data, true);
+        given(taskDefs.getFieldValue("quote", "price", "persist", "data"))
+                .willReturn("false");
         given(dataPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);
         given(dataPersistence.storeData(data)).willReturn(false);
@@ -426,14 +434,16 @@ public class BaseParserTest {
         Data actualData = (Data) FieldUtils.readField(parser, "data", true);
 
         assertThat(actualData).isSameAs(data);
-        verify(dataPersistence).persist(Optional.of(true));
+        verify(dataPersistence).persist(eq(taskLevelPersistenceDefined));
         verify(dataPersistence).storeData(data);
         verifyNoMoreInteractions(dataPersistence);
     }
 
     @Test
-    public void testStorePersistFalse() throws IllegalAccessException {
-        given(dataPersistence.persist(Optional.of(true))).willReturn(false);
+    public void testStorePersistFalse()
+            throws IllegalAccessException, DefNotFoundException {
+        given(taskDefs.getFieldValue("quote", "price", "persist", "data"))
+                .willReturn("false");
 
         boolean actual = parser.store();
         assertThat(actual).isTrue();
@@ -441,8 +451,37 @@ public class BaseParserTest {
         actual = parser.store();
         assertThat(actual).isTrue();
 
-        verify(dataPersistence, times(2)).persist(Optional.of(true));
+        verify(dataPersistence, times(2)).persist(Optional.of(false));
         verifyNoMoreInteractions(dataPersistence);
+    }
+
+    @Test
+    public void testStoreTaskLevelPersistenceNotDefined()
+            throws IllegalAccessException, DefNotFoundException {
+        Data data = factory.createData("price");
+        data.setId(1L);
+        Data loadedData = factory.createData("price");
+        data.setId(2L);
+
+        Optional<Boolean> taskLevelPersistenceDefined = Optional.of(true);
+
+        FieldUtils.writeField(parser, "data", data, true);
+        given(taskDefs.getFieldValue("quote", "price", "persist", "data"))
+                .willThrow(DefNotFoundException.class);
+        given(dataPersistence.persist(taskLevelPersistenceDefined))
+                .willReturn(true);
+        given(dataPersistence.storeData(data)).willReturn(true);
+        given(dataPersistence.loadData(data.getId())).willReturn(loadedData);
+
+        boolean actual = parser.store();
+
+        assertThat(actual).isTrue();
+
+        Data actualData = (Data) FieldUtils.readField(parser, "data", true);
+        Object actualOutput = parser.getOutput();
+
+        assertThat(actualData).isSameAs(loadedData);
+        assertThat(actualOutput).isSameAs(loadedData);
     }
 
     public Payload getTestPayload() {

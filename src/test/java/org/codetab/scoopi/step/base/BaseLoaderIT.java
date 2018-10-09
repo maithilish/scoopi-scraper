@@ -57,6 +57,9 @@ public class BaseLoaderIT {
     @Rule
     public ExpectedException testRule = ExpectedException.none();
 
+    // TODO refactor this test as done with BaseParserIT and see whether
+    // testdefs folder can be removed
+
     // don't move this to base class, tests fail in cli
     @BeforeClass
     public static void setUpBeforeClass()

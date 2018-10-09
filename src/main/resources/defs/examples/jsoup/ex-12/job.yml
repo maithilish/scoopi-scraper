@@ -2,7 +2,7 @@ locatorGroups:
 
   quoteGroup:   
     locators: [
-       { name: acme, url: "/defs/examples/page/acme-quote.html", persist: false }  
+       { name: acme, url: "/defs/examples/page/acme-quote.html" }  
     ]
 
 taskGroups:
@@ -12,12 +12,12 @@ taskGroups:
     priceTask:
       dataDef: price      
       persist:
-        data: false
+        data: true
               
     snapshotTask:
       dataDef: snapshot
       persist:
-        data: true
+        data: false
 
     live: P1W
                 
