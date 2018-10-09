@@ -1,15 +1,14 @@
-![gotz-banner](https://user-images.githubusercontent.com/12656407/34713923-9ea9a668-f51f-11e7-8fd9-7465f262fe12.png)
-
+![scoopi-logo](https://user-images.githubusercontent.com/12656407/46675127-5e0de980-cbfb-11e8-9448-f9ea0dc070e7.png)
 
 Scoopi Documentation <a href="http://www.codetab.org/scoopi/"> Scoopi Quickstart and Reference</a>
 
 <hr>
 
-JSoup and HtmlUnit makes it quite easy to scrape web pages in Java, but the things get complicated when data is from large number of pages.
+Scoopi is a tool to extract and transform data from web pages.
 
-Scraping libraries do well in scraping data from limited set of pages but they are not meant to handle thousands of pages. Scoopi is built upon <a href="https://jsoup.org/">JSoup</a> and <a href="http://htmlunit.sourceforge.net/">HtmlUnit</a> and the functionality offered by Scoopi are:
+Libraries such as JSoup and HtmlUnit makes it quite easy to scrape web pages in Java, but the things get complicated when data is from large number of pages. They do well in scraping data from limited set of pages but they are not meant to handle thousands of pages. Scoopi is built on <a href="https://jsoup.org/">JSoup</a> and <a href="http://htmlunit.sourceforge.net/">HtmlUnit</a> and the functionality offered by Scoopi are:
 
-   - Scoopi is completely definition driven. Data structure, task workflow and pages to scrape are defined with a set of YML definition files and no coding is required
+   - Scoopi is completely definition driven. Data structure, task workflow and pages to scrape are defined with a set of YML definition files and no coding skill is required
    - It can be configured to use either JSoup or HtmlUnit as scraper
    - Query can be written either using Selectors with JSoup or XPath with HtmlUnit
    - Scoopi is a multithreaded application which process pages in parallel for maximum throughput. 
