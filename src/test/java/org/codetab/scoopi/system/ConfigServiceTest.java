@@ -301,7 +301,7 @@ public class ConfigServiceTest {
                 .isEqualTo("org.codetab.scoopi.step.extract.LocatorSeeder");
 
         assertThat(defaultConfigs.getString("scoopi.poolsize.start"))
-                .isEqualTo("2");
+                .isEqualTo("4");
         assertThat(defaultConfigs.getString("scoopi.poolsize.seeder"))
                 .isEqualTo("6");
         assertThat(defaultConfigs.getString("scoopi.poolsize.loader"))

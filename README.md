@@ -1,6 +1,6 @@
 ![scoopi-logo](https://user-images.githubusercontent.com/12656407/46675127-5e0de980-cbfb-11e8-9448-f9ea0dc070e7.png)
 
-Scoopi Documentation <a href="http://www.codetab.org/scoopi/"> Scoopi Quickstart and Reference</a>
+CodeTab Scoopi Guide <a href="http://www.codetab.org/scoopi-web-scraper/">Quickstart and Guide</a>
 
 <hr>
 
@@ -24,4 +24,6 @@ Libraries such as JSoup and HtmlUnit makes it quite easy to scrape web pages in 
 
 ## Scoopi Installation
 
-To install and run Scoopi see [CodeTab Scoopi Reference](http://www.codetab.org/scoopi/). It is also a step-by-step guide to create data definition files through a set of examples.
+To install and run Scoopi see [CodeTab Scoopi Guide](http://www.codetab.org/scoopi-web-scraper/). It is also a step-by-step guide to create data definition files through a set of examples.
+
+
