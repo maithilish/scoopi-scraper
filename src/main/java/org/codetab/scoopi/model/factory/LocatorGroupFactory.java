@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
@@ -39,11 +40,15 @@ public class LocatorGroupFactory {
         Map<String, LocatorGroup> lgs = new HashMap<>();
         for (Member member : members) {
             Axis row = member.getAxis(AxisName.ROW);
+            Axis fact = member.getAxis(AxisName.FACT);
+            if (StringUtils.isBlank(fact.getValue())) {
+                continue;
+            }
             Optional<String> optionalLinkGroup =
                     axisDefs.getLinkGroup(dataDef, row);
             if (optionalLinkGroup.isPresent()) {
                 String linkGroup = optionalLinkGroup.get();
-                String url = member.getAxis(AxisName.FACT).getValue();
+                String url = fact.getValue();
                 Locator locator = objectFactory.createLocator(locatorName,
                         linkGroup, url);
                 if (!lgs.containsKey(linkGroup)) {

@@ -93,13 +93,15 @@ public class ValueProcessor {
                                 queryProcessor.getQueries(dataDef, axisName);
                         appendQueryTrace(trace, "", queries);
 
-                        varSubstitutor.replaceVariables(queries,
-                                member.getAxisMap());
-                        appendQueryTrace(trace, "    >>>", queries);
+                        if (!queries.get("field").equals("scoopi:none")) {
+                            varSubstitutor.replaceVariables(queries,
+                                    member.getAxisMap());
+                            appendQueryTrace(trace, "    >>>", queries);
 
-                        logQueryTrace(axisName, trace);
+                            logQueryTrace(axisName, trace);
 
-                        value = queryProcessor.query(queries, valueParser);
+                            value = queryProcessor.query(queries, valueParser);
+                        }
                     } catch (NoSuchElementException e) {
                     }
                 }

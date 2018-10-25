@@ -25,6 +25,7 @@ import org.codetab.scoopi.model.factory.DataFactory;
 import org.codetab.scoopi.persistence.DataPersistence;
 import org.codetab.scoopi.step.Step;
 import org.codetab.scoopi.step.parse.IValueParser;
+import org.codetab.scoopi.step.parse.ItemProcessor;
 import org.codetab.scoopi.step.parse.MemberStack;
 import org.codetab.scoopi.step.parse.ValueProcessor;
 import org.slf4j.Logger;
@@ -40,6 +41,8 @@ public abstract class BaseParser extends Step {
     private MemberStack memberStack;
     @Inject
     private ValueProcessor valueProcessor;
+    @Inject
+    private ItemProcessor itemProcessor;
     @Inject
     private DataPersistence dataPersistence;
     @Inject
@@ -168,6 +171,7 @@ public abstract class BaseParser extends Step {
             // collections.sort not possible as axes is a Set so implied sort
             // as value field of an axis may be referred by later axis
             valueProcessor.setAxisValues(dataDef, member, valueParser);
+            itemProcessor.setFieldsValue(dataDef, member, valueParser);
             memberStack.pushAdjacentMembers(dataDef, member);
         }
 

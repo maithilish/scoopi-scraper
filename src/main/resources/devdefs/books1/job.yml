@@ -1,0 +1,108 @@
+locatorGroups:
+  
+  booksGroup:   
+    locators: [
+       { name: acme, url: "/devdefs/books/book.html" }  
+    ]
+                                        
+taskGroups:
+
+  booksGroup:
+    booksDataTask:
+      dataDef: booksData
+      
+    booksLinkTask:
+      dataDef: booksLink
+      steps: jsoupLink
+      
+    
+dataDefs:
+
+  booksData:
+    items:
+      books:
+        indexRange: 1-10
+        region: "section ol > li:nth-child(%{row.index}) > article"
+        fields:             
+          title: "h3 > a attribute: title"
+          url: "h3 > a attribute: href"
+          imgUrl: "img attribute: src"
+          price: "p[class='price_color']"
+          avail: "p[class='instock availability']"
+      booksx:
+        indexRange: 11-15
+        region: "section ol > li:nth-child(%{row.index}) > article"
+        fields:             
+          title: "h3 > a attribute: title"
+          url: "h3 > a attribute: href"                    
+           
+    axis:
+      fact:
+        query:
+          region: "scoopi:none"  
+          field: "scoopi:none"           
+      col:
+        query:
+          script: "document.getFromDate()"        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:                        
+        members:  
+          - member: 
+              name: "books"
+              indexRange: 1-10
+          - member: 
+              name: "booksx"
+              indexRange: 11-15    
+                
+  booksLink:
+    
+    links:
+      query:
+        region: "li[class='next']"  
+        field: "a"
+        attribute: "href"
+    
+      booksLink:
+        linkGroup: booksGroup    
+        index: 1    
+       
+    axis:
+      fact:
+        query:
+          region: "li[class='next']"  
+          field: "a"
+          attribute: "href"
+        prefix: [ "/devdefs/books/" ]             
+      col:
+        query:
+          script: "document.getFromDate()"        
+        members: [ 
+          member: {name: date},
+        ]  
+      row:
+        members: [
+          member: { name: link, value: link, linkGroup: booksGroup} 
+        ]  
+
+steps:
+  jsoupLink:
+    seeder:
+      class: "org.codetab.scoopi.step.extract.LocatorSeeder"
+      previous: start
+      next: loader
+    loader:
+      class: "org.codetab.scoopi.step.extract.URLLoader"
+      previous: seeder
+      next: parser
+    parser:
+      class: "org.codetab.scoopi.step.parse.jsoup.Parser"
+      previous: loader
+      next: process
+    process:
+      class: "org.codetab.scoopi.step.convert.LocatorCreator"
+      previous: parser
+      next: seeder         
+
+            

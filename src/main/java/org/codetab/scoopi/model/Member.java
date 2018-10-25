@@ -1,5 +1,8 @@
 package org.codetab.scoopi.model;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +22,8 @@ public final class Member implements Serializable {
     private String name;
     private String group;
     private Set<Axis> axes = new HashSet<Axis>();
+
+    private Map<String, String> fields;
 
     Member() {
     }
@@ -76,6 +81,21 @@ public final class Member implements Serializable {
 
     public void setValue(final AxisName axisName, final String value) {
         getAxis(axisName).setValue(value);
+    }
+
+    public Map<String, String> getFields() {
+        return fields;
+    }
+
+    public void addFields(final String fieldName, final String fieldValue) {
+        if (isNull(fields)) {
+            fields = new HashMap<>();
+        }
+        fields.put(fieldName, fieldValue);
+    }
+
+    public boolean isFieldsMember() {
+        return nonNull(fields);
     }
 
     /**
