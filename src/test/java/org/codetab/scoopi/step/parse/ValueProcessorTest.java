@@ -125,6 +125,8 @@ public class ValueProcessorTest {
 
         IValueParser valueParser = Mockito.mock(ValueParser.class);
         Map<String, String> queries = new HashMap<>();
+        queries.put("region", "region query");
+        queries.put("field", "field query");
 
         String value = "test";
 
@@ -182,6 +184,8 @@ public class ValueProcessorTest {
 
         IValueParser valueParser = Mockito.mock(ValueParser.class);
         Map<String, String> queries = new HashMap<>();
+        queries.put("region", "region query");
+        queries.put("field", "field query");
 
         String value = "test";
         String expectedValue = "p1test";

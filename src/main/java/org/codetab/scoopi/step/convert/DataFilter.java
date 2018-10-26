@@ -36,7 +36,7 @@ public class DataFilter extends BaseConverter {
                     filterHelper.getFilterMap(dataDef);
             List<Member> filterMembers =
                     filterHelper.getFilterMembers(data.getMembers(), filterMap);
-            filterHelper.filter(data.getMembers(), filterMembers);
+            filterHelper.filter(data, filterMembers);
             setOutput(data);
             setConsistent(true);
         } catch (DataDefNotFoundException e) {

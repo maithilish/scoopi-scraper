@@ -15,7 +15,10 @@ import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
+import org.codetab.scoopi.model.Data;
+import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.DataDef;
+import org.codetab.scoopi.model.DataIterator;
 import org.codetab.scoopi.model.Filter;
 import org.codetab.scoopi.model.Member;
 
@@ -46,10 +49,15 @@ public class FilterHelper {
         return filterMembers;
     }
 
-    public void filter(final List<Member> members,
-            final List<Member> filterMembers) {
-        for (Member removalMember : filterMembers) {
-            members.remove(removalMember);
+    public void filter(final Data data, final List<Member> filterMembers) {
+        DataIterator it = data.iterator();
+        while (it.hasNext()) {
+            DataComponent dc = it.next();
+            if (dc instanceof Member) {
+                if (filterMembers.contains(dc)) {
+                    it.remove();
+                }
+            }
         }
     }
 

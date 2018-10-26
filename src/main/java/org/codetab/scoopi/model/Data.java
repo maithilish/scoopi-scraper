@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public final class Data implements Serializable {
+public final class Data extends DataComponent implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -18,7 +18,7 @@ public final class Data implements Serializable {
     private String dataDef;
     private Long dataDefId;
     private Long documentId;
-    private List<Member> members = new ArrayList<Member>();
+    private List<DataComponent> members = new ArrayList<>();
 
     Data() {
     }
@@ -64,14 +64,26 @@ public final class Data implements Serializable {
     }
 
     public List<Member> getMembers() {
-        return members;
+        DataIterator it = iterator();
+        List<Member> list = new ArrayList<>();
+        while (it.hasNext()) {
+            DataComponent dc = it.next();
+            if (dc instanceof Member) {
+                list.add((Member) dc);
+            }
+        }
+        return list;
     }
 
-    public void setMembers(final List<Member> members) {
+    public DataIterator iterator() {
+        return new DataIterator(members.iterator());
+    }
+
+    public void setMembers(final List<DataComponent> members) {
         this.members = members;
     }
 
-    public void addMember(final Member member) {
+    public void addMember(final DataComponent member) {
         members.add(member);
     }
 
@@ -86,7 +98,7 @@ public final class Data implements Serializable {
         copy.dataDef = dataDef;
         copy.dataDefId = dataDefId;
         copy.documentId = documentId;
-        for (Member member : members) {
+        for (DataComponent member : members) {
             copy.addMember(member.copy());
         }
         return copy;

@@ -75,7 +75,7 @@ public class DataFilterTest {
         assertThat(actual).isTrue();
         assertThat(dataFilter.getOutput()).isEqualTo(data);
         assertThat(dataFilter.isConsistent()).isTrue();
-        verify(filterHelper).filter(data.getMembers(), filterMembers);
+        verify(filterHelper).filter(data, filterMembers);
     }
 
     @Test

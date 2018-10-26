@@ -13,6 +13,7 @@ import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
+import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Filter;
 import org.codetab.scoopi.model.Member;
@@ -166,13 +167,23 @@ public class FilterHelperTest {
         Member m5 = members.get(4);
         Member m6 = members.get(5);
 
+        Data data = factory.createData("dataDef1");
+        data.addMember(m1);
+        data.addMember(m2);
+        data.addMember(m3);
+        data.addMember(m4);
+        data.addMember(m5);
+        data.addMember(m6);
+
         ArrayList<Member> filterMembers = Lists.newArrayList(m1, m2, m5);
 
-        filterHelper.filter(members, filterMembers);
+        filterHelper.filter(data, filterMembers);
 
-        assertThat(members.size()).isEqualTo(3);
-        assertThat(members).doesNotContain(m1, m2, m5);
-        assertThat(members).containsExactly(m3, m4, m6);
+        List<Member> actual = data.getMembers();
+
+        assertThat(actual.size()).isEqualTo(3);
+        assertThat(actual).doesNotContain(m1, m2, m5);
+        assertThat(actual).containsExactly(m3, m4, m6);
     }
 
     private List<Member> createTestMembers() {

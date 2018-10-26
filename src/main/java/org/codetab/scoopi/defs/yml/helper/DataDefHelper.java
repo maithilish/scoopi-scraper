@@ -225,7 +225,7 @@ public class DataDefHelper {
         for (List<Axis> axes : axesSets) {
             Member member = objectFactory.createMember();
             member.getAxes().addAll(axes);
-            data.getMembers().add(member);
+            data.addMember(member);
         }
         return data;
     }

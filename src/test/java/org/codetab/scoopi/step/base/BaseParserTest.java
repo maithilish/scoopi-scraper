@@ -34,11 +34,13 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.model.factory.DataFactory;
+import org.codetab.scoopi.model.helper.DataHelper;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DataPersistence;
 import org.codetab.scoopi.step.TaskFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.step.parse.IValueParser;
+import org.codetab.scoopi.step.parse.ItemProcessor;
 import org.codetab.scoopi.step.parse.MemberStack;
 import org.codetab.scoopi.step.parse.ValueProcessor;
 import org.codetab.scoopi.step.parse.jsoup.Parser;
@@ -82,9 +84,13 @@ public class BaseParserTest {
     @Mock
     private ValueProcessor valueProcessor;
     @Mock
+    private ItemProcessor itemProcessor;
+    @Mock
     private DataPersistence dataPersistence;
     @Mock
     private IDataDefDefs dataDefDefs;
+    @Mock
+    private DataHelper dataHelper;
 
     @Spy
     private ValueParser valueParser;

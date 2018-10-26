@@ -18,10 +18,12 @@ import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
+import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.factory.DataFactory;
+import org.codetab.scoopi.model.helper.DataHelper;
 import org.codetab.scoopi.persistence.DataPersistence;
 import org.codetab.scoopi.step.Step;
 import org.codetab.scoopi.step.parse.IValueParser;
@@ -49,6 +51,8 @@ public abstract class BaseParser extends Step {
     private DataFactory dataFactory;
     @Inject
     private IDataDefDefs dataDefDefs;
+    @Inject
+    private DataHelper dataHelper;
     @Inject
     private StopWatch timer;
 
@@ -161,9 +165,12 @@ public abstract class BaseParser extends Step {
 
         memberStack.pushMembers(data.getMembers());
 
-        List<Member> members = new ArrayList<>(); // expanded member list
+        List<DataComponent> members = new ArrayList<>(); // expanded member list
         String dataDefName = getJobInfo().getDataDef();
         DataDef dataDef = dataDefDefs.getDataDef(dataDefName);
+
+        List<DataComponent> addItems = new ArrayList<>();
+        List<DataComponent> removeItems = new ArrayList<>();
 
         while (!memberStack.isEmpty()) {
             Member member = memberStack.popMember();
@@ -171,11 +178,20 @@ public abstract class BaseParser extends Step {
             // collections.sort not possible as axes is a Set so implied sort
             // as value field of an axis may be referred by later axis
             valueProcessor.setAxisValues(dataDef, member, valueParser);
-            itemProcessor.setFieldsValue(dataDef, member, valueParser);
+            // TODO write test
+            Optional<Data> extraData =
+                    itemProcessor.createItems(dataDef, member, valueParser);
+            if (extraData.isPresent()) {
+                addItems.add(extraData.get());
+                removeItems.add(member);
+            }
             memberStack.pushAdjacentMembers(dataDef, member);
         }
 
         data.setMembers(members); // replace with expanded member list
+
+        dataHelper.removeItems(data, removeItems);
+        dataHelper.addItems(data, addItems);
 
         LOGGER.trace(marker, "-- data after parse --{}{}{}", LINE, getLabel(),
                 LINE, data);
