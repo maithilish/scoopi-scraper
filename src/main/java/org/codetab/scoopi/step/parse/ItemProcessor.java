@@ -16,8 +16,9 @@ import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.ObjectFactory;
+import org.codetab.scoopi.model.helper.DataHelper;
 
 public class ItemProcessor {
 
@@ -29,27 +30,32 @@ public class ItemProcessor {
     private ObjectFactory objectFactory;
     @Inject
     private IItemDefs itemDefs;
+    @Inject
+    private DataHelper dataHelper;
 
     public Optional<Data> createItems(final DataDef dataDef,
-            final Member member, final IValueParser valueParser)
-            throws IllegalAccessException, InvocationTargetException,
-            NoSuchMethodException, ScriptException {
+            final Data parentData, final Item item,
+            final IValueParser valueParser) throws IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException, ScriptException {
 
         Data data = null;
 
-        Axis row = member.getAxis(AxisName.ROW);
-        String itemName = row.getMemberName();
-        List<String> fieldNames = itemDefs.getFieldNames(dataDef, itemName);
+        Axis row = item.getAxis(AxisName.ROW);
+        String itemName = row.getItemName();
+        List<String> fieldNames = itemDefs.getItemNames(dataDef, itemName);
 
         if (fieldNames.size() == 0) {
             return Optional.ofNullable(data);
         } else {
             data = objectFactory.createData(dataDef.getName());
+            parentData.copyTags(data);
+            dataHelper.addItemTag(data);
+            dataHelper.addAxisTags(data, row);
         }
 
         for (AxisName axisName : AxisName.getReverseValues()) {
             try {
-                Axis axis = member.getAxis(axisName);
+                Axis axis = item.getAxis(axisName);
                 if (isNull(axis.getValue())) {
                     axis.setValue("scoopi:item");
                 }
@@ -62,16 +68,18 @@ public class ItemProcessor {
                 Map<String, String> queries =
                         itemDefs.getQueries(dataDef, itemName, fieldName);
 
-                varSubstitutor.replaceVariables(queries, member.getAxisMap());
+                varSubstitutor.replaceVariables(queries, item.getAxisMap());
 
                 String value = queryProcessor.query(queries, valueParser);
 
-                Member newItem = member.copy();
+                Item newItem = item.copy();
                 row = newItem.getAxis(AxisName.ROW);
                 Axis fact = newItem.getAxis(AxisName.FACT);
                 row.setValue(fieldName);
                 fact.setValue(value);
-                data.addMember(newItem);
+
+                newItem.setParent(data);
+                data.addItem(newItem);
             } catch (NoSuchElementException e) {
             }
         }

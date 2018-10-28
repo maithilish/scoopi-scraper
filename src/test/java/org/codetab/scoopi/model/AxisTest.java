@@ -126,7 +126,7 @@ public class AxisTest {
         String str =
                 new ToStringBuilder(testAxis, ToStringStyle.SHORT_PREFIX_STYLE)
                         .append("name", testAxis.getName())
-                        .append("memberName", testAxis.getMemberName())
+                        .append("itemName", testAxis.getItemName())
                         .append("value", testAxis.getValue())
                         .append("match", testAxis.getMatch())
                         .append("index", testAxis.getIndex())

@@ -18,7 +18,7 @@ import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.TestUtils;
@@ -271,8 +271,8 @@ public class DataDefHelperTest {
         DataDef dataDef = getTestDataDef();
 
         Data data = factory.createData(dataDef.getName());
-        Member member1 = factory.createMember();
-        Member member2 = factory.createMember();
+        Item item1 = factory.createItem();
+        Item item2 = factory.createItem();
 
         Map<String, Axis> axes = getTestAxes();
         Axis fact = axes.get("fact");
@@ -293,15 +293,15 @@ public class DataDefHelperTest {
         axisSets.add(axisSet);
 
         given(objectFactory.createData(dataDef.getName())).willReturn(data);
-        given(objectFactory.createMember()).willReturn(member1, member2);
+        given(objectFactory.createItem()).willReturn(item1, item2);
 
         Data actual = dataDefHelper.getData(dataDef, axisSets);
 
         assertThat(actual.getDataDef()).isEqualTo(dataDef.getName());
-        assertThat(actual.getMembers().size()).isEqualTo(2);
+        assertThat(actual.getItems().size()).isEqualTo(2);
 
-        Set<Axis> actualAxes1 = actual.getMembers().get(0).getAxes();
-        Set<Axis> actualAxes2 = actual.getMembers().get(1).getAxes();
+        Set<Axis> actualAxes1 = actual.getItems().get(0).getAxes();
+        Set<Axis> actualAxes2 = actual.getItems().get(1).getAxes();
         // set order may change so use isIn
         assertThat(actualAxes1).isIn(expectedAxes1, expectedAxes2);
         assertThat(actualAxes2).isIn(expectedAxes1, expectedAxes2);
@@ -329,12 +329,12 @@ public class DataDefHelperTest {
         Date toDate = DateUtils.addDays(runDate, 1);
         String defJson = new StringBuilder().append("{axis:")
                 .append("{fact:{query:{region:queryregion,field:queryfield},")
-                .append("members:[{member:{name:fact,index:0,order:10}}]},")
+                .append("items:[{item:{name:fact,index:0,order:10}}]},")
                 .append("col:{query:{script:colscript},")
-                .append("members:[{member:{name:date,index:1,order:11}}]},")
+                .append("items:[{item:{name:date,index:1,order:11}}]},")
                 .append("row:{query:{noQuery: ignored},")
-                .append("members:[{member:{name:Price,value:Price,index:2,order:12}},")
-                .append("{member:{name:High,match:High}}").append("]} }}")
+                .append("items:[{item:{name:Price,value:Price,index:2,order:12}},")
+                .append("{item:{name:High,match:High}}").append("]} }}")
                 .toString();
         JsonNode def = mapper.readTree(TestUtils.parseJson(defJson));
         DataDef dataDef =

@@ -7,7 +7,7 @@ import org.codetab.scoopi.model.DataDef;
 
 public interface IItemDefs {
 
-    List<String> getFieldNames(DataDef dataDef, String itemName);
+    List<String> getItemNames(DataDef dataDef, String itemName);
 
     Map<String, String> getQueries(DataDef dataDef, String itemName,
             String fieldName);

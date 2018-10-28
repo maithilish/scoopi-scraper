@@ -22,13 +22,13 @@ dataDefs:
         query:
           region: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]"
           field: "*//tr[1]/td[%{col.index}]"        
-        members: [ 
-          member: {name: year, index: 2},
+        items: [ 
+          item: {name: year, index: 2},
         ]  
       row:
         query:
           region: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]"
           field: "*//tr[%{row.index}+1]/td[1]"      
-        members: [ 
-          member: {name: item, indexRange: 6-8 },
+        items: [ 
+          item: {name: item, indexRange: 6-8 },
         ]

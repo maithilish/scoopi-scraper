@@ -15,14 +15,14 @@ public class JsonNodeHelper {
      * <pre>
      * axis:
      *     col:
-     *        members:
-     *            member:
-     *            member:
+     *        items:
+     *            item:
+     *            item:
      *
-     * path - /axis/col/members
-     * item - member
+     * path - /axis/col/items
+     * item - item
      *
-     * then return list of member
+     * then return list of item
      *
      * </pre>
      *
@@ -40,11 +40,11 @@ public class JsonNodeHelper {
      * find node with matching field
      *
      * <pre>
-     * member: { name: price }
-     * member: { name: high }
+     * item: { name: price }
+     * item: { name: high }
      *
      * then findField(nodeList, "name","price")
-     * returns the first member which has field name with match price
+     * returns the first item which has field name with match price
      * </pre>
      * <p>
      * </p>

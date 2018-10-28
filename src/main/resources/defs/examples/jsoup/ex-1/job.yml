@@ -22,10 +22,10 @@ dataDefs:
       col:
         query:
           script: configs.getRunDateTime()        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
-        members: [ 
-          member: {name: Price, value: Price},
+        items: [ 
+          item: {name: Price, value: Price},
         ]

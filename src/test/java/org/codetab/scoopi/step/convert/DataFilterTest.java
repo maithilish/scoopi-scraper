@@ -16,8 +16,8 @@ import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Filter;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.FilterHelper;
@@ -63,19 +63,19 @@ public class DataFilterTest {
 
         DataDef dataDef = factory.createDataDef("price");
         Map<AxisName, List<Filter>> filterMap = new HashMap<>();
-        List<Member> filterMembers = new ArrayList<>();
+        List<Item> filterItems = new ArrayList<>();
 
         given(dataDefDefs.getDataDef(dataDef.getName())).willReturn(dataDef);
         given(filterHelper.getFilterMap(dataDef)).willReturn(filterMap);
-        given(filterHelper.getFilterMembers(data.getMembers(), filterMap))
-                .willReturn(filterMembers);
+        given(filterHelper.getFilterItems(data.getItems(), filterMap))
+                .willReturn(filterItems);
 
         boolean actual = dataFilter.process();
 
         assertThat(actual).isTrue();
         assertThat(dataFilter.getOutput()).isEqualTo(data);
         assertThat(dataFilter.isConsistent()).isTrue();
-        verify(filterHelper).filter(data, filterMembers);
+        verify(filterHelper).filter(data, filterItems);
     }
 
     @Test

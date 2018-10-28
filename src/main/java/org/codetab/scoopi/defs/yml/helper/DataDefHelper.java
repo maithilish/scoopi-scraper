@@ -24,7 +24,7 @@ import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
@@ -139,21 +139,20 @@ public class DataDefHelper {
     }
 
     /**
-     * Members/member in each axis in datadef is converted to Axis and added to
-     * set.
+     * Items/item in each axis in datadef is converted to Axis and added to set.
      * <p>
      * For example, for
      * </p>
      *
      * <pre>
      * col
-     *    members: [
-     *        member: {name: date, index: 0},
+     *    items: [
+     *        item: {name: date, index: 0},
      *    ]
      * row
-     *    members: [
-     *        member: {name: price, index: 0},
-     *        member: {name: high, index: 1}
+     *    items: [
+     *        item: {name: price, index: 0},
+     *        item: {name: high, index: 1}
      *    ]
      * </pre>
      * <p>
@@ -181,23 +180,23 @@ public class DataDefHelper {
             AxisName axisName = AxisName.valueOf(jAxisName.toUpperCase());
             path = String.join("/", "", jAxisName);
             JsonNode jAxis = jAxes.at(path);
-            List<JsonNode> jMembers = jAxis.findValues("member");
+            List<JsonNode> jItems = jAxis.findValues("item");
             Set<Axis> axisSet = new HashSet<>();
-            for (JsonNode jMember : jMembers) {
-                JsonNode memberName = jMember.get("name");
-                JsonNode value = jMember.get("value");
-                JsonNode match = jMember.get("match");
-                JsonNode index = jMember.get("index");
-                JsonNode order = jMember.get("order");
+            for (JsonNode jItem : jItems) {
+                JsonNode itemName = jItem.get("name");
+                JsonNode value = jItem.get("value");
+                JsonNode match = jItem.get("match");
+                JsonNode index = jItem.get("index");
+                JsonNode order = jItem.get("order");
 
                 Axis axis = null;
-                if (nonNull(memberName)) {
+                if (nonNull(itemName)) {
                     axis = objectFactory.createAxis(axisName,
-                            memberName.asText());
+                            itemName.asText());
                 } else {
                     String message = String.join(" ",
                             "unable to create datadef:", dataDef.getName(),
-                            "- member name not defined");
+                            "- item name not defined");
                     throw new CriticalException(message);
                 }
                 if (nonNull(value)) {
@@ -223,9 +222,9 @@ public class DataDefHelper {
         Data data = objectFactory.createData(dataDef.getName());
         Set<List<Axis>> axesSets = Sets.cartesianProduct(axisSets);
         for (List<Axis> axes : axesSets) {
-            Member member = objectFactory.createMember();
-            member.getAxes().addAll(axes);
-            data.addMember(member);
+            Item item = objectFactory.createItem();
+            item.getAxes().addAll(axes);
+            data.addItem(item);
         }
         return data;
     }

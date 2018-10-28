@@ -69,4 +69,14 @@ public class PluginDefs implements IPluginDefs {
             throws DefNotFoundException {
         return pluginDefsHelper.getPluginField(plugin, field);
     }
+
+    @Override
+    public String getValue(final Plugin plugin, final String field,
+            final String defaultValue) {
+        try {
+            return getValue(plugin, field);
+        } catch (DefNotFoundException e) {
+            return defaultValue;
+        }
+    }
 }

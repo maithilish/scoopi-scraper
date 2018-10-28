@@ -64,7 +64,7 @@ public class AxisDefsCache {
     public Optional<List<String>> getBreakAfters(final DataDef dataDef,
             final Axis axis) {
         int key = Objects.hash(dataDef.getName(), axis.getName().toString(),
-                axis.getMemberName());
+                axis.getItemName());
         if (!breakAfterCache.containsKey(key)) {
             try {
                 Optional<List<String>> breakAfters =
@@ -80,7 +80,7 @@ public class AxisDefsCache {
     public Optional<Range<Integer>> getIndexRange(final DataDef dataDef,
             final Axis axis) {
         int key = Objects.hash(dataDef.getName(), axis.getName().toString(),
-                axis.getMemberName());
+                axis.getItemName());
         if (!indexRangeCache.containsKey(key)) {
             try {
                 Optional<Range<Integer>> indexRange =

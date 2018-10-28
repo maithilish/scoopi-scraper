@@ -77,16 +77,16 @@ dataDefs:
       col:
         query:
           script: "configs.getRunDateTime()"                  
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
         query:
           region: "#page_links > table > tbody > tr > td:nth-child(4) > ul"
           field: "li:nth-child(%{row.index}) > a[href]"      
-        members: [ 
-          member: {name: bs, index: 2, linkGroup: bsGroup},                   
-          member: {name: pl, index: 3, linkGroup: plGroup},
+        items: [ 
+          item: {name: bs, index: 2, linkGroup: bsGroup},                   
+          item: {name: pl, index: 3, linkGroup: plGroup},
         ]
 
   price:
@@ -98,12 +98,12 @@ dataDefs:
       col:
         query:
           script: configs.getRunDateTime()        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
-        members: [ 
-          member: {name: Price, value: Price},
+        items: [ 
+          item: {name: Price, value: Price},
         ]
   
   snapshot:
@@ -115,24 +115,24 @@ dataDefs:
       col:
         query:
           script: "document.getFromDate()"        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
         query:
           region: "div#snapshot"
           field: "div:matchesOwn(^%{row.match})"      
-        members: [ 
-          member: { name: "MC", match: "MARKET CAP" },
-          member: { name: "EPS", match: "EPS \\(TTM\\)" },
-          member: { name: "PE", match: "P/E" },
-          member: { name: "PC", match: "P/C" },
-          member: { name: "BV", match: "BOOK VALUE" },
-          member: { name: "PB", match: "PRICE/BOOK" },
-          member: { name: "DIV", match: "DIV \\(%\\)" },
-          member: { name: "DY", match: "DIV YIELD" },
-          member: { name: "FV", match: "FACE VALUE" },
-          member: { name: "IND PE", match: "INDUSTRY P/E" },
+        items: [ 
+          item: { name: "MC", match: "MARKET CAP" },
+          item: { name: "EPS", match: "EPS \\(TTM\\)" },
+          item: { name: "PE", match: "P/E" },
+          item: { name: "PC", match: "P/C" },
+          item: { name: "BV", match: "BOOK VALUE" },
+          item: { name: "PB", match: "PRICE/BOOK" },
+          item: { name: "DIV", match: "DIV \\(%\\)" },
+          item: { name: "DY", match: "DIV YIELD" },
+          item: { name: "FV", match: "FACE VALUE" },
+          item: { name: "IND PE", match: "INDUSTRY P/E" },
         ]
 
   bs:
@@ -145,15 +145,15 @@ dataDefs:
         query:
           region: "table:contains(Sources Of Funds)"
           field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
-        members: [ 
-          member: {name: year, indexRange: 2-6},
+        items: [ 
+          item: {name: year, indexRange: 2-6},
         ]  
       row:
         query:
           region: "table:contains(Sources Of Funds)"
           field: "tr:nth-child(%{row.index}) > td:nth-child(1)"      
-        members: [ 
-          member: {name: item, index: 5, breakAfter: ["Book Value (Rs)"] },
+        items: [ 
+          item: {name: item, index: 5, breakAfter: ["Book Value (Rs)"] },
         ]
         filters: [ 
           filter: { type: value, pattern: "" },
@@ -171,15 +171,15 @@ dataDefs:
         query:
           region: "table:contains(Employee Cost)"
           field: "tr:nth-child(1) > td:nth-child(%{col.index})"      
-        members: [ 
-          member: {name: year, indexRange: 2-6},
+        items: [ 
+          item: {name: year, indexRange: 2-6},
         ]  
       row:
         query:
           region: "table:contains(Employee Cost)"
           field: "tr:nth-child(%{row.index}) > td:nth-child(1)" 
-        members: [ 
-          member: {name: item, index: 6, breakAfter: ["Book Value (Rs)"] },
+        items: [ 
+          item: {name: item, index: 6, breakAfter: ["Book Value (Rs)"] },
         ]
         filters: [ 
           filter: { type: value, pattern: "" },

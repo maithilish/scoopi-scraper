@@ -1,7 +1,7 @@
 # examples 
 
-ex-1 single member - price
-ex-2 multi member, region, field, scripts - snapshot
+ex-1 single item - price
+ex-2 multi item, region, field, scripts - snapshot
 ex-3 index and indexRange - BS
 ex-4 breakAfter - BS
 ex-5 filters - BS

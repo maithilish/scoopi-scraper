@@ -23,19 +23,21 @@ dataDefs:
       books:
         indexRange: 1-10
         region: "section ol > li:nth-child(%{row.index}) > article"
-        fields:             
-          title: "h3 > a attribute: title"
-          url: "h3 > a attribute: href"
-          imgUrl: "img attribute: src"
-          price: "p[class='price_color']"
-          avail: "p[class='instock availability']"
+        items: [ 
+          item: { name: "title", selector: "h3 > a attribute: title" },
+          item: { name: "url", selector: "h3 > a attribute: href" },
+          item: { name: "imgUrl", selector: "img attribute: src" },
+          item: { name: "price", selector: "p[class='price_color']" },
+          item: { name: "avail", selector: "p[class='instock availability']" }          
+        ] 
       booksx:
         indexRange: 11-15
         region: "section ol > li:nth-child(%{row.index}) > article"
-        fields:             
-          title: "h3 > a attribute: title"
-          url: "h3 > a attribute: href"                    
-           
+        items: [ 
+          item: { name: "title", selector: "h3 > a attribute: title" },
+          item: { name: "url", selector: "h3 > a attribute: href" }
+        ]
+          
     axis:
       fact:
         query:
@@ -44,15 +46,15 @@ dataDefs:
       col:
         query:
           script: "document.getFromDate()"        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:                        
-        members:  
-          - member: 
+        items:  
+          - item: 
               name: "books"
               indexRange: 1-10
-          - member: 
+          - item: 
               name: "booksx"
               indexRange: 11-15    
                 
@@ -78,12 +80,12 @@ dataDefs:
       col:
         query:
           script: "document.getFromDate()"        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
-        members: [
-          member: { name: link, value: link, linkGroup: booksGroup} 
+        items: [
+          item: { name: link, value: link, linkGroup: booksGroup} 
         ]  
 
 steps:

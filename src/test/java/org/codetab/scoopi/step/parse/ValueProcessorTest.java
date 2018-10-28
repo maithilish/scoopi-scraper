@@ -22,7 +22,7 @@ import org.codetab.scoopi.defs.yml.AxisDefs;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.TaskInfo;
 import org.codetab.scoopi.step.parse.jsoup.ValueParser;
@@ -89,8 +89,8 @@ public class ValueProcessorTest {
         DataDef dataDef = factory.createDataDef("price", now, now, "def");
 
         Axis row = factory.createAxis(AxisName.ROW, "item", null, null, 2, 2);
-        Member member = factory.createMember();
-        member.addAxis(row);
+        Item item = factory.createItem();
+        item.addAxis(row);
 
         IValueParser valueParser = null;
 
@@ -105,11 +105,11 @@ public class ValueProcessorTest {
                 .willReturn(scripts);
         given(scriptProcessor.query(scripts)).willReturn(value);
 
-        valueProcessor.setAxisValues(dataDef, member, valueParser);
+        valueProcessor.setAxisValues(dataDef, item, valueParser);
 
         assertThat(row.getValue()).isEqualTo(value);
         verify(scriptProcessor).init(scriptObjectMap);
-        verify(varSubstitutor).replaceVariables(scripts, member.getAxisMap());
+        verify(varSubstitutor).replaceVariables(scripts, item.getAxisMap());
     }
 
     @Test
@@ -120,8 +120,8 @@ public class ValueProcessorTest {
         DataDef dataDef = factory.createDataDef("price", now, now, "def");
 
         Axis row = factory.createAxis(AxisName.ROW, "item", null, null, 2, 2);
-        Member member = factory.createMember();
-        member.addAxis(row);
+        Item item = factory.createItem();
+        item.addAxis(row);
 
         IValueParser valueParser = Mockito.mock(ValueParser.class);
         Map<String, String> queries = new HashMap<>();
@@ -136,10 +136,10 @@ public class ValueProcessorTest {
                 .willReturn(queries);
         given(queryProcessor.query(queries, valueParser)).willReturn(value);
 
-        valueProcessor.setAxisValues(dataDef, member, valueParser);
+        valueProcessor.setAxisValues(dataDef, item, valueParser);
 
         assertThat(row.getValue()).isEqualTo(value);
-        verify(varSubstitutor).replaceVariables(queries, member.getAxisMap());
+        verify(varSubstitutor).replaceVariables(queries, item.getAxisMap());
     }
 
     @Test
@@ -151,8 +151,8 @@ public class ValueProcessorTest {
         Axis row = factory.createAxis(AxisName.ROW, "item");
         row.setValue("xyz"); // value is set to skip script and query block
 
-        Member member = factory.createMember();
-        member.addAxis(row);
+        Item item = factory.createItem();
+        item.addAxis(row);
 
         IValueParser valueParser = null;
 
@@ -160,14 +160,14 @@ public class ValueProcessorTest {
         Optional<Range<Integer>> indexRange = Optional.empty();
         given(axisDefs.getIndexRange(dataDef, row)).willReturn(indexRange);
         row.setIndex(null);
-        valueProcessor.setAxisValues(dataDef, member, valueParser);
+        valueProcessor.setAxisValues(dataDef, item, valueParser);
         assertThat(row.getIndex()).isEqualTo(1);
 
         // indexRange 22-24
         indexRange = Optional.of(Range.between(22, 24));
         given(axisDefs.getIndexRange(dataDef, row)).willReturn(indexRange);
         row.setIndex(null);
-        valueProcessor.setAxisValues(dataDef, member, valueParser);
+        valueProcessor.setAxisValues(dataDef, item, valueParser);
         assertThat(row.getIndex()).isEqualTo(22);
     }
 
@@ -179,8 +179,8 @@ public class ValueProcessorTest {
         DataDef dataDef = factory.createDataDef("price", now, now, "def");
 
         Axis row = factory.createAxis(AxisName.ROW, "item", null, null, 2, 2);
-        Member member = factory.createMember();
-        member.addAxis(row);
+        Item item = factory.createItem();
+        item.addAxis(row);
 
         IValueParser valueParser = Mockito.mock(ValueParser.class);
         Map<String, String> queries = new HashMap<>();
@@ -202,7 +202,7 @@ public class ValueProcessorTest {
         given(prefixProcessor.prefixValue(value, prefixes.get()))
                 .willReturn(expectedValue);
 
-        valueProcessor.setAxisValues(dataDef, member, valueParser);
+        valueProcessor.setAxisValues(dataDef, item, valueParser);
 
         assertThat(row.getValue()).isEqualTo(expectedValue);
     }
@@ -215,8 +215,8 @@ public class ValueProcessorTest {
         DataDef dataDef = factory.createDataDef("price", now, now, "def");
 
         Axis row = factory.createAxis(AxisName.ROW, "item", null, null, 2, 2);
-        Member member = factory.createMember();
-        member.addAxis(row);
+        Item item = factory.createItem();
+        item.addAxis(row);
 
         IValueParser valueParser = Mockito.mock(ValueParser.class);
 
@@ -225,7 +225,7 @@ public class ValueProcessorTest {
         given(queryProcessor.getQueries(dataDef, row.getName()))
                 .willThrow(NoSuchElementException.class);
 
-        valueProcessor.setAxisValues(dataDef, member, valueParser);
+        valueProcessor.setAxisValues(dataDef, item, valueParser);
 
         assertThat(row.getValue()).isNull();
         verifyZeroInteractions(varSubstitutor, prefixProcessor);

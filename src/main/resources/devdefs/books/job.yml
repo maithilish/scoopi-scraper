@@ -23,7 +23,7 @@ dataDefs:
       books:
         indexRange: 1-10
         region: "section ol > li:nth-child(%{row.index}) > article"
-        fields:             
+        items:             
           title: "h3 > a attribute: title"
           url: "h3 > a attribute: href"
           imgUrl: "img attribute: src"
@@ -32,7 +32,7 @@ dataDefs:
       booksx:
         indexRange: 11-15
         region: "section ol > li:nth-child(%{row.index}) > article"
-        fields:             
+        items:             
           title: "h3 > a attribute: title"
           url: "h3 > a attribute: href"                    
            
@@ -44,15 +44,15 @@ dataDefs:
 #      col:
 #        query:
 #          script: "document.getFromDate()"        
-#        members: [ 
-#          member: {name: date},
+#        items: [ 
+#          item: {name: date},
 #        ]  
 #      row:                        
-#        members:  
-#          - member: 
+#        items:  
+#          - item: 
 #              name: "books"
 #              indexRange: 1-10
-#          - member: 
+#          - item: 
 #              name: "booksx"
 #              indexRange: 11-15    
                 
@@ -78,12 +78,12 @@ dataDefs:
       col:
         query:
           script: "document.getFromDate()"        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
-        members: [
-          member: { name: link, value: link, linkGroup: booksGroup} 
+        items: [
+          item: { name: link, value: link, linkGroup: booksGroup} 
         ]  
 
 steps:

@@ -32,7 +32,7 @@ steps:
           plugins: [ 
              plugin: { 
                name: csv,
-               delimiter: "|",
+               delimiter: "|",               
                class: "org.codetab.scoopi.plugin.encoder.CsvEncoder"
              } 
           ]

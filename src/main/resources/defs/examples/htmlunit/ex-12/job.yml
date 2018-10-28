@@ -30,12 +30,12 @@ dataDefs:
       col:
         query:
           script: configs.getRunDateTime()        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
-        members: [ 
-          member: {name: Price, value: Price},
+        items: [ 
+          item: {name: Price, value: Price},
         ]
 
   snapshot:
@@ -47,23 +47,23 @@ dataDefs:
       col:
         query:
           script: "document.getFromDate()"        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]
       row:
         query:
           region: "//*[@id='snapshot']"
           field: "div/div/div[starts-with(child::text(),'%{row.match}')]/child::text()"      
-        members: [ 
-          member: { name: "MC", match: "MARKET CAP" },
-          member: { name: "EPS", match: "EPS (TTM)" },
-          member: { name: "PE", match: "P/E" },
-          member: { name: "PC", match: "P/C" },
-          member: { name: "BV", match: "BOOK VALUE" },
-          member: { name: "PB", match: "PRICE/BOOK" },
-          member: { name: "DIV", match: "DIV (%)" },
-          member: { name: "DY", match: "DIV YIELD" },
-          member: { name: "FV", match: "FACE VALUE" },
-          member: { name: "IND PE", match: "INDUSTRY P/E" },
+        items: [ 
+          item: { name: "MC", match: "MARKET CAP" },
+          item: { name: "EPS", match: "EPS (TTM)" },
+          item: { name: "PE", match: "P/E" },
+          item: { name: "PC", match: "P/C" },
+          item: { name: "BV", match: "BOOK VALUE" },
+          item: { name: "PB", match: "PRICE/BOOK" },
+          item: { name: "DIV", match: "DIV (%)" },
+          item: { name: "DY", match: "DIV YIELD" },
+          item: { name: "FV", match: "FACE VALUE" },
+          item: { name: "IND PE", match: "INDUSTRY P/E" },
         ]
         

@@ -14,7 +14,7 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.codetab.scoopi.defs.IPluginDefs;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.AxisName;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.plugin.converter.Converters;
 import org.codetab.scoopi.plugin.converter.IConverter;
@@ -67,19 +67,19 @@ public final class DataConverter extends BaseConverter {
                 converters.createConverters(plugins.get());
 
                 // apply converters
-                for (Member member : data.getMembers()) {
+                for (Item item : data.getItems()) {
 
-                    String col = member.getValue(AxisName.COL);
-                    String row = member.getValue(AxisName.ROW);
-                    String fact = member.getValue(AxisName.FACT);
+                    String col = item.getValue(AxisName.COL);
+                    String row = item.getValue(AxisName.ROW);
+                    String fact = item.getValue(AxisName.FACT);
 
                     col = convert(col, converters.get(AxisName.COL));
                     row = convert(row, converters.get(AxisName.ROW));
                     fact = convert(fact, converters.get(AxisName.FACT));
 
-                    member.setValue(AxisName.COL, col);
-                    member.setValue(AxisName.ROW, row);
-                    member.setValue(AxisName.FACT, fact);
+                    item.setValue(AxisName.COL, col);
+                    item.setValue(AxisName.ROW, row);
+                    item.setValue(AxisName.FACT, fact);
                 }
             }
         } catch (Exception e) {

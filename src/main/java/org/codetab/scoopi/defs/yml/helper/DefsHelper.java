@@ -130,9 +130,9 @@ public class DefsHelper {
 
         JsonNode eDefs = defs.deepCopy();
         // !! don't change order of these methods !!
-        defsNormalizer.addFactMember(eDefs);
-        defsNormalizer.addMemberIndex(eDefs);
-        defsNormalizer.addMemberOrder(eDefs);
+        defsNormalizer.addFactItem(eDefs);
+        defsNormalizer.addItemIndex(eDefs);
+        defsNormalizer.addItemOrder(eDefs);
         defsNormalizer.addNoQuery(eDefs);
 
         defsNormalizer.setDefaultSteps(eDefs, defaultStepsName);

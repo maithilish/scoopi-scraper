@@ -12,10 +12,10 @@ import org.codetab.scoopi.defs.IAxisDefs;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
@@ -36,11 +36,11 @@ public class LocatorGroupFactory {
     private ErrorLogger errorLogger;
 
     public List<LocatorGroup> createLocatorGroups(final DataDef dataDef,
-            final List<Member> members, final String locatorName) {
+            final List<Item> items, final String locatorName) {
         Map<String, LocatorGroup> lgs = new HashMap<>();
-        for (Member member : members) {
-            Axis row = member.getAxis(AxisName.ROW);
-            Axis fact = member.getAxis(AxisName.FACT);
+        for (Item item : items) {
+            Axis row = item.getAxis(AxisName.ROW);
+            Axis fact = item.getAxis(AxisName.FACT);
             if (StringUtils.isBlank(fact.getValue())) {
                 continue;
             }
@@ -59,10 +59,10 @@ public class LocatorGroupFactory {
                 LocatorGroup lg = lgs.get(linkGroup);
                 lg.getLocators().add(locator);
             } else {
-                String label = String.join(":", dataDef.getName(),
-                        row.getMemberName());
+                String label =
+                        String.join(":", dataDef.getName(), row.getItemName());
                 String message = String.join(" ",
-                        "create locator from link, no linkGroup defined for member:",
+                        "create locator from link, no linkGroup defined for item:",
                         label);
                 errorLogger.log(CAT.ERROR, message);
             }

@@ -85,7 +85,7 @@ public final class DataDao implements IDataDao {
             query.declareParameters(paramDecla);
             query.setParameters(documentId, dataDefId);
             data = query.executeList();
-            pm.getFetchPlan().addGroup("detachMembers"); //$NON-NLS-1$
+            pm.getFetchPlan().addGroup("detachItems"); //$NON-NLS-1$
             data = (List<Data>) pm.detachCopyAll(data);
         } finally {
             pm.close();
@@ -116,7 +116,7 @@ public final class DataDao implements IDataDao {
         Data data = null;
         try {
             Object result = pm.getObjectById(Data.class, id);
-            pm.getFetchPlan().addGroup("detachMembers"); //$NON-NLS-1$
+            pm.getFetchPlan().addGroup("detachItems"); //$NON-NLS-1$
             data = (Data) pm.detachCopy(result);
         } finally {
             pm.close();

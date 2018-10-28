@@ -20,7 +20,7 @@ import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.DataIterator;
 import org.codetab.scoopi.model.Filter;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 
 public class FilterHelper {
 
@@ -31,30 +31,30 @@ public class FilterHelper {
         return axisDefs.getFilterMap(dataDef);
     }
 
-    public List<Member> getFilterMembers(final List<Member> members,
+    public List<Item> getFilterItems(final List<Item> items,
             final Map<AxisName, List<Filter>> filterMap) {
-        List<Member> filterMembers = new ArrayList<>();
-        for (Member member : members) {
-            Stream<Axis> axisToFilter = member.getAxes().stream()
+        List<Item> filterItems = new ArrayList<>();
+        for (Item item : items) {
+            Stream<Axis> axisToFilter = item.getAxes().stream()
                     .filter(axis -> filterMap.containsKey(axis.getName()));
             axisToFilter.forEach(axis -> {
                 List<Filter> filters = filterMap.get(axis.getName());
                 if (requireFilter(axis, filters)) {
-                    if (!filterMembers.contains(member)) {
-                        filterMembers.add(member);
+                    if (!filterItems.contains(item)) {
+                        filterItems.add(item);
                     }
                 }
             });
         }
-        return filterMembers;
+        return filterItems;
     }
 
-    public void filter(final Data data, final List<Member> filterMembers) {
+    public void filter(final Data data, final List<Item> filterItems) {
         DataIterator it = data.iterator();
         while (it.hasNext()) {
             DataComponent dc = it.next();
-            if (dc instanceof Member) {
-                if (filterMembers.contains(dc)) {
+            if (dc instanceof Item) {
+                if (filterItems.contains(dc)) {
                     it.remove();
                 }
             }

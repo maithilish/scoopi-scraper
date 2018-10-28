@@ -56,14 +56,14 @@
             <field name="name" />
             <field name="dataDefId" />
             <field name="documentId" />
-            <field name="members" persistence-modifier="persistent"
+            <field name="items" persistence-modifier="persistent"
                 serialized="true" />
             <unique name="UNIQUE_DATA">
                 <field name="dataDefId" />
                 <field name="documentId" />
             </unique>            
-            <fetch-group name="detachMembers">
-                <field name="members" />
+            <fetch-group name="detachItems">
+                <field name="items" />
             </fetch-group>
         </class>
         <class name="DataSet">                        

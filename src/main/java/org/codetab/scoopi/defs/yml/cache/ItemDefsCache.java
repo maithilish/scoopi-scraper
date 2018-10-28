@@ -18,14 +18,16 @@ public class ItemDefsCache {
     private ItemDefsHelper itemDefsHelper;
 
     private Map<Integer, String> regionQueryCache = new HashMap<>();
-    private Map<Integer, String> fieldQueryCache = new HashMap<>();
-    private Map<Integer, List<String>> fieldNamesCache = new HashMap<>();
+    private Map<Integer, String> itemQueryCache = new HashMap<>();
+    private Map<Integer, List<String>> itemNamesCache = new HashMap<>();
 
-    public String getRegionQuery(final DataDef dataDef, final String name) {
-        int key = Objects.hash(dataDef.getName(), name);
+    public String getRegionQuery(final DataDef dataDef,
+            final String itemsName) {
+        int key = Objects.hash(dataDef.getName(), itemsName);
         if (!regionQueryCache.containsKey(key)) {
             try {
-                String query = itemDefsHelper.getRegionQuery(dataDef, name);
+                String query =
+                        itemDefsHelper.getRegionQuery(dataDef, itemsName);
                 regionQueryCache.put(key, query);
             } catch (NoSuchElementException e) {
                 regionQueryCache.put(key, "undefined");
@@ -34,34 +36,34 @@ public class ItemDefsCache {
         return regionQueryCache.get(key);
     }
 
-    public String getFieldQuery(final DataDef dataDef, final String itemName,
-            final String fieldName) {
-        int key = Objects.hash(dataDef.getName(), itemName, fieldName);
-        if (!fieldQueryCache.containsKey(key)) {
+    public String getItemQuery(final DataDef dataDef, final String itemsName,
+            final String itemName) {
+        int key = Objects.hash(dataDef.getName(), itemsName, itemName);
+        if (!itemQueryCache.containsKey(key)) {
             try {
-                String query = itemDefsHelper.getFieldQuery(dataDef, itemName,
-                        fieldName);
-                fieldQueryCache.put(key, query);
+                String query = itemDefsHelper.getItemQuery(dataDef, itemsName,
+                        itemName);
+                itemQueryCache.put(key, query);
             } catch (NoSuchElementException e) {
-                fieldQueryCache.put(key, "undefined");
+                itemQueryCache.put(key, "undefined");
             }
         }
-        return fieldQueryCache.get(key);
+        return itemQueryCache.get(key);
     }
 
-    public List<String> getFieldNames(final DataDef dataDef,
-            final String name) {
-        int key = Objects.hash(dataDef.getName(), name);
-        if (!fieldNamesCache.containsKey(key)) {
+    public List<String> getItemNames(final DataDef dataDef,
+            final String itemsName) {
+        int key = Objects.hash(dataDef.getName(), itemsName);
+        if (!itemNamesCache.containsKey(key)) {
             try {
-                List<String> fieldNames =
-                        itemDefsHelper.getFieldNames(dataDef, name);
-                fieldNamesCache.put(key, fieldNames);
+                List<String> itemNames =
+                        itemDefsHelper.getItemNames(dataDef, itemsName);
+                itemNamesCache.put(key, itemNames);
             } catch (NoSuchElementException e) {
-                fieldNamesCache.put(key, new ArrayList<>());
+                itemNamesCache.put(key, new ArrayList<>());
             }
         }
-        return fieldNamesCache.get(key);
+        return itemNamesCache.get(key);
     }
 
 }

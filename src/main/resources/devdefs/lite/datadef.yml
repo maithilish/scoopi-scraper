@@ -9,13 +9,13 @@ dataDefs:
       col:
         query:
           script: configs.getRunDateTime()        
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
         query:
           noQuery: "no query"                      
-        members: [ 
-          member: {name: Price, value: Price},          
+        items: [ 
+          item: {name: Price, value: Price},          
         ]
        

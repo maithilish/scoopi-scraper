@@ -43,7 +43,7 @@ public class QueryVarSubstitutor {
         notNull(axisMap, "axisMap must not be null");
 
         // TODO optimise: create single value map for all strings in queries
-        // one of the option is member can return value map of its
+        // one of the option is item can return value map of its
         // axes (can't cache as value may change)
         for (String key : queries.keySet()) {
             String str = queries.get(key);

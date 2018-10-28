@@ -11,16 +11,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public final class Member extends DataComponent implements Serializable {
+public final class Item extends DataComponent implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
     private String name;
     private String group;
+    private Data parent;
     private Set<Axis> axes = new HashSet<Axis>();
 
-    Member() {
+    Item() {
     }
 
     public Long getId() {
@@ -45,6 +46,14 @@ public final class Member extends DataComponent implements Serializable {
 
     public void setGroup(final String group) {
         this.group = group;
+    }
+
+    public Data getParent() {
+        return parent;
+    }
+
+    public void setParent(final Data parent) {
+        this.parent = parent;
     }
 
     public Set<Axis> getAxes() {
@@ -80,23 +89,23 @@ public final class Member extends DataComponent implements Serializable {
 
     /**
      * Deep Copy
-     * @return deep copy of Member
+     * @return deep copy of Item
      */
-    public Member copy() {
-        Member member = new Member();
-        member.id = id;
-        member.name = name;
-        member.group = group;
+    public Item copy() {
+        Item item = new Item();
+        item.id = id;
+        item.name = name;
+        item.group = group;
         for (Axis axis : axes) {
-            member.addAxis(axis.copy());
+            item.addAxis(axis.copy());
         }
-        return member;
+        return item;
     }
 
-    public StringBuilder traceMember() {
+    public StringBuilder traceItem() {
         String line = System.lineSeparator();
         StringBuilder sb = new StringBuilder();
-        sb.append("Member=[name=");
+        sb.append("Item=[name=");
         sb.append(getName());
         sb.append(",group=");
         sb.append(getGroup());

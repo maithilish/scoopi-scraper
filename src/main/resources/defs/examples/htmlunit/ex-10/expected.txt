@@ -1,281 +1,281 @@
-acme|quoteGroup|%{runDateTime}|Price|315.25
-acme|quoteGroup|%{documentFromDate}|P/C|-
-acme|quoteGroup|%{documentFromDate}|FACE VALUE (Rs)|1.00
-acme|quoteGroup|%{documentFromDate}|BOOK VALUE (Rs)|27.89
-acme|quoteGroup|%{documentFromDate}|DIV (%)|850.00%
-acme|quoteGroup|%{documentFromDate}|PRICE/BOOK|11.29
-acme|quoteGroup|%{documentFromDate}|P/E|-
-acme|quoteGroup|%{documentFromDate}|INDUSTRY P/E|37.06
-acme|quoteGroup|%{documentFromDate}|MARKET CAP (Rs Cr)|382,642.57
-acme|quoteGroup|%{documentFromDate}|EPS (TTM)|-
-acme|quoteGroup|%{documentFromDate}|DIV YIELD.(%)|2.70%
-acme|plGroup|2016-12-31|Sales Turnover|51,944.57
-acme|plGroup|2015-12-31|Sales Turnover|50,389.01
-acme|plGroup|2014-12-31|Sales Turnover|47,068.66
-acme|plGroup|2013-12-31|Sales Turnover|42,105.51
-acme|plGroup|2012-12-31|Sales Turnover|35,247.25
-acme|plGroup|2016-12-31|Excise Duty|15,107.18
-acme|plGroup|2015-12-31|Excise Duty|13,881.61
-acme|plGroup|2014-12-31|Excise Duty|13,830.06
-acme|plGroup|2013-12-31|Excise Duty|12,204.24
-acme|plGroup|2012-12-31|Excise Duty|10,073.43
-acme|plGroup|2016-12-31|Net Sales|36,837.39
-acme|plGroup|2015-12-31|Net Sales|36,507.40
-acme|plGroup|2014-12-31|Net Sales|33,238.60
-acme|plGroup|2013-12-31|Net Sales|29,901.27
-acme|plGroup|2012-12-31|Net Sales|25,173.82
-acme|plGroup|2016-12-31|Other Income|1,803.74
-acme|plGroup|2015-12-31|Other Income|1,543.13
-acme|plGroup|2014-12-31|Other Income|1,107.14
-acme|plGroup|2013-12-31|Other Income|938.70
-acme|plGroup|2012-12-31|Other Income|825.34
-acme|plGroup|2016-12-31|Stock Adjustments|-58.17
-acme|plGroup|2015-12-31|Stock Adjustments|214.53
-acme|plGroup|2014-12-31|Stock Adjustments|128.41
-acme|plGroup|2013-12-31|Stock Adjustments|246.35
-acme|plGroup|2012-12-31|Stock Adjustments|65.59
-acme|plGroup|2016-12-31|Total Income|38,582.96
-acme|plGroup|2015-12-31|Total Income|38,265.06
-acme|plGroup|2014-12-31|Total Income|34,474.15
-acme|plGroup|2013-12-31|Total Income|31,086.32
-acme|plGroup|2012-12-31|Total Income|26,064.75
-acme|plGroup|2016-12-31|Raw Materials|13,893.28
-acme|plGroup|2015-12-31|Raw Materials|15,117.82
-acme|plGroup|2014-12-31|Raw Materials|13,522.04
-acme|plGroup|2013-12-31|Raw Materials|12,531.44
-acme|plGroup|2012-12-31|Raw Materials|9,933.19
-acme|plGroup|2016-12-31|Power & Fuel Cost|541.57
-acme|plGroup|2015-12-31|Power & Fuel Cost|581.65
-acme|plGroup|2014-12-31|Power & Fuel Cost|613.19
-acme|plGroup|2013-12-31|Power & Fuel Cost|550.11
-acme|plGroup|2012-12-31|Power & Fuel Cost|453.19
-acme|plGroup|2016-12-31|Employee Cost|1,883.51
-acme|plGroup|2015-12-31|Employee Cost|1,780.04
-acme|plGroup|2014-12-31|Employee Cost|1,608.37
-acme|plGroup|2013-12-31|Employee Cost|1,387.01
-acme|plGroup|2012-12-31|Employee Cost|1,265.41
-acme|plGroup|2016-12-31|Miscellaneous Expenses|6,222.63
-acme|plGroup|2015-12-31|Miscellaneous Expenses|5,768.87
-acme|plGroup|2014-12-31|Miscellaneous Expenses|5,168.57
-acme|plGroup|2013-12-31|Miscellaneous Expenses|5,051.55
-acme|plGroup|2012-12-31|Miscellaneous Expenses|4,739.00
-acme|plGroup|2016-12-31|Total Expenses|22,540.99
-acme|plGroup|2015-12-31|Total Expenses|23,248.38
-acme|plGroup|2014-12-31|Total Expenses|20,912.17
-acme|plGroup|2013-12-31|Total Expenses|19,520.11
-acme|plGroup|2012-12-31|Total Expenses|16,390.79
-acme|plGroup|2016-12-31|Operating Profit|14,238.23
-acme|plGroup|2015-12-31|Operating Profit|13,473.55
-acme|plGroup|2014-12-31|Operating Profit|12,454.84
-acme|plGroup|2013-12-31|Operating Profit|10,627.51
-acme|plGroup|2012-12-31|Operating Profit|8,848.62
-acme|plGroup|2016-12-31|PBDIT|16,041.97
-acme|plGroup|2015-12-31|PBDIT|15,016.68
-acme|plGroup|2014-12-31|PBDIT|13,561.98
-acme|plGroup|2013-12-31|PBDIT|11,566.21
-acme|plGroup|2012-12-31|PBDIT|9,673.96
-acme|plGroup|2016-12-31|Interest|49.13
-acme|plGroup|2015-12-31|Interest|57.42
-acme|plGroup|2014-12-31|Interest|2.95
-acme|plGroup|2013-12-31|Interest|86.47
-acme|plGroup|2012-12-31|Interest|77.92
-acme|plGroup|2016-12-31|PBDT|15,992.84
-acme|plGroup|2015-12-31|PBDT|14,959.26
-acme|plGroup|2014-12-31|PBDT|13,559.03
-acme|plGroup|2013-12-31|PBDT|11,479.74
-acme|plGroup|2012-12-31|PBDT|9,596.04
-acme|plGroup|2016-12-31|Depreciation|1,034.45
-acme|plGroup|2015-12-31|Depreciation|961.74
-acme|plGroup|2014-12-31|Depreciation|899.92
-acme|plGroup|2013-12-31|Depreciation|795.56
-acme|plGroup|2012-12-31|Depreciation|698.51
-acme|plGroup|2016-12-31|Profit Before Tax|14,958.39
-acme|plGroup|2015-12-31|Profit Before Tax|13,997.52
-acme|plGroup|2014-12-31|Profit Before Tax|12,659.11
-acme|plGroup|2013-12-31|Profit Before Tax|10,684.18
-acme|plGroup|2012-12-31|Profit Before Tax|8,897.53
-acme|plGroup|2016-12-31|PBT (Post Extra-ord Items)|14,958.39
-acme|plGroup|2015-12-31|PBT (Post Extra-ord Items)|13,997.52
-acme|plGroup|2014-12-31|PBT (Post Extra-ord Items)|12,659.11
-acme|plGroup|2013-12-31|PBT (Post Extra-ord Items)|10,684.18
-acme|plGroup|2012-12-31|PBT (Post Extra-ord Items)|8,897.53
-acme|plGroup|2016-12-31|Tax|5,113.68
-acme|plGroup|2015-12-31|Tax|4,389.79
-acme|plGroup|2014-12-31|Tax|3,873.90
-acme|plGroup|2013-12-31|Tax|3,265.79
-acme|plGroup|2012-12-31|Tax|2,735.16
-acme|plGroup|2016-12-31|Reported Net Profit|9,844.71
-acme|plGroup|2015-12-31|Reported Net Profit|9,607.73
-acme|plGroup|2014-12-31|Reported Net Profit|8,785.21
-acme|plGroup|2013-12-31|Reported Net Profit|7,418.39
-acme|plGroup|2012-12-31|Reported Net Profit|6,162.37
-acme|plGroup|2016-12-31|Total Value Addition|8,647.71
-acme|plGroup|2015-12-31|Total Value Addition|8,130.56
-acme|plGroup|2014-12-31|Total Value Addition|7,390.13
-acme|plGroup|2013-12-31|Total Value Addition|6,988.67
-acme|plGroup|2012-12-31|Total Value Addition|6,457.60
-acme|plGroup|2016-12-31|Equity Dividend|6,840.12
-acme|plGroup|2015-12-31|Equity Dividend|5,009.70
-acme|plGroup|2014-12-31|Equity Dividend|4,771.91
-acme|plGroup|2013-12-31|Equity Dividend|4,148.46
-acme|plGroup|2012-12-31|Equity Dividend|3,518.29
-acme|plGroup|2016-12-31|Corporate Dividend Tax|1,392.48
-acme|plGroup|2015-12-31|Corporate Dividend Tax|1,019.86
-acme|plGroup|2014-12-31|Corporate Dividend Tax|810.99
-acme|plGroup|2013-12-31|Corporate Dividend Tax|705.03
-acme|plGroup|2012-12-31|Corporate Dividend Tax|570.75
-acme|plGroup|2016-12-31|Shares in issue (lakhs)|80,472.07
-acme|plGroup|2015-12-31|Shares in issue (lakhs)|80,155.20
-acme|plGroup|2014-12-31|Shares in issue (lakhs)|79,531.83
-acme|plGroup|2013-12-31|Shares in issue (lakhs)|79,018.33
-acme|plGroup|2012-12-31|Shares in issue (lakhs)|78,184.24
-acme|plGroup|2016-12-31|Earning Per Share (Rs)|12.23
-acme|plGroup|2015-12-31|Earning Per Share (Rs)|11.99
-acme|plGroup|2014-12-31|Earning Per Share (Rs)|11.05
-acme|plGroup|2013-12-31|Earning Per Share (Rs)|9.39
-acme|plGroup|2012-12-31|Earning Per Share (Rs)|7.88
-acme|plGroup|2016-12-31|Equity Dividend (%)|850.00
-acme|plGroup|2015-12-31|Equity Dividend (%)|625.00
-acme|plGroup|2014-12-31|Equity Dividend (%)|600.00
-acme|plGroup|2013-12-31|Equity Dividend (%)|525.00
-acme|plGroup|2012-12-31|Equity Dividend (%)|450.00
-acme|plGroup|2016-12-31|Book Value (Rs)|40.85
-acme|plGroup|2015-12-31|Book Value (Rs)|38.28
-acme|plGroup|2014-12-31|Book Value (Rs)|32.95
-acme|plGroup|2013-12-31|Book Value (Rs)|28.14
-acme|plGroup|2012-12-31|Book Value (Rs)|23.97
-acme|bsGroup|2016-12-31|Total Share Capital|804.72
-acme|bsGroup|2015-12-31|Total Share Capital|801.55
-acme|bsGroup|2014-12-31|Total Share Capital|795.32
-acme|bsGroup|2013-12-31|Total Share Capital|790.18
-acme|bsGroup|2012-12-31|Total Share Capital|781.84
-acme|bsGroup|2016-12-31|Equity Share Capital|804.72
-acme|bsGroup|2015-12-31|Equity Share Capital|801.55
-acme|bsGroup|2014-12-31|Equity Share Capital|795.32
-acme|bsGroup|2013-12-31|Equity Share Capital|790.18
-acme|bsGroup|2012-12-31|Equity Share Capital|781.84
-acme|bsGroup|2016-12-31|Reserves|32,071.87
-acme|bsGroup|2015-12-31|Reserves|29,881.73
-acme|bsGroup|2014-12-31|Reserves|25,414.29
-acme|bsGroup|2013-12-31|Reserves|21,444.92
-acme|bsGroup|2012-12-31|Reserves|17,957.00
-acme|bsGroup|2016-12-31|Networth|32,876.59
-acme|bsGroup|2015-12-31|Networth|30,683.28
-acme|bsGroup|2014-12-31|Networth|26,209.61
-acme|bsGroup|2013-12-31|Networth|22,235.10
-acme|bsGroup|2012-12-31|Networth|18,738.84
-acme|bsGroup|2016-12-31|Secured Loans|3.60
-acme|bsGroup|2015-12-31|Secured Loans|0.02
-acme|bsGroup|2014-12-31|Secured Loans|0.14
-acme|bsGroup|2013-12-31|Secured Loans|0.00
-acme|bsGroup|2012-12-31|Secured Loans|1.77
-acme|bsGroup|2016-12-31|Unsecured Loans|25.83
-acme|bsGroup|2015-12-31|Unsecured Loans|38.69
-acme|bsGroup|2014-12-31|Unsecured Loans|51.00
-acme|bsGroup|2013-12-31|Unsecured Loans|66.40
-acme|bsGroup|2012-12-31|Unsecured Loans|77.32
-acme|bsGroup|2016-12-31|Total Debt|29.43
-acme|bsGroup|2015-12-31|Total Debt|38.71
-acme|bsGroup|2014-12-31|Total Debt|51.14
-acme|bsGroup|2013-12-31|Total Debt|66.40
-acme|bsGroup|2012-12-31|Total Debt|79.09
-acme|bsGroup|2016-12-31|Total Liabilities|32,906.02
-acme|bsGroup|2015-12-31|Total Liabilities|30,721.99
-acme|bsGroup|2014-12-31|Total Liabilities|26,260.75
-acme|bsGroup|2013-12-31|Total Liabilities|22,301.50
-acme|bsGroup|2012-12-31|Total Liabilities|18,817.93
-acme|bsGroup|2016-12-31|Gross Block|22,256.11
-acme|bsGroup|2015-12-31|Gross Block|21,392.12
-acme|bsGroup|2014-12-31|Gross Block|18,239.65
-acme|bsGroup|2013-12-31|Gross Block|16,679.17
-acme|bsGroup|2012-12-31|Gross Block|13,918.85
-acme|bsGroup|2016-12-31|Less: Revaluation Reserves|52.41
-acme|bsGroup|2015-12-31|Less: Revaluation Reserves|52.41
-acme|bsGroup|2014-12-31|Less: Revaluation Reserves|52.41
-acme|bsGroup|2013-12-31|Less: Revaluation Reserves|52.75
-acme|bsGroup|2012-12-31|Less: Revaluation Reserves|53.05
-acme|bsGroup|2016-12-31|Less: Accum. Depreciation|8,051.58
-acme|bsGroup|2015-12-31|Less: Accum. Depreciation|7,213.63
-acme|bsGroup|2014-12-31|Less: Accum. Depreciation|6,226.91
-acme|bsGroup|2013-12-31|Less: Accum. Depreciation|5,469.83
-acme|bsGroup|2012-12-31|Less: Accum. Depreciation|4,819.66
-acme|bsGroup|2016-12-31|Net Block|14,152.12
-acme|bsGroup|2015-12-31|Net Block|14,126.08
-acme|bsGroup|2014-12-31|Net Block|11,960.33
-acme|bsGroup|2013-12-31|Net Block|11,156.59
-acme|bsGroup|2012-12-31|Net Block|9,046.14
-acme|bsGroup|2016-12-31|Capital Work in Progress|2,500.83
-acme|bsGroup|2015-12-31|Capital Work in Progress|2,114.14
-acme|bsGroup|2014-12-31|Capital Work in Progress|2,295.73
-acme|bsGroup|2013-12-31|Capital Work in Progress|1,487.79
-acme|bsGroup|2012-12-31|Capital Work in Progress|2,276.75
-acme|bsGroup|2016-12-31|Investments|12,854.24
-acme|bsGroup|2015-12-31|Investments|8,405.46
-acme|bsGroup|2014-12-31|Investments|8,823.43
-acme|bsGroup|2013-12-31|Investments|7,060.29
-acme|bsGroup|2012-12-31|Investments|6,316.59
-acme|bsGroup|2016-12-31|Inventories|8,519.82
-acme|bsGroup|2015-12-31|Inventories|7,836.76
-acme|bsGroup|2014-12-31|Inventories|7,359.54
-acme|bsGroup|2013-12-31|Inventories|6,600.20
-acme|bsGroup|2012-12-31|Inventories|5,637.83
-acme|bsGroup|2016-12-31|Sundry Debtors|1,686.35
-acme|bsGroup|2015-12-31|Sundry Debtors|1,722.40
-acme|bsGroup|2014-12-31|Sundry Debtors|2,165.36
-acme|bsGroup|2013-12-31|Sundry Debtors|1,163.34
-acme|bsGroup|2012-12-31|Sundry Debtors|986.02
-acme|bsGroup|2016-12-31|Cash and Bank Balance|6,563.95
-acme|bsGroup|2015-12-31|Cash and Bank Balance|7,588.61
-acme|bsGroup|2014-12-31|Cash and Bank Balance|3,289.37
-acme|bsGroup|2013-12-31|Cash and Bank Balance|3,615.00
-acme|bsGroup|2012-12-31|Cash and Bank Balance|2,818.93
-acme|bsGroup|2016-12-31|Total Current Assets|16,770.12
-acme|bsGroup|2015-12-31|Total Current Assets|17,147.77
-acme|bsGroup|2014-12-31|Total Current Assets|12,814.27
-acme|bsGroup|2013-12-31|Total Current Assets|11,378.54
-acme|bsGroup|2012-12-31|Total Current Assets|9,442.78
-acme|bsGroup|2016-12-31|Loans and Advances|3,188.71
-acme|bsGroup|2015-12-31|Loans and Advances|2,349.80
-acme|bsGroup|2014-12-31|Loans and Advances|3,283.22
-acme|bsGroup|2013-12-31|Loans and Advances|2,881.47
-acme|bsGroup|2012-12-31|Loans and Advances|1,831.09
-acme|bsGroup|2016-12-31|Total CA, Loans & Advances|19,958.83
-acme|bsGroup|2015-12-31|Total CA, Loans & Advances|19,497.57
-acme|bsGroup|2014-12-31|Total CA, Loans & Advances|16,097.49
-acme|bsGroup|2013-12-31|Total CA, Loans & Advances|14,260.01
-acme|bsGroup|2012-12-31|Total CA, Loans & Advances|11,273.87
-acme|bsGroup|2016-12-31|Current Liabilities|8,129.22
-acme|bsGroup|2015-12-31|Current Liabilities|7,214.45
-acme|bsGroup|2014-12-31|Current Liabilities|6,921.52
-acme|bsGroup|2013-12-31|Current Liabilities|6,404.43
-acme|bsGroup|2012-12-31|Current Liabilities|5,684.35
-acme|bsGroup|2016-12-31|Provisions|8,430.78
-acme|bsGroup|2015-12-31|Provisions|6,206.81
-acme|bsGroup|2014-12-31|Provisions|5,994.71
-acme|bsGroup|2013-12-31|Provisions|5,258.75
-acme|bsGroup|2012-12-31|Provisions|4,411.07
-acme|bsGroup|2016-12-31|Total CL & Provisions|16,560.00
-acme|bsGroup|2015-12-31|Total CL & Provisions|13,421.26
-acme|bsGroup|2014-12-31|Total CL & Provisions|12,916.23
-acme|bsGroup|2013-12-31|Total CL & Provisions|11,663.18
-acme|bsGroup|2012-12-31|Total CL & Provisions|10,095.42
-acme|bsGroup|2016-12-31|Net Current Assets|3,398.83
-acme|bsGroup|2015-12-31|Net Current Assets|6,076.31
-acme|bsGroup|2014-12-31|Net Current Assets|3,181.26
-acme|bsGroup|2013-12-31|Net Current Assets|2,596.83
-acme|bsGroup|2012-12-31|Net Current Assets|1,178.45
-acme|bsGroup|2016-12-31|Total Assets|32,906.02
-acme|bsGroup|2015-12-31|Total Assets|30,721.99
-acme|bsGroup|2014-12-31|Total Assets|26,260.75
-acme|bsGroup|2013-12-31|Total Assets|22,301.50
-acme|bsGroup|2012-12-31|Total Assets|18,817.93
-acme|bsGroup|2016-12-31|Contingent Liabilities|2,648.78
-acme|bsGroup|2015-12-31|Contingent Liabilities|1,864.99
-acme|bsGroup|2014-12-31|Contingent Liabilities|1,916.00
-acme|bsGroup|2013-12-31|Contingent Liabilities|2,149.23
-acme|bsGroup|2012-12-31|Contingent Liabilities|2,533.61
-acme|bsGroup|2016-12-31|Book Value (Rs)|40.85
-acme|bsGroup|2015-12-31|Book Value (Rs)|38.28
-acme|bsGroup|2014-12-31|Book Value (Rs)|32.95
-acme|bsGroup|2013-12-31|Book Value (Rs)|28.14
-acme|bsGroup|2012-12-31|Book Value (Rs)|23.97
+acme|quoteGroup|1|1|1|%{runDateTime}|Price|315.25
+acme|quoteGroup|1|1|1|%{documentFromDate}|P/C|-
+acme|quoteGroup|1|1|1|%{documentFromDate}|FACE VALUE (Rs)|1.00
+acme|quoteGroup|1|1|1|%{documentFromDate}|BOOK VALUE (Rs)|27.89
+acme|quoteGroup|1|1|1|%{documentFromDate}|DIV (%)|850.00%
+acme|quoteGroup|1|1|1|%{documentFromDate}|PRICE/BOOK|11.29
+acme|quoteGroup|1|1|1|%{documentFromDate}|P/E|-
+acme|quoteGroup|1|1|1|%{documentFromDate}|INDUSTRY P/E|37.06
+acme|quoteGroup|1|1|1|%{documentFromDate}|MARKET CAP (Rs Cr)|382,642.57
+acme|quoteGroup|1|1|1|%{documentFromDate}|EPS (TTM)|-
+acme|quoteGroup|1|1|1|%{documentFromDate}|DIV YIELD.(%)|2.70%
+acme|plGroup|1|1|1|2016-12-31|Sales Turnover|51,944.57
+acme|plGroup|1|1|1|2015-12-31|Sales Turnover|50,389.01
+acme|plGroup|1|1|1|2014-12-31|Sales Turnover|47,068.66
+acme|plGroup|1|1|1|2013-12-31|Sales Turnover|42,105.51
+acme|plGroup|1|1|1|2012-12-31|Sales Turnover|35,247.25
+acme|plGroup|1|1|1|2016-12-31|Excise Duty|15,107.18
+acme|plGroup|1|1|1|2015-12-31|Excise Duty|13,881.61
+acme|plGroup|1|1|1|2014-12-31|Excise Duty|13,830.06
+acme|plGroup|1|1|1|2013-12-31|Excise Duty|12,204.24
+acme|plGroup|1|1|1|2012-12-31|Excise Duty|10,073.43
+acme|plGroup|1|1|1|2016-12-31|Net Sales|36,837.39
+acme|plGroup|1|1|1|2015-12-31|Net Sales|36,507.40
+acme|plGroup|1|1|1|2014-12-31|Net Sales|33,238.60
+acme|plGroup|1|1|1|2013-12-31|Net Sales|29,901.27
+acme|plGroup|1|1|1|2012-12-31|Net Sales|25,173.82
+acme|plGroup|1|1|1|2016-12-31|Other Income|1,803.74
+acme|plGroup|1|1|1|2015-12-31|Other Income|1,543.13
+acme|plGroup|1|1|1|2014-12-31|Other Income|1,107.14
+acme|plGroup|1|1|1|2013-12-31|Other Income|938.70
+acme|plGroup|1|1|1|2012-12-31|Other Income|825.34
+acme|plGroup|1|1|1|2016-12-31|Stock Adjustments|-58.17
+acme|plGroup|1|1|1|2015-12-31|Stock Adjustments|214.53
+acme|plGroup|1|1|1|2014-12-31|Stock Adjustments|128.41
+acme|plGroup|1|1|1|2013-12-31|Stock Adjustments|246.35
+acme|plGroup|1|1|1|2012-12-31|Stock Adjustments|65.59
+acme|plGroup|1|1|1|2016-12-31|Total Income|38,582.96
+acme|plGroup|1|1|1|2015-12-31|Total Income|38,265.06
+acme|plGroup|1|1|1|2014-12-31|Total Income|34,474.15
+acme|plGroup|1|1|1|2013-12-31|Total Income|31,086.32
+acme|plGroup|1|1|1|2012-12-31|Total Income|26,064.75
+acme|plGroup|1|1|1|2016-12-31|Raw Materials|13,893.28
+acme|plGroup|1|1|1|2015-12-31|Raw Materials|15,117.82
+acme|plGroup|1|1|1|2014-12-31|Raw Materials|13,522.04
+acme|plGroup|1|1|1|2013-12-31|Raw Materials|12,531.44
+acme|plGroup|1|1|1|2012-12-31|Raw Materials|9,933.19
+acme|plGroup|1|1|1|2016-12-31|Power & Fuel Cost|541.57
+acme|plGroup|1|1|1|2015-12-31|Power & Fuel Cost|581.65
+acme|plGroup|1|1|1|2014-12-31|Power & Fuel Cost|613.19
+acme|plGroup|1|1|1|2013-12-31|Power & Fuel Cost|550.11
+acme|plGroup|1|1|1|2012-12-31|Power & Fuel Cost|453.19
+acme|plGroup|1|1|1|2016-12-31|Employee Cost|1,883.51
+acme|plGroup|1|1|1|2015-12-31|Employee Cost|1,780.04
+acme|plGroup|1|1|1|2014-12-31|Employee Cost|1,608.37
+acme|plGroup|1|1|1|2013-12-31|Employee Cost|1,387.01
+acme|plGroup|1|1|1|2012-12-31|Employee Cost|1,265.41
+acme|plGroup|1|1|1|2016-12-31|Miscellaneous Expenses|6,222.63
+acme|plGroup|1|1|1|2015-12-31|Miscellaneous Expenses|5,768.87
+acme|plGroup|1|1|1|2014-12-31|Miscellaneous Expenses|5,168.57
+acme|plGroup|1|1|1|2013-12-31|Miscellaneous Expenses|5,051.55
+acme|plGroup|1|1|1|2012-12-31|Miscellaneous Expenses|4,739.00
+acme|plGroup|1|1|1|2016-12-31|Total Expenses|22,540.99
+acme|plGroup|1|1|1|2015-12-31|Total Expenses|23,248.38
+acme|plGroup|1|1|1|2014-12-31|Total Expenses|20,912.17
+acme|plGroup|1|1|1|2013-12-31|Total Expenses|19,520.11
+acme|plGroup|1|1|1|2012-12-31|Total Expenses|16,390.79
+acme|plGroup|1|1|1|2016-12-31|Operating Profit|14,238.23
+acme|plGroup|1|1|1|2015-12-31|Operating Profit|13,473.55
+acme|plGroup|1|1|1|2014-12-31|Operating Profit|12,454.84
+acme|plGroup|1|1|1|2013-12-31|Operating Profit|10,627.51
+acme|plGroup|1|1|1|2012-12-31|Operating Profit|8,848.62
+acme|plGroup|1|1|1|2016-12-31|PBDIT|16,041.97
+acme|plGroup|1|1|1|2015-12-31|PBDIT|15,016.68
+acme|plGroup|1|1|1|2014-12-31|PBDIT|13,561.98
+acme|plGroup|1|1|1|2013-12-31|PBDIT|11,566.21
+acme|plGroup|1|1|1|2012-12-31|PBDIT|9,673.96
+acme|plGroup|1|1|1|2016-12-31|Interest|49.13
+acme|plGroup|1|1|1|2015-12-31|Interest|57.42
+acme|plGroup|1|1|1|2014-12-31|Interest|2.95
+acme|plGroup|1|1|1|2013-12-31|Interest|86.47
+acme|plGroup|1|1|1|2012-12-31|Interest|77.92
+acme|plGroup|1|1|1|2016-12-31|PBDT|15,992.84
+acme|plGroup|1|1|1|2015-12-31|PBDT|14,959.26
+acme|plGroup|1|1|1|2014-12-31|PBDT|13,559.03
+acme|plGroup|1|1|1|2013-12-31|PBDT|11,479.74
+acme|plGroup|1|1|1|2012-12-31|PBDT|9,596.04
+acme|plGroup|1|1|1|2016-12-31|Depreciation|1,034.45
+acme|plGroup|1|1|1|2015-12-31|Depreciation|961.74
+acme|plGroup|1|1|1|2014-12-31|Depreciation|899.92
+acme|plGroup|1|1|1|2013-12-31|Depreciation|795.56
+acme|plGroup|1|1|1|2012-12-31|Depreciation|698.51
+acme|plGroup|1|1|1|2016-12-31|Profit Before Tax|14,958.39
+acme|plGroup|1|1|1|2015-12-31|Profit Before Tax|13,997.52
+acme|plGroup|1|1|1|2014-12-31|Profit Before Tax|12,659.11
+acme|plGroup|1|1|1|2013-12-31|Profit Before Tax|10,684.18
+acme|plGroup|1|1|1|2012-12-31|Profit Before Tax|8,897.53
+acme|plGroup|1|1|1|2016-12-31|PBT (Post Extra-ord Items)|14,958.39
+acme|plGroup|1|1|1|2015-12-31|PBT (Post Extra-ord Items)|13,997.52
+acme|plGroup|1|1|1|2014-12-31|PBT (Post Extra-ord Items)|12,659.11
+acme|plGroup|1|1|1|2013-12-31|PBT (Post Extra-ord Items)|10,684.18
+acme|plGroup|1|1|1|2012-12-31|PBT (Post Extra-ord Items)|8,897.53
+acme|plGroup|1|1|1|2016-12-31|Tax|5,113.68
+acme|plGroup|1|1|1|2015-12-31|Tax|4,389.79
+acme|plGroup|1|1|1|2014-12-31|Tax|3,873.90
+acme|plGroup|1|1|1|2013-12-31|Tax|3,265.79
+acme|plGroup|1|1|1|2012-12-31|Tax|2,735.16
+acme|plGroup|1|1|1|2016-12-31|Reported Net Profit|9,844.71
+acme|plGroup|1|1|1|2015-12-31|Reported Net Profit|9,607.73
+acme|plGroup|1|1|1|2014-12-31|Reported Net Profit|8,785.21
+acme|plGroup|1|1|1|2013-12-31|Reported Net Profit|7,418.39
+acme|plGroup|1|1|1|2012-12-31|Reported Net Profit|6,162.37
+acme|plGroup|1|1|1|2016-12-31|Total Value Addition|8,647.71
+acme|plGroup|1|1|1|2015-12-31|Total Value Addition|8,130.56
+acme|plGroup|1|1|1|2014-12-31|Total Value Addition|7,390.13
+acme|plGroup|1|1|1|2013-12-31|Total Value Addition|6,988.67
+acme|plGroup|1|1|1|2012-12-31|Total Value Addition|6,457.60
+acme|plGroup|1|1|1|2016-12-31|Equity Dividend|6,840.12
+acme|plGroup|1|1|1|2015-12-31|Equity Dividend|5,009.70
+acme|plGroup|1|1|1|2014-12-31|Equity Dividend|4,771.91
+acme|plGroup|1|1|1|2013-12-31|Equity Dividend|4,148.46
+acme|plGroup|1|1|1|2012-12-31|Equity Dividend|3,518.29
+acme|plGroup|1|1|1|2016-12-31|Corporate Dividend Tax|1,392.48
+acme|plGroup|1|1|1|2015-12-31|Corporate Dividend Tax|1,019.86
+acme|plGroup|1|1|1|2014-12-31|Corporate Dividend Tax|810.99
+acme|plGroup|1|1|1|2013-12-31|Corporate Dividend Tax|705.03
+acme|plGroup|1|1|1|2012-12-31|Corporate Dividend Tax|570.75
+acme|plGroup|1|1|1|2016-12-31|Shares in issue (lakhs)|80,472.07
+acme|plGroup|1|1|1|2015-12-31|Shares in issue (lakhs)|80,155.20
+acme|plGroup|1|1|1|2014-12-31|Shares in issue (lakhs)|79,531.83
+acme|plGroup|1|1|1|2013-12-31|Shares in issue (lakhs)|79,018.33
+acme|plGroup|1|1|1|2012-12-31|Shares in issue (lakhs)|78,184.24
+acme|plGroup|1|1|1|2016-12-31|Earning Per Share (Rs)|12.23
+acme|plGroup|1|1|1|2015-12-31|Earning Per Share (Rs)|11.99
+acme|plGroup|1|1|1|2014-12-31|Earning Per Share (Rs)|11.05
+acme|plGroup|1|1|1|2013-12-31|Earning Per Share (Rs)|9.39
+acme|plGroup|1|1|1|2012-12-31|Earning Per Share (Rs)|7.88
+acme|plGroup|1|1|1|2016-12-31|Equity Dividend (%)|850.00
+acme|plGroup|1|1|1|2015-12-31|Equity Dividend (%)|625.00
+acme|plGroup|1|1|1|2014-12-31|Equity Dividend (%)|600.00
+acme|plGroup|1|1|1|2013-12-31|Equity Dividend (%)|525.00
+acme|plGroup|1|1|1|2012-12-31|Equity Dividend (%)|450.00
+acme|plGroup|1|1|1|2016-12-31|Book Value (Rs)|40.85
+acme|plGroup|1|1|1|2015-12-31|Book Value (Rs)|38.28
+acme|plGroup|1|1|1|2014-12-31|Book Value (Rs)|32.95
+acme|plGroup|1|1|1|2013-12-31|Book Value (Rs)|28.14
+acme|plGroup|1|1|1|2012-12-31|Book Value (Rs)|23.97
+acme|bsGroup|1|1|1|2016-12-31|Total Share Capital|804.72
+acme|bsGroup|1|1|1|2015-12-31|Total Share Capital|801.55
+acme|bsGroup|1|1|1|2014-12-31|Total Share Capital|795.32
+acme|bsGroup|1|1|1|2013-12-31|Total Share Capital|790.18
+acme|bsGroup|1|1|1|2012-12-31|Total Share Capital|781.84
+acme|bsGroup|1|1|1|2016-12-31|Equity Share Capital|804.72
+acme|bsGroup|1|1|1|2015-12-31|Equity Share Capital|801.55
+acme|bsGroup|1|1|1|2014-12-31|Equity Share Capital|795.32
+acme|bsGroup|1|1|1|2013-12-31|Equity Share Capital|790.18
+acme|bsGroup|1|1|1|2012-12-31|Equity Share Capital|781.84
+acme|bsGroup|1|1|1|2016-12-31|Reserves|32,071.87
+acme|bsGroup|1|1|1|2015-12-31|Reserves|29,881.73
+acme|bsGroup|1|1|1|2014-12-31|Reserves|25,414.29
+acme|bsGroup|1|1|1|2013-12-31|Reserves|21,444.92
+acme|bsGroup|1|1|1|2012-12-31|Reserves|17,957.00
+acme|bsGroup|1|1|1|2016-12-31|Networth|32,876.59
+acme|bsGroup|1|1|1|2015-12-31|Networth|30,683.28
+acme|bsGroup|1|1|1|2014-12-31|Networth|26,209.61
+acme|bsGroup|1|1|1|2013-12-31|Networth|22,235.10
+acme|bsGroup|1|1|1|2012-12-31|Networth|18,738.84
+acme|bsGroup|1|1|1|2016-12-31|Secured Loans|3.60
+acme|bsGroup|1|1|1|2015-12-31|Secured Loans|0.02
+acme|bsGroup|1|1|1|2014-12-31|Secured Loans|0.14
+acme|bsGroup|1|1|1|2013-12-31|Secured Loans|0.00
+acme|bsGroup|1|1|1|2012-12-31|Secured Loans|1.77
+acme|bsGroup|1|1|1|2016-12-31|Unsecured Loans|25.83
+acme|bsGroup|1|1|1|2015-12-31|Unsecured Loans|38.69
+acme|bsGroup|1|1|1|2014-12-31|Unsecured Loans|51.00
+acme|bsGroup|1|1|1|2013-12-31|Unsecured Loans|66.40
+acme|bsGroup|1|1|1|2012-12-31|Unsecured Loans|77.32
+acme|bsGroup|1|1|1|2016-12-31|Total Debt|29.43
+acme|bsGroup|1|1|1|2015-12-31|Total Debt|38.71
+acme|bsGroup|1|1|1|2014-12-31|Total Debt|51.14
+acme|bsGroup|1|1|1|2013-12-31|Total Debt|66.40
+acme|bsGroup|1|1|1|2012-12-31|Total Debt|79.09
+acme|bsGroup|1|1|1|2016-12-31|Total Liabilities|32,906.02
+acme|bsGroup|1|1|1|2015-12-31|Total Liabilities|30,721.99
+acme|bsGroup|1|1|1|2014-12-31|Total Liabilities|26,260.75
+acme|bsGroup|1|1|1|2013-12-31|Total Liabilities|22,301.50
+acme|bsGroup|1|1|1|2012-12-31|Total Liabilities|18,817.93
+acme|bsGroup|1|1|1|2016-12-31|Gross Block|22,256.11
+acme|bsGroup|1|1|1|2015-12-31|Gross Block|21,392.12
+acme|bsGroup|1|1|1|2014-12-31|Gross Block|18,239.65
+acme|bsGroup|1|1|1|2013-12-31|Gross Block|16,679.17
+acme|bsGroup|1|1|1|2012-12-31|Gross Block|13,918.85
+acme|bsGroup|1|1|1|2016-12-31|Less: Revaluation Reserves|52.41
+acme|bsGroup|1|1|1|2015-12-31|Less: Revaluation Reserves|52.41
+acme|bsGroup|1|1|1|2014-12-31|Less: Revaluation Reserves|52.41
+acme|bsGroup|1|1|1|2013-12-31|Less: Revaluation Reserves|52.75
+acme|bsGroup|1|1|1|2012-12-31|Less: Revaluation Reserves|53.05
+acme|bsGroup|1|1|1|2016-12-31|Less: Accum. Depreciation|8,051.58
+acme|bsGroup|1|1|1|2015-12-31|Less: Accum. Depreciation|7,213.63
+acme|bsGroup|1|1|1|2014-12-31|Less: Accum. Depreciation|6,226.91
+acme|bsGroup|1|1|1|2013-12-31|Less: Accum. Depreciation|5,469.83
+acme|bsGroup|1|1|1|2012-12-31|Less: Accum. Depreciation|4,819.66
+acme|bsGroup|1|1|1|2016-12-31|Net Block|14,152.12
+acme|bsGroup|1|1|1|2015-12-31|Net Block|14,126.08
+acme|bsGroup|1|1|1|2014-12-31|Net Block|11,960.33
+acme|bsGroup|1|1|1|2013-12-31|Net Block|11,156.59
+acme|bsGroup|1|1|1|2012-12-31|Net Block|9,046.14
+acme|bsGroup|1|1|1|2016-12-31|Capital Work in Progress|2,500.83
+acme|bsGroup|1|1|1|2015-12-31|Capital Work in Progress|2,114.14
+acme|bsGroup|1|1|1|2014-12-31|Capital Work in Progress|2,295.73
+acme|bsGroup|1|1|1|2013-12-31|Capital Work in Progress|1,487.79
+acme|bsGroup|1|1|1|2012-12-31|Capital Work in Progress|2,276.75
+acme|bsGroup|1|1|1|2016-12-31|Investments|12,854.24
+acme|bsGroup|1|1|1|2015-12-31|Investments|8,405.46
+acme|bsGroup|1|1|1|2014-12-31|Investments|8,823.43
+acme|bsGroup|1|1|1|2013-12-31|Investments|7,060.29
+acme|bsGroup|1|1|1|2012-12-31|Investments|6,316.59
+acme|bsGroup|1|1|1|2016-12-31|Inventories|8,519.82
+acme|bsGroup|1|1|1|2015-12-31|Inventories|7,836.76
+acme|bsGroup|1|1|1|2014-12-31|Inventories|7,359.54
+acme|bsGroup|1|1|1|2013-12-31|Inventories|6,600.20
+acme|bsGroup|1|1|1|2012-12-31|Inventories|5,637.83
+acme|bsGroup|1|1|1|2016-12-31|Sundry Debtors|1,686.35
+acme|bsGroup|1|1|1|2015-12-31|Sundry Debtors|1,722.40
+acme|bsGroup|1|1|1|2014-12-31|Sundry Debtors|2,165.36
+acme|bsGroup|1|1|1|2013-12-31|Sundry Debtors|1,163.34
+acme|bsGroup|1|1|1|2012-12-31|Sundry Debtors|986.02
+acme|bsGroup|1|1|1|2016-12-31|Cash and Bank Balance|6,563.95
+acme|bsGroup|1|1|1|2015-12-31|Cash and Bank Balance|7,588.61
+acme|bsGroup|1|1|1|2014-12-31|Cash and Bank Balance|3,289.37
+acme|bsGroup|1|1|1|2013-12-31|Cash and Bank Balance|3,615.00
+acme|bsGroup|1|1|1|2012-12-31|Cash and Bank Balance|2,818.93
+acme|bsGroup|1|1|1|2016-12-31|Total Current Assets|16,770.12
+acme|bsGroup|1|1|1|2015-12-31|Total Current Assets|17,147.77
+acme|bsGroup|1|1|1|2014-12-31|Total Current Assets|12,814.27
+acme|bsGroup|1|1|1|2013-12-31|Total Current Assets|11,378.54
+acme|bsGroup|1|1|1|2012-12-31|Total Current Assets|9,442.78
+acme|bsGroup|1|1|1|2016-12-31|Loans and Advances|3,188.71
+acme|bsGroup|1|1|1|2015-12-31|Loans and Advances|2,349.80
+acme|bsGroup|1|1|1|2014-12-31|Loans and Advances|3,283.22
+acme|bsGroup|1|1|1|2013-12-31|Loans and Advances|2,881.47
+acme|bsGroup|1|1|1|2012-12-31|Loans and Advances|1,831.09
+acme|bsGroup|1|1|1|2016-12-31|Total CA, Loans & Advances|19,958.83
+acme|bsGroup|1|1|1|2015-12-31|Total CA, Loans & Advances|19,497.57
+acme|bsGroup|1|1|1|2014-12-31|Total CA, Loans & Advances|16,097.49
+acme|bsGroup|1|1|1|2013-12-31|Total CA, Loans & Advances|14,260.01
+acme|bsGroup|1|1|1|2012-12-31|Total CA, Loans & Advances|11,273.87
+acme|bsGroup|1|1|1|2016-12-31|Current Liabilities|8,129.22
+acme|bsGroup|1|1|1|2015-12-31|Current Liabilities|7,214.45
+acme|bsGroup|1|1|1|2014-12-31|Current Liabilities|6,921.52
+acme|bsGroup|1|1|1|2013-12-31|Current Liabilities|6,404.43
+acme|bsGroup|1|1|1|2012-12-31|Current Liabilities|5,684.35
+acme|bsGroup|1|1|1|2016-12-31|Provisions|8,430.78
+acme|bsGroup|1|1|1|2015-12-31|Provisions|6,206.81
+acme|bsGroup|1|1|1|2014-12-31|Provisions|5,994.71
+acme|bsGroup|1|1|1|2013-12-31|Provisions|5,258.75
+acme|bsGroup|1|1|1|2012-12-31|Provisions|4,411.07
+acme|bsGroup|1|1|1|2016-12-31|Total CL & Provisions|16,560.00
+acme|bsGroup|1|1|1|2015-12-31|Total CL & Provisions|13,421.26
+acme|bsGroup|1|1|1|2014-12-31|Total CL & Provisions|12,916.23
+acme|bsGroup|1|1|1|2013-12-31|Total CL & Provisions|11,663.18
+acme|bsGroup|1|1|1|2012-12-31|Total CL & Provisions|10,095.42
+acme|bsGroup|1|1|1|2016-12-31|Net Current Assets|3,398.83
+acme|bsGroup|1|1|1|2015-12-31|Net Current Assets|6,076.31
+acme|bsGroup|1|1|1|2014-12-31|Net Current Assets|3,181.26
+acme|bsGroup|1|1|1|2013-12-31|Net Current Assets|2,596.83
+acme|bsGroup|1|1|1|2012-12-31|Net Current Assets|1,178.45
+acme|bsGroup|1|1|1|2016-12-31|Total Assets|32,906.02
+acme|bsGroup|1|1|1|2015-12-31|Total Assets|30,721.99
+acme|bsGroup|1|1|1|2014-12-31|Total Assets|26,260.75
+acme|bsGroup|1|1|1|2013-12-31|Total Assets|22,301.50
+acme|bsGroup|1|1|1|2012-12-31|Total Assets|18,817.93
+acme|bsGroup|1|1|1|2016-12-31|Contingent Liabilities|2,648.78
+acme|bsGroup|1|1|1|2015-12-31|Contingent Liabilities|1,864.99
+acme|bsGroup|1|1|1|2014-12-31|Contingent Liabilities|1,916.00
+acme|bsGroup|1|1|1|2013-12-31|Contingent Liabilities|2,149.23
+acme|bsGroup|1|1|1|2012-12-31|Contingent Liabilities|2,533.61
+acme|bsGroup|1|1|1|2016-12-31|Book Value (Rs)|40.85
+acme|bsGroup|1|1|1|2015-12-31|Book Value (Rs)|38.28
+acme|bsGroup|1|1|1|2014-12-31|Book Value (Rs)|32.95
+acme|bsGroup|1|1|1|2013-12-31|Book Value (Rs)|28.14
+acme|bsGroup|1|1|1|2012-12-31|Book Value (Rs)|23.97

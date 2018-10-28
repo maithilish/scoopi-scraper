@@ -18,20 +18,20 @@ public class ItemDefs implements IItemDefs {
     private ItemDefsCache cache;
 
     @Override
-    public List<String> getFieldNames(final DataDef dataDef,
+    public List<String> getItemNames(final DataDef dataDef,
             final String itemName) {
-        return cache.getFieldNames(dataDef, itemName);
+        return cache.getItemNames(dataDef, itemName);
     }
 
     @Override
     public Map<String, String> getQueries(final DataDef dataDef,
-            final String itemName, final String fieldName) {
+            final String itemsName, final String itemName) {
 
         Map<String, String> queries = new HashMap<>();
-        queries.put("region", cache.getRegionQuery(dataDef, itemName));
+        queries.put("region", cache.getRegionQuery(dataDef, itemsName));
 
-        String fieldQuery = cache.getFieldQuery(dataDef, itemName, fieldName);
-        String[] parts = fieldQuery.split(" attribute: ");
+        String itemQuery = cache.getItemQuery(dataDef, itemsName, itemName);
+        String[] parts = itemQuery.split(" attribute: ");
         queries.put("field", parts[0]);
         if (parts.length > 1) {
             queries.put("attribute", parts[1]);

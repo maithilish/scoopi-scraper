@@ -19,7 +19,7 @@ import org.codetab.scoopi.defs.yml.AxisDefs;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class ValueProcessor {
 
     private Map<String, Object> scriptObjectMap = new HashMap<>();
 
-    public void setAxisValues(final DataDef dataDef, final Member member,
+    public void setAxisValues(final DataDef dataDef, final Item item,
             final IValueParser valueParser)
             throws ScriptException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
@@ -52,7 +52,7 @@ public class ValueProcessor {
         for (AxisName axisName : AxisName.getReverseValues()) {
             Axis axis = null;
             try {
-                axis = member.getAxis(axisName);
+                axis = item.getAxis(axisName);
             } catch (NoSuchElementException e) {
                 continue;
             }
@@ -76,8 +76,7 @@ public class ValueProcessor {
                             scriptProcessor.getScripts(dataDef, axisName);
                     appendQueryTrace(trace, "", scripts);
 
-                    varSubstitutor.replaceVariables(scripts,
-                            member.getAxisMap());
+                    varSubstitutor.replaceVariables(scripts, item.getAxisMap());
                     appendQueryTrace(trace, "    >>>", scripts);
 
                     logQueryTrace(axisName, trace);
@@ -95,7 +94,7 @@ public class ValueProcessor {
 
                         if (!queries.get("field").equals("scoopi:none")) {
                             varSubstitutor.replaceVariables(queries,
-                                    member.getAxisMap());
+                                    item.getAxisMap());
                             appendQueryTrace(trace, "    >>>", queries);
 
                             logQueryTrace(axisName, trace);

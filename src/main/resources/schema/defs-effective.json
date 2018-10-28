@@ -123,7 +123,7 @@
 							"$ref": "#/definitions/queryNode"
 						},
 						{
-							"$ref": "#/definitions/membersNode"
+							"$ref": "#/definitions/itemsNode"
 						}
 					]
 				}
@@ -141,7 +141,7 @@
 							"$ref": "#/definitions/queryNode"
 						},
 						{
-							"$ref": "#/definitions/membersNode"
+							"$ref": "#/definitions/itemsNode"
 						},
 						{
 							"$ref": "#/definitions/filtersNode"
@@ -162,7 +162,7 @@
 							"$ref": "#/definitions/queryNode"
 						},
 						{
-							"$ref": "#/definitions/membersNode"
+							"$ref": "#/definitions/itemsNode"
 						},
 						{
 							"$ref": "#/definitions/filtersNode"
@@ -225,30 +225,30 @@
 				"field"
 			]
 		},
-		"membersNode": {
+		"itemsNode": {
 			"type": "object",
 			"properties": {
-				"members": {
+				"items": {
 					"type": "array",
 					"uniqueItems": true,
 					"minItems": 1,
 					"items": {
 						"oneOf": [
 							{
-								"$ref": "#/definitions/memberNode"
+								"$ref": "#/definitions/itemNode"
 							}
 						]
 					}
 				}
 			},
 			"required": [
-				"members"
+				"items"
 			]
 		},
-		"memberNode": {
+		"itemNode": {
 			"type": "object",
 			"properties": {
-				"member": {
+				"item": {
 					"type": "object",
 					"properties": {
 						"name": {
@@ -298,7 +298,7 @@
 				}
 			},
 			"required": [
-				"member"
+				"item"
 			]
 		},
 		"filtersNode": {

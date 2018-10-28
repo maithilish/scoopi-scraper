@@ -44,7 +44,7 @@ public class LocatorCreator extends BaseConverter {
             String dataDefName = getPayload().getJobInfo().getDataDef();
             DataDef dataDef = dataDefDefs.getDataDef(dataDefName);
             locatorGroups = locatorGroupFactory.createLocatorGroups(dataDef,
-                    data.getMembers(), locatorName);
+                    data.getItems(), locatorName);
             setOutput(locatorGroups);
             setConsistent(true);
             return true;

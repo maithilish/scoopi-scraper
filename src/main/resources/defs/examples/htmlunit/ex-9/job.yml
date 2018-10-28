@@ -71,16 +71,16 @@ dataDefs:
       col:
         query:
           script: "configs.getRunDateTime()"                  
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
         query:
           region: "//*[@id='page_links']/table"
           field: "tbody/tr/td[4]/ul/li[%{row.index}]/a"      
-        members: [ 
-          member: {name: bs, index: 2, linkGroup: bsGroup},                   
-          member: {name: pl, index: 3, linkGroup: plGroup},
+        items: [ 
+          item: {name: bs, index: 2, linkGroup: bsGroup},                   
+          item: {name: pl, index: 3, linkGroup: plGroup},
         ]
 
   bs:
@@ -93,15 +93,15 @@ dataDefs:
         query:
           region: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]"
           field: "*//tr[1]/td[%{col.index}]"        
-        members: [ 
-          member: {name: year, indexRange: 2-6},
+        items: [ 
+          item: {name: year, indexRange: 2-6},
         ]  
       row:
         query:
           region: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]" 
           field: "*//tr[%{row.index}+1]/td[1]"      
-        members: [ 
-          member: {name: item, index: 5, breakAfter: ["Book Value (Rs)"] },
+        items: [ 
+          item: {name: item, index: 5, breakAfter: ["Book Value (Rs)"] },
         ]
         filters: [ 
           filter: { type: value, pattern: "" },
@@ -119,15 +119,15 @@ dataDefs:
         query:
           region: "//table//*[count(*)=0 and contains(.,'Employee Cost')]/ancestor::table[1]"
           field: "*//tr[1]/td[%{col.index}]"       
-        members: [ 
-          member: {name: year, indexRange: 2-6},
+        items: [ 
+          item: {name: year, indexRange: 2-6},
         ]  
       row:
         query:
           region: "//table//*[count(*)=0 and contains(.,'Employee Cost')]/ancestor::table[1]"
           field: "*//tr[%{row.index}+0]/td[1]" 
-        members: [ 
-          member: {name: item, index: 6, breakAfter: ["Book Value (Rs)"] },
+        items: [ 
+          item: {name: item, index: 6, breakAfter: ["Book Value (Rs)"] },
         ]
         filters: [ 
           filter: { type: value, pattern: "" },

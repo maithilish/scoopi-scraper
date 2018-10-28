@@ -28,8 +28,8 @@ import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Document;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
@@ -41,7 +41,7 @@ import org.codetab.scoopi.step.TaskFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.step.parse.IValueParser;
 import org.codetab.scoopi.step.parse.ItemProcessor;
-import org.codetab.scoopi.step.parse.MemberStack;
+import org.codetab.scoopi.step.parse.ItemStack;
 import org.codetab.scoopi.step.parse.ValueProcessor;
 import org.codetab.scoopi.step.parse.jsoup.Parser;
 import org.codetab.scoopi.step.parse.jsoup.ValueParser;
@@ -80,7 +80,7 @@ public class BaseParserTest {
     private DataFactory dataFactory;
 
     @Mock
-    private MemberStack memberStack;
+    private ItemStack itemStack;
     @Mock
     private ValueProcessor valueProcessor;
     @Mock
@@ -286,17 +286,17 @@ public class BaseParserTest {
 
         String label = parser.getJobInfo().getLabel();
 
-        Member member1 = factory.createMember();
-        member1.setName("m1");
-        Member member2 = factory.createMember();
-        member1.setName("m2");
+        Item item1 = factory.createItem();
+        item1.setName("m1");
+        Item item2 = factory.createItem();
+        item1.setName("m2");
 
         Data data = factory.createData(dataDefName);
         data.setDocumentId(documentId);
         data.setDataDefId(dataDefId);
 
-        data.addMember(member1);
-        data.addMember(member2);
+        data.addItem(item1);
+        data.addItem(item2);
 
         given(metricsHelper.getCounter(parser, "data", "parse"))
                 .willReturn(parseCounter);
@@ -306,8 +306,8 @@ public class BaseParserTest {
                 .willReturn(data);
         given(dataDefDefs.getDataDef(dataDefName)).willReturn(dataDef);
         given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
-        given(memberStack.isEmpty()).willReturn(false, false, true);
-        given(memberStack.popMember()).willReturn(member1, member2);
+        given(itemStack.isEmpty()).willReturn(false, false, true);
+        given(itemStack.popItem()).willReturn(item1, item2);
 
         boolean actual = parser.process();
 
@@ -315,16 +315,16 @@ public class BaseParserTest {
         assertThat(parser.getOutput()).isInstanceOf(Data.class);
         Data actualData = (Data) parser.getOutput();
         assertThat(actualData).isEqualTo(data);
-        assertThat(actualData.getMembers()).containsExactly(member1, member2);
+        assertThat(actualData.getItems()).containsExactly(item1, item2);
         assertThat(parser.isConsistent()).isTrue();
 
         verify(valueProcessor).addScriptObject("document", document);
         verify(valueProcessor).addScriptObject("configs", configService);
-        verify(memberStack).pushMembers(data.getMembers());
-        verify(valueProcessor).setAxisValues(dataDef, member1, valParser);
-        verify(memberStack).pushAdjacentMembers(dataDef, member1);
-        verify(valueProcessor).setAxisValues(dataDef, member2, valParser);
-        verify(memberStack).pushAdjacentMembers(dataDef, member2);
+        verify(itemStack).pushItems(data.getItems());
+        verify(valueProcessor).setAxisValues(dataDef, item1, valParser);
+        verify(itemStack).pushAdjacentItems(dataDef, item1);
+        verify(valueProcessor).setAxisValues(dataDef, item2, valParser);
+        verify(itemStack).pushAdjacentItems(dataDef, item2);
         verify(parseCounter).inc();
 
         verifyZeroInteractions(reuseCounter);
@@ -384,7 +384,7 @@ public class BaseParserTest {
                 .willReturn(data);
         given(dataFactory.createData(dataDefName, documentId, label))
                 .willThrow(DataDefNotFoundException.class);
-        given(memberStack.isEmpty()).willReturn(false, false, true);
+        given(itemStack.isEmpty()).willReturn(false, false, true);
 
         testRule.expect(StepRunException.class);
         parser.process();

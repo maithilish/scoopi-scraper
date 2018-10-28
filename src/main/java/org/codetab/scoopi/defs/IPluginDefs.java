@@ -19,4 +19,6 @@ public interface IPluginDefs {
     String getPluginName(Plugin plugin) throws DefNotFoundException;
 
     String getValue(Plugin plugin, String field) throws DefNotFoundException;
+
+    String getValue(Plugin plugin, String field, String defaultValue);
 }

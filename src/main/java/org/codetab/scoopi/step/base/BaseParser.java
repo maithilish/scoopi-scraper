@@ -21,14 +21,14 @@ import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Document;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.factory.DataFactory;
 import org.codetab.scoopi.model.helper.DataHelper;
 import org.codetab.scoopi.persistence.DataPersistence;
 import org.codetab.scoopi.step.Step;
 import org.codetab.scoopi.step.parse.IValueParser;
 import org.codetab.scoopi.step.parse.ItemProcessor;
-import org.codetab.scoopi.step.parse.MemberStack;
+import org.codetab.scoopi.step.parse.ItemStack;
 import org.codetab.scoopi.step.parse.ValueProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public abstract class BaseParser extends Step {
     static final Logger LOGGER = LoggerFactory.getLogger(BaseParser.class);
 
     @Inject
-    private MemberStack memberStack;
+    private ItemStack itemStack;
     @Inject
     private ValueProcessor valueProcessor;
     @Inject
@@ -129,6 +129,11 @@ public abstract class BaseParser extends Step {
                 String dataDefName = getJobInfo().getDataDef();
                 data = dataFactory.createData(dataDefName, document.getId(),
                         getJobInfo().getLabel());
+
+                dataHelper.addPageTag(data);
+                dataHelper.addItemTag(data);
+                dataHelper.addAxisTags(data, null);
+
                 parse();
                 setConsistent(true);
                 dataParseCounter.inc();
@@ -163,32 +168,33 @@ public abstract class BaseParser extends Step {
         valueProcessor.addScriptObject("document", document);
         valueProcessor.addScriptObject("configs", configService);
 
-        memberStack.pushMembers(data.getMembers());
+        itemStack.pushItems(data.getItems());
 
-        List<DataComponent> members = new ArrayList<>(); // expanded member list
+        List<DataComponent> items = new ArrayList<>(); // expanded item list
         String dataDefName = getJobInfo().getDataDef();
         DataDef dataDef = dataDefDefs.getDataDef(dataDefName);
 
         List<DataComponent> addItems = new ArrayList<>();
         List<DataComponent> removeItems = new ArrayList<>();
 
-        while (!memberStack.isEmpty()) {
-            Member member = memberStack.popMember();
-            members.add(member);
+        while (!itemStack.isEmpty()) {
+            Item item = itemStack.popItem();
+            item.setParent(data);
+            items.add(item);
             // collections.sort not possible as axes is a Set so implied sort
             // as value field of an axis may be referred by later axis
-            valueProcessor.setAxisValues(dataDef, member, valueParser);
+            valueProcessor.setAxisValues(dataDef, item, valueParser);
             // TODO write test
             Optional<Data> extraData =
-                    itemProcessor.createItems(dataDef, member, valueParser);
+                    itemProcessor.createItems(dataDef, data, item, valueParser);
             if (extraData.isPresent()) {
                 addItems.add(extraData.get());
-                removeItems.add(member);
+                removeItems.add(item);
             }
-            memberStack.pushAdjacentMembers(dataDef, member);
+            itemStack.pushAdjacentItems(dataDef, item);
         }
 
-        data.setMembers(members); // replace with expanded member list
+        data.setItems(items); // replace with expanded item list
 
         dataHelper.removeItems(data, removeItems);
         dataHelper.addItems(data, addItems);

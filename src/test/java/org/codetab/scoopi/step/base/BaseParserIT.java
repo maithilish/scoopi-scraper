@@ -26,8 +26,8 @@ import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Document;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
@@ -133,16 +133,16 @@ public class BaseParserIT {
 
         // test persistence
         List<Data> actuals = daoUtil.getObjects(Data.class,
-                Lists.newArrayList("detachMembers"));
+                Lists.newArrayList("detachItems"));
         assertThat(actuals.size()).isEqualTo(1);
 
         Data actualData = actuals.get(0);
-        assertThat(actualData.getMembers().size()).isEqualTo(1);
+        assertThat(actualData.getItems().size()).isEqualTo(1);
 
         Data expectedData = getTestData();
 
-        Set<Axis> aAxes = actualData.getMembers().get(0).getAxes();
-        Set<Axis> eAxes = expectedData.getMembers().get(0).getAxes();
+        Set<Axis> aAxes = actualData.getItems().get(0).getAxes();
+        Set<Axis> eAxes = expectedData.getItems().get(0).getAxes();
         assertThat(aAxes).containsAll(eAxes);
 
         // test handover
@@ -185,7 +185,7 @@ public class BaseParserIT {
 
         // test persistence
         List<Data> actuals = daoUtil.getObjects(Data.class,
-                Lists.newArrayList("detachMembers"));
+                Lists.newArrayList("detachItems"));
         assertThat(actuals.size()).isEqualTo(1);
         assertThat(actuals.get(0)).isEqualTo(existingData);
 
@@ -220,7 +220,7 @@ public class BaseParserIT {
 
         // test persistence
         List<Data> actuals = daoUtil.getObjects(Data.class,
-                Lists.newArrayList("detachMembers"));
+                Lists.newArrayList("detachItems"));
         assertThat(actuals.size()).isEqualTo(0);
     }
 
@@ -247,7 +247,7 @@ public class BaseParserIT {
 
         // test persistence
         List<Data> actuals = daoUtil.getObjects(Data.class,
-                Lists.newArrayList("detachMembers"));
+                Lists.newArrayList("detachItems"));
         assertThat(actuals.size()).isEqualTo(0);
     }
 
@@ -280,7 +280,7 @@ public class BaseParserIT {
 
         // test persistence
         List<Data> actuals = daoUtil.getObjects(Data.class,
-                Lists.newArrayList("detachMembers"));
+                Lists.newArrayList("detachItems"));
         assertThat(actuals.size()).isEqualTo(1);
     }
 
@@ -313,7 +313,7 @@ public class BaseParserIT {
 
         // test persistence
         List<Data> actuals = daoUtil.getObjects(Data.class,
-                Lists.newArrayList("detachMembers"));
+                Lists.newArrayList("detachItems"));
         assertThat(actuals.size()).isEqualTo(0);
     }
 
@@ -339,10 +339,10 @@ public class BaseParserIT {
         Axis fact =
                 factory.createAxis(AxisName.FACT, "fact", "315.25", null, 0, 0);
 
-        Member member = factory.createMember();
-        member.setAxes(Sets.newHashSet(fact, row, col));
+        Item item = factory.createItem();
+        item.setAxes(Sets.newHashSet(fact, row, col));
 
-        data.addMember(member);
+        data.addItem(item);
         return data;
     }
 

@@ -37,13 +37,13 @@ public class DefsNormalizer {
      * @param nodes
      * @throws IOException
      */
-    public void addMemberIndex(final JsonNode nodes) throws IOException {
+    public void addItemIndex(final JsonNode nodes) throws IOException {
         JsonNode dataDefs = nodes.at("/dataDefs");
-        List<JsonNode> members = dataDefs.findValues("member");
-        for (JsonNode member : members) {
-            if (isNull(member.findValue("index"))
-                    && isNull(member.findValue("indexRange"))) {
-                ((ObjectNode) member).put("index", 0);
+        List<JsonNode> items = dataDefs.findValues("item");
+        for (JsonNode item : items) {
+            if (isNull(item.findValue("index"))
+                    && isNull(item.findValue("indexRange"))) {
+                ((ObjectNode) item).put("index", 0);
             }
         }
     }
@@ -53,35 +53,35 @@ public class DefsNormalizer {
      * @param nodes
      * @throws IOException
      */
-    public void addMemberOrder(final JsonNode nodes) throws IOException {
+    public void addItemOrder(final JsonNode nodes) throws IOException {
         JsonNode dataDefs = nodes.at("/dataDefs");
-        List<JsonNode> membersList = dataDefs.findValues("members");
-        for (JsonNode members : membersList) {
-            List<JsonNode> memberList = members.findValues("member");
-            for (int i = 0; i < memberList.size(); i++) {
-                JsonNode member = memberList.get(i);
-                if (isNull(member.findValue("order"))) {
-                    ((ObjectNode) member).put("order", i);
+        List<JsonNode> itemsList = dataDefs.findValues("items");
+        for (JsonNode items : itemsList) {
+            List<JsonNode> itemList = items.findValues("item");
+            for (int i = 0; i < itemList.size(); i++) {
+                JsonNode item = itemList.get(i);
+                if (isNull(item.findValue("order"))) {
+                    ((ObjectNode) item).put("order", i);
                 }
             }
         }
     }
 
     /**
-     * Add default members field to fact axis. Any existing members field is
-     * replaced with default members
+     * Add default items field to fact axis. Any existing items field is
+     * replaced with default items
      * @param nodes
      * @throws IOException
      */
-    public void addFactMember(final JsonNode nodes) throws IOException {
+    public void addFactItem(final JsonNode nodes) throws IOException {
         JsonNode dataDefs = nodes.at("/dataDefs");
         ArrayList<String> names = Lists.newArrayList(dataDefs.fieldNames());
         for (String name : names) {
             String path = String.join("/", "", name, "axis", "fact");
             JsonNode fact = dataDefs.at(path);
-            String memberYml = "[{\"member\": {\"name\": \"fact\"}}]";
-            JsonNode member = mapper.readTree(memberYml);
-            ((ObjectNode) fact).replace("members", member);
+            String itemYml = "[{\"item\": {\"name\": \"fact\"}}]";
+            JsonNode item = mapper.readTree(itemYml);
+            ((ObjectNode) fact).replace("items", item);
         }
     }
 

@@ -18,23 +18,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class MemberTest {
+public class ItemTest {
 
-    private Member member;
+    private Item item;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
-        member = new Member();
+        item = new Item();
     }
 
     @Test
     public void testHashCode() {
-        List<Member> testObjects = createTestObjects();
-        Member t1 = testObjects.get(0);
-        Member t2 = testObjects.get(1);
+        List<Item> testObjects = createTestObjects();
+        Item t1 = testObjects.get(0);
+        Item t2 = testObjects.get(1);
 
         String[] excludes = {};
         int expectedHashT1 = HashCodeBuilder.reflectionHashCode(t1, excludes);
@@ -47,9 +47,9 @@ public class MemberTest {
 
     @Test
     public void testEqualsObject() {
-        List<Member> testObjects = createTestObjects();
-        Member t1 = testObjects.get(0);
-        Member t2 = testObjects.get(1);
+        List<Item> testObjects = createTestObjects();
+        Item t1 = testObjects.get(0);
+        Item t2 = testObjects.get(1);
 
         String[] excludes = {};
         assertThat(EqualsBuilder.reflectionEquals(t1, t2, excludes)).isTrue();
@@ -60,8 +60,8 @@ public class MemberTest {
 
     @Test
     public void testToString() {
-        List<Member> testObjects = createTestObjects();
-        Member t1 = testObjects.get(0);
+        List<Item> testObjects = createTestObjects();
+        Item t1 = testObjects.get(0);
 
         String expected =
                 new ToStringBuilder(t1, ToStringStyle.MULTI_LINE_STYLE)
@@ -71,43 +71,43 @@ public class MemberTest {
 
     @Test
     public void testGetGroup() {
-        member.setGroup("x");
-        assertThat(member.getGroup()).isEqualTo("x");
+        item.setGroup("x");
+        assertThat(item.getGroup()).isEqualTo("x");
     }
 
     @Test
     public void testGetAxes() {
-        Set<Axis> axis = member.getAxes();
+        Set<Axis> axis = item.getAxes();
         assertThat(axis).isNotNull();
     }
 
     @Test
     public void testGetAxis() {
         Axis col = new Axis(AxisName.COL, "date");
-        member.addAxis(col);
+        item.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
-        member.addAxis(row);
+        item.addAxis(row);
 
-        assertThat(member.getAxis(AxisName.COL)).isSameAs(col);
-        assertThat(member.getAxis(AxisName.ROW)).isSameAs(row);
+        assertThat(item.getAxis(AxisName.COL)).isSameAs(col);
+        assertThat(item.getAxis(AxisName.ROW)).isSameAs(row);
     }
 
     @Test
     public void testGetAxisThrowException() {
         exceptionRule.expect(NoSuchElementException.class);
-        member.getAxis(AxisName.COL);
+        item.getAxis(AxisName.COL);
     }
 
     @Test
     public void testGetAxisMap() {
         Axis col = new Axis(AxisName.COL, "date");
-        member.addAxis(col);
+        item.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
-        member.addAxis(row);
+        item.addAxis(row);
 
-        Map<String, Axis> axisMap = member.getAxisMap();
+        Map<String, Axis> axisMap = item.getAxisMap();
 
         assertThat(axisMap.size()).isEqualTo(2);
         assertThat(axisMap.get("COL")).isSameAs(col);
@@ -117,81 +117,80 @@ public class MemberTest {
     @Test
     public void testAddAxis() {
         Axis col = new Axis(AxisName.COL, "date");
-        member.addAxis(col);
+        item.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
-        member.addAxis(row);
+        item.addAxis(row);
 
-        assertThat(member.getAxis(AxisName.COL)).isSameAs(col);
-        assertThat(member.getAxis(AxisName.ROW)).isSameAs(row);
+        assertThat(item.getAxis(AxisName.COL)).isSameAs(col);
+        assertThat(item.getAxis(AxisName.ROW)).isSameAs(row);
     }
 
     @Test
     public void testGetValue() {
         Axis col = new Axis(AxisName.COL, "date");
-        member.addAxis(col);
+        item.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
-        member.addAxis(row);
+        item.addAxis(row);
 
-        member.setValue(AxisName.COL, "x");
-        member.setValue(AxisName.ROW, "y");
+        item.setValue(AxisName.COL, "x");
+        item.setValue(AxisName.ROW, "y");
 
-        assertThat(member.getValue(AxisName.COL)).isSameAs("x");
-        assertThat(member.getValue(AxisName.ROW)).isSameAs("y");
+        assertThat(item.getValue(AxisName.COL)).isSameAs("x");
+        assertThat(item.getValue(AxisName.ROW)).isSameAs("y");
     }
 
     @Test
     public void testGetId() {
-        member.setId(10L);
-        assertThat(member.getId()).isEqualTo(10L);
+        item.setId(10L);
+        assertThat(item.getId()).isEqualTo(10L);
     }
 
     @Test
-    public void testTraceMember() {
+    public void testTraceItem() {
         Axis col = new Axis(AxisName.COL, "date");
         col.setValue("x");
-        member.addAxis(col);
+        item.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
         row.setValue("y");
-        member.addAxis(row);
+        item.addAxis(row);
 
-        assertThat(member.traceMember().toString())
-                .isEqualTo(traceString(member));
+        assertThat(item.traceItem().toString()).isEqualTo(traceString(item));
     }
 
-    private List<Member> createTestObjects() {
+    private List<Item> createTestObjects() {
         Set<Axis> axes = new HashSet<>();
 
-        Member t1 = new Member();
+        Item t1 = new Item();
         t1.setId(1L);
         t1.setName("x");
         t1.setGroup("g");
         t1.setAxes(axes);
 
-        Member t2 = new Member();
+        Item t2 = new Item();
         t2.setId(1L);
         t2.setName("x");
         t2.setGroup("g");
         t2.setAxes(axes);
 
-        List<Member> testObjects = new ArrayList<>();
+        List<Item> testObjects = new ArrayList<>();
         testObjects.add(t1);
         testObjects.add(t2);
         return testObjects;
     }
 
-    private String traceString(final Member testMember) {
+    private String traceString(final Item testItem) {
         String nl = System.lineSeparator();
         StringBuilder sb = new StringBuilder();
-        sb.append("Member=[name=");
-        sb.append(testMember.getName());
+        sb.append("Item=[name=");
+        sb.append(testItem.getName());
         sb.append(",group=");
-        sb.append(testMember.getGroup());
+        sb.append(testItem.getGroup());
         sb.append("]");
         sb.append(nl);
-        testMember.getAxes().stream().forEach(sb::append);
+        testItem.getAxes().stream().forEach(sb::append);
         return sb.toString();
     }
 }

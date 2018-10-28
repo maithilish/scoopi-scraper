@@ -10,10 +10,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.defs.IPluginDefs;
-import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.model.TaskInfo;
 
@@ -38,23 +37,29 @@ public class CsvEncoder implements IEncoder<List<String>> {
 
         List<String> encodedData = new ArrayList<>();
 
-        String delimiter = ",";
-        try {
-            delimiter = pluginDefs.getValue(plugin, "delimiter");
-        } catch (DefNotFoundException e) {
-        }
+        String delimiter = pluginDefs.getValue(plugin, "delimiter", ",");
+        boolean outputTags =
+                Boolean.valueOf(pluginDefs.getValue(plugin, "tags", "true"));
 
         // encode and append data
-        for (Member member : data.getMembers()) {
-            String col = member.getValue(AxisName.COL);
-            String row = member.getValue(AxisName.ROW);
-            String fact = member.getValue(AxisName.FACT);
+        for (Item item : data.getItems()) {
+            String col = item.getValue(AxisName.COL);
+            String row = item.getValue(AxisName.ROW);
+            String fact = item.getValue(AxisName.FACT);
 
             StringBuilder sb = new StringBuilder();
             sb.append(taskInfo.getName());
             sb.append(delimiter);
             sb.append(taskInfo.getGroup());
             sb.append(delimiter);
+            if (outputTags) {
+                sb.append(item.getParent().getTagValue("page"));
+                sb.append(delimiter);
+                sb.append(item.getParent().getTagValue("index"));
+                sb.append(delimiter);
+                sb.append(item.getParent().getTagValue("item"));
+                sb.append(delimiter);
+            }
             sb.append(col);
             sb.append(delimiter);
             sb.append(row);

@@ -56,18 +56,17 @@ public class AxisDefsHelper {
         validState(dataDef.getDef() instanceof JsonNode, "def is not JsonNode");
 
         String path =
-                String.join("/", "", "axis", axis.getNameString(), "members");
+                String.join("/", "", "axis", axis.getNameString(), "items");
 
         JsonNode def = (JsonNode) dataDef.getDef();
-        List<JsonNode> jMemberList =
-                jsonNodeHelper.findValues(def, path, "member");
-        Optional<JsonNode> jMember = jsonNodeHelper.findByField(jMemberList,
-                "name", axis.getMemberName());
+        List<JsonNode> jItemList = jsonNodeHelper.findValues(def, path, "item");
+        Optional<JsonNode> jItem = jsonNodeHelper.findByField(jItemList, "name",
+                axis.getItemName());
 
         Optional<List<String>> breakAfters = Optional.empty();
-        if (jMember.isPresent()) {
-            List<String> breakAfterList = jsonNodeHelper
-                    .getArrayAsStrings(jMember.get(), "breakAfter");
+        if (jItem.isPresent()) {
+            List<String> breakAfterList =
+                    jsonNodeHelper.getArrayAsStrings(jItem.get(), "breakAfter");
             if (nonNull(breakAfterList)) {
                 breakAfters = Optional.ofNullable(
                         Collections.unmodifiableList(breakAfterList));
@@ -81,17 +80,16 @@ public class AxisDefsHelper {
         validState(dataDef.getDef() instanceof JsonNode, "def is not JsonNode");
 
         String path =
-                String.join("/", "", "axis", axis.getNameString(), "members");
+                String.join("/", "", "axis", axis.getNameString(), "items");
 
         JsonNode def = (JsonNode) dataDef.getDef();
-        List<JsonNode> jMemberList =
-                jsonNodeHelper.findValues(def, path, "member");
-        Optional<JsonNode> jMember = jsonNodeHelper.findByField(jMemberList,
-                "name", axis.getMemberName());
+        List<JsonNode> jItemList = jsonNodeHelper.findValues(def, path, "item");
+        Optional<JsonNode> jItem = jsonNodeHelper.findByField(jItemList, "name",
+                axis.getItemName());
 
         Optional<Range<Integer>> indexRange = Optional.empty();
-        if (jMember.isPresent()) {
-            String value = jMember.get().path("indexRange").asText();
+        if (jItem.isPresent()) {
+            String value = jItem.get().path("indexRange").asText();
             if (StringUtils.isNotBlank(value)) {
                 // TODO - extract Util.getRange() to separate class
                 indexRange = Optional.ofNullable(Util.getRange(value));
@@ -163,17 +161,16 @@ public class AxisDefsHelper {
         validState(dataDef.getDef() instanceof JsonNode, "def is not JsonNode");
 
         String path =
-                String.join("/", "", "axis", axis.getNameString(), "members");
+                String.join("/", "", "axis", axis.getNameString(), "items");
 
         JsonNode def = (JsonNode) dataDef.getDef();
-        List<JsonNode> jMemberList =
-                jsonNodeHelper.findValues(def, path, "member");
-        Optional<JsonNode> jMember = jsonNodeHelper.findByField(jMemberList,
-                "name", axis.getMemberName());
+        List<JsonNode> jItemList = jsonNodeHelper.findValues(def, path, "item");
+        Optional<JsonNode> jItem = jsonNodeHelper.findByField(jItemList, "name",
+                axis.getItemName());
 
         Optional<String> linkGroup = Optional.empty();
-        if (jMember.isPresent()) {
-            String value = jMember.get().path("linkGroup").asText();
+        if (jItem.isPresent()) {
+            String value = jItem.get().path("linkGroup").asText();
             if (StringUtils.isNotBlank(value)) {
                 linkGroup = Optional.ofNullable(value);
             }

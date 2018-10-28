@@ -1,11 +1,11 @@
-acme|quoteGroup|%{runDateTime}|Price|315.25
-acme|quoteGroup|%{documentFromDate}|P/C|-
-acme|quoteGroup|%{documentFromDate}|FACE VALUE (Rs)|1.00
-acme|quoteGroup|%{documentFromDate}|BOOK VALUE (Rs)|27.89
-acme|quoteGroup|%{documentFromDate}|DIV (%)|850.00%
-acme|quoteGroup|%{documentFromDate}|PRICE/BOOK|11.29
-acme|quoteGroup|%{documentFromDate}|P/E|-
-acme|quoteGroup|%{documentFromDate}|INDUSTRY P/E|37.06
-acme|quoteGroup|%{documentFromDate}|MARKET CAP (Rs Cr)|382,642.57
-acme|quoteGroup|%{documentFromDate}|EPS (TTM)|-
-acme|quoteGroup|%{documentFromDate}|DIV YIELD.(%)|2.70%
+acme|quoteGroup|1|1|1|%{runDateTime}|Price|315.25
+acme|quoteGroup|1|1|1|%{documentFromDate}|P/C|-
+acme|quoteGroup|1|1|1|%{documentFromDate}|FACE VALUE (Rs)|1.00
+acme|quoteGroup|1|1|1|%{documentFromDate}|BOOK VALUE (Rs)|27.89
+acme|quoteGroup|1|1|1|%{documentFromDate}|DIV (%)|850.00%
+acme|quoteGroup|1|1|1|%{documentFromDate}|PRICE/BOOK|11.29
+acme|quoteGroup|1|1|1|%{documentFromDate}|P/E|-
+acme|quoteGroup|1|1|1|%{documentFromDate}|INDUSTRY P/E|37.06
+acme|quoteGroup|1|1|1|%{documentFromDate}|MARKET CAP (Rs Cr)|382,642.57
+acme|quoteGroup|1|1|1|%{documentFromDate}|EPS (TTM)|-
+acme|quoteGroup|1|1|1|%{documentFromDate}|DIV YIELD.(%)|2.70%

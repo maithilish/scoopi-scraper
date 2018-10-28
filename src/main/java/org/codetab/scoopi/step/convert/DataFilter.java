@@ -11,7 +11,7 @@ import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Filter;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.helper.FilterHelper;
 import org.codetab.scoopi.step.base.BaseConverter;
 import org.slf4j.Logger;
@@ -34,9 +34,9 @@ public class DataFilter extends BaseConverter {
             dataDef = dataDefDefs.getDataDef(dataDefName);
             Map<AxisName, List<Filter>> filterMap =
                     filterHelper.getFilterMap(dataDef);
-            List<Member> filterMembers =
-                    filterHelper.getFilterMembers(data.getMembers(), filterMap);
-            filterHelper.filter(data, filterMembers);
+            List<Item> filterItems =
+                    filterHelper.getFilterItems(data.getItems(), filterMap);
+            filterHelper.filter(data, filterItems);
             setOutput(data);
             setConsistent(true);
         } catch (DataDefNotFoundException e) {

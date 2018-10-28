@@ -16,7 +16,7 @@ import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
-import org.codetab.scoopi.model.Member;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
@@ -71,7 +71,7 @@ public class DataDaoIT {
         dao.storeData(data);
 
         List<Data> actuals = daoUtil.getObjects(Data.class,
-                Lists.newArrayList("detachMembers"));
+                Lists.newArrayList("detachItems"));
 
         assertThat(actuals.size()).isEqualTo(1);
         assertThat(actuals.get(0)).isEqualTo(data);
@@ -154,15 +154,15 @@ public class DataDaoIT {
 
     private Data createTestData() {
         Axis col = factory.createAxis(AxisName.COL, "date");
-        Member member = factory.createMember();
-        member.setName("date");
-        member.setGroup("group1");
-        member.getAxes().add(col);
+        Item item = factory.createItem();
+        item.setName("date");
+        item.setGroup("group1");
+        item.getAxes().add(col);
         Data data = factory.createData("dataDef1");
         data.setName("acme");
         data.setDocumentId(1L);
         data.setDataDefId(2L);
-        data.addMember(member);
+        data.addItem(item);
         return data;
     }
 }

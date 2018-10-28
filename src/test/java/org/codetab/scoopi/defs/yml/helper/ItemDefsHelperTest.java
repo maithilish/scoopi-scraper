@@ -54,42 +54,41 @@ public class ItemDefsHelperTest {
 
     @Test
     public void testGetRegionQuery() throws IOException {
-        String actual = itemDefsHelper.getRegionQuery(dataDef, "item1");
+        String actual = itemDefsHelper.getRegionQuery(dataDef, "items1");
         assertThat(actual).isEqualTo("region query");
     }
 
     @Test
     public void testGetRegionQueryNotDefined() throws IOException {
         testRule.expect(NoSuchElementException.class);
-        itemDefsHelper.getRegionQuery(dataDef, "item2");
+        itemDefsHelper.getRegionQuery(dataDef, "items2");
     }
 
     @Test
-    public void testGetFieldQuery() throws IOException {
-        String actual =
-                itemDefsHelper.getFieldQuery(dataDef, "item1", "field1");
-        assertThat(actual).isEqualTo("field1 query");
+    public void testGetItemQuery() throws IOException {
+        String actual = itemDefsHelper.getItemQuery(dataDef, "items1", "item1");
+        assertThat(actual).isEqualTo("item1 query");
 
-        actual = itemDefsHelper.getFieldQuery(dataDef, "item1", "field2");
-        assertThat(actual).isEqualTo("field2 query");
+        actual = itemDefsHelper.getItemQuery(dataDef, "items1", "item2");
+        assertThat(actual).isEqualTo("item2 query");
     }
 
     @Test
-    public void testGetFieldQueryNotDefined() throws IOException {
+    public void testGetItemQueryNotDefined() throws IOException {
         testRule.expect(NoSuchElementException.class);
-        itemDefsHelper.getFieldQuery(dataDef, "item1", "field3");
+        itemDefsHelper.getItemQuery(dataDef, "items1", "item3");
     }
 
     @Test
-    public void testGetFieldNames() {
-        List<String> actual = itemDefsHelper.getFieldNames(dataDef, "item1");
-        assertThat(actual).containsExactly("field1", "field2");
+    public void testGetItemNames() {
+        List<String> actual = itemDefsHelper.getItemNames(dataDef, "items1");
+        assertThat(actual).containsExactly("item1", "item2");
     }
 
     @Test
-    public void testGetFieldNamesNotDefined() {
+    public void testGetItemNamesNotDefined() {
         testRule.expect(NoSuchElementException.class);
-        itemDefsHelper.getFieldNames(dataDef, "item2");
+        itemDefsHelper.getItemNames(dataDef, "item2");
     }
 
     // @Test
@@ -135,11 +134,12 @@ public class ItemDefsHelperTest {
         Date fromDate = DateUtils.addDays(runDate, -1);
         Date toDate = DateUtils.addDays(runDate, 1);
         String defJson = new StringBuilder().append("{ items:")
-                .append("{ item1:")
+                .append("{ items1:")
                 .append("{ indexRange: 1-20, breakAfter: ['break1','break2'], ")
-                .append("region: 'region query', ")
-                .append("fields: { field1: 'field1 query', field2: 'field2 query' }},")
-                .append("item2: { } }}").toString();
+                .append("region: 'region query', ").append("items: [ ")
+                .append("{ item: {name: 'item1', selector: 'item1 query'} },")
+                .append("{ item: {name: 'item2', selector: 'item2 query'} } ] },")
+                .append("items2: { } }}").toString();
         JsonNode def = mapper.readTree(TestUtils.parseJson(defJson));
         DataDef testDataDef =
                 factory.createDataDef("price", fromDate, toDate, defJson);

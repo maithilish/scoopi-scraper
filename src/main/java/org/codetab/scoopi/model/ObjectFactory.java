@@ -68,20 +68,20 @@ public class ObjectFactory {
         return data;
     }
 
-    public Member createMember() {
-        Member member = new Member();
-        return member;
+    public Item createItem() {
+        Item item = new Item();
+        return item;
     }
 
-    public Axis createAxis(final AxisName name, final String memberName) {
-        Axis axis = new Axis(name, memberName);
+    public Axis createAxis(final AxisName name, final String itemName) {
+        Axis axis = new Axis(name, itemName);
         return axis;
     }
 
-    public Axis createAxis(final AxisName name, final String memberName,
+    public Axis createAxis(final AxisName name, final String itemName,
             final String value, final String match, final int index,
             final int order) {
-        Axis axis = new Axis(name, memberName);
+        Axis axis = new Axis(name, itemName);
         axis.setValue(value);
         axis.setMatch(match);
         axis.setIndex(index);

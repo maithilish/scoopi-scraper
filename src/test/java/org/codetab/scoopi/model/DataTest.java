@@ -21,7 +21,7 @@ public class DataTest {
 
     @Test
     public void testData() {
-        assertThat(data.getMembers()).isNotNull();
+        assertThat(data.getItems()).isNotNull();
     }
 
     @Test
@@ -55,31 +55,31 @@ public class DataTest {
     }
 
     @Test
-    public void testGetMembers() {
-        Member m1 = new Member();
+    public void testGetItems() {
+        Item m1 = new Item();
         m1.setName("m1");
-        Member m2 = new Member();
+        Item m2 = new Item();
         m2.setName("m2");
         Data data1 = new Data();
         data1.setName("data");
 
-        List<DataComponent> members = Lists.newArrayList(data1, m1, m2);
-        data.setMembers(members);
+        List<DataComponent> items = Lists.newArrayList(data1, m1, m2);
+        data.setItems(items);
 
-        assertThat(data.getMembers()).containsOnly(m1, m2);
+        assertThat(data.getItems()).containsOnly(m1, m2);
     }
 
     @Test
-    public void testAddMember() {
-        Member member = new Member();
-        member.setName("x");
-        member.setGroup("y");
+    public void testAddItem() {
+        Item item = new Item();
+        item.setName("x");
+        item.setGroup("y");
 
-        List<DataComponent> members = new ArrayList<>();
-        data.setMembers(members);
-        data.addMember(member);
+        List<DataComponent> items = new ArrayList<>();
+        data.setItems(items);
+        data.addItem(item);
 
-        assertThat(data.getMembers()).contains(member);
+        assertThat(data.getItems()).contains(item);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class DataTest {
         data.setDataDef("d");
         data.setDataDefId(2L);
         data.setDocumentId(3L);
-        assertThat(data.hashCode()).isEqualTo(1408814739L);
+        assertThat(data.hashCode()).isEqualTo(586561028L);
     }
 
     @Test

@@ -17,15 +17,15 @@ dataDefs:
       col:
         query:
           script: "configs.getRunDateTime()"                  
-        members: [ 
-          member: {name: date},
+        items: [ 
+          item: {name: date},
         ]  
       row:
         query:
           region: "#page_links > table > tbody > tr > td:nth-child(4) > ul"
           field: "li:nth-child(%{row.index}) > a[href]"      
-        members: [ 
-          member: {name: bs, index: 2, linkGroup: bs},                   
+        items: [ 
+          item: {name: bs, index: 2, linkGroup: bs},                   
         ]
                               
   bs:
@@ -38,15 +38,15 @@ dataDefs:
         query:
           region: "table:contains(Sources Of Funds)"
           field: "tr:nth-child(1) > td:nth-child(%{col.index})"        
-        members: [ 
-          member: {name: year, indexRange: 2-3},
+        items: [ 
+          item: {name: year, indexRange: 2-3},
         ]  
       row:
         query:
           region: "table:contains(Sources Of Funds)"
           field: "tr:nth-child(%{row.index}) > td:nth-child(1)"      
-        members: [ 
-          member: {name: item, index: 5, breakAfter: ["Reserves"] },
+        items: [ 
+          item: {name: item, index: 5, breakAfter: ["Reserves"] },
         ]
         filters: [ 
           filter: { type: value, pattern: "" },

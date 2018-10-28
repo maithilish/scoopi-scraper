@@ -10,8 +10,8 @@ import org.codetab.scoopi.defs.IPluginDefs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.model.Member;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.system.ErrorLogger;
 
@@ -46,7 +46,7 @@ public class DataSorter {
         }
         for (String axisName : sortOrder.split(",")) { //$NON-NLS-1$
             AxisName axis = AxisName.valueOf(axisName.trim());
-            Comparator<Member> comparator = null;
+            Comparator<Item> comparator = null;
             switch (axis) {
             case COL:
                 comparator = new ColComparator();
@@ -58,7 +58,7 @@ public class DataSorter {
                 break;
             }
             if (comparator != null) {
-                Collections.sort(data.getMembers(), comparator);
+                Collections.sort(data.getItems(), comparator);
             }
         }
     }

@@ -18,7 +18,8 @@ public final class Data extends DataComponent implements Serializable {
     private String dataDef;
     private Long dataDefId;
     private Long documentId;
-    private List<DataComponent> members = new ArrayList<>();
+    private Tag tag = new Tag();
+    private List<DataComponent> items = new ArrayList<>();
 
     Data() {
     }
@@ -63,28 +64,40 @@ public final class Data extends DataComponent implements Serializable {
         this.documentId = documentId;
     }
 
-    public List<Member> getMembers() {
+    public List<Item> getItems() {
         DataIterator it = iterator();
-        List<Member> list = new ArrayList<>();
+        List<Item> list = new ArrayList<>();
         while (it.hasNext()) {
             DataComponent dc = it.next();
-            if (dc instanceof Member) {
-                list.add((Member) dc);
+            if (dc instanceof Item) {
+                list.add((Item) dc);
             }
         }
         return list;
     }
 
     public DataIterator iterator() {
-        return new DataIterator(members.iterator());
+        return new DataIterator(items.iterator());
     }
 
-    public void setMembers(final List<DataComponent> members) {
-        this.members = members;
+    public void setItems(final List<DataComponent> items) {
+        this.items = items;
     }
 
-    public void addMember(final DataComponent member) {
-        members.add(member);
+    public void addItem(final DataComponent item) {
+        items.add(item);
+    }
+
+    public void addTag(final String key, final Object value) {
+        tag.add(key, value);
+    }
+
+    public void copyTags(final Data toData) {
+        tag.copyTags(toData.tag);
+    }
+
+    public Object getTagValue(final String key) {
+        return tag.getValue(key);
     }
 
     /**
@@ -98,8 +111,8 @@ public final class Data extends DataComponent implements Serializable {
         copy.dataDef = dataDef;
         copy.dataDefId = dataDefId;
         copy.documentId = documentId;
-        for (DataComponent member : members) {
-            copy.addMember(member.copy());
+        for (DataComponent item : items) {
+            copy.addItem(item.copy());
         }
         return copy;
     }
@@ -129,7 +142,7 @@ public final class Data extends DataComponent implements Serializable {
     public String toTraceString() {
         String line = System.lineSeparator();
         String str = toString();
-        return String.join(line, str, "members:", members.toString(), line);
+        return String.join(line, str, "items:", items.toString(), line);
     }
 
     public String toStringIds() {
