@@ -1,6 +1,7 @@
 package org.codetab.scoopi.dao.jdo;
 
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.List;
 
@@ -97,7 +98,7 @@ public final class DataDao implements IDataDao {
             return data.get(0);
         default:
             throw new IllegalStateException(
-                    String.join(" ", "found multiple data for documentId:",
+                    spaceit("found multiple data for documentId:",
                             String.valueOf(documentId), "dataDefId:",
                             String.valueOf(dataDefId)));
         }

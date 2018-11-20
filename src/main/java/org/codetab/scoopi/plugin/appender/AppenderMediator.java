@@ -2,6 +2,7 @@ package org.codetab.scoopi.plugin.appender;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,8 +63,7 @@ public class AppenderMediator {
             try {
                 appender.append(Marker.EOF);
             } catch (InterruptedException e) {
-                String message =
-                        String.join(" ", "close appender:", appenderName);
+                String message = spaceit("close appender:", appenderName);
                 errorLogger.log(CAT.INTERNAL, message, e);
             }
         }

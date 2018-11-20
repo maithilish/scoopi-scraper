@@ -1,6 +1,8 @@
 package org.codetab.scoopi.plugin.appender;
 
 import static java.util.Objects.isNull;
+import static org.codetab.scoopi.util.Util.dashit;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +29,7 @@ public class Appenders extends HashMap<String, Appender> {
         for (Plugin plugin : plugins) {
             try {
                 String appenderName =
-                        String.join("-", stepsName, stepName, plugin.getName());
+                        dashit(stepsName, stepName, plugin.getName());
                 Appender appender =
                         appenderMediator.getAppender(appenderName, plugin);
                 if (isNull(appender)) {
@@ -37,9 +39,9 @@ public class Appenders extends HashMap<String, Appender> {
                 put(appenderName, appender);
             } catch (ClassCastException | IllegalStateException
                     | ClassNotFoundException | DefNotFoundException e) {
-                String message = String.join(" ",
-                        "unable to create appender from plugin:",
-                        plugin.toString());
+                String message =
+                        spaceit("unable to create appender from plugin:",
+                                plugin.toString());
                 errorLogger.log(CAT.ERROR, message, e);
             }
         }

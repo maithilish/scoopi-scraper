@@ -1,10 +1,13 @@
 package org.codetab.scoopi.model;
 
+import static java.util.Objects.isNull;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -19,7 +22,7 @@ public final class Item extends DataComponent implements Serializable {
     private String name;
     private String group;
     private Data parent;
-    private Set<Axis> axes = new HashSet<Axis>();
+    private List<Axis> axes;
 
     Item() {
     }
@@ -56,35 +59,49 @@ public final class Item extends DataComponent implements Serializable {
         this.parent = parent;
     }
 
-    public Set<Axis> getAxes() {
+    public List<Axis> getAxes() {
         return axes;
     }
 
-    public void setAxes(final Set<Axis> axes) {
+    public void setAxes(final List<Axis> axes) {
         this.axes = axes;
     }
 
-    public Axis getAxis(final AxisName axisName) {
-        return axes.stream().filter(a -> a.getName().equals(axisName))
+    public List<String> getItemNames() {
+        // fact should be at the end
+        List<String> names = axes.stream().map(Axis::getItemName)
+                .collect(Collectors.toList());
+        return names;
+    }
+
+    public Axis getAxis(final String itemName) {
+        return axes.stream().filter(a -> a.getItemName().equals(itemName))
                 .findFirst().get();
     }
 
     public Map<String, Axis> getAxisMap() {
         Map<String, Axis> axisMap = new HashMap<>();
-        axes.stream().forEach(a -> axisMap.put(a.getName().toString(), a));
+        axes.stream().forEach(a -> axisMap.put(a.getAxisName().toString(), a));
         return axisMap;
     }
 
     public void addAxis(final Axis axis) {
+        if (isNull(axes)) {
+            axes = new ArrayList<>();
+        }
         axes.add(axis);
     }
 
-    public String getValue(final AxisName axisName) {
-        return getAxis(axisName).getValue();
+    public String getValue(final String itemName) {
+        return getAxis(itemName).getValue();
     }
 
-    public void setValue(final AxisName axisName, final String value) {
-        getAxis(axisName).setValue(value);
+    public void setValue(final String itemName, final String value) {
+        getAxis(itemName).setValue(value);
+    }
+
+    public Axis getFirstAxis() {
+        return axes.get(0);
     }
 
     /**

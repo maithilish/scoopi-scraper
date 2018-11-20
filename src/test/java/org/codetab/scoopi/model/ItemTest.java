@@ -20,21 +20,21 @@ import org.junit.rules.ExpectedException;
 
 public class ItemTest {
 
-    private Item item;
+    private ItemMig itemMig;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
-        item = new Item();
+        itemMig = new ItemMig();
     }
 
     @Test
     public void testHashCode() {
-        List<Item> testObjects = createTestObjects();
-        Item t1 = testObjects.get(0);
-        Item t2 = testObjects.get(1);
+        List<ItemMig> testObjects = createTestObjects();
+        ItemMig t1 = testObjects.get(0);
+        ItemMig t2 = testObjects.get(1);
 
         String[] excludes = {};
         int expectedHashT1 = HashCodeBuilder.reflectionHashCode(t1, excludes);
@@ -47,9 +47,9 @@ public class ItemTest {
 
     @Test
     public void testEqualsObject() {
-        List<Item> testObjects = createTestObjects();
-        Item t1 = testObjects.get(0);
-        Item t2 = testObjects.get(1);
+        List<ItemMig> testObjects = createTestObjects();
+        ItemMig t1 = testObjects.get(0);
+        ItemMig t2 = testObjects.get(1);
 
         String[] excludes = {};
         assertThat(EqualsBuilder.reflectionEquals(t1, t2, excludes)).isTrue();
@@ -60,8 +60,8 @@ public class ItemTest {
 
     @Test
     public void testToString() {
-        List<Item> testObjects = createTestObjects();
-        Item t1 = testObjects.get(0);
+        List<ItemMig> testObjects = createTestObjects();
+        ItemMig t1 = testObjects.get(0);
 
         String expected =
                 new ToStringBuilder(t1, ToStringStyle.MULTI_LINE_STYLE)
@@ -71,43 +71,43 @@ public class ItemTest {
 
     @Test
     public void testGetGroup() {
-        item.setGroup("x");
-        assertThat(item.getGroup()).isEqualTo("x");
+        itemMig.setGroup("x");
+        assertThat(itemMig.getGroup()).isEqualTo("x");
     }
 
     @Test
     public void testGetAxes() {
-        Set<Axis> axis = item.getAxes();
+        Set<Axis> axis = itemMig.getAxes();
         assertThat(axis).isNotNull();
     }
 
     @Test
     public void testGetAxis() {
         Axis col = new Axis(AxisName.COL, "date");
-        item.addAxis(col);
+        itemMig.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
-        item.addAxis(row);
+        itemMig.addAxis(row);
 
-        assertThat(item.getAxis(AxisName.COL)).isSameAs(col);
-        assertThat(item.getAxis(AxisName.ROW)).isSameAs(row);
+        assertThat(itemMig.getAxis(AxisName.COL)).isSameAs(col);
+        assertThat(itemMig.getAxis(AxisName.ROW)).isSameAs(row);
     }
 
     @Test
     public void testGetAxisThrowException() {
         exceptionRule.expect(NoSuchElementException.class);
-        item.getAxis(AxisName.COL);
+        itemMig.getAxis(AxisName.COL);
     }
 
     @Test
     public void testGetAxisMap() {
         Axis col = new Axis(AxisName.COL, "date");
-        item.addAxis(col);
+        itemMig.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
-        item.addAxis(row);
+        itemMig.addAxis(row);
 
-        Map<String, Axis> axisMap = item.getAxisMap();
+        Map<String, Axis> axisMap = itemMig.getAxisMap();
 
         assertThat(axisMap.size()).isEqualTo(2);
         assertThat(axisMap.get("COL")).isSameAs(col);
@@ -117,71 +117,72 @@ public class ItemTest {
     @Test
     public void testAddAxis() {
         Axis col = new Axis(AxisName.COL, "date");
-        item.addAxis(col);
+        itemMig.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
-        item.addAxis(row);
+        itemMig.addAxis(row);
 
-        assertThat(item.getAxis(AxisName.COL)).isSameAs(col);
-        assertThat(item.getAxis(AxisName.ROW)).isSameAs(row);
+        assertThat(itemMig.getAxis(AxisName.COL)).isSameAs(col);
+        assertThat(itemMig.getAxis(AxisName.ROW)).isSameAs(row);
     }
 
     @Test
     public void testGetValue() {
         Axis col = new Axis(AxisName.COL, "date");
-        item.addAxis(col);
+        itemMig.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
-        item.addAxis(row);
+        itemMig.addAxis(row);
 
-        item.setValue(AxisName.COL, "x");
-        item.setValue(AxisName.ROW, "y");
+        itemMig.setValue(AxisName.COL, "x");
+        itemMig.setValue(AxisName.ROW, "y");
 
-        assertThat(item.getValue(AxisName.COL)).isSameAs("x");
-        assertThat(item.getValue(AxisName.ROW)).isSameAs("y");
+        assertThat(itemMig.getValue(AxisName.COL)).isSameAs("x");
+        assertThat(itemMig.getValue(AxisName.ROW)).isSameAs("y");
     }
 
     @Test
     public void testGetId() {
-        item.setId(10L);
-        assertThat(item.getId()).isEqualTo(10L);
+        itemMig.setId(10L);
+        assertThat(itemMig.getId()).isEqualTo(10L);
     }
 
     @Test
     public void testTraceItem() {
         Axis col = new Axis(AxisName.COL, "date");
         col.setValue("x");
-        item.addAxis(col);
+        itemMig.addAxis(col);
 
         Axis row = new Axis(AxisName.ROW, "Price");
         row.setValue("y");
-        item.addAxis(row);
+        itemMig.addAxis(row);
 
-        assertThat(item.traceItem().toString()).isEqualTo(traceString(item));
+        assertThat(itemMig.traceItem().toString())
+                .isEqualTo(traceString(itemMig));
     }
 
-    private List<Item> createTestObjects() {
+    private List<ItemMig> createTestObjects() {
         Set<Axis> axes = new HashSet<>();
 
-        Item t1 = new Item();
+        ItemMig t1 = new ItemMig();
         t1.setId(1L);
         t1.setName("x");
         t1.setGroup("g");
         t1.setAxes(axes);
 
-        Item t2 = new Item();
+        ItemMig t2 = new ItemMig();
         t2.setId(1L);
         t2.setName("x");
         t2.setGroup("g");
         t2.setAxes(axes);
 
-        List<Item> testObjects = new ArrayList<>();
+        List<ItemMig> testObjects = new ArrayList<>();
         testObjects.add(t1);
         testObjects.add(t2);
         return testObjects;
     }
 
-    private String traceString(final Item testItem) {
+    private String traceString(final ItemMig testItem) {
         String nl = System.lineSeparator();
         StringBuilder sb = new StringBuilder();
         sb.append("Item=[name=");

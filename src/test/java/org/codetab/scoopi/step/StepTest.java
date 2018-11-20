@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-import org.codetab.scoopi.defs.ITaskDefs;
+import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
@@ -13,7 +13,7 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.step.convert.DataFilter;
+import org.codetab.scoopi.step.process.DataFilter;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
@@ -37,7 +37,7 @@ public class StepTest {
     @Mock
     protected MetricsHelper metricsHelper;
     @Mock
-    protected ITaskDefs taskDefs;
+    protected ITaskDef taskDef;
     @Mock
     protected TaskMediator taskMediator;
     @Mock
@@ -79,7 +79,7 @@ public class StepTest {
         step.setOutput(output);
         step.setConsistent(true);
 
-        given(taskDefs.getNextStep(group, taskName, stepName))
+        given(taskDef.getNextStep(group, taskName, stepName))
                 .willReturn(nextStep);
         given(objectFactory.createPayload(step.getJobInfo(), nextStep, output))
                 .willReturn(nextStepPayload);
@@ -106,7 +106,7 @@ public class StepTest {
 
         assertThat(actual).isTrue();
 
-        verifyZeroInteractions(taskMediator, objectFactory, taskDefs);
+        verifyZeroInteractions(taskMediator, objectFactory, taskDef);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class StepTest {
         step.setOutput(output);
         step.setConsistent(true);
 
-        given(taskDefs.getNextStep(group, taskName, stepName))
+        given(taskDef.getNextStep(group, taskName, stepName))
                 .willThrow(DefNotFoundException.class);
 
         testRule.expect(StepRunException.class);

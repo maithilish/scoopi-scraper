@@ -25,14 +25,14 @@ public class ValueParser implements IValueParser {
 
     @Override
     public String parseValue(final Map<String, String> queries) {
-        String regionSelector = queries.get("region"); //$NON-NLS-1$
-        Elements region = nodeSelector.selectRegion(page, regionSelector);
+        String blockSelector = queries.get("block"); //$NON-NLS-1$
+        Elements blockNode = nodeSelector.selectBlock(page, blockSelector);
 
-        String fieldSelector = queries.get("field"); //$NON-NLS-1$
+        String selector = queries.get("selector"); //$NON-NLS-1$
         // optional attribute, only for jsoup
         String attribute = queries.get("attribute"); //$NON-NLS-1$
         String value =
-                nodeSelector.selectField(region, fieldSelector, attribute);
+                nodeSelector.selectSelector(blockNode, selector, attribute);
 
         LOGGER.trace(taskInfo.getMarker(), "[{}], value: {}",
                 taskInfo.getLabel(), value);

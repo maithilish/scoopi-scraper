@@ -8,9 +8,10 @@ import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
-import org.codetab.scoopi.model.Item;
+import org.codetab.scoopi.model.ItemMig;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.helper.ItemHelper;
+import org.codetab.scoopi.step.mig.parse.ItemMatrix;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -45,9 +46,9 @@ public class ItemMatrixTest {
         row.setIndex(10);
         row.setOrder(11);
 
-        Item item = factory.createItem();
-        item.addAxis(col);
-        item.addAxis(row);
+        ItemMig itemMig = factory.createItemMig();
+        itemMig.addAxis(col);
+        itemMig.addAxis(row);
 
         // value is null in expected axis
         Axis expectedCol = factory.createAxis(AxisName.COL, "date");
@@ -58,16 +59,16 @@ public class ItemMatrixTest {
         expectedRow.setIndex(10);
         expectedRow.setOrder(11);
 
-        Item copy = item.copy();
+        ItemMig copy = itemMig.copy();
 
         String nextItemIndexesKey = "1020300";
 
-        given(itemHelper.copy(item)).willReturn(copy);
+        given(itemHelper.copy(itemMig)).willReturn(copy);
 
         assertThat(itemMatrix.notYetCreated(nextItemIndexesKey)).isTrue();
 
-        Item actual =
-                itemMatrix.createAdjacentItem(item, col, nextItemIndexesKey);
+        ItemMig actual =
+                itemMatrix.createAdjacentItem(itemMig, col, nextItemIndexesKey);
 
         assertThat(actual).isSameAs(copy);
         assertThat(actual.getAxis(AxisName.COL)).isEqualTo(expectedCol);

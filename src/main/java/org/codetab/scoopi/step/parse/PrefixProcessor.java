@@ -9,18 +9,16 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.defs.IAxisDefs;
-import org.codetab.scoopi.model.AxisName;
-import org.codetab.scoopi.model.DataDef;
+import org.codetab.scoopi.defs.IItemDef;
 
 public class PrefixProcessor {
 
     @Inject
-    private IAxisDefs axisDefs;
+    private IItemDef itemDef;
 
-    public Optional<List<String>> getPrefixes(final DataDef dataDef,
-            final AxisName axisName) {
-        return axisDefs.getPrefixes(dataDef, axisName);
+    public Optional<List<String>> getPrefixes(final String dataDef,
+            final String itemName) {
+        return itemDef.getPrefix(dataDef, itemName);
     }
 
     public String prefixValue(final String value, final List<String> prefixes) {

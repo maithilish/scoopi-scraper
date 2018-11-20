@@ -15,9 +15,9 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.dao.jdo.DataDao;
 import org.codetab.scoopi.dao.jdo.JdoDaoUtilFactory;
-import org.codetab.scoopi.defs.ITaskDefs;
-import org.codetab.scoopi.defs.yml.DataDefDefs;
-import org.codetab.scoopi.defs.yml.Defs;
+import org.codetab.scoopi.defs.ITaskDef;
+import org.codetab.scoopi.defs.yml.DataDefDef;
+import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
@@ -26,13 +26,12 @@ import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Document;
-import org.codetab.scoopi.model.Item;
+import org.codetab.scoopi.model.ItemMig;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.Task;
-import org.codetab.scoopi.step.parse.jsoup.Parser;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
@@ -56,11 +55,11 @@ public class BaseParserIT {
     private static DInjector di;
     private static IDaoUtil daoUtil;
     private static HashSet<String> schemaClasses;
-    private static Defs defs;
+    private static Def def;
     private static ObjectFactory factory;
     private static ConfigService configService;
 
-    private BaseParser parser;
+    private BaseParserMig parser;
     private Task task;
     private String pageUrl;
 
@@ -70,8 +69,8 @@ public class BaseParserIT {
 
     // don't move this to base class, tests fail in cli
     @BeforeClass
-    public static void setUpBeforeClass()
-            throws IOException, IllegalAccessException, URISyntaxException {
+    public static void setUpBeforeClass() throws IOException,
+            IllegalAccessException, URISyntaxException, DefNotFoundException {
         di = new DInjector();
 
         String defDir = "/defs/examples/jsoup/ex-1";
@@ -81,9 +80,9 @@ public class BaseParserIT {
         configService.getConfigs().setProperty("scoopi.useDatastore", "true");
         configService.getConfigs().setProperty("scoopi.defs.dir", defDir);
 
-        defs = di.instance(Defs.class);
-        defs.init();
-        defs.initDefProviders();
+        def = di.instance(Def.class);
+        def.init();
+        def.initDefProviders();
 
         schemaClasses = new HashSet<>();
 
@@ -165,8 +164,8 @@ public class BaseParserIT {
         String taskGroup = "quoteGroup";
         String taskName = "priceTask";
 
-        DataDefDefs dataDefDefs = di.instance(DataDefDefs.class);
-        DataDef dataDef = dataDefDefs.getDataDef("price");
+        DataDefDef dataDefDef = di.instance(DataDefDef.class);
+        DataDef dataDef = dataDefDef.getDataDef("price");
 
         Document document = getTestDocument();
         document.setId(10L);
@@ -270,10 +269,10 @@ public class BaseParserIT {
         Payload payload = factory.createPayload(jobInfo, stepInfo, document);
         parser.setPayload(payload);
 
-        ITaskDefs taskDefs = Mockito.mock(ITaskDefs.class);
-        FieldUtils.writeField(parser, "taskDefs", taskDefs, true);
+        ITaskDef taskDef = Mockito.mock(ITaskDef.class);
+        FieldUtils.writeField(parser, "taskDefs", taskDef, true);
 
-        given(taskDefs.getFieldValue(taskGroup, taskName, "persist", "data"))
+        given(taskDef.getFieldValue(taskGroup, taskName, "persist", "data"))
                 .willReturn("true");
 
         task.run(); // run task
@@ -303,10 +302,10 @@ public class BaseParserIT {
         Payload payload = factory.createPayload(jobInfo, stepInfo, document);
         parser.setPayload(payload);
 
-        ITaskDefs taskDefs = Mockito.mock(ITaskDefs.class);
-        FieldUtils.writeField(parser, "taskDefs", taskDefs, true);
+        ITaskDef taskDef = Mockito.mock(ITaskDef.class);
+        FieldUtils.writeField(parser, "taskDefs", taskDef, true);
 
-        given(taskDefs.getFieldValue(taskGroup, taskName, "persist", "data"))
+        given(taskDef.getFieldValue(taskGroup, taskName, "persist", "data"))
                 .willReturn("false");
 
         task.run(); // run task
@@ -339,10 +338,10 @@ public class BaseParserIT {
         Axis fact =
                 factory.createAxis(AxisName.FACT, "fact", "315.25", null, 0, 0);
 
-        Item item = factory.createItem();
-        item.setAxes(Sets.newHashSet(fact, row, col));
+        ItemMig itemMig = factory.createItemMig();
+        itemMig.setAxes(Sets.newHashSet(fact, row, col));
 
-        data.addItem(item);
+        data.addItem(itemMig);
         return data;
     }
 

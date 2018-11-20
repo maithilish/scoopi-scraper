@@ -73,14 +73,25 @@ public class ObjectFactory {
         return item;
     }
 
-    public Axis createAxis(final AxisName name, final String itemName) {
+    public Axis createAxis(final String name, final String itemName) {
         Axis axis = new Axis(name, itemName);
         return axis;
     }
 
-    public Axis createAxis(final AxisName name, final String itemName,
+    public Axis createAxis(final String name, final String itemName,
             final String value, final String match, final int index,
             final int order) {
+        Axis axis = new Axis(name, itemName);
+        axis.setValue(value);
+        axis.setMatch(match);
+        axis.setIndex(index);
+        axis.setOrder(order);
+        return axis;
+    }
+
+    public Axis createAxis(final String name, final String itemName,
+            final String value, final String match, final Integer index,
+            final Integer order) {
         Axis axis = new Axis(name, itemName);
         axis.setValue(value);
         axis.setMatch(match);
@@ -117,5 +128,9 @@ public class ObjectFactory {
             final String stepName, final String defJson, final Object def) {
         return new Plugin(name, clzName, taskGroup, taskName, stepName, defJson,
                 def);
+    }
+
+    public Query createQuery() {
+        return new Query();
     }
 }

@@ -23,7 +23,7 @@ public class AxisTest {
 
     @Test
     public void testGetName() {
-        assertThat(axis.getName()).isEqualTo(AxisName.COL);
+        assertThat(axis.getAxisName()).isEqualTo(AxisName.COL);
     }
 
     @Test
@@ -125,7 +125,7 @@ public class AxisTest {
     private String expectedString(final Axis testAxis) {
         String str =
                 new ToStringBuilder(testAxis, ToStringStyle.SHORT_PREFIX_STYLE)
-                        .append("name", testAxis.getName())
+                        .append("name", testAxis.getAxisName())
                         .append("itemName", testAxis.getItemName())
                         .append("value", testAxis.getValue())
                         .append("match", testAxis.getMatch())

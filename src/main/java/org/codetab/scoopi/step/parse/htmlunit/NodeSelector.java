@@ -26,21 +26,21 @@ public class NodeSelector {
 
     private final int outerLines = 5;
 
-    private Map<Integer, List<Object>> regionCache = new HashMap<>();
+    private Map<Integer, List<Object>> blockCache = new HashMap<>();
 
     public List<Object> selectRegion(final HtmlPage page,
             final String selector) {
 
         // regional nodes are cached for performance
         Integer hash = selector.hashCode();
-        List<Object> elements = regionCache.get(hash);
+        List<Object> elements = blockCache.get(hash);
 
         if (isNull(elements)) {
             elements = page.getByXPath(selector);
-            regionCache.put(hash, elements);
+            blockCache.put(hash, elements);
         }
 
-        LOGGER.trace(taskInfo.getMarker(), "[{}], region nodes: {}",
+        LOGGER.trace(taskInfo.getMarker(), "[{}], block nodes: {}",
                 taskInfo.getLabel(), elements.size());
         for (Object element : elements) {
             traceElement(selector, element);
@@ -49,11 +49,11 @@ public class NodeSelector {
         return elements;
     }
 
-    public String selectField(final DomNode element, final String selector) {
+    public String selectSelector(final DomNode element, final String selector) {
         String value = null;
 
         List<?> subElements = element.getByXPath(selector);
-        LOGGER.trace(taskInfo.getMarker(), "[{}], field nodes: {}",
+        LOGGER.trace(taskInfo.getMarker(), "[{}], selector nodes: {}",
                 taskInfo.getLabel(), subElements.size());
 
         for (Object o : subElements) {

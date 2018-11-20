@@ -1,6 +1,7 @@
 package org.codetab.scoopi.plugin.appender;
 
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public final class ListAppender extends Appender {
                 }
                 list.add(item);
             } catch (InterruptedException e) {
-                String message = String.join(" ", "appender:", getName());
+                String message = spaceit("appender:", getName());
                 errorLogger.log(CAT.INTERNAL, message, e);
             }
         }

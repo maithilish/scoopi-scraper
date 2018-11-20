@@ -6,18 +6,16 @@ import java.lang.management.RuntimeMXBean;
 
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.defs.IAxisDefs;
-import org.codetab.scoopi.defs.IDataDefDefs;
-import org.codetab.scoopi.defs.IItemDefs;
-import org.codetab.scoopi.defs.ILocatorDefs;
-import org.codetab.scoopi.defs.IPluginDefs;
-import org.codetab.scoopi.defs.ITaskDefs;
-import org.codetab.scoopi.defs.yml.AxisDefs;
-import org.codetab.scoopi.defs.yml.DataDefDefs;
-import org.codetab.scoopi.defs.yml.ItemDefs;
-import org.codetab.scoopi.defs.yml.LocatorDefs;
-import org.codetab.scoopi.defs.yml.PluginDefs;
-import org.codetab.scoopi.defs.yml.TaskDefs;
+import org.codetab.scoopi.defs.IDataDefDef;
+import org.codetab.scoopi.defs.IItemDef;
+import org.codetab.scoopi.defs.ILocatorDef;
+import org.codetab.scoopi.defs.IPluginDef;
+import org.codetab.scoopi.defs.ITaskDef;
+import org.codetab.scoopi.defs.yml.DataDefDef;
+import org.codetab.scoopi.defs.yml.ItemDef;
+import org.codetab.scoopi.defs.yml.LocatorDef;
+import org.codetab.scoopi.defs.yml.PluginDef;
+import org.codetab.scoopi.defs.yml.TaskDef;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.store.basic.BasicStore;
 
@@ -36,12 +34,11 @@ public class BasicModule extends AbstractModule {
         bind(IStore.class).to(BasicStore.class).in(Singleton.class);
 
         // bind yaml defs
-        bind(ILocatorDefs.class).to(LocatorDefs.class).in(Singleton.class);
-        bind(ITaskDefs.class).to(TaskDefs.class).in(Singleton.class);
-        bind(IDataDefDefs.class).to(DataDefDefs.class).in(Singleton.class);
-        bind(IAxisDefs.class).to(AxisDefs.class).in(Singleton.class);
-        bind(IItemDefs.class).to(ItemDefs.class).in(Singleton.class);
-        bind(IPluginDefs.class).to(PluginDefs.class).in(Singleton.class);
+        bind(ILocatorDef.class).to(LocatorDef.class).in(Singleton.class);
+        bind(ITaskDef.class).to(TaskDef.class).in(Singleton.class);
+        bind(IDataDefDef.class).to(DataDefDef.class).in(Singleton.class);
+        bind(IItemDef.class).to(ItemDef.class).in(Singleton.class);
+        bind(IPluginDef.class).to(PluginDef.class).in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));

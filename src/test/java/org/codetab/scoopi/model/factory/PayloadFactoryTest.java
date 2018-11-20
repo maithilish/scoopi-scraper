@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.given;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codetab.scoopi.defs.IAxisDefs;
+import org.codetab.scoopi.defs.mig.IAxisDefs;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;

@@ -1,5 +1,7 @@
 package org.codetab.scoopi.persistence;
 
+import static org.codetab.scoopi.util.Util.spaceit;
+
 import javax.inject.Inject;
 
 import org.codetab.scoopi.dao.DaoFactoryProvider;
@@ -46,8 +48,8 @@ public class DocumentPersistence {
             IDocumentDao dao = daoFactory.getDocumentDao();
             return dao.getDocument(id);
         } catch (RuntimeException e) {
-            String message = String.join(" ", "unable to load document, id:",
-                    String.valueOf(id));
+            String message =
+                    spaceit("unable to load document, id:", String.valueOf(id));
             throw new StepPersistenceException(message, e);
         }
     }

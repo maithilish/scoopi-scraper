@@ -1,6 +1,7 @@
 package org.codetab.scoopi.model.helper;
 
 import static java.util.Objects.isNull;
+import static org.codetab.scoopi.util.Util.dashit;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.DataIterator;
-import org.codetab.scoopi.util.Sequence;
+import org.codetab.scoopi.system.Sequence;
 
 public class DataHelper {
 
@@ -34,14 +35,14 @@ public class DataHelper {
     }
 
     public void addPageTag(final Data data) {
-        String key = String.join("-", "page", data.getName());
+        String key = dashit("page", data.getName());
         data.addTag("page", sequence.getSequence(key));
     }
 
     public void addItemTag(final Data data) {
         Integer page = (Integer) data.getTagValue("page");
-        String key = String.join("-", "item", data.getName(), "page",
-                String.valueOf(page));
+        String key =
+                dashit("item", data.getName(), "page", String.valueOf(page));
         data.addTag("item", sequence.getSequence(key));
     }
 

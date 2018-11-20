@@ -1,11 +1,13 @@
 package org.codetab.scoopi.model.factory;
 
+import static org.codetab.scoopi.util.Util.spaceit;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.defs.ITaskDefs;
+import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.LocatorGroup;
@@ -23,7 +25,7 @@ public class PayloadFactory {
     static final Logger LOGGER = LoggerFactory.getLogger(PayloadFactory.class);
 
     @Inject
-    private ITaskDefs taskDefs;
+    private ITaskDef taskDef;
     @Inject
     private TaskMediator taskMediator;
     @Inject
@@ -66,16 +68,16 @@ public class PayloadFactory {
                  * next step!
                  */
                 if (stepInfo.getStepName().equalsIgnoreCase("start")) {
-                    thisStep = taskDefs.getNextStep(taskGroup, taskName,
+                    thisStep = taskDef.getNextStep(taskGroup, taskName,
                             stepInfo.getStepName());
                 }
                 if (!thisStep.getNextStepName().equalsIgnoreCase("end")) {
                     String stepsName =
-                            taskDefs.getStepsName(taskGroup, taskName);
-                    String dataDefName = taskDefs.getFieldValue(taskGroup,
+                            taskDef.getStepsName(taskGroup, taskName);
+                    String dataDefName = taskDef.getFieldValue(taskGroup,
                             taskName, "dataDef");
-                    StepInfo nextStep = taskDefs.getNextStep(taskGroup,
-                            taskName, thisStep.getStepName());
+                    StepInfo nextStep = taskDef.getNextStep(taskGroup, taskName,
+                            thisStep.getStepName());
                     JobInfo jobInfo = objectFactory.createJobInfo(
                             taskMediator.getJobId(), jobName, taskGroup,
                             taskName, stepsName, dataDefName);
@@ -84,7 +86,7 @@ public class PayloadFactory {
                     payloads.add(nextStepPayload);
                 }
             } catch (DefNotFoundException e) {
-                String message = String.join(" ",
+                String message = spaceit(
                         "unable to create payload for taskGroup:taskName ",
                         taskGroup + ":" + taskName);
                 errorLogger.log(CAT.ERROR, message, e);

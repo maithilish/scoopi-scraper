@@ -1,6 +1,7 @@
 package org.codetab.scoopi.plugin.appender;
 
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -8,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codetab.scoopi.defs.IPluginDefs;
+import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Log.CAT;
@@ -45,7 +46,7 @@ public abstract class Appender implements Runnable {
     @Inject
     private ConfigService configService;
     @Inject
-    private IPluginDefs pluginDefs;
+    private IPluginDef pluginDef;
     @Inject
     protected ErrorLogger errorLogger;
 
@@ -89,7 +90,7 @@ public abstract class Appender implements Runnable {
         } catch (ConfigNotFoundException e) {
         }
         try {
-            queueSize = pluginDefs.getValue(plugin, "queueSize");
+            queueSize = pluginDef.getValue(plugin, "queueSize");
         } catch (DefNotFoundException e) {
         }
         /*
@@ -104,8 +105,7 @@ public abstract class Appender implements Runnable {
             LOGGER.info("initialized appender: {}, queue size: {}", name,
                     queueSize);
         } catch (NumberFormatException e) {
-            String message =
-                    String.join(" ", "unable to create appender:", name);
+            String message = spaceit("unable to create appender:", name);
             errorLogger.log(CAT.ERROR, message, e);
         }
     }
@@ -137,6 +137,6 @@ public abstract class Appender implements Runnable {
 
     public String getPluginField(final String field)
             throws DefNotFoundException {
-        return pluginDefs.getValue(plugin, field);
+        return pluginDef.getValue(plugin, field);
     }
 }

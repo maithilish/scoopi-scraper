@@ -1,64 +1,66 @@
 package org.codetab.scoopi.defs.yml;
 
-import static java.util.stream.Collectors.toList;
-
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-import org.codetab.scoopi.defs.ILocatorDefs;
+import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 
-@Singleton
-public class LocatorDefs implements ILocatorDefs {
+class LocatorDefs {
 
+    @Inject
+    private Jacksons jacksons;
     @Inject
     private ObjectFactory objectFactory;
 
-    private JsonNode defs;
+    public List<LocatorGroup> getLocatorGroups(final JsonNode defs)
+            throws DefNotFoundException {
 
-    /**
-     * on first invoke sets defs and subsequent invocations do nothing.
-     * @param defs
-     */
-    public void init(final JsonNode locatorDefs) {
-        if (this.defs == null) {
-            this.defs = locatorDefs;
+        List<LocatorGroup> locatorGroups = new ArrayList<>();
+
+        Iterator<Entry<String, JsonNode>> entries = defs.fields();
+        while (entries.hasNext()) {
+            Entry<String, JsonNode> entry = entries.next();
+
+            String groupName = entry.getKey();
+            LocatorGroup locatorGroup =
+                    objectFactory.createLocatorGroup(groupName);
+            locatorGroups.add(locatorGroup);
+
+            JsonNode jGroup = entry.getValue();
+            JsonNode jLocators = jGroup.path("locators");
+            for (int i = 0; i < jLocators.size(); i++) {
+                JsonNode jLocator = jLocators.get(i);
+                String locatorName = jLocator.get("name").asText();
+                String locatorUrl = jLocator.get("url").asText();
+                Locator locator = objectFactory.createLocator(locatorName,
+                        groupName, locatorUrl);
+                locatorGroup.getLocators().add(locator);
+            }
+        }
+        if (locatorGroups.isEmpty()) {
+            throw new DefNotFoundException("locatorGroups");
+        } else {
+            return locatorGroups;
         }
     }
 
-    @Override
-    public List<String> getGroups() {
-        return Lists.newArrayList(defs.fieldNames());
-    }
-
-    @Override
-    public LocatorGroup getLocatorGroup(final String group) {
-        LocatorGroup locatorGroup = objectFactory.createLocatorGroup(group);
-
-        JsonNode groupNode = defs.at("/" + group);
-        JsonNode nodes = groupNode.get("locators");
-        for (int i = 0; i < nodes.size(); i++) {
-            JsonNode node = nodes.get(i);
-
-            String locatorName = node.get("name").asText();
-            String locatorUrl = node.get("url").asText();
-            Locator locator =
-                    objectFactory.createLocator(locatorName, group, locatorUrl);
-            locatorGroup.getLocators().add(locator);
+    public List<String> getGroupNames(final JsonNode defs)
+            throws DefNotFoundException {
+        List<String> groupNames = jacksons.getFieldNames(defs);
+        if (groupNames.isEmpty()) {
+            throw new DefNotFoundException("no locator groups found");
+        } else {
+            return groupNames;
         }
-        return locatorGroup;
     }
 
-    @Override
-    public List<LocatorGroup> getLocatorGroups() {
-        return getGroups().stream().map(this::getLocatorGroup)
-                .collect(toList());
-    }
 }

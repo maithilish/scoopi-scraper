@@ -26,20 +26,20 @@ public class NodeSelector {
 
     private final int outerLines = 5;
 
-    private Map<Integer, Elements> regionCache = new HashMap<>();
+    private Map<Integer, Elements> blockCache = new HashMap<>();
 
-    public Elements selectRegion(final Document page, final String selector) {
+    public Elements selectBlock(final Document page, final String selector) {
 
-        // regional nodes are cached for performance
+        // blocks nodes are cached for performance
         Integer hash = selector.hashCode();
-        Elements elements = regionCache.get(hash);
+        Elements elements = blockCache.get(hash);
 
         if (isNull(elements)) {
             elements = page.select(selector);
-            regionCache.put(hash, elements);
+            blockCache.put(hash, elements);
         }
 
-        LOGGER.trace(taskInfo.getMarker(), "[{}], region nodes: {}",
+        LOGGER.trace(taskInfo.getMarker(), "[{}], block nodes: {}",
                 taskInfo.getLabel(), elements.size());
         for (Element element : elements) {
             traceElement(selector, element);
@@ -48,20 +48,21 @@ public class NodeSelector {
         return elements;
     }
 
-    public String selectField(final Elements elements, final String selector,
-            final String attr) {
+    public String selectSelector(final Elements elements, final String selector,
+            final String attribute) {
         Elements subElements = elements.select(selector);
 
         String value = null;
 
-        LOGGER.trace(taskInfo.getMarker(), "[{}], field nodes: {}",
+        LOGGER.trace(taskInfo.getMarker(), "[{}], selector nodes: {}",
                 taskInfo.getLabel(), subElements.size());
 
         for (Element element : subElements) {
-            if (StringUtils.isBlank(attr)) {
+            if (StringUtils.isBlank(attribute)) {
                 value = element.ownText();
             } else {
-                value = element.attr(attr); // get value by attribute key
+                // get attribute value by its key
+                value = element.attr(attribute);
             }
             traceElement(selector, element);
         }

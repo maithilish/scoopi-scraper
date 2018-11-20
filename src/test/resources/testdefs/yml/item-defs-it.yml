@@ -1,0 +1,59 @@
+dataDefs:
+
+  def1:
+    query:
+      block: "def1 block query"       
+    items:  
+      - item:
+          name: item1
+          nameSelector: "def1-item1 name selector"
+          selector: "def1-item1 selector"              
+          index: "11"
+          breakAfter: 
+            - "def1-item1 breakafter 1"
+            - "def1-item1 breakafter 2"
+          prefix:
+            - "def1-item1 prefix 1"
+            - "def1-item1 prefix 2"  
+          filters:
+            - filter: { type: value, pattern: "def1-item1 filter 1"}
+            - filter: { type: match, pattern: "def1-item1 filter 2"} 
+    dims:  
+      - item:
+          name: dim1
+          selector: "def1-dim1 selector"
+          indexRange: "1-12"
+
+  def2:
+    query:
+      block: "def2 block query"
+      selector: "def2 selector query"
+      script: "def2 script query"
+    items:  
+      - item:
+          name: item1
+          nameSelector: "def2-item1 name selector"
+          selector: "def2-item1 selector"              
+          indexRange: "2-21"          
+           
+    dims:  
+      - item:
+          name: dim1
+          value: "dim1 value"
+          match: "dim1 match"
+          order: 122
+          selector: "def2-dim1 selector"
+          index: "22"
+          breakAfter: 
+            - "def2-dim1 breakafter 1"            
+      - item:
+          name: dim2
+          nameSelector: "def2-dim2 name selector"
+          selector: "def2-dim2 selector"
+          script: "def2-dim2 script"
+          index: "23"          
+          prefix: 
+            - "def2-dim2 prefix 1"
+          filters:
+            - filter: { type: value, pattern: "def2-dim2 filter 1"}
+              

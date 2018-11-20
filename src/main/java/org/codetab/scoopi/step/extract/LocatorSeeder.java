@@ -1,6 +1,7 @@
 package org.codetab.scoopi.step.extract;
 
 import static org.apache.commons.lang3.Validate.validState;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +67,9 @@ public final class LocatorSeeder extends BaseSeeder {
             setOutput(pData);
             setConsistent(true);
         } else {
-            String message = String.join(" ",
-                    "payload data is not instance of locator, but",
-                    pData.getClass().getName());
+            String message =
+                    spaceit("payload data is not instance of locator, but",
+                            pData.getClass().getName());
             throw new StepRunException(message);
         }
         Meter meter = metricsHelper.getMeter(this, "locator", "provided");
@@ -92,7 +93,7 @@ public final class LocatorSeeder extends BaseSeeder {
         for (Locator locator : locatorGroup.getLocators()) {
             // create and push first task payload for each locator
             // so that loader fetch only one document for each locator
-            Optional<String> firstTask = taskDefs.getFirstTaskName(group);
+            Optional<String> firstTask = taskDef.getFirstTaskName(group);
             if (firstTask.isPresent()) {
                 ArrayList<String> firstTaskName =
                         Lists.newArrayList(firstTask.get());
@@ -105,13 +106,13 @@ public final class LocatorSeeder extends BaseSeeder {
                             taskMediator.pushPayload(payload);
                             meter.mark();
                         } catch (InterruptedException e) {
-                            String message = String.join(" ",
-                                    "handover locator,", payload.toString());
+                            String message = spaceit("handover locator,",
+                                    payload.toString());
                             errorLogger.log(CAT.INTERNAL, message, e);
                         }
                     }
                 } else {
-                    String message = String.join(" ", "unable to seed locator:",
+                    String message = spaceit("unable to seed locator:",
                             locator.getName(),
                             ", expected one payload for taskGroup:", group,
                             "task:", firstTask.get(), "but got:",
@@ -119,7 +120,7 @@ public final class LocatorSeeder extends BaseSeeder {
                     errorLogger.log(CAT.ERROR, message);
                 }
             } else {
-                String message = String.join(" ",
+                String message = spaceit(
                         "unable to get first task for locator group:", group);
                 errorLogger.log(CAT.ERROR, message);
             }

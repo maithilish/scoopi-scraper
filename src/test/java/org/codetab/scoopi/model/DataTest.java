@@ -56,9 +56,9 @@ public class DataTest {
 
     @Test
     public void testGetItems() {
-        Item m1 = new Item();
+        ItemMig m1 = new ItemMig();
         m1.setName("m1");
-        Item m2 = new Item();
+        ItemMig m2 = new ItemMig();
         m2.setName("m2");
         Data data1 = new Data();
         data1.setName("data");
@@ -71,15 +71,15 @@ public class DataTest {
 
     @Test
     public void testAddItem() {
-        Item item = new Item();
-        item.setName("x");
-        item.setGroup("y");
+        ItemMig itemMig = new ItemMig();
+        itemMig.setName("x");
+        itemMig.setGroup("y");
 
         List<DataComponent> items = new ArrayList<>();
         data.setItems(items);
-        data.addItem(item);
+        data.addItem(itemMig);
 
-        assertThat(data.getItems()).contains(item);
+        assertThat(data.getItems()).contains(itemMig);
     }
 
     @Test

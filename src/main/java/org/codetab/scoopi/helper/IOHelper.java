@@ -8,7 +8,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,6 +54,11 @@ public class IOHelper {
             }
         }
         return stream;
+    }
+
+    public Reader getReader(final String fileName)
+            throws FileNotFoundException {
+        return new InputStreamReader(getInputStream(fileName));
     }
 
     /**

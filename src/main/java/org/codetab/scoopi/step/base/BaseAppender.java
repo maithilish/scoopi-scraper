@@ -2,13 +2,14 @@ package org.codetab.scoopi.step.base;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.defs.IPluginDefs;
+import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Plugin;
@@ -25,7 +26,7 @@ public abstract class BaseAppender extends Step {
     static final Logger LOGGER = LoggerFactory.getLogger(BaseAppender.class);
 
     @Inject
-    private IPluginDefs pluginDefs;
+    private IPluginDef pluginDef;
     @Inject
     protected Appenders appenders;
     @Inject
@@ -42,9 +43,8 @@ public abstract class BaseAppender extends Step {
         if (pData instanceof Data) {
             data = (Data) pData;
         } else {
-            String message =
-                    String.join(" ", "payload data type is not Data but",
-                            pData.getClass().getName());
+            String message = spaceit("payload data type is not Data but",
+                    pData.getClass().getName());
             throw new StepRunException(message);
         }
 
@@ -55,7 +55,7 @@ public abstract class BaseAppender extends Step {
 
         Optional<List<Plugin>> plugins = null;
         try {
-            plugins = pluginDefs.getPlugins(taskGroup, taskName, stepName);
+            plugins = pluginDef.getPlugins(taskGroup, taskName, stepName);
         } catch (Exception e) {
             throw new StepRunException("unable to create appenders", e);
         }

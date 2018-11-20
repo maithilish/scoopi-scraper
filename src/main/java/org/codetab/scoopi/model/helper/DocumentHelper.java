@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -143,7 +144,7 @@ public class DocumentHelper {
             }
         }
         throw new NoSuchElementException(
-                String.join(" ", "no document with id:", String.valueOf(id)));
+                spaceit("no document with id:", String.valueOf(id)));
     }
 
     /**

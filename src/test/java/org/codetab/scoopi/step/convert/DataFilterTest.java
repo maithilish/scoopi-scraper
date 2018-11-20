@@ -9,18 +9,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codetab.scoopi.defs.yml.DataDefDefs;
+import org.codetab.scoopi.defs.yml.DataDefDef;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Filter;
-import org.codetab.scoopi.model.Item;
+import org.codetab.scoopi.model.ItemMig;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.FilterHelper;
+import org.codetab.scoopi.step.process.DataFilter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -35,7 +36,7 @@ public class DataFilterTest {
     @Mock
     private FilterHelper filterHelper;
     @Mock
-    private DataDefDefs dataDefDefs;
+    private DataDefDef dataDefDef;
     @Mock
     private Data data;
 
@@ -63,9 +64,9 @@ public class DataFilterTest {
 
         DataDef dataDef = factory.createDataDef("price");
         Map<AxisName, List<Filter>> filterMap = new HashMap<>();
-        List<Item> filterItems = new ArrayList<>();
+        List<ItemMig> filterItems = new ArrayList<>();
 
-        given(dataDefDefs.getDataDef(dataDef.getName())).willReturn(dataDef);
+        given(dataDefDef.getDataDef(dataDef.getName())).willReturn(dataDef);
         given(filterHelper.getFilterMap(dataDef)).willReturn(filterMap);
         given(filterHelper.getFilterItems(data.getItems(), filterMap))
                 .willReturn(filterItems);
@@ -83,7 +84,7 @@ public class DataFilterTest {
             throws DataDefNotFoundException {
         dataFilter.setPayload(getTestPayload());
 
-        given(dataDefDefs.getDataDef("price"))
+        given(dataDefDef.getDataDef("price"))
                 .willThrow(DataDefNotFoundException.class);
 
         testRule.expect(StepRunException.class);

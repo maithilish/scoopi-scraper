@@ -19,8 +19,8 @@ import javax.script.ScriptException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.codetab.scoopi.defs.IDataDefDefs;
-import org.codetab.scoopi.defs.ITaskDefs;
+import org.codetab.scoopi.defs.IDataDefDef;
+import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
@@ -28,7 +28,7 @@ import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Document;
-import org.codetab.scoopi.model.Item;
+import org.codetab.scoopi.model.ItemMig;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
@@ -39,12 +39,10 @@ import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DataPersistence;
 import org.codetab.scoopi.step.TaskFactory;
 import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.step.mig.parse.ItemProcessor;
+import org.codetab.scoopi.step.mig.parse.ItemStack;
 import org.codetab.scoopi.step.parse.IValueParser;
-import org.codetab.scoopi.step.parse.ItemProcessor;
-import org.codetab.scoopi.step.parse.ItemStack;
 import org.codetab.scoopi.step.parse.ValueProcessor;
-import org.codetab.scoopi.step.parse.jsoup.Parser;
-import org.codetab.scoopi.step.parse.jsoup.ValueParser;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
@@ -71,7 +69,7 @@ public class BaseParserTest {
     @Mock
     private MetricsHelper metricsHelper;
     @Mock
-    private ITaskDefs taskDefs;
+    private ITaskDef taskDef;
     @Mock
     private TaskMediator taskMediator;
     @Mock
@@ -88,7 +86,7 @@ public class BaseParserTest {
     @Mock
     private DataPersistence dataPersistence;
     @Mock
-    private IDataDefDefs dataDefDefs;
+    private IDataDefDef dataDefDef;
     @Mock
     private DataHelper dataHelper;
 
@@ -185,7 +183,7 @@ public class BaseParserTest {
 
         Data loadedData = factory.createData(dataDefName);
 
-        given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
+        given(dataDefDef.getDataDefId(dataDefName)).willReturn(dataDefId);
         given(dataPersistence.loadData(dataDefId, documentId))
                 .willReturn(loadedData);
 
@@ -210,7 +208,7 @@ public class BaseParserTest {
                 factory.createDataDef(dataDefName, now, now, "defJson");
         dataDef.setId(dataDefId);
 
-        given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
+        given(dataDefDef.getDataDefId(dataDefName)).willReturn(dataDefId);
 
         boolean actual = parser.load();
         Data actualData = (Data) FieldUtils.readField(parser, "data", true);
@@ -233,7 +231,7 @@ public class BaseParserTest {
                 factory.createDataDef(dataDefName, now, now, "defJson");
         dataDef.setId(dataDefId);
 
-        given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
+        given(dataDefDef.getDataDefId(dataDefName)).willReturn(dataDefId);
 
         boolean actual = parser.load();
         Data actualData = (Data) FieldUtils.readField(parser, "data", true);
@@ -246,7 +244,7 @@ public class BaseParserTest {
     public void testLoadShouldThrowException()
             throws IllegalAccessException, DataDefNotFoundException {
         String dataDefName = parser.getJobInfo().getDataDef();
-        given(dataDefDefs.getDataDefId(dataDefName))
+        given(dataDefDef.getDataDefId(dataDefName))
                 .willThrow(DataDefNotFoundException.class);
 
         testRule.expect(StepRunException.class);
@@ -286,9 +284,9 @@ public class BaseParserTest {
 
         String label = parser.getJobInfo().getLabel();
 
-        Item item1 = factory.createItem();
+        ItemMig item1 = factory.createItemMig();
         item1.setName("m1");
-        Item item2 = factory.createItem();
+        ItemMig item2 = factory.createItemMig();
         item1.setName("m2");
 
         Data data = factory.createData(dataDefName);
@@ -304,8 +302,8 @@ public class BaseParserTest {
                 .willReturn(reuseCounter);
         given(dataFactory.createData(dataDefName, documentId, label))
                 .willReturn(data);
-        given(dataDefDefs.getDataDef(dataDefName)).willReturn(dataDef);
-        given(dataDefDefs.getDataDefId(dataDefName)).willReturn(dataDefId);
+        given(dataDefDef.getDataDef(dataDefName)).willReturn(dataDef);
+        given(dataDefDef.getDataDefId(dataDefName)).willReturn(dataDefId);
         given(itemStack.isEmpty()).willReturn(false, false, true);
         given(itemStack.popItem()).willReturn(item1, item2);
 
@@ -401,7 +399,7 @@ public class BaseParserTest {
         Optional<Boolean> taskLevelPersistenceDefined = Optional.of(true);
 
         FieldUtils.writeField(parser, "data", data, true);
-        given(taskDefs.getFieldValue("quote", "price", "persist", "data"))
+        given(taskDef.getFieldValue("quote", "price", "persist", "data"))
                 .willReturn("true");
         given(dataPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);
@@ -427,7 +425,7 @@ public class BaseParserTest {
 
         Optional<Boolean> taskLevelPersistenceDefined = Optional.of(false);
         FieldUtils.writeField(parser, "data", data, true);
-        given(taskDefs.getFieldValue("quote", "price", "persist", "data"))
+        given(taskDef.getFieldValue("quote", "price", "persist", "data"))
                 .willReturn("false");
         given(dataPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);
@@ -448,7 +446,7 @@ public class BaseParserTest {
     @Test
     public void testStorePersistFalse()
             throws IllegalAccessException, DefNotFoundException {
-        given(taskDefs.getFieldValue("quote", "price", "persist", "data"))
+        given(taskDef.getFieldValue("quote", "price", "persist", "data"))
                 .willReturn("false");
 
         boolean actual = parser.store();
@@ -472,7 +470,7 @@ public class BaseParserTest {
         Optional<Boolean> taskLevelPersistenceDefined = Optional.of(true);
 
         FieldUtils.writeField(parser, "data", data, true);
-        given(taskDefs.getFieldValue("quote", "price", "persist", "data"))
+        given(taskDef.getFieldValue("quote", "price", "persist", "data"))
                 .willThrow(DefNotFoundException.class);
         given(dataPersistence.persist(taskLevelPersistenceDefined))
                 .willReturn(true);

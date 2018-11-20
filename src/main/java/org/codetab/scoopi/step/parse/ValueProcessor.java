@@ -14,11 +14,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
-import org.apache.commons.lang3.Range;
-import org.codetab.scoopi.defs.yml.AxisDefs;
 import org.codetab.scoopi.model.Axis;
-import org.codetab.scoopi.model.AxisName;
-import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
 import org.slf4j.Logger;
@@ -37,49 +33,47 @@ public class ValueProcessor {
     @Inject
     private QueryVarSubstitutor varSubstitutor;
     @Inject
-    private AxisDefs axisDefs;
+    private BreakAfter breakAfter;
     @Inject
     private TaskInfo taskInfo;
 
-    private Map<String, Object> scriptObjectMap = new HashMap<>();
+    private Map<String, Object> scriptObjectMap;
 
-    public void setAxisValues(final DataDef dataDef, final Item item,
+    public void setAxisValues(final String dataDef, final Item item,
+            final Map<String, Integer> indexMap, final Indexer indexer,
             final IValueParser valueParser)
             throws ScriptException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
         // as index of AxisName.FACT is zero, process in reverse so that
         // all other axis are processed before the fact
-        for (AxisName axisName : AxisName.getReverseValues()) {
-            Axis axis = null;
-            try {
-                axis = item.getAxis(axisName);
-            } catch (NoSuchElementException e) {
-                continue;
+        for (Axis axis : item.getAxes()) {
+            axis.setIndex(indexMap.get(axis.getItemName()));
+            // if (isNull(axis.getIndex())) {
+            // }
+        }
+        for (Axis axis : item.getAxes()) {
+            String axisName = axis.getAxisName();
+            String itemName = axis.getItemName();
+            if (isNull(axis.getValue()) && nonNull(axis.getMatch())) {
+                axis.setValue(axis.getMatch());
             }
 
-            if (axis.getIndex() == null) {
-                int startIndex = 1;
-                Optional<Range<Integer>> indexRange =
-                        axisDefs.getIndexRange(dataDef, axis);
-                if (indexRange.isPresent()) {
-                    startIndex = indexRange.get().getMinimum();
-                }
-                axis.setIndex(startIndex);
-            }
-
-            if (axis.getValue() == null) {
+            if (isNull(axis.getValue())) {
                 String value = null;
                 try {
                     StringBuilder trace = new StringBuilder();
-                    scriptProcessor.init(scriptObjectMap); // lazy
                     Map<String, String> scripts =
-                            scriptProcessor.getScripts(dataDef, axisName);
+                            scriptProcessor.getScripts(dataDef, itemName);
                     appendQueryTrace(trace, "", scripts);
 
-                    varSubstitutor.replaceVariables(scripts, item.getAxisMap());
+                    Map<String, String> varValues = varSubstitutor
+                            .getVarValueMap(scripts, item.getAxes(), axis);
+                    varSubstitutor.replaceVariables(scripts, varValues);
                     appendQueryTrace(trace, "    >>>", scripts);
 
-                    logQueryTrace(axisName, trace);
+                    logQueryTrace(itemName, trace);
+
+                    scriptProcessor.init(scriptObjectMap); // lazy
 
                     value = scriptProcessor.query(scripts);
                 } catch (NoSuchElementException e) {
@@ -88,26 +82,30 @@ public class ValueProcessor {
                 if (isNull(value)) {
                     try {
                         StringBuilder trace = new StringBuilder();
-                        Map<String, String> queries =
-                                queryProcessor.getQueries(dataDef, axisName);
+                        Map<String, String> queries = queryProcessor
+                                .getQueries(dataDef, axisName, itemName);
                         appendQueryTrace(trace, "", queries);
 
-                        if (!queries.get("field").equals("scoopi:none")) {
-                            varSubstitutor.replaceVariables(queries,
-                                    item.getAxisMap());
-                            appendQueryTrace(trace, "    >>>", queries);
+                        Map<String, String> varValues = varSubstitutor
+                                .getVarValueMap(queries, item.getAxes(), axis);
+                        varSubstitutor.replaceVariables(queries, varValues);
+                        appendQueryTrace(trace, "    >>>", queries);
 
-                            logQueryTrace(axisName, trace);
+                        logQueryTrace(itemName, trace);
 
-                            value = queryProcessor.query(queries, valueParser);
-                        }
+                        value = queryProcessor.query(queries, valueParser);
+
                     } catch (NoSuchElementException e) {
                     }
+                }
+                if (nonNull(value)
+                        && breakAfter.check(dataDef, itemName, value)) {
+                    indexer.markBreakAfter(itemName);
                 }
 
                 if (nonNull(value)) {
                     Optional<List<String>> prefixes =
-                            prefixProcessor.getPrefixes(dataDef, axisName);
+                            prefixProcessor.getPrefixes(dataDef, itemName);
                     if (prefixes.isPresent()) {
                         value = prefixProcessor.prefixValue(value,
                                 prefixes.get());
@@ -122,6 +120,9 @@ public class ValueProcessor {
     }
 
     public void addScriptObject(final String key, final Object value) {
+        if (isNull(scriptObjectMap)) {
+            scriptObjectMap = new HashMap<>();
+        }
         scriptObjectMap.put(key, value);
     }
 
@@ -146,10 +147,10 @@ public class ValueProcessor {
         }
     }
 
-    private void logQueryTrace(final AxisName axisName,
+    private void logQueryTrace(final String itemName,
             final StringBuilder trace) {
         LOGGER.trace(taskInfo.getMarker(), "[{}]:{} query{}{}",
-                taskInfo.getLabel(), axisName, LINE, trace.toString());
+                taskInfo.getLabel(), itemName, LINE, trace.toString());
     }
 
 }

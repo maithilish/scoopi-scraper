@@ -1,5 +1,7 @@
 package org.codetab.scoopi.plugin.appender;
 
+import static org.codetab.scoopi.util.Util.spaceit;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -23,8 +25,7 @@ public class AppenderFactory {
         if (appender.isInitialized()) {
             appender.initializeQueue();
         } else {
-            String message =
-                    String.join(" ", "appender not initalized:", appenderName);
+            String message = spaceit("appender not initalized:", appenderName);
             throw new IllegalStateException(message);
         }
         return appender;

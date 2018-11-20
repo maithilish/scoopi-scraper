@@ -1,5 +1,7 @@
 package org.codetab.scoopi.model;
 
+import static org.codetab.scoopi.util.Util.dashit;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -55,8 +57,7 @@ public class Plugin {
 
     @Override
     public String toString() {
-        return "Plugin: "
-                + String.join("-", taskGroup, taskName, stepName, name);
+        return "Plugin: " + dashit(taskGroup, taskName, stepName, name);
     }
 
     @Override
@@ -68,4 +69,5 @@ public class Plugin {
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
+
 }

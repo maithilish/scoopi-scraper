@@ -3,6 +3,7 @@ package org.codetab.scoopi.step.parse.htmlunit;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -82,8 +83,8 @@ public class Parser extends BaseParser {
         try {
             timeout = Integer.parseInt(configService.getConfig(key));
         } catch (NumberFormatException | ConfigNotFoundException e) {
-            String message = String.join(" ", "use default value:",
-                    String.valueOf(timeout));
+            String message =
+                    spaceit("use default value:", String.valueOf(timeout));
             errorLogger.log(CAT.INTERNAL, message, e);
         }
 

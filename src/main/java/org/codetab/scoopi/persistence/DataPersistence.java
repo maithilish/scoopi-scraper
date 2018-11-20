@@ -1,6 +1,7 @@
 package org.codetab.scoopi.persistence;
 
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.Optional;
 
@@ -53,7 +54,7 @@ public class DataPersistence {
             Data data = dao.getData(documentId, dataDefId);
             return data;
         } catch (RuntimeException e) {
-            String message = String.join(" ", "unable to load data, dataDefId:",
+            String message = spaceit("unable to load data, dataDefId:",
                     String.valueOf(dataDefId), ", documentId:",
                     String.valueOf(documentId));
             throw new StepPersistenceException(message, e);
@@ -77,8 +78,8 @@ public class DataPersistence {
             Data data = dao.getData(id);
             return data;
         } catch (RuntimeException e) {
-            String message = String.join(" ", "unable to load data, id:",
-                    String.valueOf(id));
+            String message =
+                    spaceit("unable to load data, id:", String.valueOf(id));
             throw new StepPersistenceException(message, e);
         }
     }
@@ -102,8 +103,7 @@ public class DataPersistence {
             dao.storeData(data);
             return true;
         } catch (RuntimeException e) {
-            String message =
-                    String.join(" ", "unable to store data:", data.getName());
+            String message = spaceit("unable to store data:", data.getName());
             throw new StepPersistenceException(message, e);
         }
     }

@@ -1,5 +1,7 @@
 package org.codetab.scoopi.step.extract;
 
+import static org.codetab.scoopi.util.Util.spaceit;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -73,8 +75,7 @@ public final class URLLoader extends BaseLoader {
                 LOGGER.debug(marker, "fetched resource: {}", urlSpec);
                 return bytes;
             } catch (IOException e1) {
-                throw new IOException(
-                        String.join(" ", "file not found: ", urlSpec));
+                throw new IOException(spaceit("file not found: ", urlSpec));
             }
         }
 
@@ -87,8 +88,7 @@ public final class URLLoader extends BaseLoader {
                 LOGGER.debug(marker, "fetched file: {}", urlSpec);
                 return bytes;
             } catch (IOException | NullPointerException e) {
-                throw new IOException(
-                        String.join(" ", "file not found: ", urlSpec));
+                throw new IOException(spaceit("file not found: ", urlSpec));
             }
         }
 
@@ -107,7 +107,7 @@ public final class URLLoader extends BaseLoader {
             uc.connect();
             int respCode = uc.getResponseCode();
             if (respCode != HttpURLConnection.HTTP_OK) {
-                throw new IOException(String.join(" ",
+                throw new IOException(spaceit(
                         "HTTP response:" + respCode + ", URL:", urlSpec));
             }
 
@@ -118,7 +118,7 @@ public final class URLLoader extends BaseLoader {
             return bytes;
         }
 
-        throw new IOException(String.join(" ", "unknown protocol:", urlSpec));
+        throw new IOException(spaceit("unknown protocol:", urlSpec));
     }
 
     /**
@@ -138,7 +138,7 @@ public final class URLLoader extends BaseLoader {
             timeout = Integer.parseInt(configService.getConfig(key));
         } catch (NumberFormatException | ConfigNotFoundException e) {
             // TODO add activity or update config with default
-            String message = String.join(" ", "config not found:", key,
+            String message = spaceit("config not found:", key,
                     ", defaults to: ", String.valueOf(timeout), "millis");
             LOGGER.debug(marker, "{}, {}", e, message);
         }
@@ -163,7 +163,7 @@ public final class URLLoader extends BaseLoader {
         try {
             userAgent = configService.getConfig(key);
         } catch (ConfigNotFoundException e) {
-            String message = String.join(" ", "config not found:", key,
+            String message = spaceit("config not found:", key,
                     ", defaults to: ", userAgent);
             LOGGER.debug(marker, "{}, {}", e, message);
         }

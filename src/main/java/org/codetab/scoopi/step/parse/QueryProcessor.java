@@ -5,40 +5,51 @@ import static java.util.Objects.isNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
-import org.codetab.scoopi.defs.IAxisDefs;
-import org.codetab.scoopi.model.AxisName;
-import org.codetab.scoopi.model.DataDef;
+import org.codetab.scoopi.defs.IItemDef;
+import org.codetab.scoopi.model.Query;
 import org.codetab.scoopi.step.parse.cache.ParserCache;
 
 public class QueryProcessor {
 
     @Inject
-    private IAxisDefs axisDefs;
+    private IItemDef itemDef;
     @Inject
     private ParserCache parserCache;
 
-    public Map<String, String> getQueries(final DataDef dataDef,
-            final AxisName axisName) {
+    public Map<String, String> getQueries(final String dataDef,
+            final String axisName, String itemName) {
         Map<String, String> queries = new HashMap<>();
-        String region = axisDefs.getQuery(dataDef, axisName, "region");
-        String field = axisDefs.getQuery(dataDef, axisName, "field");
-        if (region.equals("undefined") || field.equals("undefined")) {
-            throw new NoSuchElementException("query not defined");
-        }
-        // optional attribute
-        String attribute = axisDefs.getQuery(dataDef, axisName, "attribute");
-        if (attribute.equals("undefined")) {
-            attribute = "";
+        Query query = itemDef.getQuery(dataDef);
+        Optional<Query> itemQuery = itemDef.getItemQuery(dataDef, itemName);
+
+        String block;
+        String selector;
+        if (axisName.toLowerCase().equals("fact")) {
+            block = query.getQuery("block");
+
+            selector = query.getQuery("selector");
+
+        } else {
+            if (itemQuery.isPresent()) {
+                block = query.getQuery("block");
+                selector = itemQuery.get().getQuery("selector");
+            } else {
+                throw new NoSuchElementException();
+            }
         }
 
-        queries.put("region", region); //$NON-NLS-1$
-        queries.put("field", field); //$NON-NLS-1$
-        queries.put("attribute", attribute); //$NON-NLS-1$ //$NON-NLS-2$
+        String[] parts = selector.split(" attribute: ");
 
+        queries.put("block", block); //$NON-NLS-1$
+        queries.put("selector", parts[0]);
+        if (parts.length > 1) {
+            queries.put("attribute", parts[1]);
+        }
         return queries;
     }
 

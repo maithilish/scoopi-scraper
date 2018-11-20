@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codetab.scoopi.defs.IAxisDefs;
+import org.codetab.scoopi.defs.mig.IAxisDefs;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Filter;
-import org.codetab.scoopi.model.Item;
+import org.codetab.scoopi.model.ItemMig;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -73,13 +73,13 @@ public class FilterHelperTest {
         Map<AxisName, List<Filter>> filterMap = new HashMap<>();
         filterMap.put(AxisName.ROW, filters);
 
-        List<Item> items = createTestItems();
+        List<ItemMig> itemMigs = createTestItems();
 
-        List<Item> actual = filterHelper.getFilterItems(items, filterMap);
+        List<ItemMig> actual = filterHelper.getFilterItems(itemMigs, filterMap);
 
         assertThat(actual.size()).isEqualTo(2);
-        assertThat(actual.get(0)).isSameAs(items.get(0));
-        assertThat(actual.get(1)).isSameAs(items.get(2));
+        assertThat(actual.get(0)).isSameAs(itemMigs.get(0));
+        assertThat(actual.get(1)).isSameAs(itemMigs.get(2));
 
         filter1 = factory.createFilter("value", "c1");
         filter2 = factory.createFilter("value", "c2");
@@ -88,12 +88,12 @@ public class FilterHelperTest {
 
         filterMap.put(AxisName.COL, filters);
 
-        actual = filterHelper.getFilterItems(items, filterMap);
+        actual = filterHelper.getFilterItems(itemMigs, filterMap);
 
         assertThat(actual.size()).isEqualTo(3);
-        assertThat(actual.get(0)).isSameAs(items.get(0));
-        assertThat(actual.get(1)).isSameAs(items.get(1));
-        assertThat(actual.get(2)).isSameAs(items.get(2));
+        assertThat(actual.get(0)).isSameAs(itemMigs.get(0));
+        assertThat(actual.get(1)).isSameAs(itemMigs.get(1));
+        assertThat(actual.get(2)).isSameAs(itemMigs.get(2));
     }
 
     @Test
@@ -103,13 +103,13 @@ public class FilterHelperTest {
         Map<AxisName, List<Filter>> filterMap = new HashMap<>();
         filterMap.put(AxisName.ROW, filters);
 
-        List<Item> items = createTestItems();
+        List<ItemMig> itemMigs = createTestItems();
 
-        List<Item> actual = filterHelper.getFilterItems(items, filterMap);
+        List<ItemMig> actual = filterHelper.getFilterItems(itemMigs, filterMap);
 
         assertThat(actual.size()).isEqualTo(2);
-        assertThat(actual.get(0)).isSameAs(items.get(0));
-        assertThat(actual.get(1)).isSameAs(items.get(1));
+        assertThat(actual.get(0)).isSameAs(itemMigs.get(0));
+        assertThat(actual.get(1)).isSameAs(itemMigs.get(1));
     }
 
     @Test
@@ -119,10 +119,10 @@ public class FilterHelperTest {
         Map<AxisName, List<Filter>> filterMap = new HashMap<>();
         filterMap.put(AxisName.ROW, filters);
 
-        List<Item> items = createTestItems();
+        List<ItemMig> itemMigs = createTestItems();
 
         testRule.expect(StepRunException.class);
-        filterHelper.getFilterItems(items, filterMap);
+        filterHelper.getFilterItems(itemMigs, filterMap);
     }
 
     @Test
@@ -133,13 +133,13 @@ public class FilterHelperTest {
         Map<AxisName, List<Filter>> filterMap = new HashMap<>();
         filterMap.put(AxisName.ROW, filters);
 
-        List<Item> items = createTestItems();
+        List<ItemMig> itemMigs = createTestItems();
 
-        List<Item> actual = filterHelper.getFilterItems(items, filterMap);
+        List<ItemMig> actual = filterHelper.getFilterItems(itemMigs, filterMap);
 
         assertThat(actual.size()).isEqualTo(2);
-        assertThat(actual.get(0)).isSameAs(items.get(3));
-        assertThat(actual.get(1)).isSameAs(items.get(5));
+        assertThat(actual.get(0)).isSameAs(itemMigs.get(3));
+        assertThat(actual.get(1)).isSameAs(itemMigs.get(5));
 
         filter1 = factory.createFilter("match", "c4");
         filter2 = factory.createFilter("match", "c5");
@@ -148,24 +148,24 @@ public class FilterHelperTest {
 
         filterMap.put(AxisName.COL, filters);
 
-        actual = filterHelper.getFilterItems(items, filterMap);
+        actual = filterHelper.getFilterItems(itemMigs, filterMap);
 
         assertThat(actual.size()).isEqualTo(3);
-        assertThat(actual.get(0)).isSameAs(items.get(3));
-        assertThat(actual.get(1)).isSameAs(items.get(4));
-        assertThat(actual.get(2)).isSameAs(items.get(5));
+        assertThat(actual.get(0)).isSameAs(itemMigs.get(3));
+        assertThat(actual.get(1)).isSameAs(itemMigs.get(4));
+        assertThat(actual.get(2)).isSameAs(itemMigs.get(5));
     }
 
     @Test
     public void testFilter() {
-        List<Item> items = createTestItems();
+        List<ItemMig> itemMigs = createTestItems();
 
-        Item m1 = items.get(0);
-        Item m2 = items.get(1);
-        Item m3 = items.get(2);
-        Item m4 = items.get(3);
-        Item m5 = items.get(4);
-        Item m6 = items.get(5);
+        ItemMig m1 = itemMigs.get(0);
+        ItemMig m2 = itemMigs.get(1);
+        ItemMig m3 = itemMigs.get(2);
+        ItemMig m4 = itemMigs.get(3);
+        ItemMig m5 = itemMigs.get(4);
+        ItemMig m6 = itemMigs.get(5);
 
         Data data = factory.createData("dataDef1");
         data.addItem(m1);
@@ -175,32 +175,32 @@ public class FilterHelperTest {
         data.addItem(m5);
         data.addItem(m6);
 
-        ArrayList<Item> filterItems = Lists.newArrayList(m1, m2, m5);
+        ArrayList<ItemMig> filterItems = Lists.newArrayList(m1, m2, m5);
 
         filterHelper.filter(data, filterItems);
 
-        List<Item> actual = data.getItems();
+        List<ItemMig> actual = data.getItems();
 
         assertThat(actual.size()).isEqualTo(3);
         assertThat(actual).doesNotContain(m1, m2, m5);
         assertThat(actual).containsExactly(m3, m4, m6);
     }
 
-    private List<Item> createTestItems() {
-        List<Item> items = new ArrayList<>();
+    private List<ItemMig> createTestItems() {
+        List<ItemMig> itemMigs = new ArrayList<>();
 
-        items.add(createTestItem("value", "1"));
-        items.add(createTestItem("value", "2"));
-        items.add(createTestItem("value", "3"));
+        itemMigs.add(createTestItem("value", "1"));
+        itemMigs.add(createTestItem("value", "2"));
+        itemMigs.add(createTestItem("value", "3"));
 
-        items.add(createTestItem("match", "4"));
-        items.add(createTestItem("match", "5"));
-        items.add(createTestItem("match", "6"));
-        return items;
+        itemMigs.add(createTestItem("match", "4"));
+        itemMigs.add(createTestItem("match", "5"));
+        itemMigs.add(createTestItem("match", "6"));
+        return itemMigs;
     }
 
-    private Item createTestItem(final String type, final String index) {
-        Item item = factory.createItem();
+    private ItemMig createTestItem(final String type, final String index) {
+        ItemMig itemMig = factory.createItemMig();
         String mName = "m" + index;
         String colValue = "c" + index;
         String colMatch = null;
@@ -224,10 +224,10 @@ public class FilterHelperTest {
         Axis fact = factory.createAxis(AxisName.FACT, mName, factValue,
                 factMatch, 0, 0);
 
-        item.addAxis(col);
-        item.addAxis(row);
-        item.addAxis(fact);
-        return item;
+        itemMig.addAxis(col);
+        itemMig.addAxis(row);
+        itemMig.addAxis(fact);
+        return itemMig;
     }
 
 }

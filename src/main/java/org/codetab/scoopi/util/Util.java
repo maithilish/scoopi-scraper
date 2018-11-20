@@ -341,4 +341,11 @@ public final class Util {
         return Range.between(min, max);
     }
 
+    public static String dashit(final String... parts) {
+        return String.join("-", parts);
+    }
+
+    public static String spaceit(final String... parts) {
+        return String.join("", parts);
+    }
 }

@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 
 import javax.script.ScriptException;
 
-import org.codetab.scoopi.defs.IAxisDefs;
+import org.codetab.scoopi.defs.mig.IAxisDefs;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;

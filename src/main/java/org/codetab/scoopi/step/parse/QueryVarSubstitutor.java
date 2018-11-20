@@ -1,9 +1,12 @@
 package org.codetab.scoopi.step.parse;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.ConvertUtils;
@@ -11,6 +14,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.codetab.scoopi.model.Axis;
+
+import com.google.common.collect.Lists;
 
 public class QueryVarSubstitutor {
 
@@ -28,46 +33,50 @@ public class QueryVarSubstitutor {
      * </pre>
      *
      * @param queries
-     * @param axisMap
+     * @param varValueMap
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
     public void replaceVariables(final Map<String, String> queries,
-            final Map<String, Axis> axisMap) throws IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
+            final Map<String, String> varValueMap)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
 
         // TODO provide some examples and full explanation in javadoc
 
         notNull(queries, "queries must not be null");
-        notNull(axisMap, "axisMap must not be null");
+        notNull(varValueMap, "varValueMap must not be null");
 
-        // TODO optimise: create single value map for all strings in queries
-        // one of the option is item can return value map of its
-        // axes (can't cache as value may change)
         for (String key : queries.keySet()) {
-            String str = queries.get(key);
-            Map<String, String> valueMap = getValueMap(str, axisMap);
-            StringSubstitutor ss = new StringSubstitutor(valueMap);
+            String query = queries.get(key);
+            StringSubstitutor ss = new StringSubstitutor(varValueMap);
             ss.setVariablePrefix("%{"); //$NON-NLS-1$
             ss.setVariableSuffix("}"); //$NON-NLS-1$
             ss.setEscapeChar('%');
-            String patchedStr = ss.replace(str);
-            queries.put(key, patchedStr);
+            String patchedQuery = ss.replace(query);
+            queries.put(key, patchedQuery);
         }
     }
 
     /**
      * <p>
-     * Returns a key and value map of variable name and its value from
-     * corresponding axis field.
+     * Returns map of variable name and its value.
+     * </p>
+     * 
+     * <p>
+     * for variables such as %{index} or %{item.index} etc., value from ownAxis
+     * is returned
      * </p>
      *
+     * for variables such as %{item.xyz.index} etc., value from axis whose
+     * itemName is xyz is returned
+     * 
      * <pre>
-     * Key          Value
-     * col.index    8
-     * col.match    Price
-     * row.value    20.00
+     * Key              Value
+     * index            8
+     * item.match       Price
+     * dim.xyz.value    20.00
      * </pre>
      *
      * @param str
@@ -82,22 +91,54 @@ public class QueryVarSubstitutor {
      * @throws NoSuchMethodException
      *             on error
      */
-    private Map<String, String> getValueMap(final String str,
-            final Map<String, ?> map) throws IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
-        String[] keys = StringUtils.substringsBetween(str, "%{", "}"); //$NON-NLS-1$ //$NON-NLS-2$
-        if (keys == null) {
-            return null;
+    public Map<String, String> getVarValueMap(final Map<String, String> queries,
+            final List<Axis> axisList, final Axis ownAxis)
+            throws IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+        List<String> placeHolders = new ArrayList<>();
+        for (String query : queries.values()) {
+            String[] ph = StringUtils.substringsBetween(query, "%{", "}"); //$NON-NLS-1$ //$NON-NLS-2$
+            if (nonNull(ph)) {
+                placeHolders.addAll(Lists.newArrayList(ph));
+            }
         }
         Map<String, String> valueMap = new HashMap<>();
-        for (String key : keys) {
-            String[] parts = key.split("\\."); //$NON-NLS-1$
-            String objKey = parts[0];
-            String property = parts[1];
-            Object obj = map.get(objKey.toUpperCase());
+        for (String placeHolder : placeHolders) {
+            String[] parts = placeHolder.split("\\."); //$NON-NLS-1$
+            Axis axis = null;
+            String property = null;
+
+            int len = parts.length;
+            switch (len) {
+            case 1:
+                // example: index
+                property = parts[0];
+                axis = ownAxis;
+                break;
+            case 2:
+                // example: item.index
+                String axisName = parts[0];
+                property = parts[1];
+                axis = axisList.stream()
+                        .filter(a -> a.getAxisName().equals(axisName))
+                        .findFirst().orElse(null);
+                break;
+            case 3:
+                // example: item.Price.index
+                axisName = parts[0];
+                String itemName = parts[1];
+                property = parts[2];
+                axis = axisList.stream()
+                        .filter(a -> a.getAxisName().equals(axisName)
+                                && a.getItemName().equals(itemName))
+                        .findFirst().orElse(null);
+                break;
+            default:
+                break;
+            }
             // call getter and type convert to String
-            Object o = PropertyUtils.getProperty(obj, property);
-            valueMap.put(key, ConvertUtils.convert(o));
+            Object o = PropertyUtils.getProperty(axis, property);
+            valueMap.put(placeHolder, ConvertUtils.convert(o));
         }
         return valueMap;
     }

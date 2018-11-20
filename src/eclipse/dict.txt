@@ -134,3 +134,4 @@ dclassifier
 dnf
 openjdk
 fedora
+var

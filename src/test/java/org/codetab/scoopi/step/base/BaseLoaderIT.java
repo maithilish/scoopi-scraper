@@ -16,8 +16,9 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.dao.jdo.JdoDaoUtilFactory;
-import org.codetab.scoopi.defs.yml.Defs;
+import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
@@ -43,7 +44,7 @@ public class BaseLoaderIT {
     protected static DInjector di;
     protected static IDaoUtil daoUtil;
     protected static HashSet<String> schemaClasses;
-    protected static Defs defs;
+    protected static Def def;
     protected static ObjectFactory factory;
     protected static ConfigService configService;
 
@@ -62,8 +63,8 @@ public class BaseLoaderIT {
 
     // don't move this to base class, tests fail in cli
     @BeforeClass
-    public static void setUpBeforeClass()
-            throws IOException, IllegalAccessException, URISyntaxException {
+    public static void setUpBeforeClass() throws IOException,
+            IllegalAccessException, URISyntaxException, DefNotFoundException {
 
         di = new DInjector();
 
@@ -74,9 +75,9 @@ public class BaseLoaderIT {
         configService.getConfigs().setProperty("scoopi.useDatastore", "true");
         configService.getConfigs().setProperty("scoopi.defs.dir", defDir);
 
-        defs = di.instance(Defs.class);
-        defs.init();
-        defs.initDefProviders();
+        def = di.instance(Def.class);
+        def.init();
+        def.initDefProviders();
 
         schemaClasses = new HashSet<>();
 

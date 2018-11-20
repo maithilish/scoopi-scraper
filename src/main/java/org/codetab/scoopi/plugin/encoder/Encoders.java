@@ -1,6 +1,8 @@
 package org.codetab.scoopi.plugin.encoder;
 
 import static java.util.Objects.nonNull;
+import static org.codetab.scoopi.util.Util.dashit;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +11,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.defs.IPluginDefs;
+import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Log.CAT;
@@ -21,7 +23,7 @@ public class Encoders extends HashMap<String, List<IEncoder<?>>> {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private IPluginDefs pluginDefs;
+    private IPluginDef pluginDef;
     @Inject
     private EncoderFactory encoderFactory;
     @Inject
@@ -30,11 +32,10 @@ public class Encoders extends HashMap<String, List<IEncoder<?>>> {
     public void createEncoders(final List<Plugin> plugins,
             final String stepsName, final String stepName) {
         for (Plugin plugin : plugins) {
-            String appenderName =
-                    String.join("-", stepsName, stepName, plugin.getName());
+            String appenderName = dashit(stepsName, stepName, plugin.getName());
             Optional<List<Plugin>> encoderPlugins = null;
             try {
-                encoderPlugins = pluginDefs.getPlugins(plugin);
+                encoderPlugins = pluginDef.getPlugins(plugin);
             } catch (Exception e) {
                 throw new StepRunException("unable to create appenders", e);
             }
@@ -47,7 +48,7 @@ public class Encoders extends HashMap<String, List<IEncoder<?>>> {
                         encoders.add(encoder);
                     } catch (ClassCastException | IllegalStateException
                             | ClassNotFoundException | DefNotFoundException e) {
-                        String message = String.join(" ",
+                        String message = spaceit(
                                 "unable to create appender from plugin:",
                                 plugin.toString());
                         errorLogger.log(CAT.ERROR, message, e);

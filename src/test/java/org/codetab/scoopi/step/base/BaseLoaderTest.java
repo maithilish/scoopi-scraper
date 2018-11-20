@@ -15,7 +15,7 @@ import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.defs.ITaskDefs;
+import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
@@ -64,7 +64,7 @@ public class BaseLoaderTest {
     @Mock
     private MetricsHelper metricsHelper;
     @Mock
-    private ITaskDefs taskDefs;
+    private ITaskDef taskDef;
     @Mock
     private TaskMediator taskMediator;
     @Mock
@@ -203,7 +203,7 @@ public class BaseLoaderTest {
                 factory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskDefs.getLive("quote")).willReturn(live);
+        given(taskDef.getLive("quote")).willReturn(live);
         given(ucHelper.getProtocol(url)).willReturn("resource");
         given(configService.getRunDateTime()).willReturn(fromDate);
         given(documentHelper.getToDate(fromDate, live, loader.getJobInfo()))
@@ -245,7 +245,7 @@ public class BaseLoaderTest {
                 factory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskDefs.getLive("quote")).willReturn(live);
+        given(taskDef.getLive("quote")).willReturn(live);
         given(ucHelper.getProtocol(invalidUrl)).willReturn("file");
 
         try {
@@ -329,7 +329,7 @@ public class BaseLoaderTest {
                 factory.createDocument("acme", url, fromDate, toDate);
         Counter counter = Mockito.mock(Counter.class);
 
-        given(taskDefs.getLive("quote")).willThrow(DefNotFoundException.class);
+        given(taskDef.getLive("quote")).willThrow(DefNotFoundException.class);
         given(documentHelper.getActiveDocument(locator.getDocuments()))
                 .willReturn(document);
         given(documentHelper.getToDate(document.getFromDate(), live,

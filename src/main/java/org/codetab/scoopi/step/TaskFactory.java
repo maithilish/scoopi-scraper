@@ -1,6 +1,7 @@
 package org.codetab.scoopi.step;
 
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -80,8 +81,8 @@ public class TaskFactory {
         if (obj instanceof IStep) {
             step = (IStep) obj;
         } else {
-            throw new ClassCastException(String.join(" ", "step class:",
-                    clzName, "is not IStep type"));
+            throw new ClassCastException(
+                    spaceit("step class:", clzName, "is not IStep type"));
         }
         return step;
     }

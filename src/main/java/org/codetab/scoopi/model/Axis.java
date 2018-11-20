@@ -26,20 +26,20 @@ public final class Axis implements Comparable<Axis>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final AxisName name;
+    private final String axisName;
     private final String itemName;
     private String value;
     private String match;
     private Integer index;
     private Integer order;
 
-    public Axis(final AxisName name, final String itemName) {
-        this.name = name;
+    public Axis(final String axisName, final String itemName) {
+        this.axisName = axisName;
         this.itemName = itemName;
     }
 
-    public AxisName getName() {
-        return name;
+    public String getAxisName() {
+        return axisName;
     }
 
     public String getValue() {
@@ -79,7 +79,7 @@ public final class Axis implements Comparable<Axis>, Serializable {
     }
 
     public String getNameString() {
-        return name.toString().toLowerCase();
+        return axisName.toString().toLowerCase();
     }
 
     /**
@@ -87,7 +87,7 @@ public final class Axis implements Comparable<Axis>, Serializable {
      * @return deep copy of Axis
      */
     public Axis copy() {
-        Axis copy = new Axis(this.name, this.itemName);
+        Axis copy = new Axis(this.axisName, this.itemName);
         copy.match = match;
         copy.value = value;
         copy.index = index;
@@ -98,8 +98,8 @@ public final class Axis implements Comparable<Axis>, Serializable {
     @Override
     public int compareTo(final Axis other) {
         // compare Enum AxisName
-        AxisName a1 = name;
-        AxisName a2 = other.name;
+        String a1 = axisName;
+        String a2 = other.axisName;
         return a1.compareTo(a2);
     }
 
@@ -116,7 +116,7 @@ public final class Axis implements Comparable<Axis>, Serializable {
     @Override
     public String toString() {
         String str = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("name", name).append("itemName", itemName)
+                .append("name", axisName).append("itemName", itemName)
                 .append("value", value).append("match", match)
                 .append("index", index).append("order", order).toString();
         return String.join("", System.lineSeparator(), "  ", str);

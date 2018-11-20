@@ -1,5 +1,7 @@
 package org.codetab.scoopi.step.load;
 
+import static org.codetab.scoopi.util.Util.spaceit;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -54,8 +56,7 @@ public class DataAppender extends BaseAppender {
                     doAppend(appender, encodedData);
                 }
             } catch (Exception e) {
-                String message =
-                        String.join(" ", "unable to append to:", appenderName);
+                String message = spaceit("unable to append to:", appenderName);
                 errorLogger.log(getMarker(), CAT.ERROR, getLabeled(message), e);
             }
         }

@@ -88,6 +88,10 @@ public final class Data extends DataComponent implements Serializable {
         items.add(item);
     }
 
+    public void removeItem(final DataComponent item) {
+        items.remove(item);
+    }
+
     public void addTag(final String key, final Object value) {
         tag.add(key, value);
     }

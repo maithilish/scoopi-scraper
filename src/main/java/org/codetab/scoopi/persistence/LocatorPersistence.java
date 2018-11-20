@@ -1,6 +1,7 @@
 package org.codetab.scoopi.persistence;
 
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.Optional;
 
@@ -56,8 +57,8 @@ public class LocatorPersistence {
             Locator existingLocator = dao.getLocator(name, group);
             return existingLocator;
         } catch (RuntimeException e) {
-            String message = String.join(" ", "unable to load locator, name:",
-                    name, "group:", group);
+            String message = spaceit("unable to load locator, name:", name,
+                    "group:", group);
             throw new StepPersistenceException(message, e);
         }
     }
@@ -78,8 +79,8 @@ public class LocatorPersistence {
             ILocatorDao dao = daoFactory.getLocatorDao();
             return dao.getLocator(id);
         } catch (RuntimeException e) {
-            String message = String.join(" ", "unable to load locator, id:",
-                    String.valueOf(id));
+            String message =
+                    spaceit("unable to load locator, id:", String.valueOf(id));
             throw new StepPersistenceException(message, e);
         }
     }
@@ -101,7 +102,7 @@ public class LocatorPersistence {
             dao.storeLocator(locator);
             return true;
         } catch (RuntimeException e) {
-            String message = String.join(" ", "unable to store locator, name:",
+            String message = spaceit("unable to store locator, name:",
                     locator.getName(), "group:", locator.getGroup());
             throw new StepPersistenceException(message, e);
         }

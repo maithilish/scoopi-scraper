@@ -27,14 +27,14 @@ public class ValueParser implements IValueParser {
 
     @Override
     public String parseValue(final Map<String, String> queries) {
-        String regionSelector = queries.get("region"); //$NON-NLS-1$
-        List<Object> region = nodeSelector.selectRegion(page, regionSelector);
+        String blockSelector = queries.get("block"); //$NON-NLS-1$
+        List<Object> block = nodeSelector.selectRegion(page, blockSelector);
 
-        String fieldSelector = queries.get("field"); //$NON-NLS-1$
+        String selectorSelector = queries.get("selector"); //$NON-NLS-1$
 
         String value = null;
-        for (Object o : region) {
-            value = nodeSelector.selectField((DomNode) o, fieldSelector);
+        for (Object o : block) {
+            value = nodeSelector.selectSelector((DomNode) o, selectorSelector);
         }
 
         LOGGER.trace(taskInfo.getMarker(), "[{}], value: {}",

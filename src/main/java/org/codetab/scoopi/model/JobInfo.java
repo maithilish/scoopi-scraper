@@ -1,5 +1,7 @@
 package org.codetab.scoopi.model;
 
+import static org.codetab.scoopi.util.Util.dashit;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -34,7 +36,7 @@ public class JobInfo {
         this.dataDef = dataDef;
         this.label = String.join(":", locator, task, dataDef);
 
-        String markerName = String.join("-", "task", locator, group, task);
+        String markerName = dashit("task", locator, group, task);
         marker = MarkerFactory.getMarker(markerName);
     }
 

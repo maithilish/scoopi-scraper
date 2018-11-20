@@ -1,5 +1,7 @@
 package org.codetab.scoopi.plugin.appender;
 
+import static org.codetab.scoopi.util.Util.spaceit;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -48,8 +50,7 @@ public final class FileAppender extends Appender {
             LOGGER.info("created {}, name: {}, file: {}",
                     this.getClass().getSimpleName(), getName(), fileName);
         } catch (IOException | DefNotFoundException e) {
-            String message =
-                    String.join(" ", "unable to create appender:", getName());
+            String message = spaceit("unable to create appender:", getName());
             errorLogger.log(CAT.ERROR, message, e);
         }
     }
@@ -73,7 +74,7 @@ public final class FileAppender extends Appender {
                 String data = item.toString();
                 writer.println(data);
             } catch (InterruptedException e) {
-                String message = String.join(" ", "appender:", getName());
+                String message = spaceit("appender:", getName());
                 errorLogger.log(CAT.INTERNAL, message, e);
             }
         }

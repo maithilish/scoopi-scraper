@@ -1,16 +1,19 @@
 package org.codetab.scoopi;
 
 import static org.codetab.scoopi.util.Util.LINE;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codetab.scoopi.defs.ILocatorDefs;
-import org.codetab.scoopi.defs.yml.Defs;
+import org.codetab.scoopi.defs.ILocatorDef;
+import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
+import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
@@ -36,11 +39,11 @@ public class ScoopiSystem {
     @Inject
     private ConfigService configService;
     @Inject
-    private Defs defs;
+    private Def def;
     @Inject
     private TaskMediator taskMediator;
     @Inject
-    private ILocatorDefs locatorDefs;
+    private ILocatorDef locatorDef;
     @Inject
     private MetricsServer metricsServer;
     @Inject
@@ -95,8 +98,13 @@ public class ScoopiSystem {
     }
 
     public boolean initDefs() {
-        defs.init();
-        defs.initDefProviders();
+        def.init();
+        try {
+            def.initDefProviders();
+        } catch (DefNotFoundException | InvalidDefException e) {
+            String message = "unable init defs";
+            throw new CriticalException(message, e);
+        }
         return true;
     }
 
@@ -126,7 +134,7 @@ public class ScoopiSystem {
             throw new CriticalException(message, e);
         }
 
-        List<LocatorGroup> locatorGroups = locatorDefs.getLocatorGroups();
+        List<LocatorGroup> locatorGroups = locatorDef.getLocatorGroups();
         List<Payload> payloads = payloadFactory
                 .createSeedPayloads(locatorGroups, stepName, seederClzName);
         for (Payload payload : payloads) {
@@ -134,8 +142,7 @@ public class ScoopiSystem {
                 taskMediator.pushPayload(payload);
             } catch (InterruptedException e) {
                 String group = payload.getJobInfo().getGroup();
-                String message =
-                        String.join(" ", "seed locator group: ", group);
+                String message = spaceit("seed locator group: ", group);
                 errorLogger.log(CAT.INTERNAL, message, e);
             }
         }

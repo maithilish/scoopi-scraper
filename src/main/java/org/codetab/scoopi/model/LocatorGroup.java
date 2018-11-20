@@ -30,7 +30,16 @@ public class LocatorGroup implements Serializable {
         if (locators == null) {
             locators = new ArrayList<Locator>();
         }
-        return this.locators;
+        return locators;
+    }
+
+    public LocatorGroup copy() {
+        LocatorGroup copy = new LocatorGroup();
+        copy.setGroup(this.group);
+        for (Locator locator : locators) {
+            copy.getLocators().add(locator.copy());
+        }
+        return copy;
     }
 
     @Override
@@ -52,4 +61,5 @@ public class LocatorGroup implements Serializable {
         return "LocatorGroup [group=" + group + ", locators=" + locators.size()
                 + "]";
     }
+
 }

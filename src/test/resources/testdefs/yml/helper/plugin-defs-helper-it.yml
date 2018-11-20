@@ -1,0 +1,61 @@
+taskGroups:
+
+  taskGroup1:
+    task1:
+      dataDef: def1
+      steps:
+        steps11:
+          step11:
+            class: class1
+            previous: start
+            next: step2
+          step12:
+            class: class2
+            previous: step1
+            next: end
+            plugins: [
+              plugin: { 
+                     name: plugin11, 
+                     class: "plugin11 class",
+                     property1: property 11, }
+           ]
+ 
+    task2:
+      dataDef: def2
+      steps:
+        steps21:
+          step21:
+            class: class1
+            previous: start
+            next: end
+
+            
+  taskGroup2:
+    task3:
+      dataDef: def3
+      steps:
+        steps31:
+          step31:
+            class: class1
+            previous: start
+            next: step2
+            plugins: [
+              plugin: { 
+                     name: plugin31, 
+                     class: "plugin31 class",
+                     property1: property 31, },
+              plugin: { 
+                     name: plugin32, 
+                     class: "plugin32 class",
+                     property1: property 32, },       
+           ]
+
+taskGroupsMultipleSteps:
+
+  taskGroup1:
+    task1:
+      dataDef: def1
+      steps:
+        steps1: "x"
+        steps2: "y"
+        

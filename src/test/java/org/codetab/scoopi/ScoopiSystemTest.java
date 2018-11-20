@@ -12,10 +12,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codetab.scoopi.defs.ILocatorDefs;
-import org.codetab.scoopi.defs.yml.Defs;
+import org.codetab.scoopi.defs.ILocatorDef;
+import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
+import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
@@ -49,13 +50,13 @@ public class ScoopiSystemTest {
     @Mock
     private ConfigService configService;
     @Mock
-    private Defs defs;
+    private Def def;
     // @Inject
     // private DataDefService dataDefService;
     @Mock
     private TaskMediator taskMediator;
     @Mock
-    private ILocatorDefs locatorDefs;
+    private ILocatorDef locatorDef;
     @Mock
     private MetricsServer metricsServer;
     @Mock
@@ -121,16 +122,16 @@ public class ScoopiSystemTest {
     }
 
     @Test
-    public void testInitDefsProvider() {
+    public void testInitDefsProvider() throws DefNotFoundException {
         boolean result = sSystem.initDefs();
 
         assertThat(result).isTrue();
 
-        InOrder inOrder = inOrder(defs);
+        InOrder inOrder = inOrder(def);
 
-        inOrder.verify(defs).init();
-        inOrder.verify(defs).initDefProviders();
-        verifyNoMoreInteractions(defs);
+        inOrder.verify(def).init();
+        inOrder.verify(def).initDefProviders();
+        verifyNoMoreInteractions(def);
     }
 
     @Test
@@ -172,7 +173,7 @@ public class ScoopiSystemTest {
 
         given(configService.getConfig("scoopi.seederClass"))
                 .willReturn(seederClzName);
-        given(locatorDefs.getLocatorGroups()).willReturn(lGroups);
+        given(locatorDef.getLocatorGroups()).willReturn(lGroups);
         given(payloadFactory.createSeedPayloads(lGroups, stepName,
                 seederClzName)).willReturn(payloads);
 
@@ -205,7 +206,7 @@ public class ScoopiSystemTest {
 
         given(configService.getConfig("scoopi.seederClass"))
                 .willReturn(seederClzName);
-        given(locatorDefs.getLocatorGroups()).willReturn(lGroups);
+        given(locatorDef.getLocatorGroups()).willReturn(lGroups);
         given(payloadFactory.createSeedPayloads(lGroups, stepName,
                 seederClzName)).willReturn(payloads);
 

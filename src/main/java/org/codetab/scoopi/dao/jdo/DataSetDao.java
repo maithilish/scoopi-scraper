@@ -1,6 +1,7 @@
 package org.codetab.scoopi.dao.jdo;
 
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public final class DataSetDao implements IDataSetDao {
                 .distinct().collect(Collectors.toList());
 
         if (names.size() != 1 || groups.size() != 1) {
-            String message = String.join(" ",
+            String message = spaceit(
                     "unable persist dataset as name or group are not unique",
                     names.toString(), groups.toString());
             throw new StepPersistenceException(message);

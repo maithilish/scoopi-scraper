@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
 import static org.codetab.scoopi.util.Util.LINE;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
 import java.util.Date;
@@ -85,9 +86,8 @@ public abstract class BaseLoader extends Step {
         if (pData instanceof Locator) {
             this.locator = (Locator) pData;
         } else {
-            String message =
-                    String.join(" ", "payload is not instance of Locator, but",
-                            pData.getClass().getName());
+            String message = spaceit("payload is not instance of Locator, but",
+                    pData.getClass().getName());
             throw new StepRunException(message);
         }
         return true;
@@ -166,7 +166,7 @@ public abstract class BaseLoader extends Step {
         String taskGroup = getJobInfo().getGroup();
         String live;
         try {
-            live = taskDefs.getLive(taskGroup);
+            live = taskDef.getLive(taskGroup);
         } catch (DefNotFoundException e1) {
             live = "PT0S";
         }
@@ -289,7 +289,7 @@ public abstract class BaseLoader extends Step {
         LOGGER.debug("push document tasks to taskpool");
         String group = getJobInfo().getGroup();
 
-        List<String> taskNames = taskDefs.getTaskNames(group);
+        List<String> taskNames = taskDef.getTaskNames(group);
         List<Payload> payloads = payloadFactory.createPayloads(group, taskNames,
                 getStepInfo(), getJobInfo().getName(), getOutput());
 
@@ -297,8 +297,8 @@ public abstract class BaseLoader extends Step {
             try {
                 taskMediator.pushPayload(payload);
             } catch (InterruptedException e) {
-                String message = String.join(" ", "handover document,",
-                        payload.toString());
+                String message =
+                        spaceit("handover document,", payload.toString());
                 errorLogger.log(CAT.INTERNAL, message, e);
             }
         }

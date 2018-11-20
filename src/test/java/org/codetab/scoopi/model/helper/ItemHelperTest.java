@@ -10,7 +10,7 @@ import org.apache.commons.lang3.Range;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
-import org.codetab.scoopi.model.Item;
+import org.codetab.scoopi.model.ItemMig;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -48,56 +48,57 @@ public class ItemHelperTest {
         Axis col = factory.createAxis(AxisName.COL, "date");
         Axis row = factory.createAxis(AxisName.ROW, "item");
 
-        Item item = createTestItem();
-        item.addAxis(fact);
-        item.addAxis(col);
-        item.addAxis(row);
+        ItemMig itemMig = createTestItem();
+        itemMig.addAxis(fact);
+        itemMig.addAxis(col);
+        itemMig.addAxis(row);
 
-        Item actual = itemHelper.copy(item);
+        ItemMig actual = itemHelper.copy(itemMig);
 
-        assertThat(actual).isNotSameAs(item);
-        assertThat(actual).isEqualTo(item);
+        assertThat(actual).isNotSameAs(itemMig);
+        assertThat(actual).isEqualTo(itemMig);
     }
 
     @Test
     public void testGetNextItemIndexesKey() {
-        Item item = createTestItem();
+        ItemMig itemMig = createTestItem();
 
         // indexes: fact 10, col 20, row 30, page 0
 
-        String actual = itemHelper.getNextItemIndexesAsKey(item,
-                item.getAxis(AxisName.FACT));
+        String actual = itemHelper.getNextItemIndexesAsKey(itemMig,
+                itemMig.getAxis(AxisName.FACT));
 
         assertThat(actual).isEqualTo("1120300");
 
-        actual = itemHelper.getNextItemIndexesAsKey(item,
-                item.getAxis(AxisName.COL));
+        actual = itemHelper.getNextItemIndexesAsKey(itemMig,
+                itemMig.getAxis(AxisName.COL));
 
         assertThat(actual).isEqualTo("1021300");
 
-        actual = itemHelper.getNextItemIndexesAsKey(item,
-                item.getAxis(AxisName.ROW));
+        actual = itemHelper.getNextItemIndexesAsKey(itemMig,
+                itemMig.getAxis(AxisName.ROW));
 
         assertThat(actual).isEqualTo("1020310");
     }
 
     @Test
     public void testGetNextItemIndexesKeyShouldThrowException() {
-        Item item = createTestItem();
+        ItemMig itemMig = createTestItem();
 
         // indexes: fact 10, col 20, row 30, page 0
         testRule.expect(NoSuchElementException.class);
-        itemHelper.getNextItemIndexesAsKey(item, item.getAxis(AxisName.PAGE));
+        itemHelper.getNextItemIndexesAsKey(itemMig,
+                itemMig.getAxis(AxisName.PAGE));
     }
 
     @Test
     public void testGetItemIndexesNullIndex() {
-        Item item = createTestItem();
-        item.getAxis(AxisName.COL).setIndex(null);
+        ItemMig itemMig = createTestItem();
+        itemMig.getAxis(AxisName.COL).setIndex(null);
 
         // indexes: fact 10, col null, row 30, page 0
-        String actual = itemHelper.getNextItemIndexesAsKey(item,
-                item.getAxis(AxisName.COL));
+        String actual = itemHelper.getNextItemIndexesAsKey(itemMig,
+                itemMig.getAxis(AxisName.COL));
         assertThat(actual).isEqualTo("101300");
     }
 
@@ -169,21 +170,21 @@ public class ItemHelperTest {
         itemHelper.isAxisWithinRange(row, breakAfters, indexRange);
     }
 
-    public Item createTestItem() {
-        Item item = factory.createItem();
+    public ItemMig createTestItem() {
+        ItemMig itemMig = factory.createItemMig();
 
         Axis fact = factory.createAxis(AxisName.FACT, "factItem");
         fact.setIndex(10);
-        item.addAxis(fact);
+        itemMig.addAxis(fact);
 
         Axis col = factory.createAxis(AxisName.COL, "colItem");
         col.setIndex(20);
-        item.addAxis(col);
+        itemMig.addAxis(col);
 
         Axis row = factory.createAxis(AxisName.ROW, "rowItem");
         row.setIndex(30);
-        item.addAxis(row);
-        return item;
+        itemMig.addAxis(row);
+        return itemMig;
     }
 
 }

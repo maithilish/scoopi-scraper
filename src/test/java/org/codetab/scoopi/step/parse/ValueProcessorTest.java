@@ -18,14 +18,13 @@ import javax.script.ScriptException;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.assertj.core.util.Lists;
-import org.codetab.scoopi.defs.yml.AxisDefs;
+import org.codetab.scoopi.defs.mig.yml.AxisDefs;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.model.Item;
+import org.codetab.scoopi.model.ItemMig;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.TaskInfo;
-import org.codetab.scoopi.step.parse.jsoup.ValueParser;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -89,8 +88,8 @@ public class ValueProcessorTest {
         DataDef dataDef = factory.createDataDef("price", now, now, "def");
 
         Axis row = factory.createAxis(AxisName.ROW, "item", null, null, 2, 2);
-        Item item = factory.createItem();
-        item.addAxis(row);
+        ItemMig itemMig = factory.createItemMig();
+        itemMig.addAxis(row);
 
         IValueParser valueParser = null;
 
@@ -101,15 +100,15 @@ public class ValueProcessorTest {
 
         String value = "test";
 
-        given(scriptProcessor.getScripts(dataDef, row.getName()))
+        given(scriptProcessor.getScripts(dataDef, row.getAxisName()))
                 .willReturn(scripts);
         given(scriptProcessor.query(scripts)).willReturn(value);
 
-        valueProcessor.setAxisValues(dataDef, item, valueParser);
+        valueProcessor.setAxisValues(dataDef, itemMig, valueParser);
 
         assertThat(row.getValue()).isEqualTo(value);
         verify(scriptProcessor).init(scriptObjectMap);
-        verify(varSubstitutor).replaceVariables(scripts, item.getAxisMap());
+        verify(varSubstitutor).replaceVariables(scripts, itemMig.getAxisMap());
     }
 
     @Test
@@ -120,8 +119,8 @@ public class ValueProcessorTest {
         DataDef dataDef = factory.createDataDef("price", now, now, "def");
 
         Axis row = factory.createAxis(AxisName.ROW, "item", null, null, 2, 2);
-        Item item = factory.createItem();
-        item.addAxis(row);
+        ItemMig itemMig = factory.createItemMig();
+        itemMig.addAxis(row);
 
         IValueParser valueParser = Mockito.mock(ValueParser.class);
         Map<String, String> queries = new HashMap<>();
@@ -130,16 +129,16 @@ public class ValueProcessorTest {
 
         String value = "test";
 
-        given(scriptProcessor.getScripts(dataDef, row.getName()))
+        given(scriptProcessor.getScripts(dataDef, row.getAxisName()))
                 .willThrow(NoSuchElementException.class);
-        given(queryProcessor.getQueries(dataDef, row.getName()))
+        given(queryProcessor.getQueries(dataDef, row.getAxisName()))
                 .willReturn(queries);
         given(queryProcessor.query(queries, valueParser)).willReturn(value);
 
-        valueProcessor.setAxisValues(dataDef, item, valueParser);
+        valueProcessor.setAxisValues(dataDef, itemMig, valueParser);
 
         assertThat(row.getValue()).isEqualTo(value);
-        verify(varSubstitutor).replaceVariables(queries, item.getAxisMap());
+        verify(varSubstitutor).replaceVariables(queries, itemMig.getAxisMap());
     }
 
     @Test
@@ -151,8 +150,8 @@ public class ValueProcessorTest {
         Axis row = factory.createAxis(AxisName.ROW, "item");
         row.setValue("xyz"); // value is set to skip script and query block
 
-        Item item = factory.createItem();
-        item.addAxis(row);
+        ItemMig itemMig = factory.createItemMig();
+        itemMig.addAxis(row);
 
         IValueParser valueParser = null;
 
@@ -160,14 +159,14 @@ public class ValueProcessorTest {
         Optional<Range<Integer>> indexRange = Optional.empty();
         given(axisDefs.getIndexRange(dataDef, row)).willReturn(indexRange);
         row.setIndex(null);
-        valueProcessor.setAxisValues(dataDef, item, valueParser);
+        valueProcessor.setAxisValues(dataDef, itemMig, valueParser);
         assertThat(row.getIndex()).isEqualTo(1);
 
         // indexRange 22-24
         indexRange = Optional.of(Range.between(22, 24));
         given(axisDefs.getIndexRange(dataDef, row)).willReturn(indexRange);
         row.setIndex(null);
-        valueProcessor.setAxisValues(dataDef, item, valueParser);
+        valueProcessor.setAxisValues(dataDef, itemMig, valueParser);
         assertThat(row.getIndex()).isEqualTo(22);
     }
 
@@ -179,8 +178,8 @@ public class ValueProcessorTest {
         DataDef dataDef = factory.createDataDef("price", now, now, "def");
 
         Axis row = factory.createAxis(AxisName.ROW, "item", null, null, 2, 2);
-        Item item = factory.createItem();
-        item.addAxis(row);
+        ItemMig itemMig = factory.createItemMig();
+        itemMig.addAxis(row);
 
         IValueParser valueParser = Mockito.mock(ValueParser.class);
         Map<String, String> queries = new HashMap<>();
@@ -192,9 +191,9 @@ public class ValueProcessorTest {
 
         Optional<List<String>> prefixes = Optional.of(Lists.newArrayList("p1"));
 
-        given(scriptProcessor.getScripts(dataDef, row.getName()))
+        given(scriptProcessor.getScripts(dataDef, row.getAxisName()))
                 .willThrow(NoSuchElementException.class);
-        given(queryProcessor.getQueries(dataDef, row.getName()))
+        given(queryProcessor.getQueries(dataDef, row.getAxisName()))
                 .willReturn(queries);
         given(queryProcessor.query(queries, valueParser)).willReturn(value);
         given(prefixProcessor.getPrefixes(dataDef, AxisName.ROW))
@@ -202,7 +201,7 @@ public class ValueProcessorTest {
         given(prefixProcessor.prefixValue(value, prefixes.get()))
                 .willReturn(expectedValue);
 
-        valueProcessor.setAxisValues(dataDef, item, valueParser);
+        valueProcessor.setAxisValues(dataDef, itemMig, valueParser);
 
         assertThat(row.getValue()).isEqualTo(expectedValue);
     }
@@ -215,17 +214,17 @@ public class ValueProcessorTest {
         DataDef dataDef = factory.createDataDef("price", now, now, "def");
 
         Axis row = factory.createAxis(AxisName.ROW, "item", null, null, 2, 2);
-        Item item = factory.createItem();
-        item.addAxis(row);
+        ItemMig itemMig = factory.createItemMig();
+        itemMig.addAxis(row);
 
         IValueParser valueParser = Mockito.mock(ValueParser.class);
 
-        given(scriptProcessor.getScripts(dataDef, row.getName()))
+        given(scriptProcessor.getScripts(dataDef, row.getAxisName()))
                 .willThrow(NoSuchElementException.class);
-        given(queryProcessor.getQueries(dataDef, row.getName()))
+        given(queryProcessor.getQueries(dataDef, row.getAxisName()))
                 .willThrow(NoSuchElementException.class);
 
-        valueProcessor.setAxisValues(dataDef, item, valueParser);
+        valueProcessor.setAxisValues(dataDef, itemMig, valueParser);
 
         assertThat(row.getValue()).isNull();
         verifyZeroInteractions(varSubstitutor, prefixProcessor);

@@ -136,6 +136,15 @@ public class Locator implements Serializable {
         this.url = value;
     }
 
+    public Locator copy() {
+        Locator copy = new Locator();
+        copy.setGroup(group);
+        copy.setName(name);
+        copy.setUrl(url);
+        // documents not cloned
+        return copy;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         String[] excludes =

@@ -2,6 +2,7 @@ package org.codetab.scoopi.persistence;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.List;
 
@@ -88,8 +89,8 @@ public class DataDefPersistence {
                         dataDef.getId());
             }
         } catch (RuntimeException e) {
-            String message = String.join(" ", "unable to store dataDef:",
-                    dataDef.getName());
+            String message =
+                    spaceit("unable to store dataDef:", dataDef.getName());
             throw new CriticalException(message, e);
         }
     }
