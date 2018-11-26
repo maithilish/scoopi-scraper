@@ -16,7 +16,7 @@ public class DataScript implements IScript {
     private IPluginDef pluginDef;
 
     @Override
-    public Object execute(Object input) throws Exception {
+    public Object execute(final Object input) throws Exception {
         String functionName =
                 pluginDef.getValue(plugin, "entryPoint", "execute");
         Invocable invocable = (Invocable) scriptEngine;
@@ -24,12 +24,12 @@ public class DataScript implements IScript {
     }
 
     @Override
-    public void setPlugin(Plugin plugin) {
+    public void setPlugin(final Plugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public void setScriptEngine(ScriptEngine scriptEngine) {
+    public void setScriptEngine(final ScriptEngine scriptEngine) {
         this.scriptEngine = scriptEngine;
     }
 

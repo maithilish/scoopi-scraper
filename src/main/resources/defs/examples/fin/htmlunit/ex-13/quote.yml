@@ -1,0 +1,69 @@
+locatorGroups:
+
+  quoteGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/fin/page/acme-quote-links.html" }  
+    ]
+
+taskGroups:
+
+  quoteGroup:    
+    priceTask:
+      dataDef: price
+  
+    snapshotTask:
+      dataDef: snapshot
+    
+    linkTask:
+      dataDef: links
+      steps:
+        htmlUnitDefault:
+          process:
+            class: "org.codetab.scoopi.step.process.LocatorCreator"
+            previous: parser
+            next: seeder
+
+dataDefs:
+
+  price:            
+    query:
+      block: "//*[@id='price_tick_span']"
+      selector: "strong"
+    items: [ 
+      item: { name: "Price", value: "Price" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]        
+
+  snapshot:            
+    query:
+      block: "//*[@id='snapshot']"
+      selector: "div/div/div[starts-with(child::text(),'%{item.match}')]/following-sibling::div[1]"
+    items: [
+      item: { name: "MC", match: "MARKET CAP" },
+      item: { name: "EPS", match: "EPS (TTM)" },
+      item: { name: "PE", match: "P/E" },
+      item: { name: "PC", match: "P/C" },
+      item: { name: "BV", match: "BOOK VALUE" },
+      item: { name: "PB", match: "PRICE/BOOK" },
+      item: { name: "DIV", match: "DIV (%)" },
+      item: { name: "DY", match: "DIV YIELD" },
+      item: { name: "FV", match: "FACE VALUE" },
+      item: { name: "IND PE", match: "INDUSTRY P/E" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]
+
+  links:
+    query:
+      block: "//div[@id='page_links']/table"
+    items: [ 
+      item: { name: "bsLink", linkGroup: bsGroup, index: 2,  
+              selector: "tbody/tr/td[4]/ul/li[%{index}]/a/@href", 
+              prefix: [ "/defs/examples/fin/page/" ] },
+      item: { name: "plLink", linkGroup: plGroup, index: 3,  
+              selector: "tbody/tr/td[4]/ul/li[%{index}]/a/@href", 
+              prefix: [ "/defs/examples/fin/page/" ] },              
+    ]

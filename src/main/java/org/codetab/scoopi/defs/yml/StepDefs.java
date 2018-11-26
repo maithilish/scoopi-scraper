@@ -45,7 +45,7 @@ class StepDefs {
         }
     }
 
-    public boolean isStepDefined(JsonNode steps, String stepName) {
+    public boolean isStepDefined(final JsonNode steps, final String stepName) {
         return nonNull(steps.get(stepName));
     }
 
@@ -72,8 +72,8 @@ class StepDefs {
         }
     }
 
-    public Map<String, String> getStepsNameMap(Map<String, JsonNode> tasksMap)
-            throws DefNotFoundException {
+    public Map<String, String> getTaskStepsNameMap(
+            final Map<String, JsonNode> tasksMap) throws DefNotFoundException {
         Map<String, String> map = new HashMap<>();
 
         for (String key : tasksMap.keySet()) {
@@ -97,7 +97,7 @@ class StepDefs {
         return map;
     }
 
-    public Map<String, StepInfo> getStepInfoMap(final JsonNode defs,
+    public Map<String, StepInfo> getStepNameStepInfoMap(final JsonNode defs,
             final String taskGroup, final String taskName,
             final String stepsName) throws DefNotFoundException {
         String path = jacksons.path(taskGroup, taskName, "steps", stepsName);
@@ -133,8 +133,8 @@ class StepDefs {
         for (String taskGroup : taskNamesMap.keySet()) {
             for (String taskName : taskNamesMap.get(taskGroup)) {
                 String stepsName = getStepsName(defs, taskGroup, taskName);
-                Map<String, StepInfo> stepMap =
-                        getStepInfoMap(defs, taskGroup, taskName, stepsName);
+                Map<String, StepInfo> stepMap = getStepNameStepInfoMap(defs,
+                        taskGroup, taskName, stepsName);
                 String key = dashit(taskGroup, taskName);
                 map.put(key, stepMap);
             }
@@ -163,7 +163,7 @@ class StepDefs {
             final Map<String, JsonNode> tasksMap) throws DefNotFoundException {
         Map<String, JsonNode> map = new HashMap<>();
 
-        Map<String, String> stepsNameMap = getStepsNameMap(tasksMap);
+        Map<String, String> stepsNameMap = getTaskStepsNameMap(tasksMap);
 
         for (String key : tasksMap.keySet()) {
             JsonNode jTask = tasksMap.get(key);
@@ -230,7 +230,7 @@ class StepDefs {
         return map;
     }
 
-    public JsonNode getExpandedSteps(final Map<String, JsonNode> topStepsMap,
+    public JsonNode getTopSteps(final Map<String, JsonNode> topStepsMap,
             final String stepsName) {
 
         if (isNull(topStepsMap.get(stepsName))) {
@@ -240,6 +240,19 @@ class StepDefs {
         } else {
             return topStepsMap.get(stepsName);
         }
+    }
+
+    public boolean isNestedSteps(final JsonNode steps) {
+        boolean nested = true;
+        Iterator<Entry<String, JsonNode>> entries = steps.fields();
+        while (entries.hasNext()) {
+            Entry<String, JsonNode> entry = entries.next();
+            JsonNode node = entry.getValue();
+            if (!node.path("class").isMissingNode()) {
+                nested = false;
+            }
+        }
+        return nested;
     }
 
 }

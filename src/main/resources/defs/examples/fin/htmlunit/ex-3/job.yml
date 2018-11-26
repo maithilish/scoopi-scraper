@@ -1,0 +1,28 @@
+locatorGroups:
+  bsGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/fin/page/acme-bs.html" }  
+    ]
+                                        
+taskGroups:
+
+  bsGroup:
+    bsTask:
+      dataDef: bs
+
+dataDefs:
+
+  bs:
+    query:
+      block: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]"      
+      selector: "*//*[.='%{item.value}']/following-sibling::td[%{dim.year.index}-1]"       
+    items:  
+      - item:
+          name: item          
+          selector: "*//tr[%{index}+1]/td[1]"                        
+          indexRange: 6-8             
+    dims:  
+      - item:
+          name: year
+          selector: "*//tr[1]/td[%{index}]"          
+          index: 2        

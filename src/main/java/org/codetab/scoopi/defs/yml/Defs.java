@@ -132,18 +132,18 @@ class Defs {
         JsonNode eDefs = defs.deepCopy();
         // !! don't change order of these methods !!
         normalizer.addFactItem(eDefs);
-
-        System.out.println(pretty(eDefs));
-        // System.exit(1);
-
         normalizer.addItemIndex(eDefs);
         normalizer.addItemOrder(eDefs);
         // defsNormalizer.addNoQuery(eDefs);
 
-        normalizer.setDefaultSteps(eDefs, defaultStepsName);
+        // recursively expand top level steps
         normalizer.expandSteps(eDefs);
 
-        LOGGER.debug("effectvie defs create");
+        // expand task steps
+        normalizer.setDefaultSteps(eDefs, defaultStepsName);
+        normalizer.expandTaskSteps(eDefs);
+
+        LOGGER.debug("effectvie defs created");
 
         return eDefs;
     }

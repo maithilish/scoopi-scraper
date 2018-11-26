@@ -46,7 +46,7 @@ public class TaskDef implements ITaskDef {
         this.defs = (JsonNode) taskDefNodes;
         taskNamesMap = taskDefs.getTaskNamesMap(defs);
         Map<String, JsonNode> allTasks = taskDefs.getAllTasks(defs);
-        stepsNameMap = stepDefs.getStepsNameMap(allTasks);
+        stepsNameMap = stepDefs.getTaskStepsNameMap(allTasks);
         stepsMap = stepDefs.getStepsMap(defs, taskNamesMap);
         nextStepsMap = stepDefs.getNextStepsMap(defs, stepsMap);
     }

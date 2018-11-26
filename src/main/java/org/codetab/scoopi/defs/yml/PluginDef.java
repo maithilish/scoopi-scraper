@@ -35,7 +35,7 @@ public class PluginDef implements IPluginDef {
     private Map<String, JsonNode> stepsMap;
 
     @Override
-    public void init(Object taskDefNodes)
+    public void init(final Object taskDefNodes)
             throws DefNotFoundException, InvalidDefException {
         Validate.validState(taskDefNodes instanceof JsonNode,
                 "taskDefNodes is not JsonNode");
@@ -48,8 +48,9 @@ public class PluginDef implements IPluginDef {
     }
 
     @Override
-    public Optional<List<Plugin>> getPlugins(String taskGroup, String taskName,
-            String stepName) throws DefNotFoundException, InvalidDefException {
+    public Optional<List<Plugin>> getPlugins(final String taskGroup,
+            final String taskName, final String stepName)
+            throws DefNotFoundException, InvalidDefException {
         String key = dashit(taskGroup, taskName, stepName);
         Optional<List<Plugin>> plugins = pluginMap.get(key);
         List<Plugin> copy = null;
@@ -77,7 +78,8 @@ public class PluginDef implements IPluginDef {
     }
 
     @Override
-    public String getValue(Plugin plugin, String field, String defaultValue) {
+    public String getValue(final Plugin plugin, final String field,
+            final String defaultValue) {
         try {
             return pluginDefs.getFieldValue(plugin, field);
         } catch (DefNotFoundException e) {

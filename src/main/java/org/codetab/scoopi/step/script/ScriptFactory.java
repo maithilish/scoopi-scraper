@@ -37,7 +37,7 @@ public class ScriptFactory {
     // engine pool
     private Map<String, Stack<ScriptEngine>> engineMap = new HashMap<>();
 
-    public IScript createScript(ScriptEngine engine, final Plugin plugin)
+    public IScript createScript(final ScriptEngine engine, final Plugin plugin)
             throws DefNotFoundException, ClassNotFoundException {
         IScript script = di.instance(plugin.getClassName(), IScript.class);
         script.setPlugin(plugin);
@@ -46,7 +46,7 @@ public class ScriptFactory {
     }
 
     /**
-     * 
+     *
      * @param plugin
      * @return
      * @throws DefNotFoundException
@@ -101,7 +101,7 @@ public class ScriptFactory {
         }
     }
 
-    public void putScriptEngine(ScriptEngine engine) {
+    public void putScriptEngine(final ScriptEngine engine) {
         String key = (String) engine.get("scoopiPluginKey");
         Stack<ScriptEngine> stack = engineMap.get(key);
         stack.push(engine);

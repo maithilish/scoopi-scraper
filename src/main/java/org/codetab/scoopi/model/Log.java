@@ -11,20 +11,6 @@ public final class Log {
     private String message;
     private Throwable throwable;
 
-    // TODO remove this
-    public Log(final CAT cat, final String message) {
-        super();
-        this.cat = cat;
-        this.message = message;
-    }
-
-    // TODO remove this
-    public Log(final CAT cat, final String message, final Throwable throwable) {
-        this.cat = cat;
-        this.message = message;
-        this.throwable = throwable;
-    }
-
     public Log(final CAT cat, final String label, final String message) {
         this.cat = cat;
         this.message = message;

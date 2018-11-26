@@ -28,8 +28,7 @@ public class Appenders extends HashMap<String, Appender> {
 
         for (Plugin plugin : plugins) {
             try {
-                String appenderName =
-                        dashit(stepsName, stepName, plugin.getName());
+                String appenderName = dashit(stepName, plugin.getName());
                 Appender appender =
                         appenderMediator.getAppender(appenderName, plugin);
                 if (isNull(appender)) {

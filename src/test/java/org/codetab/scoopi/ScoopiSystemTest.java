@@ -17,6 +17,7 @@ import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
@@ -122,7 +123,8 @@ public class ScoopiSystemTest {
     }
 
     @Test
-    public void testInitDefsProvider() throws DefNotFoundException {
+    public void testInitDefsProvider()
+            throws DefNotFoundException, InvalidDefException {
         boolean result = sSystem.initDefs();
 
         assertThat(result).isTrue();

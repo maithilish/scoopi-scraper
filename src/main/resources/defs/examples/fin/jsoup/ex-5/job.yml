@@ -1,0 +1,36 @@
+locatorGroups:
+  
+  bsGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/fin/page/acme-bs.html" }  
+    ]
+                                        
+taskGroups:
+
+  bsGroup:
+    bsTask:
+      dataDef: bs
+        
+dataDefs:
+
+  bs:
+    query:
+      block: "table:contains(Sources Of Funds)"
+      selector: "tr:nth-child(%{item.index}) > td:nth-child(%{dim.year.index})"       
+    items:  
+      - item:
+          name: item
+          selector: "tr:nth-child(%{index}) > td:nth-child(1)"                        
+          index: 5
+          breakAfter:
+            - "Book Value (Rs)"
+          filters: 
+            - filter: { type: value, pattern: "" }
+            - filter: { type: value, pattern: "Sources Of Funds" }
+            - filter: { type: value, pattern: "Application Of Funds" }                   
+
+    dims:  
+      - item:
+          name: year
+          selector: "tr:nth-child(1) > td:nth-child(%{index})"
+          indexRange: 2-6

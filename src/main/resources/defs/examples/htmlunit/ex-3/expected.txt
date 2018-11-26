@@ -1,3 +1,0 @@
-acme|bsGroup|1|1|1|Dec '16|Equity Share Capital|804.72
-acme|bsGroup|1|1|1|Dec '16|Reserves|32,071.87
-acme|bsGroup|1|1|1|Dec '16|Networth|32,876.59

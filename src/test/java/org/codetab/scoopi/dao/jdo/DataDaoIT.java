@@ -14,9 +14,8 @@ import javax.jdo.JDODataStoreException;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Axis;
-import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.Data;
-import org.codetab.scoopi.model.ItemMig;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
@@ -153,16 +152,16 @@ public class DataDaoIT {
     }
 
     private Data createTestData() {
-        Axis col = factory.createAxis(AxisName.COL, "date");
-        ItemMig itemMig = factory.createItemMig();
-        itemMig.setName("date");
-        itemMig.setGroup("group1");
-        itemMig.getAxes().add(col);
+        Axis col = factory.createAxis("col", "date");
+        Item item = factory.createItem();
+        item.setName("date");
+        item.setGroup("group1");
+        item.getAxes().add(col);
         Data data = factory.createData("dataDef1");
         data.setName("acme");
         data.setDocumentId(1L);
         data.setDataDefId(2L);
-        data.addItem(itemMig);
+        data.addItem(item);
         return data;
     }
 }

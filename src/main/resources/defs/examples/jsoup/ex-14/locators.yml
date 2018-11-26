@@ -1,7 +1,0 @@
-locatorGroups:
-
-  quoteGroup:   
-    locators: [
-       { name: acme, url: "/defs/examples/page/acme-quote-links.html" }  
-    ]
-

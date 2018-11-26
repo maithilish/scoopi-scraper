@@ -79,8 +79,8 @@ class ItemDefs {
         return getItemMap(defs, "fact", "fact");
     }
 
-    private Map<String, List<Axis>> getItemMap(final JsonNode defs, String type,
-            final String axisName) {
+    private Map<String, List<Axis>> getItemMap(final JsonNode defs,
+            final String type, final String axisName) {
         Map<String, List<Axis>> map = new HashMap<>();
         Iterator<String> dataDefNames = defs.fieldNames();
         while (dataDefNames.hasNext()) {

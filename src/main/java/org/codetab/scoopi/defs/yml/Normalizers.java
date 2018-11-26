@@ -1,9 +1,12 @@
 package org.codetab.scoopi.defs.yml;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
@@ -18,8 +21,10 @@ class Normalizers {
     private ObjectMapper mapper;
     @Inject
     private Jacksons jacksons;
+    @Inject
+    private StepDefs stepDefs;
 
-    public void addOrder(List<JsonNode> itemsList) {
+    public void addOrder(final List<JsonNode> itemsList) {
         for (JsonNode items : itemsList) {
             List<JsonNode> itemList = items.findValues("item");
             for (int i = 0; i < itemList.size(); i++) {
@@ -31,7 +36,7 @@ class Normalizers {
         }
     }
 
-    public void addIndex(List<JsonNode> itemsList) {
+    public void addIndex(final List<JsonNode> itemsList) {
         for (JsonNode items : itemsList) {
             List<JsonNode> itemList = items.findValues("item");
             for (JsonNode item : itemList) {
@@ -43,7 +48,8 @@ class Normalizers {
         }
     }
 
-    public void addFact(Entry<String, JsonNode> entry) throws IOException {
+    public void addFact(final Entry<String, JsonNode> entry)
+            throws IOException {
         JsonNode jDataDef = entry.getValue();
         JsonNode jFact = jDataDef.findPath("fact");
         if (jFact.isMissingNode()) {
@@ -58,35 +64,84 @@ class Normalizers {
         ((ObjectNode) task).put("steps", defaultStepsName);
     }
 
-    public void expandSteps(JsonNode taskDef, JsonNode expandedSteps,
-            final String stepsName) {
+    public void expandTaskSteps(final JsonNode taskDef,
+            final JsonNode expandedSteps, final String stepsName) {
         ObjectNode stepsNode = mapper.createObjectNode();
         stepsNode.set(stepsName, expandedSteps);
         ((ObjectNode) taskDef).set("steps", stepsNode);
     }
 
-    public void replaceSteps(JsonNode steps, JsonNode replaceSteps,
-            String stepsName) {
+    public void replaceSteps(final JsonNode steps, final JsonNode replaceSteps,
+            final String stepsName) {
         ((ObjectNode) steps).set(stepsName, replaceSteps);
     }
 
-    public void replaceStep(JsonNode steps, JsonNode replaceStep,
-            String stepName) {
+    public void replaceStep(final JsonNode steps, final JsonNode replaceStep,
+            final String stepName) {
         ((ObjectNode) steps).set(stepName, replaceStep);
     }
 
-    public void insertStep(JsonNode steps, JsonNode insertStep,
-            String stepName) {
+    public void insertStep(final JsonNode steps, final JsonNode insertStep,
+            final String stepName) {
         String prev = insertStep.findValue("previous").asText();
         String next = insertStep.findValue("next").asText();
 
         JsonNode prevStep = steps.findValue(prev);
-        JsonNode nextStep = steps.findValue(next);
-
         ((ObjectNode) prevStep).put("next", stepName);
-        ((ObjectNode) nextStep).put("previous", stepName);
+
+        JsonNode nextStep = steps.findValue(next);
+        if (nonNull(nextStep)) {
+            String nextStepPrev = nextStep.findValue("previous").asText();
+            if (!nextStepPrev.equalsIgnoreCase("start")) {
+                ((ObjectNode) nextStep).put("previous", stepName);
+            }
+        }
 
         ((ObjectNode) steps).set(stepName, insertStep);
+    }
+
+    public JsonNode expandSteps(final Map<String, JsonNode> stepsMap,
+            final JsonNode steps) {
+        if (stepDefs.isNestedSteps(steps)) {
+            Iterator<Entry<String, JsonNode>> entries = steps.fields();
+            Entry<String, JsonNode> entry = entries.next();
+            String childStepsName = entry.getKey();
+            JsonNode childSteps = stepsMap.get(childStepsName);
+            JsonNode overridenSteps = entry.getValue();
+
+            // ObjectNode stepsNode = mapper.createObjectNode();
+
+            JsonNode extSteps = expandSteps(stepsMap, childSteps);
+
+            JsonNode stepsNode = extSteps.deepCopy();
+            // Iterator<Entry<String, JsonNode>> it = extSteps.fields();
+            // while (it.hasNext()) {
+            // Entry<String, JsonNode> e = it.next();
+            // stepsNode.set(e.getKey(), e.getValue());
+            // }
+
+            Iterator<Entry<String, JsonNode>> it = overridenSteps.fields();
+            while (it.hasNext()) {
+                Entry<String, JsonNode> e = it.next();
+                String oStepName = e.getKey();
+                JsonNode oStep = e.getValue();
+                if (stepDefs.isStepDefined(stepsNode, oStepName)) {
+                    replaceStep(stepsNode, oStep.deepCopy(), oStepName);
+                } else {
+                    insertStep(stepsNode, oStep.deepCopy(), oStepName);
+                }
+            }
+            return stepsNode;
+        } else {
+            // ObjectNode stepsNode = mapper.createObjectNode();
+            // Iterator<Entry<String, JsonNode>> it = steps.fields();
+            // while (it.hasNext()) {
+            // Entry<String, JsonNode> e = it.next();
+            // stepsNode.set(e.getKey(), e.getValue());
+            // }
+            // return stepsNode;
+            return steps.deepCopy();
+        }
     }
 
 }

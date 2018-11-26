@@ -63,7 +63,6 @@ public class QueryVarSubstitutor {
      * <p>
      * Returns map of variable name and its value.
      * </p>
-     * 
      * <p>
      * for variables such as %{index} or %{item.index} etc., value from ownAxis
      * is returned
@@ -71,7 +70,7 @@ public class QueryVarSubstitutor {
      *
      * for variables such as %{item.xyz.index} etc., value from axis whose
      * itemName is xyz is returned
-     * 
+     *
      * <pre>
      * Key              Value
      * index            8
@@ -109,13 +108,16 @@ public class QueryVarSubstitutor {
             String property = null;
 
             int len = parts.length;
+            final int one = 1;
+            final int two = 2;
+            final int three = 3;
             switch (len) {
-            case 1:
+            case one:
                 // example: index
                 property = parts[0];
                 axis = ownAxis;
                 break;
-            case 2:
+            case two:
                 // example: item.index
                 String axisName = parts[0];
                 property = parts[1];
@@ -123,7 +125,7 @@ public class QueryVarSubstitutor {
                         .filter(a -> a.getAxisName().equals(axisName))
                         .findFirst().orElse(null);
                 break;
-            case 3:
+            case three:
                 // example: item.Price.index
                 axisName = parts[0];
                 String itemName = parts[1];

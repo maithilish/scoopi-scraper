@@ -62,7 +62,7 @@ public class Def implements IDef {
             LOGGER.debug("--- defined defs ---{}{}", LINE,
                     defs.pretty(definedDefs));
 
-            // TODO top priority refactor
+            // TODO 1 top priority refactor
             // defsHelper.validateDefinedDefs(definedDefs);
 
             effectiveDefs = defs.createEffectiveDefs(definedDefs);

@@ -1,0 +1,165 @@
+acme|bsGroup|1|1|1|Total Share Capital|Dec '16|804.72
+acme|bsGroup|1|1|1|Total Share Capital|Dec '15|801.55
+acme|bsGroup|1|1|1|Total Share Capital|Dec '14|795.32
+acme|bsGroup|1|1|1|Total Share Capital|Dec '13|790.18
+acme|bsGroup|1|1|1|Total Share Capital|Dec '12|781.84
+acme|bsGroup|1|1|1|Equity Share Capital|Dec '16|804.72
+acme|bsGroup|1|1|1|Equity Share Capital|Dec '15|801.55
+acme|bsGroup|1|1|1|Equity Share Capital|Dec '14|795.32
+acme|bsGroup|1|1|1|Equity Share Capital|Dec '13|790.18
+acme|bsGroup|1|1|1|Equity Share Capital|Dec '12|781.84
+acme|bsGroup|1|1|1|Reserves|Dec '16|32,071.87
+acme|bsGroup|1|1|1|Reserves|Dec '15|29,881.73
+acme|bsGroup|1|1|1|Reserves|Dec '14|25,414.29
+acme|bsGroup|1|1|1|Reserves|Dec '13|21,444.92
+acme|bsGroup|1|1|1|Reserves|Dec '12|17,957.00
+acme|bsGroup|1|1|1|Networth|Dec '16|32,876.59
+acme|bsGroup|1|1|1|Networth|Dec '15|30,683.28
+acme|bsGroup|1|1|1|Networth|Dec '14|26,209.61
+acme|bsGroup|1|1|1|Networth|Dec '13|22,235.10
+acme|bsGroup|1|1|1|Networth|Dec '12|18,738.84
+acme|bsGroup|1|1|1|Secured Loans|Dec '16|3.60
+acme|bsGroup|1|1|1|Secured Loans|Dec '15|0.02
+acme|bsGroup|1|1|1|Secured Loans|Dec '14|0.14
+acme|bsGroup|1|1|1|Secured Loans|Dec '13|0.00
+acme|bsGroup|1|1|1|Secured Loans|Dec '12|1.77
+acme|bsGroup|1|1|1|Unsecured Loans|Dec '16|25.83
+acme|bsGroup|1|1|1|Unsecured Loans|Dec '15|38.69
+acme|bsGroup|1|1|1|Unsecured Loans|Dec '14|51.00
+acme|bsGroup|1|1|1|Unsecured Loans|Dec '13|66.40
+acme|bsGroup|1|1|1|Unsecured Loans|Dec '12|77.32
+acme|bsGroup|1|1|1|Total Debt|Dec '16|29.43
+acme|bsGroup|1|1|1|Total Debt|Dec '15|38.71
+acme|bsGroup|1|1|1|Total Debt|Dec '14|51.14
+acme|bsGroup|1|1|1|Total Debt|Dec '13|66.40
+acme|bsGroup|1|1|1|Total Debt|Dec '12|79.09
+acme|bsGroup|1|1|1|Total Liabilities|Dec '16|32,906.02
+acme|bsGroup|1|1|1|Total Liabilities|Dec '15|30,721.99
+acme|bsGroup|1|1|1|Total Liabilities|Dec '14|26,260.75
+acme|bsGroup|1|1|1|Total Liabilities|Dec '13|22,301.50
+acme|bsGroup|1|1|1|Total Liabilities|Dec '12|18,817.93
+acme|bsGroup|1|1|1||Dec '16|
+acme|bsGroup|1|1|1||Dec '15|
+acme|bsGroup|1|1|1||Dec '14|
+acme|bsGroup|1|1|1||Dec '13|12 mths
+acme|bsGroup|1|1|1||Dec '12|12 mths
+acme|bsGroup|1|1|1||Dec '16|
+acme|bsGroup|1|1|1||Dec '15|
+acme|bsGroup|1|1|1||Dec '14|
+acme|bsGroup|1|1|1||Dec '13|12 mths
+acme|bsGroup|1|1|1||Dec '12|12 mths
+acme|bsGroup|1|1|1||Dec '16|
+acme|bsGroup|1|1|1||Dec '15|
+acme|bsGroup|1|1|1||Dec '14|
+acme|bsGroup|1|1|1||Dec '13|12 mths
+acme|bsGroup|1|1|1||Dec '12|12 mths
+acme|bsGroup|1|1|1||Dec '16|
+acme|bsGroup|1|1|1||Dec '15|
+acme|bsGroup|1|1|1||Dec '14|
+acme|bsGroup|1|1|1||Dec '13|12 mths
+acme|bsGroup|1|1|1||Dec '12|12 mths
+acme|bsGroup|1|1|1|Application Of Funds|Dec '16|
+acme|bsGroup|1|1|1|Application Of Funds|Dec '15|
+acme|bsGroup|1|1|1|Application Of Funds|Dec '14|
+acme|bsGroup|1|1|1|Application Of Funds|Dec '13|
+acme|bsGroup|1|1|1|Application Of Funds|Dec '12|null
+acme|bsGroup|1|1|1|Gross Block|Dec '16|22,256.11
+acme|bsGroup|1|1|1|Gross Block|Dec '15|21,392.12
+acme|bsGroup|1|1|1|Gross Block|Dec '14|18,239.65
+acme|bsGroup|1|1|1|Gross Block|Dec '13|16,679.17
+acme|bsGroup|1|1|1|Gross Block|Dec '12|13,918.85
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|Dec '16|52.41
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|Dec '15|52.41
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|Dec '14|52.41
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|Dec '13|52.75
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|Dec '12|53.05
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|Dec '16|8,051.58
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|Dec '15|7,213.63
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|Dec '14|6,226.91
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|Dec '13|5,469.83
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|Dec '12|4,819.66
+acme|bsGroup|1|1|1|Net Block|Dec '16|14,152.12
+acme|bsGroup|1|1|1|Net Block|Dec '15|14,126.08
+acme|bsGroup|1|1|1|Net Block|Dec '14|11,960.33
+acme|bsGroup|1|1|1|Net Block|Dec '13|11,156.59
+acme|bsGroup|1|1|1|Net Block|Dec '12|9,046.14
+acme|bsGroup|1|1|1|Capital Work in Progress|Dec '16|2,500.83
+acme|bsGroup|1|1|1|Capital Work in Progress|Dec '15|2,114.14
+acme|bsGroup|1|1|1|Capital Work in Progress|Dec '14|2,295.73
+acme|bsGroup|1|1|1|Capital Work in Progress|Dec '13|1,487.79
+acme|bsGroup|1|1|1|Capital Work in Progress|Dec '12|2,276.75
+acme|bsGroup|1|1|1|Investments|Dec '16|12,854.24
+acme|bsGroup|1|1|1|Investments|Dec '15|8,405.46
+acme|bsGroup|1|1|1|Investments|Dec '14|8,823.43
+acme|bsGroup|1|1|1|Investments|Dec '13|7,060.29
+acme|bsGroup|1|1|1|Investments|Dec '12|6,316.59
+acme|bsGroup|1|1|1|Inventories|Dec '16|8,519.82
+acme|bsGroup|1|1|1|Inventories|Dec '15|7,836.76
+acme|bsGroup|1|1|1|Inventories|Dec '14|7,359.54
+acme|bsGroup|1|1|1|Inventories|Dec '13|6,600.20
+acme|bsGroup|1|1|1|Inventories|Dec '12|5,637.83
+acme|bsGroup|1|1|1|Sundry Debtors|Dec '16|1,686.35
+acme|bsGroup|1|1|1|Sundry Debtors|Dec '15|1,722.40
+acme|bsGroup|1|1|1|Sundry Debtors|Dec '14|2,165.36
+acme|bsGroup|1|1|1|Sundry Debtors|Dec '13|1,163.34
+acme|bsGroup|1|1|1|Sundry Debtors|Dec '12|986.02
+acme|bsGroup|1|1|1|Cash and Bank Balance|Dec '16|6,563.95
+acme|bsGroup|1|1|1|Cash and Bank Balance|Dec '15|7,588.61
+acme|bsGroup|1|1|1|Cash and Bank Balance|Dec '14|3,289.37
+acme|bsGroup|1|1|1|Cash and Bank Balance|Dec '13|3,615.00
+acme|bsGroup|1|1|1|Cash and Bank Balance|Dec '12|2,818.93
+acme|bsGroup|1|1|1|Total Current Assets|Dec '16|16,770.12
+acme|bsGroup|1|1|1|Total Current Assets|Dec '15|17,147.77
+acme|bsGroup|1|1|1|Total Current Assets|Dec '14|12,814.27
+acme|bsGroup|1|1|1|Total Current Assets|Dec '13|11,378.54
+acme|bsGroup|1|1|1|Total Current Assets|Dec '12|9,442.78
+acme|bsGroup|1|1|1|Loans and Advances|Dec '16|3,188.71
+acme|bsGroup|1|1|1|Loans and Advances|Dec '15|2,349.80
+acme|bsGroup|1|1|1|Loans and Advances|Dec '14|3,283.22
+acme|bsGroup|1|1|1|Loans and Advances|Dec '13|2,881.47
+acme|bsGroup|1|1|1|Loans and Advances|Dec '12|1,831.09
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|Dec '16|19,958.83
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|Dec '15|19,497.57
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|Dec '14|16,097.49
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|Dec '13|14,260.01
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|Dec '12|11,273.87
+acme|bsGroup|1|1|1|Current Liabilities|Dec '16|8,129.22
+acme|bsGroup|1|1|1|Current Liabilities|Dec '15|7,214.45
+acme|bsGroup|1|1|1|Current Liabilities|Dec '14|6,921.52
+acme|bsGroup|1|1|1|Current Liabilities|Dec '13|6,404.43
+acme|bsGroup|1|1|1|Current Liabilities|Dec '12|5,684.35
+acme|bsGroup|1|1|1|Provisions|Dec '16|8,430.78
+acme|bsGroup|1|1|1|Provisions|Dec '15|6,206.81
+acme|bsGroup|1|1|1|Provisions|Dec '14|5,994.71
+acme|bsGroup|1|1|1|Provisions|Dec '13|5,258.75
+acme|bsGroup|1|1|1|Provisions|Dec '12|4,411.07
+acme|bsGroup|1|1|1|Total CL & Provisions|Dec '16|16,560.00
+acme|bsGroup|1|1|1|Total CL & Provisions|Dec '15|13,421.26
+acme|bsGroup|1|1|1|Total CL & Provisions|Dec '14|12,916.23
+acme|bsGroup|1|1|1|Total CL & Provisions|Dec '13|11,663.18
+acme|bsGroup|1|1|1|Total CL & Provisions|Dec '12|10,095.42
+acme|bsGroup|1|1|1|Net Current Assets|Dec '16|3,398.83
+acme|bsGroup|1|1|1|Net Current Assets|Dec '15|6,076.31
+acme|bsGroup|1|1|1|Net Current Assets|Dec '14|3,181.26
+acme|bsGroup|1|1|1|Net Current Assets|Dec '13|2,596.83
+acme|bsGroup|1|1|1|Net Current Assets|Dec '12|1,178.45
+acme|bsGroup|1|1|1|Total Assets|Dec '16|32,906.02
+acme|bsGroup|1|1|1|Total Assets|Dec '15|30,721.99
+acme|bsGroup|1|1|1|Total Assets|Dec '14|26,260.75
+acme|bsGroup|1|1|1|Total Assets|Dec '13|22,301.50
+acme|bsGroup|1|1|1|Total Assets|Dec '12|18,817.93
+acme|bsGroup|1|1|1||Dec '16|
+acme|bsGroup|1|1|1||Dec '15|
+acme|bsGroup|1|1|1||Dec '14|
+acme|bsGroup|1|1|1||Dec '13|12 mths
+acme|bsGroup|1|1|1||Dec '12|12 mths
+acme|bsGroup|1|1|1|Contingent Liabilities|Dec '16|2,648.78
+acme|bsGroup|1|1|1|Contingent Liabilities|Dec '15|1,864.99
+acme|bsGroup|1|1|1|Contingent Liabilities|Dec '14|1,916.00
+acme|bsGroup|1|1|1|Contingent Liabilities|Dec '13|2,149.23
+acme|bsGroup|1|1|1|Contingent Liabilities|Dec '12|2,533.61
+acme|bsGroup|1|1|1|Book Value (Rs)|Dec '16|40.85
+acme|bsGroup|1|1|1|Book Value (Rs)|Dec '15|38.28
+acme|bsGroup|1|1|1|Book Value (Rs)|Dec '14|32.95
+acme|bsGroup|1|1|1|Book Value (Rs)|Dec '13|28.14
+acme|bsGroup|1|1|1|Book Value (Rs)|Dec '12|23.97

@@ -122,7 +122,8 @@ public class ItemDef implements IItemDef {
     }
 
     @Override
-    public Optional<String> getLinkGroup(String dataDef, String itemName) {
+    public Optional<String> getLinkGroup(final String dataDef,
+            final String itemName) {
         String key = dashit(dataDef, itemName);
         return itemAttributeMap.get(key).getLinkGroup();
     }

@@ -11,22 +11,18 @@ steps:
     parser:
       class: "org.codetab.scoopi.step.parse.jsoup.Parser"
       previous: loader
-      next: process
-    process:
-      class: "org.codetab.scoopi.step.convert.DataFilter"
+      next: filter
+    filter:
+      class: "org.codetab.scoopi.step.process.DataFilter"
       previous: parser
-      next: converter
-    converter:
-      class: "org.codetab.scoopi.step.convert.DataConverter"
-      previous: process
-      next: appender
+      next: appender    
     appender:
       class: "org.codetab.scoopi.step.load.DataAppender"
-      previous: converter
+      previous: filter
       next: end
       plugins: [
         plugin: { 
-          name: file, 
+          name: dataFile, 
           class: "org.codetab.scoopi.plugin.appender.FileAppender",
           file: "output/data.txt", 
           plugins: [ 
@@ -51,22 +47,18 @@ steps:
     parser:
       class: "org.codetab.scoopi.step.parse.htmlunit.Parser"
       previous: loader
-      next: process
-    process:
-      class: "org.codetab.scoopi.step.convert.DataFilter"
+      next: filter
+    filter:
+      class: "org.codetab.scoopi.step.process.DataFilter"
       previous: parser
-      next: converter
-    converter:
-      class: "org.codetab.scoopi.step.convert.DataConverter"
-      previous: process
-      next: appender
+      next: appender    
     appender:
       class: "org.codetab.scoopi.step.load.DataAppender"
-      previous: converter
+      previous: filter
       next: end
       plugins: [
         plugin: { 
-          name: file, 
+          name: dataFile, 
           class: "org.codetab.scoopi.plugin.appender.FileAppender",
           file: "output/data.txt", 
           plugins: [ 

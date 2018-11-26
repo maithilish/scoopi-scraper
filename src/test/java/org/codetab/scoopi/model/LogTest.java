@@ -8,23 +8,6 @@ import org.junit.Test;
 public class LogTest {
 
     @Test
-    public void testLog() {
-        Log act = new Log(CAT.FATAL, "x");
-        assertThat(act.getCat()).isEqualTo(CAT.FATAL);
-        assertThat(act.getMessage()).isEqualTo("x");
-        assertThat(act.getThrowable()).isNull();
-    }
-
-    @Test
-    public void testLogThrowable() {
-        Throwable t = new Throwable("exception");
-        Log act = new Log(CAT.FATAL, "x", t);
-        assertThat(act.getCat()).isEqualTo(CAT.FATAL);
-        assertThat(act.getMessage()).isEqualTo("x");
-        assertThat(act.getThrowable()).isSameAs(t);
-    }
-
-    @Test
     public void testLogLable() {
         Log act = new Log(CAT.FATAL, "label", "x");
         assertThat(act.getCat()).isEqualTo(CAT.FATAL);
@@ -61,7 +44,7 @@ public class LogTest {
 
     @Test
     public void testLogToString() {
-        Log act = new Log(CAT.FATAL, "test");
+        Log act = new Log(CAT.FATAL, "label", "test");
         String expected =
                 getExprectedString(CAT.FATAL, act.getLabel(), "test", null);
         assertThat(act.toString()).isEqualTo(expected);
@@ -70,7 +53,7 @@ public class LogTest {
     @Test
     public void testLogToStringWithThrowable() {
         Throwable t = new Throwable("exception");
-        Log act = new Log(CAT.FATAL, "test", t);
+        Log act = new Log(CAT.FATAL, "label", "test", t);
         String expected =
                 getExprectedString(CAT.FATAL, act.getLabel(), "test", t);
         assertThat(act.toString()).isEqualTo(expected);

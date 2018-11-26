@@ -31,7 +31,7 @@ class PluginDefs {
     private ObjectFactory objectFactory;
 
     public Map<String, Optional<List<Plugin>>> getPluginMap(
-            Map<String, JsonNode> stepsMap) throws InvalidDefException {
+            final Map<String, JsonNode> stepsMap) throws InvalidDefException {
 
         Map<String, Optional<List<Plugin>>> map = new HashMap<>();
 

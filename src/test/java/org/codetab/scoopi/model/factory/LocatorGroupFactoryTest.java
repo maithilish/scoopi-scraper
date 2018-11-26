@@ -9,11 +9,10 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 import java.util.Optional;
 
-import org.codetab.scoopi.defs.mig.IAxisDefs;
+import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.model.Axis;
-import org.codetab.scoopi.model.AxisName;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.model.ItemMig;
+import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Log.CAT;
@@ -33,7 +32,7 @@ import com.google.common.collect.Lists;
 public class LocatorGroupFactoryTest {
 
     @Mock
-    private IAxisDefs axisDefs;
+    private IItemDef itemDefs;
     @Mock
     private ObjectFactory objectFactory;
     @Mock
@@ -77,29 +76,32 @@ public class LocatorGroupFactoryTest {
         String url3 = "url3";
         Locator locator3 = factory.createLocator(locatorName, group2, url3);
 
-        Axis row1 = factory.createAxis(AxisName.ROW, "m1", "v1", null, 0, 0);
-        Axis fact1 = factory.createAxis(AxisName.FACT, "m1", url1, null, 0, 0);
-        ItemMig item1 = factory.createItemMig();
+        Axis row1 = factory.createAxis("row", "m1", url1, null, 0, 0);
+        Axis fact1 = factory.createAxis("fact", "m1", "f1", null, 0, 0);
+        Item item1 = factory.createItem();
         item1.addAxis(row1);
         item1.addAxis(fact1);
 
-        Axis row2 = factory.createAxis(AxisName.ROW, "m2", "v2", null, 0, 0);
-        Axis fact2 = factory.createAxis(AxisName.FACT, "m2", url2, null, 0, 0);
-        ItemMig item2 = factory.createItemMig();
+        Axis row2 = factory.createAxis("row", "m2", url2, null, 0, 0);
+        Axis fact2 = factory.createAxis("fact", "m2", "f2", null, 0, 0);
+        Item item2 = factory.createItem();
         item2.addAxis(row2);
         item2.addAxis(fact2);
 
-        Axis row3 = factory.createAxis(AxisName.ROW, "m3", "v3", null, 0, 0);
-        Axis fact3 = factory.createAxis(AxisName.FACT, "m3", url3, null, 0, 0);
-        ItemMig item3 = factory.createItemMig();
+        Axis row3 = factory.createAxis("row", "m3", url3, null, 0, 0);
+        Axis fact3 = factory.createAxis("fact", "m3", "f3", null, 0, 0);
+        Item item3 = factory.createItem();
         item3.addAxis(row3);
         item3.addAxis(fact3);
 
-        List<ItemMig> itemMigs = Lists.newArrayList(item1, item2, item3);
+        List<Item> items = Lists.newArrayList(item1, item2, item3);
 
-        given(axisDefs.getLinkGroup(dataDef, row1)).willReturn(linkGroup1);
-        given(axisDefs.getLinkGroup(dataDef, row2)).willReturn(linkGroup2);
-        given(axisDefs.getLinkGroup(dataDef, row3)).willReturn(linkGroup2);
+        given(itemDefs.getLinkGroup(dataDef.getName(), row1.getItemName()))
+                .willReturn(linkGroup1);
+        given(itemDefs.getLinkGroup(dataDef.getName(), row2.getItemName()))
+                .willReturn(linkGroup2);
+        given(itemDefs.getLinkGroup(dataDef.getName(), row3.getItemName()))
+                .willReturn(linkGroup2);
 
         given(objectFactory.createLocator(locatorName, group1, url1))
                 .willReturn(locator1);
@@ -114,7 +116,7 @@ public class LocatorGroupFactoryTest {
                 .willReturn(locatorGroup2);
 
         List<LocatorGroup> actual = locatorGroupFactory
-                .createLocatorGroups(dataDef, itemMigs, locatorName);
+                .createLocatorGroups(dataDef.getName(), items, locatorName);
 
         assertThat(actual.size()).isEqualTo(2);
 
@@ -132,18 +134,19 @@ public class LocatorGroupFactoryTest {
         String url1 = "url1";
         Optional<String> linkGroup1 = Optional.empty();
 
-        Axis row1 = factory.createAxis(AxisName.ROW, "m1", "v1", null, 0, 0);
-        Axis fact1 = factory.createAxis(AxisName.FACT, "m1", url1, null, 0, 0);
-        ItemMig item1 = factory.createItemMig();
+        Axis row1 = factory.createAxis("row", "m1", "v1", null, 0, 0);
+        Axis fact1 = factory.createAxis("fact", "m1", url1, null, 0, 0);
+        Item item1 = factory.createItem();
         item1.addAxis(row1);
         item1.addAxis(fact1);
 
-        List<ItemMig> itemMigs = Lists.newArrayList(item1);
+        List<Item> itemMigs = Lists.newArrayList(item1);
 
-        given(axisDefs.getLinkGroup(dataDef, row1)).willReturn(linkGroup1);
+        given(itemDefs.getLinkGroup(dataDef.getName(), row1.getItemName()))
+                .willReturn(linkGroup1);
 
         List<LocatorGroup> actual = locatorGroupFactory
-                .createLocatorGroups(dataDef, itemMigs, locatorName);
+                .createLocatorGroups(dataDef.getName(), itemMigs, locatorName);
 
         assertThat(actual.size()).isEqualTo(0);
 

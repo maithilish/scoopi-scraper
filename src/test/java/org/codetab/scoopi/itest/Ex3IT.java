@@ -11,7 +11,7 @@ import org.junit.Test;
 public class Ex3IT extends ITestBase {
 
     private String exName = "ex-3";
-    private String exBase = "/defs/examples";
+    private String exBase = "/defs/examples/fin";
 
     @Test
     public void jsoupTest() throws FileNotFoundException, IOException {

@@ -346,6 +346,6 @@ public final class Util {
     }
 
     public static String spaceit(final String... parts) {
-        return String.join("", parts);
+        return String.join(" ", parts);
     }
 }

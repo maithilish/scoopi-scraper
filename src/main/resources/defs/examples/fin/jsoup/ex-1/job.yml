@@ -1,0 +1,25 @@
+locatorGroups:
+
+  quoteGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/fin/page/acme-quote.html" }  
+    ]
+
+taskGroups:
+
+  quoteGroup:
+    priceTask:
+      dataDef: price
+
+dataDefs:
+
+  price:            
+    query:
+      block: "div#price_tick"
+      selector: "*"
+    items: [ 
+      item: { name: "Price", value: "Price" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]        

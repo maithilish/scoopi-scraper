@@ -55,7 +55,7 @@ public class ValueProcessor {
             String axisName = axis.getAxisName();
             String itemName = axis.getItemName();
             if (isNull(axis.getValue()) && nonNull(axis.getMatch())) {
-                axis.setValue(axis.getMatch());
+                axis.setValue(axis.getMatch().replaceAll("\\\\", ""));
             }
 
             if (isNull(axis.getValue())) {

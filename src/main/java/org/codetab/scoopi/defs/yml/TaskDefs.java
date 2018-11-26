@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 
 class TaskDefs {
 
@@ -25,9 +24,15 @@ class TaskDefs {
         while (taskGroups.hasNext()) {
             String taskGroup = taskGroups.next();
             JsonNode jTaskGroup = defs.path(taskGroup);
-            ArrayList<String> taskNames =
-                    Lists.newArrayList(jTaskGroup.fieldNames());
-            taskNamesMap.put(taskGroup, taskNames);
+            Iterator<Entry<String, JsonNode>> it = jTaskGroup.fields();
+            List<String> names = new ArrayList<>();
+            while (it.hasNext()) {
+                Entry<String, JsonNode> entry = it.next();
+                if (entry.getValue().isObject()) {
+                    names.add(entry.getKey());
+                }
+            }
+            taskNamesMap.put(taskGroup, names);
         }
         return taskNamesMap;
     }
@@ -45,8 +50,10 @@ class TaskDefs {
                 Entry<String, JsonNode> taskEntry = tasks.next();
                 String taskName = taskEntry.getKey();
                 JsonNode task = taskEntry.getValue();
-                String key = dashit(taskGroup, taskName);
-                map.put(key, task);
+                if (task.isObject()) {
+                    String key = dashit(taskGroup, taskName);
+                    map.put(key, task);
+                }
             }
         }
         return map;

@@ -1,0 +1,29 @@
+taskGroups:
+                   
+  plGroup:
+    plTask:
+      dataDef: pl
+      steps: fooSteps
+
+dataDefs:
+
+  pl:
+    query:
+      block: "//table//*[count(*)=0 and contains(.,'Employee Cost')]/ancestor::table[1]"
+      selector: "*//*[.='%{item.value}']/following-sibling::td[%{dim.year.index}-1]"       
+    items:  
+      - item:
+          name: item
+          selector: "*//tr[%{index}+1]/td[1]"                        
+          index: 5
+          breakAfter:
+            - "Book Value (Rs)"
+          filters: 
+            - filter: { type: value, pattern: "" }
+            - filter: { type: value, pattern: "Expenditure" }
+            - filter: { type: value, pattern: "Per share data (annualised)" }
+    dims:  
+      - item:
+          name: year
+          selector: "*//tr[1]/td[%{index}]"
+          indexRange: 2-6

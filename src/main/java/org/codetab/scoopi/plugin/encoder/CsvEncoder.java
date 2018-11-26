@@ -50,11 +50,10 @@ public class CsvEncoder implements IEncoder<List<String>> {
                 sb.append(item.getParent().getTagValue("index"));
                 sb.append(delimiter);
                 sb.append(item.getParent().getTagValue("item"));
-                sb.append(delimiter);
             }
             for (Axis axis : item.getAxes()) {
-                sb.append(axis.getValue());
                 sb.append(delimiter);
+                sb.append(axis.getValue());
             }
 
             encodedData.add(sb.toString());

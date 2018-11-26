@@ -32,7 +32,7 @@ public class Encoders extends HashMap<String, List<IEncoder<?>>> {
     public void createEncoders(final List<Plugin> plugins,
             final String stepsName, final String stepName) {
         for (Plugin plugin : plugins) {
-            String appenderName = dashit(stepsName, stepName, plugin.getName());
+            String appenderName = dashit(stepName, plugin.getName());
             Optional<List<Plugin>> encoderPlugins = null;
             try {
                 encoderPlugins = pluginDef.getPlugins(plugin);

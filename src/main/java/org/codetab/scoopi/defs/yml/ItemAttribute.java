@@ -63,7 +63,7 @@ public class ItemAttribute {
         return filter;
     }
 
-    public void setFilter(Optional<List<Filter>> filter) {
+    public void setFilter(final Optional<List<Filter>> filter) {
         this.filter = filter;
     }
 

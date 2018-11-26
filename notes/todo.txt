@@ -1,0 +1,16 @@
+TaskPoolService.pool.start
+Parser.task.time
+
+Parser.data.parse
+Parser.data.reuse
+
+Change title from Gotz Metrics to Scoopi Metrics
+
+step start and end info log - add label
+
+scoopi.poolsize.start
+
+live at taskGroup level and task level
+
+step reference
+

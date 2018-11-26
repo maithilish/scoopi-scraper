@@ -94,8 +94,8 @@ import preferences only after cs and emma are installed**
 for context help, install JavaDoc and sources.
 
     dnf list java-1.8.0-openjdk*
-    dnf install java-1.8.0-openjdk-<JavaDoc>
-    dnf install java-1.8.0-openjdk-<src>
+    dnf install java-1.8.0-openjdk-javadoc
+    dnf install java-1.8.0-openjdk-src
 
 - in Fedora, source src.zip is installed under /usr/lib/jvm/jdk<xxx>/  
 
@@ -106,6 +106,10 @@ Go to, _Preferences -> Installed JRE -> OpenJdk x.x.x -> Edit and select rt.jar_
 JavaDoc Location - enter JavaDoc URL as file:///etc/alternatives/JavaDocdir
 
 Source Attachment - external location -> path as /usr/lib/jvm/jdk1.8.0_xxx/src.zip
+
+to know src.zip location use
+
+    rpm -ql java-1.8.0-openjdk-src
 
 #### add imports
 

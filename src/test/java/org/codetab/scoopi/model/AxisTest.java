@@ -18,12 +18,12 @@ public class AxisTest {
 
     @Before
     public void setUp() throws Exception {
-        axis = new Axis(AxisName.COL, "date");
+        axis = new Axis("col", "date");
     }
 
     @Test
     public void testGetName() {
-        assertThat(axis.getAxisName()).isEqualTo(AxisName.COL);
+        assertThat(axis.getAxisName()).isEqualTo("col");
     }
 
     @Test
@@ -52,18 +52,18 @@ public class AxisTest {
 
     @Test
     public void testCompareTo() {
-        Axis a1 = new Axis(AxisName.COL, "date");
-        Axis a2 = new Axis(AxisName.COL, "date");
+        Axis a1 = new Axis("col", "date");
+        Axis a2 = new Axis("col", "date");
 
         assertThat(a1.compareTo(a2)).isEqualTo(0);
 
-        a1 = new Axis(AxisName.COL, "date");
-        a2 = new Axis(AxisName.ROW, "Price");
-        assertThat(a1.compareTo(a2)).isEqualTo(-1);
+        a1 = new Axis("col", "date");
+        a2 = new Axis("row", "Price");
+        assertThat(a1.compareTo(a2)).isLessThan(0);
 
-        a1 = new Axis(AxisName.ROW, "Price");
-        a2 = new Axis(AxisName.COL, "date");
-        assertThat(a1.compareTo(a2)).isEqualTo(1);
+        a1 = new Axis("row", "Price");
+        a2 = new Axis("col", "date");
+        assertThat(a1.compareTo(a2)).isGreaterThan(0);
     }
 
     @Test
@@ -104,13 +104,13 @@ public class AxisTest {
     }
 
     private List<Axis> createTestObjects() {
-        Axis t1 = new Axis(AxisName.COL, "date");
+        Axis t1 = new Axis("col", "date");
         t1.setMatch("m");
         t1.setValue("v");
         t1.setIndex(1);
         t1.setOrder(2);
 
-        Axis t2 = new Axis(AxisName.COL, "date");
+        Axis t2 = new Axis("col", "date");
         t2.setMatch("m");
         t2.setValue("v");
         t2.setIndex(1);

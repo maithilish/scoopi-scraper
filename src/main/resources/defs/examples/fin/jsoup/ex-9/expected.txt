@@ -1,0 +1,136 @@
+acme|quoteGroup|1|1|1|Price|%{runDateTime}|315.25
+acme|bsGroup|1|1|1|Total Share Capital|2016-12-31|804.72
+acme|bsGroup|1|1|1|Total Share Capital|2015-12-31|801.55
+acme|bsGroup|1|1|1|Total Share Capital|2014-12-31|795.32
+acme|bsGroup|1|1|1|Total Share Capital|2013-12-31|790.18
+acme|bsGroup|1|1|1|Total Share Capital|2012-12-31|781.84
+acme|bsGroup|1|1|1|Equity Share Capital|2016-12-31|804.72
+acme|bsGroup|1|1|1|Equity Share Capital|2015-12-31|801.55
+acme|bsGroup|1|1|1|Equity Share Capital|2014-12-31|795.32
+acme|bsGroup|1|1|1|Equity Share Capital|2013-12-31|790.18
+acme|bsGroup|1|1|1|Equity Share Capital|2012-12-31|781.84
+acme|bsGroup|1|1|1|Reserves|2016-12-31|32,071.87
+acme|bsGroup|1|1|1|Reserves|2015-12-31|29,881.73
+acme|bsGroup|1|1|1|Reserves|2014-12-31|25,414.29
+acme|bsGroup|1|1|1|Reserves|2013-12-31|21,444.92
+acme|bsGroup|1|1|1|Reserves|2012-12-31|17,957.00
+acme|bsGroup|1|1|1|Networth|2016-12-31|32,876.59
+acme|bsGroup|1|1|1|Networth|2015-12-31|30,683.28
+acme|bsGroup|1|1|1|Networth|2014-12-31|26,209.61
+acme|bsGroup|1|1|1|Networth|2013-12-31|22,235.10
+acme|bsGroup|1|1|1|Networth|2012-12-31|18,738.84
+acme|bsGroup|1|1|1|Secured Loans|2016-12-31|3.60
+acme|bsGroup|1|1|1|Secured Loans|2015-12-31|0.02
+acme|bsGroup|1|1|1|Secured Loans|2014-12-31|0.14
+acme|bsGroup|1|1|1|Secured Loans|2013-12-31|0.00
+acme|bsGroup|1|1|1|Secured Loans|2012-12-31|1.77
+acme|bsGroup|1|1|1|Unsecured Loans|2016-12-31|25.83
+acme|bsGroup|1|1|1|Unsecured Loans|2015-12-31|38.69
+acme|bsGroup|1|1|1|Unsecured Loans|2014-12-31|51.00
+acme|bsGroup|1|1|1|Unsecured Loans|2013-12-31|66.40
+acme|bsGroup|1|1|1|Unsecured Loans|2012-12-31|77.32
+acme|bsGroup|1|1|1|Total Debt|2016-12-31|29.43
+acme|bsGroup|1|1|1|Total Debt|2015-12-31|38.71
+acme|bsGroup|1|1|1|Total Debt|2014-12-31|51.14
+acme|bsGroup|1|1|1|Total Debt|2013-12-31|66.40
+acme|bsGroup|1|1|1|Total Debt|2012-12-31|79.09
+acme|bsGroup|1|1|1|Total Liabilities|2016-12-31|32,906.02
+acme|bsGroup|1|1|1|Total Liabilities|2015-12-31|30,721.99
+acme|bsGroup|1|1|1|Total Liabilities|2014-12-31|26,260.75
+acme|bsGroup|1|1|1|Total Liabilities|2013-12-31|22,301.50
+acme|bsGroup|1|1|1|Total Liabilities|2012-12-31|18,817.93
+acme|bsGroup|1|1|1|Gross Block|2016-12-31|22,256.11
+acme|bsGroup|1|1|1|Gross Block|2015-12-31|21,392.12
+acme|bsGroup|1|1|1|Gross Block|2014-12-31|18,239.65
+acme|bsGroup|1|1|1|Gross Block|2013-12-31|16,679.17
+acme|bsGroup|1|1|1|Gross Block|2012-12-31|13,918.85
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|2016-12-31|52.41
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|2015-12-31|52.41
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|2014-12-31|52.41
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|2013-12-31|52.75
+acme|bsGroup|1|1|1|Less: Revaluation Reserves|2012-12-31|53.05
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|2016-12-31|8,051.58
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|2015-12-31|7,213.63
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|2014-12-31|6,226.91
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|2013-12-31|5,469.83
+acme|bsGroup|1|1|1|Less: Accum. Depreciation|2012-12-31|4,819.66
+acme|bsGroup|1|1|1|Net Block|2016-12-31|14,152.12
+acme|bsGroup|1|1|1|Net Block|2015-12-31|14,126.08
+acme|bsGroup|1|1|1|Net Block|2014-12-31|11,960.33
+acme|bsGroup|1|1|1|Net Block|2013-12-31|11,156.59
+acme|bsGroup|1|1|1|Net Block|2012-12-31|9,046.14
+acme|bsGroup|1|1|1|Capital Work in Progress|2016-12-31|2,500.83
+acme|bsGroup|1|1|1|Capital Work in Progress|2015-12-31|2,114.14
+acme|bsGroup|1|1|1|Capital Work in Progress|2014-12-31|2,295.73
+acme|bsGroup|1|1|1|Capital Work in Progress|2013-12-31|1,487.79
+acme|bsGroup|1|1|1|Capital Work in Progress|2012-12-31|2,276.75
+acme|bsGroup|1|1|1|Investments|2016-12-31|12,854.24
+acme|bsGroup|1|1|1|Investments|2015-12-31|8,405.46
+acme|bsGroup|1|1|1|Investments|2014-12-31|8,823.43
+acme|bsGroup|1|1|1|Investments|2013-12-31|7,060.29
+acme|bsGroup|1|1|1|Investments|2012-12-31|6,316.59
+acme|bsGroup|1|1|1|Inventories|2016-12-31|8,519.82
+acme|bsGroup|1|1|1|Inventories|2015-12-31|7,836.76
+acme|bsGroup|1|1|1|Inventories|2014-12-31|7,359.54
+acme|bsGroup|1|1|1|Inventories|2013-12-31|6,600.20
+acme|bsGroup|1|1|1|Inventories|2012-12-31|5,637.83
+acme|bsGroup|1|1|1|Sundry Debtors|2016-12-31|1,686.35
+acme|bsGroup|1|1|1|Sundry Debtors|2015-12-31|1,722.40
+acme|bsGroup|1|1|1|Sundry Debtors|2014-12-31|2,165.36
+acme|bsGroup|1|1|1|Sundry Debtors|2013-12-31|1,163.34
+acme|bsGroup|1|1|1|Sundry Debtors|2012-12-31|986.02
+acme|bsGroup|1|1|1|Cash and Bank Balance|2016-12-31|6,563.95
+acme|bsGroup|1|1|1|Cash and Bank Balance|2015-12-31|7,588.61
+acme|bsGroup|1|1|1|Cash and Bank Balance|2014-12-31|3,289.37
+acme|bsGroup|1|1|1|Cash and Bank Balance|2013-12-31|3,615.00
+acme|bsGroup|1|1|1|Cash and Bank Balance|2012-12-31|2,818.93
+acme|bsGroup|1|1|1|Total Current Assets|2016-12-31|16,770.12
+acme|bsGroup|1|1|1|Total Current Assets|2015-12-31|17,147.77
+acme|bsGroup|1|1|1|Total Current Assets|2014-12-31|12,814.27
+acme|bsGroup|1|1|1|Total Current Assets|2013-12-31|11,378.54
+acme|bsGroup|1|1|1|Total Current Assets|2012-12-31|9,442.78
+acme|bsGroup|1|1|1|Loans and Advances|2016-12-31|3,188.71
+acme|bsGroup|1|1|1|Loans and Advances|2015-12-31|2,349.80
+acme|bsGroup|1|1|1|Loans and Advances|2014-12-31|3,283.22
+acme|bsGroup|1|1|1|Loans and Advances|2013-12-31|2,881.47
+acme|bsGroup|1|1|1|Loans and Advances|2012-12-31|1,831.09
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|2016-12-31|19,958.83
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|2015-12-31|19,497.57
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|2014-12-31|16,097.49
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|2013-12-31|14,260.01
+acme|bsGroup|1|1|1|Total CA, Loans & Advances|2012-12-31|11,273.87
+acme|bsGroup|1|1|1|Current Liabilities|2016-12-31|8,129.22
+acme|bsGroup|1|1|1|Current Liabilities|2015-12-31|7,214.45
+acme|bsGroup|1|1|1|Current Liabilities|2014-12-31|6,921.52
+acme|bsGroup|1|1|1|Current Liabilities|2013-12-31|6,404.43
+acme|bsGroup|1|1|1|Current Liabilities|2012-12-31|5,684.35
+acme|bsGroup|1|1|1|Provisions|2016-12-31|8,430.78
+acme|bsGroup|1|1|1|Provisions|2015-12-31|6,206.81
+acme|bsGroup|1|1|1|Provisions|2014-12-31|5,994.71
+acme|bsGroup|1|1|1|Provisions|2013-12-31|5,258.75
+acme|bsGroup|1|1|1|Provisions|2012-12-31|4,411.07
+acme|bsGroup|1|1|1|Total CL & Provisions|2016-12-31|16,560.00
+acme|bsGroup|1|1|1|Total CL & Provisions|2015-12-31|13,421.26
+acme|bsGroup|1|1|1|Total CL & Provisions|2014-12-31|12,916.23
+acme|bsGroup|1|1|1|Total CL & Provisions|2013-12-31|11,663.18
+acme|bsGroup|1|1|1|Total CL & Provisions|2012-12-31|10,095.42
+acme|bsGroup|1|1|1|Net Current Assets|2016-12-31|3,398.83
+acme|bsGroup|1|1|1|Net Current Assets|2015-12-31|6,076.31
+acme|bsGroup|1|1|1|Net Current Assets|2014-12-31|3,181.26
+acme|bsGroup|1|1|1|Net Current Assets|2013-12-31|2,596.83
+acme|bsGroup|1|1|1|Net Current Assets|2012-12-31|1,178.45
+acme|bsGroup|1|1|1|Total Assets|2016-12-31|32,906.02
+acme|bsGroup|1|1|1|Total Assets|2015-12-31|30,721.99
+acme|bsGroup|1|1|1|Total Assets|2014-12-31|26,260.75
+acme|bsGroup|1|1|1|Total Assets|2013-12-31|22,301.50
+acme|bsGroup|1|1|1|Total Assets|2012-12-31|18,817.93
+acme|bsGroup|1|1|1|Contingent Liabilities|2016-12-31|2,648.78
+acme|bsGroup|1|1|1|Contingent Liabilities|2015-12-31|1,864.99
+acme|bsGroup|1|1|1|Contingent Liabilities|2014-12-31|1,916.00
+acme|bsGroup|1|1|1|Contingent Liabilities|2013-12-31|2,149.23
+acme|bsGroup|1|1|1|Contingent Liabilities|2012-12-31|2,533.61
+acme|bsGroup|1|1|1|Book Value (Rs)|2016-12-31|40.85
+acme|bsGroup|1|1|1|Book Value (Rs)|2015-12-31|38.28
+acme|bsGroup|1|1|1|Book Value (Rs)|2014-12-31|32.95
+acme|bsGroup|1|1|1|Book Value (Rs)|2013-12-31|28.14
+acme|bsGroup|1|1|1|Book Value (Rs)|2012-12-31|23.97

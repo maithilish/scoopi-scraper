@@ -56,9 +56,9 @@ public class DataTest {
 
     @Test
     public void testGetItems() {
-        ItemMig m1 = new ItemMig();
+        Item m1 = new Item();
         m1.setName("m1");
-        ItemMig m2 = new ItemMig();
+        Item m2 = new Item();
         m2.setName("m2");
         Data data1 = new Data();
         data1.setName("data");
@@ -71,7 +71,7 @@ public class DataTest {
 
     @Test
     public void testAddItem() {
-        ItemMig itemMig = new ItemMig();
+        Item itemMig = new Item();
         itemMig.setName("x");
         itemMig.setGroup("y");
 

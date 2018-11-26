@@ -22,7 +22,7 @@ public class QueryProcessor {
     private ParserCache parserCache;
 
     public Map<String, String> getQueries(final String dataDef,
-            final String axisName, String itemName) {
+            final String axisName, final String itemName) {
         Map<String, String> queries = new HashMap<>();
         Query query = itemDef.getQuery(dataDef);
         Optional<Query> itemQuery = itemDef.getItemQuery(dataDef, itemName);

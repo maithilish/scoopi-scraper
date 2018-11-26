@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.codetab.scoopi.exception.DefNotFoundException;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Methods to normalise user defs and to create effective defs.
@@ -83,7 +84,7 @@ public class Normalizer {
         JsonNode taskGroupsDef = defs.at("/taskGroups");
         Map<String, JsonNode> taskMap = taskDefs.getAllTasks(taskGroupsDef);
         for (JsonNode task : taskMap.values()) {
-            if (!stepDefs.isStepsDefined(task)) {
+            if (!stepDefs.isStepsDefined(task) && task.isObject()) {
                 normalizers.setDefaultSteps(task, defaultStepsName);
             }
         }
@@ -95,12 +96,12 @@ public class Normalizer {
      * get steps object from top level and merge or replace its step[s] with
      * overridden step[s] and finally replace the task steps object with the new
      * merged steps object
-     * 
-     * 
+     *
      * @param defs
      * @throws DefNotFoundException
      */
-    public void expandSteps(final JsonNode defs) throws DefNotFoundException {
+    public void expandTaskSteps(final JsonNode defs)
+            throws DefNotFoundException {
 
         JsonNode topStepsDef = defs.at("/steps");
         Map<String, JsonNode> topStepsMap =
@@ -120,16 +121,17 @@ public class Normalizer {
             // named steps
             if (jSteps.isTextual()) {
                 String stepsName = jTask.path("steps").asText();
-                JsonNode expandedStepsCopy = stepDefs
-                        .getExpandedSteps(topStepsMap, stepsName).deepCopy();
-                normalizers.expandSteps(jTask, expandedStepsCopy, stepsName);
+                JsonNode expandedStepsCopy =
+                        stepDefs.getTopSteps(topStepsMap, stepsName).deepCopy();
+                normalizers.expandTaskSteps(jTask, expandedStepsCopy,
+                        stepsName);
             }
             // steps with overridden step[s]
             // replace step
             if (jSteps.isObject()) {
                 String stepsName = stepDefs.getStepsName(jSteps);
-                JsonNode expandedStepsCopy = stepDefs
-                        .getExpandedSteps(topStepsMap, stepsName).deepCopy();
+                JsonNode expandedStepsCopy =
+                        stepDefs.getTopSteps(topStepsMap, stepsName).deepCopy();
                 Map<String, JsonNode> overriddenSteps =
                         stepDefs.getStepNodes(jSteps, stepsName);
                 // replace or insert overridden steps to expanded steps copy
@@ -149,23 +151,22 @@ public class Normalizer {
         }
     }
 
-    /**
-     * For each task, replace named steps with the deep copy of top level steps
-     * node. For example steps: default is replaced with deep copy of top level
-     * default steps node.
-     *
-     * @param defs
-     */
-    // public void expandSteps(final JsonNode defs) {
-    // // top level steps
-    // Map<String, JsonNode> topStepsMap = stepDefs.getTopStepsMap(defs);
-    //
-    // JsonNode taskGroupsDef = defs.at("/taskGroups");
-    // Map<String, JsonNode> taskMap = taskDefs.getAllTasks(taskGroupsDef);
-    //
-    // for (JsonNode task : taskMap.values()) {
-    // //normalizers.expandSteps(task, topStepsMap);
-    // }
-    // }
+    public void expandSteps(final JsonNode defs) throws DefNotFoundException {
+        JsonNode topStepsDef = defs.at("/steps");
+        Map<String, JsonNode> topStepsMap =
+                stepDefs.getTopStepsMap(topStepsDef);
+
+        for (String stepsName : topStepsMap.keySet()) {
+            JsonNode steps = topStepsMap.get(stepsName);
+            JsonNode extSteps = normalizers.expandSteps(topStepsMap, steps);
+            ((ObjectNode) topStepsDef).set(stepsName, extSteps);
+        }
+
+        // topStepsMap = stepDefs.getTopStepsMap(topStepsDef);
+        // for (String stepsName : topStepsMap.keySet()) {
+        // System.out.println(stepsName + " >> ");
+        // System.out.println(yamls.pretty(topStepsMap.get(stepsName)));
+        // }
+    }
 
 }

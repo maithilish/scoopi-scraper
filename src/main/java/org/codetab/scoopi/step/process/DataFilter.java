@@ -31,9 +31,6 @@ public class DataFilter extends BaseProcessor {
         setOutput(data);
         setConsistent(true);
 
-        System.out.println(data.getItems());
-
         return true;
-
     }
 }

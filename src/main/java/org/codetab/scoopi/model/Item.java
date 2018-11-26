@@ -1,12 +1,15 @@
 package org.codetab.scoopi.model;
 
 import static java.util.Objects.isNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -60,6 +63,9 @@ public final class Item extends DataComponent implements Serializable {
     }
 
     public List<Axis> getAxes() {
+        if (isNull(axes)) {
+            axes = new ArrayList<>();
+        }
         return axes;
     }
 
@@ -74,9 +80,26 @@ public final class Item extends DataComponent implements Serializable {
         return names;
     }
 
-    public Axis getAxis(final String itemName) {
-        return axes.stream().filter(a -> a.getItemName().equals(itemName))
-                .findFirst().get();
+    public Axis getAxis(final String axisName) {
+        Optional<Axis> axis = axes.stream()
+                .filter(a -> a.getAxisName().equals(axisName)).findFirst();
+        if (axis.isPresent()) {
+            return axis.get();
+        } else {
+            throw new NoSuchElementException(
+                    spaceit("axis with axisName:", axisName));
+        }
+    }
+
+    public Axis getAxisByItemName(final String itemName) {
+        Optional<Axis> axis = axes.stream()
+                .filter(a -> a.getItemName().equals(itemName)).findFirst();
+        if (axis.isPresent()) {
+            return axis.get();
+        } else {
+            throw new NoSuchElementException(
+                    spaceit("axis with itemName:", itemName));
+        }
     }
 
     public Map<String, Axis> getAxisMap() {
@@ -92,12 +115,12 @@ public final class Item extends DataComponent implements Serializable {
         axes.add(axis);
     }
 
-    public String getValue(final String itemName) {
-        return getAxis(itemName).getValue();
+    public String getValue(final String axisName) {
+        return getAxis(axisName).getValue();
     }
 
-    public void setValue(final String itemName, final String value) {
-        getAxis(itemName).setValue(value);
+    public void setValue(final String axisName, final String value) {
+        getAxis(axisName).setValue(value);
     }
 
     public Axis getFirstAxis() {
