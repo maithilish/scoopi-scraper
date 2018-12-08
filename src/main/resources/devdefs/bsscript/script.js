@@ -4,7 +4,7 @@ var execute = function(data){
     
     for(i=0; i < items.size(); i++){
     	var item = items.get(i)
-    	var dateAxis = item.getAxis("year")
+    	var dateAxis = item.getAxisByItemName("year")
     	var date = dateAxis.getValue()
         var x = moment(date, "MMM 'YY")
         var e = moment(x).endOf('month')

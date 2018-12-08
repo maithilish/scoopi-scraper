@@ -96,7 +96,7 @@ public class MetricsHelperTest {
                 .isTrue();
         assertThat(counters.containsKey("ParserCache.parser.cache.miss"))
                 .isTrue();
-        assertThat(counters.containsKey("URLLoader.fetch.web")).isTrue();
+        assertThat(counters.containsKey("PageLoader.fetch.web")).isTrue();
         assertThat(counters.containsKey("Task.system.error")).isTrue();
     }
 }

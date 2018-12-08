@@ -30,4 +30,6 @@ public interface IItemDef {
     Optional<List<Filter>> getFilter(String dataDef, String itemName);
 
     Optional<String> getLinkGroup(String dataDef, String itemName);
+
+    Optional<List<String>> getLinkBreakOn(String dataDef, String itemName);
 }

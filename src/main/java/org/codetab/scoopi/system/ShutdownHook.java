@@ -3,6 +3,7 @@ package org.codetab.scoopi.system;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.pool.WebDriverPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ public class ShutdownHook extends Thread {
      */
     @Inject
     private Stats stats;
+    @Inject
+    private WebDriverPool webDriverPool;
 
     /**
      * <p>
@@ -43,5 +46,8 @@ public class ShutdownHook extends Thread {
     public synchronized void start() {
         stats.outputStats();
         stats.outputMemStats();
+
+        logger.debug("closing webdrivers");
+        webDriverPool.close();
     }
 }

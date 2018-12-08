@@ -2,7 +2,7 @@ locatorGroups:
   
   bsGroup:   
     locators: [
-       { name: acme, url: "/defs/examples/page/acme-bs.html" }  
+       { name: acme, url: "/defs/examples/fin/page/acme-bs.html" }  
     ]
                                         
 taskGroups:
@@ -20,9 +20,9 @@ taskGroups:
               plugin: { 
                 name: script, 
                 class: "org.codetab.scoopi.plugin.script.DataScript",
-                script: "/devdefs/bs/script.js",
+                script: "/devdefs/bsscript/script.js",
                 entryPoint: "execute",
-                scripts: [ "/devdefs/bs/moment.min.js"] }            
+                scripts: [ "/devdefs/bsscript/moment.min.js"] }            
             ]
          
         
@@ -57,7 +57,7 @@ steps:
       previous: start
       next: loader
     loader:
-      class: "org.codetab.scoopi.step.extract.URLLoader"
+      class: "org.codetab.scoopi.step.extract.PageLoader"
       previous: seeder
       next: parser
     parser:

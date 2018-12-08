@@ -32,7 +32,7 @@ steps:
       previous: start
       next: loader
     loader:
-      class: "org.codetab.scoopi.step.extract.URLLoader"
+      class: "org.codetab.scoopi.step.extract.PageLoader"
       previous: seeder
       next: parser
     parser:

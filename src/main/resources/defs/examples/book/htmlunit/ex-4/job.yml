@@ -1,0 +1,46 @@
+locatorGroups:
+  bookGroup:   
+    locators: [
+       { name: "books", url: "/defs/examples/book/page/page-1.html" }  
+    ]
+                                        
+taskGroups:
+  bookGroup:
+    bookTask:
+      dataDef: bookData
+      steps: htmlUnitDefault
+
+    linkTask:
+      dataDef: bookLink
+      steps:
+        htmlUnitDefault:            
+          process:
+            class: "org.codetab.scoopi.step.process.LocatorCreator"
+            previous: parser
+            next: seeder  
+              
+dataDefs:
+
+  bookLink:
+    query:
+      block: "//li[@class='next']"              
+    items: [ 
+      item: { name: "link",  selector: "a/@href", 
+        linkGroup: bookGroup, prefix: [ "/defs/examples/book/page/" ] },
+    ]
+
+  bookData:           
+    query:
+      block: "//section/div[2]/ol/li[%{item.index}]/article"
+      selector: "h3/a/@title"
+    items: [
+      item: { name: "book", indexRange: 1-20, value: "book"},      
+    ]
+    dims: [        
+      item: { name: "url", selector: "h3/a/@href" },
+      item: { name: "imgUrl", selector: "div[1]/a/img/@src" },      
+      item: { name: "price", selector: "div[2]/p[@class='price_color']" },
+      item: { name: "avail", selector: "div[2]/p[@class='instock availability']" },
+      item: { name: "date", script: "document.getFromDate()" },      
+    ]
+    

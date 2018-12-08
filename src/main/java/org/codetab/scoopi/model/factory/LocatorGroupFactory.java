@@ -44,12 +44,19 @@ public class LocatorGroupFactory {
             Axis axis = item.getFirstAxis();
             Optional<String> oLinkGroup =
                     itemDef.getLinkGroup(dataDef, axis.getItemName());
+            Optional<List<String>> oLinkBreakOn =
+                    itemDef.getLinkBreakOn(dataDef, axis.getItemName());
 
             if (oLinkGroup.isPresent()) {
                 String linkGroup = oLinkGroup.get();
-
                 String url = axis.getValue();
-                if (StringUtils.isNotBlank(url)) {
+                boolean createLink = true;
+                if (oLinkBreakOn.isPresent()) {
+                    if (oLinkBreakOn.get().contains(url)) {
+                        createLink = false;
+                    }
+                }
+                if (StringUtils.isNotBlank(url) && createLink) {
                     Locator locator = objectFactory.createLocator(locatorName,
                             linkGroup, url);
                     if (!lgs.containsKey(linkGroup)) {

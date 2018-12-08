@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.inOrder;
 
 import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.pool.WebDriverPool;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -21,6 +22,8 @@ public class ShutdownHookTest {
 
     @Mock
     private Stats stats;
+    @Mock
+    private WebDriverPool webDriverPool;
 
     @InjectMocks
     private ShutdownHook shutdownHook;
@@ -35,9 +38,10 @@ public class ShutdownHookTest {
         shutdownHook.start();
         shutdownHook.join();
 
-        InOrder inOrder = inOrder(stats);
+        InOrder inOrder = inOrder(stats, webDriverPool);
         inOrder.verify(stats).outputStats();
         inOrder.verify(stats).outputMemStats();
+        inOrder.verify(webDriverPool).close();
     }
 
     @Test

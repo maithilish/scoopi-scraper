@@ -9,10 +9,14 @@
             <defaultStepsFile>/steps-default.yml</defaultStepsFile>
             <defaultSteps>jsoupDefault</defaultSteps>
             <definedSchema>/schema/defs-defined.json</definedSchema>
-            <effectiveSchema>/schema/defs-effective.json</effectiveSchema>
+            <effectiveSchema>/schema/defs-effective.json
+            </effectiveSchema>
         </defs>
 
-        <seederClass>org.codetab.scoopi.step.extract.LocatorSeeder
+        <seederClass>
+            <![CDATA[
+              org.codetab.scoopi.step.extract.LocatorSeeder
+            ]]>
         </seederClass>
         <poolsize>
             <start>4</start>
@@ -20,7 +24,7 @@
             <loader>4</loader>
             <parser>4</parser>
             <process>4</process>
-            <converter>4</converter>
+            <filter>4</filter>
             <appender>2</appender>
         </poolsize>
         <appender>
@@ -34,6 +38,15 @@
               ]]>
             </userAgent>
         </webClient>
+        <webDriver>
+            <driverPath>.gecko/geckodriver</driverPath>
+            <log>geckodriver.log</log>
+            <waitType>explicit</waitType>
+            <timeout>
+                <explicitWait>10</explicitWait>
+                <implicitWait>10</implicitWait>
+            </timeout>
+        </webDriver>
         <highDate>31-12-2037 23:59:59.999</highDate>
         <dateParsePattern>dd-MM-yyyy ; dd/MM/yyyy</dateParsePattern>
         <dateTimeParsePattern>

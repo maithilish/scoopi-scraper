@@ -1,0 +1,39 @@
+locatorGroups:
+  
+  quoteGroup:   
+    locators: [
+       { name: quotes, url: "http://quotes.toscrape.com/scroll" }  
+    ]
+                                        
+taskGroups:
+
+  quoteGroup:
+    quoteTask:
+      dataDef: quote
+      steps: 
+        htmlUnitDefault:
+          loader:
+            class: "org.codetab.scoopi.step.extract.DomLoader"
+            previous: seeder 
+            next: parser
+            plugins: [
+              plugin: { 
+                name: script, 
+                class: "org.codetab.scoopi.plugin.script.DomScript",
+                script: "/devdefs/scroll/script.js",
+                entryPoint: "execute", }                            
+            ]
+                 
+dataDefs:
+
+  quote:           
+    query:
+      block: "//div/div[2]/div/div/div[%{item.index}]"
+      selector: "span[1]"            
+    items: [
+      item: { name: "quote", indexRange: 1-30, value: "quote"},      
+    ]
+    dims: [
+      item: { name: "by", selector: "span[2]/small" },
+      item: { name: "tags", selector: "div" },     
+    ]    

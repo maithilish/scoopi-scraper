@@ -9,7 +9,7 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.codetab.scoopi.step.extract.URLLoader;
+import org.codetab.scoopi.step.extract.PageLoader;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class TaskFactoryTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        clzName = "org.codetab.scoopi.step.extract.URLLoader";
+        clzName = "org.codetab.scoopi.step.extract.PageLoader";
     }
 
     @Test
@@ -46,10 +46,10 @@ public class TaskFactoryTest {
         String data = "data";
         Payload payload = mf.createPayload(jobInfo, stepInfo, data);
 
-        URLLoader step = Mockito.mock(URLLoader.class);
+        PageLoader step = Mockito.mock(PageLoader.class);
         Task task = Mockito.mock(Task.class);
 
-        given(dInjector.instance(URLLoader.class)).willReturn(step);
+        given(dInjector.instance(PageLoader.class)).willReturn(step);
         given(dInjector.instance(Task.class)).willReturn(task);
 
         Task actual = taskFactory.createTask(payload);
@@ -61,7 +61,7 @@ public class TaskFactoryTest {
 
     @Test
     public void testCreateTaskFromStep() {
-        URLLoader step = Mockito.mock(URLLoader.class);
+        PageLoader step = Mockito.mock(PageLoader.class);
         Task task = Mockito.mock(Task.class);
 
         given(dInjector.instance(Task.class)).willReturn(task);
@@ -75,8 +75,8 @@ public class TaskFactoryTest {
     @Test
     public void testGetStep() throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        URLLoader step = Mockito.mock(URLLoader.class);
-        given(dInjector.instance(URLLoader.class)).willReturn(step);
+        PageLoader step = Mockito.mock(PageLoader.class);
+        given(dInjector.instance(PageLoader.class)).willReturn(step);
 
         IStep actual = taskFactory.createStep(clzName);
 

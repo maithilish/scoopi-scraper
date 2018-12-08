@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.script.ScriptEngine;
 
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Plugin;
-import org.codetab.scoopi.plugin.script.IScript;
+import org.codetab.scoopi.plugin.script.ScriptExecutor;
 import org.codetab.scoopi.step.base.BaseScripter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public final class Scripter extends BaseScripter {
     @Inject
     private IPluginDef pluginDef;
     @Inject
-    private ScriptFactory scriptFactory;
+    private ScriptExecutor scriptExecutor;
 
     /**
      * Get list of converters defined and apply it to applicable axis of Data.
@@ -53,25 +52,9 @@ public final class Scripter extends BaseScripter {
             Optional<List<Plugin>> plugins =
                     pluginDef.getPlugins(taskGroup, taskName, stepName);
 
-            Object scriptInput = input;
             Object scriptOutput = input;
-
             if (plugins.isPresent()) {
-                for (Plugin plugin : plugins.get()) {
-                    ScriptEngine engine = null;
-                    try {
-                        engine = scriptFactory.getScriptEngine(plugin);
-                        IScript script =
-                                scriptFactory.createScript(engine, plugin);
-                        scriptOutput = script.execute(scriptInput);
-                        scriptInput = scriptOutput;
-                    } finally {
-                        // return the engine to pool
-                        if (nonNull(engine)) {
-                            scriptFactory.putScriptEngine(engine);
-                        }
-                    }
-                }
+                scriptOutput = scriptExecutor.execute(plugins.get(), input);
             }
             setOutput(scriptOutput);
             setConsistent(true);
@@ -80,5 +63,4 @@ public final class Scripter extends BaseScripter {
         }
         return true;
     }
-
 }

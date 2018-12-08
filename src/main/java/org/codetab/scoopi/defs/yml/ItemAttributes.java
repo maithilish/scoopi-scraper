@@ -157,4 +157,18 @@ class ItemAttributes {
         return map;
     }
 
+    public Map<String, Optional<List<String>>> getLinkBreakOnMap(
+            final JsonNode defs, final Map<String, JsonNode> itemMap) {
+
+        Map<String, Optional<List<String>>> map = new HashMap<>();
+
+        for (String key : itemMap.keySet()) {
+            JsonNode jItem = itemMap.get(key);
+            Optional<List<String>> linkBreakOn = Optional.ofNullable(
+                    jacksons.getArrayAsStrings(jItem, "linkBreakOn"));
+            map.put(key, linkBreakOn);
+        }
+        return map;
+    }
+
 }

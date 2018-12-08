@@ -15,7 +15,7 @@ import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.plugin.appender.Appender.Marker;
-import org.codetab.scoopi.pool.AppenderPoolService;
+import org.codetab.scoopi.step.pool.AppenderPoolService;
 import org.codetab.scoopi.system.ErrorLogger;
 
 @Singleton

@@ -1,4 +1,4 @@
-package org.codetab.scoopi.pool;
+package org.codetab.scoopi.step.pool;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;

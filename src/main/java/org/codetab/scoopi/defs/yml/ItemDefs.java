@@ -32,8 +32,6 @@ class ItemDefs {
     private ObjectFactory objectFactory;
     @Inject
     private ItemAttributes itemAttributes;
-    @Inject
-    private ItemAttributeFactory itemAttributeFactory;
 
     public Map<String, Query> getQueryMap(final JsonNode defs) {
 
@@ -183,6 +181,8 @@ class ItemDefs {
                 itemAttributes.getPrefixMap(defs, itemNodeMap);
         Map<String, Optional<String>> linkGroupMap =
                 itemAttributes.getLinkGroupMap(defs, itemNodeMap);
+        Map<String, Optional<List<String>>> linkBreakOnMap =
+                itemAttributes.getLinkBreakOnMap(defs, itemNodeMap);
 
         Map<String, ItemAttribute> map = new HashMap<>();
 
@@ -193,8 +193,12 @@ class ItemDefs {
             Optional<List<String>> prefix = prefixMap.get(key);
             Optional<List<Filter>> filter = filterMap.get(key);
             Optional<String> linkGroup = linkGroupMap.get(key);
-            ItemAttribute itemAttribute = itemAttributeFactory.create(key,
-                    query, indexRange, breakAfter, filter, prefix, linkGroup);
+            Optional<List<String>> linkBreakOn = linkBreakOnMap.get(key);
+            ItemAttribute itemAttribute = new ItemAttribute.Builder()
+                    .setKey(key).setQuery(query).setIndexRange(indexRange)
+                    .setBreakAfter(breakAfter).setPrefix(prefix)
+                    .setFilter(filter).setLinkGroup(linkGroup)
+                    .setLinkBreakOn(linkBreakOn).build();
             map.put(key, itemAttribute);
         }
         return map;

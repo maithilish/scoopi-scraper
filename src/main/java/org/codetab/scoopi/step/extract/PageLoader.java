@@ -24,13 +24,13 @@ import org.slf4j.LoggerFactory;
  * @author Maithilish
  *
  */
-public final class URLLoader extends BaseLoader {
+public final class PageLoader extends BaseLoader {
 
     /**
      * logger.
      */
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(URLLoader.class);
+            LoggerFactory.getLogger(PageLoader.class);
 
     /**
      * default timeout value in ms.
@@ -69,7 +69,7 @@ public final class URLLoader extends BaseLoader {
         if (protocol.equals("resource")) {
             LOGGER.info(marker, "fetch resource: {}", urlSpec);
             try {
-                URL fileURL = URLLoader.class.getResource(urlSpec);
+                URL fileURL = PageLoader.class.getResource(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
                 LOGGER.debug(marker, "fetched resource: {}", urlSpec);

@@ -1,4 +1,4 @@
-package org.codetab.scoopi.pool;
+package org.codetab.scoopi.step.pool;
 
 import static org.apache.commons.lang3.Validate.notNull;
 

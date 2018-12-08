@@ -26,7 +26,7 @@ import org.mockito.MockitoAnnotations;
 
 public class ConfigServiceTest {
 
-    private static final int DEFAULT_CONFIGS_COUNT = 31;
+    private static final int DEFAULT_CONFIGS_COUNT = 36;
 
     private static final int USER_CONFIGS_COUNT = 2;
 
@@ -273,6 +273,7 @@ public class ConfigServiceTest {
         assertThat(configService.useDataStore()).isTrue();
     }
 
+    // TODO test should fail when new configs are not tested
     @Test
     public void testDefaultConfigs() throws Exception {
         String userProvidedFile = "xyz";
@@ -310,7 +311,7 @@ public class ConfigServiceTest {
                 .isEqualTo("4");
         assertThat(defaultConfigs.getString("scoopi.poolsize.process"))
                 .isEqualTo("4");
-        assertThat(defaultConfigs.getString("scoopi.poolsize.converter"))
+        assertThat(defaultConfigs.getString("scoopi.poolsize.filter"))
                 .isEqualTo("4");
         assertThat(defaultConfigs.getString("scoopi.poolsize.appender"))
                 .isEqualTo("2");
@@ -322,6 +323,20 @@ public class ConfigServiceTest {
         assertThat(defaultConfigs.getString("scoopi.webClient.userAgent"))
                 .isEqualTo(
                         "Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0");
+
+        assertThat(defaultConfigs.getString("scoopi.webDriver.driverPath"))
+                .isEqualTo(".gecko/geckodriver");
+        assertThat(defaultConfigs.getString("scoopi.webDriver.log"))
+                .isEqualTo("geckodriver.log");
+        assertThat(defaultConfigs.getString("scoopi.webDriver.waitType"))
+                .isEqualTo("explicit");
+        assertThat(defaultConfigs
+                .getString("scoopi.webDriver.timeout.explicitWait"))
+                        .isEqualTo("10");
+        assertThat(defaultConfigs
+                .getString("scoopi.webDriver.timeout.implicitWait"))
+                        .isEqualTo("10");
+
         assertThat(defaultConfigs.getString("scoopi.highDate"))
                 .isEqualTo("31-12-2037 23:59:59.999");
 

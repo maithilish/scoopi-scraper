@@ -65,7 +65,7 @@ export class InMemoryDataService implements InMemoryDbService {
                 'Task.system.error': {
                     'count': 2
                 },
-                'URLLoader.fetch.web': {
+                'PageLoader.fetch.web': {
                     'count': 30
                 },
                 'ParserCache.parser.cache.hit': {
@@ -217,7 +217,7 @@ export class InMemoryDataService implements InMemoryDbService {
                     'duration_units': 'seconds',
                     'rate_units': 'calls/second'
                 },
-                'URLLoader.task.time': {
+                'PageLoader.task.time': {
                     'count': 474,
                     'max': 2.5054812920000002,
                     'mean': 0.7541652511767615,

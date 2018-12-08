@@ -11,68 +11,114 @@ import org.codetab.scoopi.model.Query;
 
 public class ItemAttribute {
 
-    private String key; // [dataDefName-itemName]
-    private Optional<Query> query;
-    private Range<Integer> indexRange;
-    private Optional<List<String>> prefix;
-    private Optional<List<String>> breakAfter;
-    private Optional<List<Filter>> filter;
-    private Optional<String> linkGroup;
+    private final String key; // [dataDefName-itemName]
+    private final Optional<Query> query;
+    private final Range<Integer> indexRange;
+    private final Optional<List<String>> prefix;
+    private final Optional<List<String>> breakAfter;
+    private final Optional<List<Filter>> filter;
+    private final Optional<String> linkGroup;
+    private final Optional<List<String>> linkBreakOn;
+
+    private ItemAttribute(final Builder builder) {
+        this.key = builder.aKey;
+        this.query = builder.aQuery;
+        this.indexRange = builder.aIndexRange;
+        this.prefix = builder.aPrefix;
+        this.breakAfter = builder.aBreakAfter;
+        this.filter = builder.aFilter;
+        this.linkGroup = builder.aLinkGroup;
+        this.linkBreakOn = builder.aLinkBreakOn;
+    }
 
     public String getKey() {
         return key;
-    }
-
-    public void setKey(final String key) {
-        this.key = key;
     }
 
     public Optional<Query> getQuery() {
         return query;
     }
 
-    public void setQuery(final Optional<Query> query) {
-        this.query = query;
-    }
-
     public Range<Integer> getIndexRange() {
         return indexRange;
-    }
-
-    public void setIndexRange(final Range<Integer> indexRange) {
-        this.indexRange = indexRange;
     }
 
     public Optional<List<String>> getPrefix() {
         return prefix;
     }
 
-    public void setPrefix(final Optional<List<String>> prefix) {
-        this.prefix = prefix;
-    }
-
     public Optional<List<String>> getBreakAfter() {
         return breakAfter;
-    }
-
-    public void setBreakAfter(final Optional<List<String>> breakAfter) {
-        this.breakAfter = breakAfter;
     }
 
     public Optional<List<Filter>> getFilter() {
         return filter;
     }
 
-    public void setFilter(final Optional<List<Filter>> filter) {
-        this.filter = filter;
-    }
-
     public Optional<String> getLinkGroup() {
         return linkGroup;
     }
 
-    public void setLinkGroup(final Optional<String> linkGroup) {
-        this.linkGroup = linkGroup;
+    public Optional<List<String>> getLinkBreakOn() {
+        return linkBreakOn;
+    }
+
+    public static class Builder {
+
+        // fields are prefixed with a to avoid cs hides field message
+        private String aKey;
+        private Optional<Query> aQuery;
+        private Range<Integer> aIndexRange;
+        private Optional<List<String>> aPrefix;
+        private Optional<List<String>> aBreakAfter;
+        private Optional<List<Filter>> aFilter;
+        private Optional<String> aLinkGroup;
+        private Optional<List<String>> aLinkBreakOn;
+
+        public Builder setKey(final String key) {
+            this.aKey = key;
+            return this;
+        }
+
+        public Builder setQuery(final Optional<Query> query) {
+            this.aQuery = query;
+            return this;
+        }
+
+        public Builder setIndexRange(final Range<Integer> indexRange) {
+            this.aIndexRange = indexRange;
+            return this;
+        }
+
+        public Builder setPrefix(final Optional<List<String>> prefix) {
+            this.aPrefix = prefix;
+            return this;
+        }
+
+        public Builder setBreakAfter(final Optional<List<String>> breakAfter) {
+            this.aBreakAfter = breakAfter;
+            return this;
+        }
+
+        public Builder setFilter(final Optional<List<Filter>> filter) {
+            this.aFilter = filter;
+            return this;
+        }
+
+        public Builder setLinkGroup(final Optional<String> linkGroup) {
+            this.aLinkGroup = linkGroup;
+            return this;
+        }
+
+        public Builder setLinkBreakOn(
+                final Optional<List<String>> linkBreakOn) {
+            this.aLinkBreakOn = linkBreakOn;
+            return this;
+        }
+
+        ItemAttribute build() {
+            return new ItemAttribute(this);
+        }
     }
 
     @Override
@@ -89,7 +135,8 @@ public class ItemAttribute {
     public String toString() {
         return "ItemAttribute [key=" + key + ", query=" + query
                 + ", indexRange=" + indexRange + ", prefix=" + prefix
-                + ", breakAfter=" + breakAfter + ", filter=" + filter + "]";
+                + ", breakAfter=" + breakAfter + ", filter=" + filter
+                + ", linkGroup=" + linkGroup + ", linkBreakOn=" + linkBreakOn
+                + "]";
     }
-
 }

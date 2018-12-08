@@ -127,4 +127,18 @@ public class ItemDef implements IItemDef {
         String key = dashit(dataDef, itemName);
         return itemAttributeMap.get(key).getLinkGroup();
     }
+
+    @Override
+    public Optional<List<String>> getLinkBreakOn(final String dataDef,
+            final String itemName) {
+        String key = dashit(dataDef, itemName);
+        Optional<List<String>> linkBreakOn =
+                itemAttributeMap.get(key).getLinkBreakOn();
+        if (linkBreakOn.isPresent()) {
+            List<String> copy = Collections.unmodifiableList(linkBreakOn.get());
+            linkBreakOn = Optional.ofNullable(copy);
+        }
+        return linkBreakOn;
+    }
+
 }
