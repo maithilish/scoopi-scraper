@@ -135,3 +135,5 @@ dnf
 openjdk
 fedora
 var
+analyze
+analyzer

@@ -2,6 +2,7 @@ package org.codetab.scoopi.step.parse.jsoup;
 
 import static java.util.Objects.isNull;
 import static org.codetab.scoopi.util.Util.LINE;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,11 +59,19 @@ public class NodeSelector {
                 taskInfo.getLabel(), subElements.size());
 
         for (Element element : subElements) {
+            String text = null;
             if (StringUtils.isBlank(attribute)) {
-                value = element.ownText();
+                text = element.ownText();
             } else {
                 // get attribute value by its key
-                value = element.attr(attribute);
+                text = element.attr(attribute);
+            }
+            if (StringUtils.isBlank(value)) {
+                value = text;
+            } else {
+                if (StringUtils.isNotBlank(text)) {
+                    value = spaceit(value, text);
+                }
             }
             traceElement(selector, element);
         }

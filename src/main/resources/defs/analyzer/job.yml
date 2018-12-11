@@ -1,0 +1,93 @@
+#  Scoopi Query Analyzer - fine tune your selector or xpath
+#
+#  set following fields before running the analyzer
+#
+#  - change url to the address against which you want to run queries
+#
+#  - for steps field in analyzeTask, select any one among following steps 
+#
+#      [ for regular web pages without any js or ajax ] 
+#
+#      to analyze selector:      jsoupQuery       
+#      to analyze xpath:         htmlUnitQuery
+#
+#      [ for web pages which loads DOM with js or ajax ]
+#
+#      to analyze selector:      jsoupDomQuery       
+#      to analyze xpath:         htmlUnitDomQuery 
+#
+#      !! to load DOM, additionaly you may add any essential Selenium 
+#         WebDriver commands in script.js found in this directory
+#
+#    Query Analyzer Tutorial: 
+#          http://www.codetab.org/scoopi-web-scaper/query-analyzer
+
+ 
+locatorGroups:
+  
+  analyzeGroup:   
+    locators: [
+       #{ name: quotes, url: "/defs/analyze/quote-1.html" }  
+       { name: quotes, url: "http://quotes.toscrape.com/scroll" }
+    ]
+ 
+taskGroups:
+  analyzeGroup:
+    analyzeTask:
+      dataDef: analyze
+      steps: jsoupDomQuery
+
+
+# no changes required after this
+    
+steps:
+  jsoupQuery:
+    jsoupDefault:          
+      parser:
+        class: "org.codetab.scoopi.step.parse.jsoup.QueryAnalyzer"
+        previous: loader
+        next: end
+
+  htmlUnitQuery:
+    htmlUnitDefault:          
+      parser:
+        class: "org.codetab.scoopi.step.parse.htmlunit.QueryAnalyzer"
+        previous: loader
+        next: end
+
+  jsoupDomQuery:
+    jsoupQuery:          
+      loader:
+        class: "org.codetab.scoopi.step.extract.DomLoader"
+        previous: seeder 
+        next: parser
+        plugins: [
+          plugin: { 
+            name: script, 
+            class: "org.codetab.scoopi.plugin.script.DomScript",
+            script: "/defs/analyzer/script.js",
+            entryPoint: "execute", }                            
+       ]
+          
+  htmlUnitDomQuery:
+    htmlUnitQuery:          
+      loader:
+        class: "org.codetab.scoopi.step.extract.DomLoader"
+        previous: seeder 
+        next: parser
+        plugins: [
+          plugin: { 
+            name: script, 
+            class: "org.codetab.scoopi.plugin.script.DomScript",
+            script: "/defs/analyze/script.js",
+            entryPoint: "execute", }                            
+       ]
+        
+dataDefs:
+  analyze:           
+    query:
+      block: "foo"
+      selector: "bar"                  
+    items: [
+      item: { name: "foo", value: "bar"},      
+    ]
