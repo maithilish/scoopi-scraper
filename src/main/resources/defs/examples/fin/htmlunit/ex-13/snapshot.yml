@@ -1,13 +1,13 @@
 locatorGroups:
 
-  quoteGroup:   
+  snapshotGroup:   
     locators: [
-       { name: acme, url: "/defs/examples/fin/page/acme-quote-links.html" }  
+       { name: acme, url: "/defs/examples/fin/page/acme-snapshot-links.html" }  
     ]
 
 taskGroups:
 
-  quoteGroup:    
+  snapshotGroup:    
     priceTask:
       dataDef: price
   

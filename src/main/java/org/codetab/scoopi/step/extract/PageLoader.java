@@ -133,14 +133,17 @@ public final class PageLoader extends BaseLoader {
      */
     private int getTimeout() {
         int timeout = TIMEOUT_MILLIS;
-        String key = "gotz.webClient.timeout";
+        String key = "scoopi.webClient.timeout";
         try {
             timeout = Integer.parseInt(configService.getConfig(key));
-        } catch (NumberFormatException | ConfigNotFoundException e) {
-            // TODO add activity or update config with default
+        } catch (ConfigNotFoundException e) {
             String message = spaceit("config not found:", key,
                     ", defaults to: ", String.valueOf(timeout), "millis");
             LOGGER.debug(marker, "{}, {}", e, message);
+        } catch (NumberFormatException e) {
+            String message = spaceit("config:", key, ", defaults to: ",
+                    String.valueOf(timeout), "millis");
+            LOGGER.error(marker, "{}, {}", e, message);
         }
         return timeout;
     }

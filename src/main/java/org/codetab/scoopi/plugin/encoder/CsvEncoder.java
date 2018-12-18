@@ -25,6 +25,7 @@ public class CsvEncoder implements IEncoder<List<String>> {
 
     private Plugin plugin;
 
+    // TODO add sort (also update document)
     @Override
     public List<String> encode(final Data data) {
 
@@ -34,8 +35,8 @@ public class CsvEncoder implements IEncoder<List<String>> {
         List<String> encodedData = new ArrayList<>();
 
         String delimiter = pluginDef.getValue(plugin, "delimiter", ",");
-        boolean outputTags =
-                Boolean.valueOf(pluginDef.getValue(plugin, "tags", "true"));
+        boolean inlcudeTags = Boolean
+                .valueOf(pluginDef.getValue(plugin, "includeTags", "false"));
 
         // encode and append data
         for (Item item : data.getItems()) {
@@ -43,8 +44,8 @@ public class CsvEncoder implements IEncoder<List<String>> {
             sb.append(taskInfo.getName());
             sb.append(delimiter);
             sb.append(taskInfo.getGroup());
-            sb.append(delimiter);
-            if (outputTags) {
+            if (inlcudeTags) {
+                sb.append(delimiter);
                 sb.append(item.getParent().getTagValue("page"));
                 sb.append(delimiter);
                 sb.append(item.getParent().getTagValue("index"));

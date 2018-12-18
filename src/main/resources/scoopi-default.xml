@@ -5,7 +5,7 @@
         <propertyPattern>scoopi/properties/property</propertyPattern>
 
         <defs>
-            <dir>/defs/examples/jsoup/ex-1</dir>
+            <dir>/defs/examples/fin/jsoup/quickstart</dir>
             <defaultStepsFile>/steps-default.yml</defaultStepsFile>
             <defaultSteps>jsoupDefault</defaultSteps>
             <definedSchema>/schema/defs-defined.json</definedSchema>

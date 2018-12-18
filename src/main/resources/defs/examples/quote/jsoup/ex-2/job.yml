@@ -19,7 +19,7 @@ taskGroups:
             plugins: [
               plugin: { 
                 name: script, 
-                class: "org.codetab.scoopi.plugin.script.DomScript",
+                class: "org.codetab.scoopi.plugin.script.BasicScript",
                 script: "/defs/examples/quote/jsoup/ex-2/script.js",
                 entryPoint: "execute", }                            
             ]

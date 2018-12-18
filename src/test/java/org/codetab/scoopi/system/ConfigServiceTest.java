@@ -289,7 +289,7 @@ public class ConfigServiceTest {
                 .isEqualTo("scoopi/properties/property");
 
         assertThat(defaultConfigs.getString("scoopi.defs.dir"))
-                .isEqualTo("/defs/examples/jsoup/ex-1");
+                .isEqualTo("/defs/examples/fin/jsoup/quickstart");
         assertThat(defaultConfigs.getString("scoopi.defs.defaultStepsFile"))
                 .isEqualTo("/steps-default.yml");
         assertThat(defaultConfigs.getString("scoopi.defs.defaultSteps"))
@@ -389,7 +389,7 @@ public class ConfigServiceTest {
         assertThat(userConfigs.size()).isEqualTo(USER_CONFIGS_COUNT);
 
         assertThat(userConfigs.getString("scoopi.defs.dir"))
-                .isEqualTo("/defs/examples/jsoup/ex-1");
+                .isEqualTo("/defs/examples/fin/jsoup/quickstart");
         assertThat(userConfigs.getString("scoopi.useDatastore"))
                 .isEqualTo("false");
     }

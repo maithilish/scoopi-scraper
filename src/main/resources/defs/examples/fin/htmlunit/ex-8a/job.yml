@@ -8,25 +8,23 @@ locatorGroups:
 taskGroups:
 
   bsGroup:
-
     bsTask:
       dataDef: bs
       steps:
         htmlUnitDefault:
-          converter:
-            class: "org.codetab.scoopi.step.process.DataConverter"
+          process:
+            class: "org.codetab.scoopi.step.script.Scripter"
             previous: filter
-            next: appender           
+            next: appender
             plugins: [
               plugin: { 
-                     name: dateConverter, 
-                     class: "org.codetab.scoopi.plugin.converter.DateRoller", 
-                     item: year, 
-                     inPattern: "MMM ''YY", 
-                     outPattern: "yyyy-MM-dd", 
-                     roll: "DAY_OF_MONTH=ceil" }            
-           ]
-      
+                name: script, 
+                class: "org.codetab.scoopi.plugin.script.BasicScript",
+                script: "/defs/examples/fin/htmlunit/ex-8a/script.js",
+                entryPoint: "execute",
+                scripts: [ "/defs/examples/fin/htmlunit/ex-8a/moment.min.js"] }            
+            ]
+        
 dataDefs:
   bs:
     query:

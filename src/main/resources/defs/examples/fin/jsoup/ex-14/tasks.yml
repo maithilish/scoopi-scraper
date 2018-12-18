@@ -1,6 +1,6 @@
 taskGroups:
 
-  quoteGroup:
+  snapshotGroup:
     
     priceTask:
       dataDef: price

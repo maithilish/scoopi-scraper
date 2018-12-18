@@ -18,8 +18,10 @@ dataDefs:
     items: [
       item: { name: "book", indexRange: 1-20, value: "book"},      
     ]
-    dims: [         
-      item: { name: "url", selector: "h3 > a attribute: href" },      
-      item: { name: "price", selector: "p[class='price_color']" },      
+    dims: [
+      item: { name: "url", selector: "h3 > a attribute: href" },
+      item: { name: "imgUrl", selector: "img attribute: src" },
+      item: { name: "price", selector: "p[class='price_color']" },
+      item: { name: "avail", selector: "p[class='instock availability']" },
       item: { name: "date", script: "document.getFromDate()" },
     ]

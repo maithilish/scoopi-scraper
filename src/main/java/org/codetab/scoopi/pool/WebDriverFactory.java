@@ -1,6 +1,7 @@
 package org.codetab.scoopi.pool;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,8 +25,12 @@ class WebDriverFactory extends BasePooledObjectFactory<WebDriver> {
     @Override
     public WebDriver create() throws Exception {
         String driverPath =
-                String.join(File.separator, System.getProperty("user.home"),
-                        configService.getConfig("scoopi.webDriver.driverPath"));
+                configService.getConfig("scoopi.webDriver.driverPath");
+        if (!Paths.get(driverPath).isAbsolute()) {
+            driverPath = String.join(File.separator,
+                    System.getProperty("user.home"), driverPath);
+        }
+
         String driverLogFile = String.join(File.separator,
                 System.getProperty("java.io.tmpdir"),
                 configService.getConfig("scoopi.webDriver.log"));

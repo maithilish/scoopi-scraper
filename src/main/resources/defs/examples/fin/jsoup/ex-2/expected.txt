@@ -1,10 +1,10 @@
-acme|quoteGroup|1|1|1|P/C|%{documentFromDate}|-
-acme|quoteGroup|1|1|1|FACE VALUE|%{documentFromDate}|1.00
-acme|quoteGroup|1|1|1|BOOK VALUE|%{documentFromDate}|27.89
-acme|quoteGroup|1|1|1|DIV (%)|%{documentFromDate}|850.00%
-acme|quoteGroup|1|1|1|PRICE/BOOK|%{documentFromDate}|11.29
-acme|quoteGroup|1|1|1|P/E|%{documentFromDate}|-
-acme|quoteGroup|1|1|1|INDUSTRY P/E|%{documentFromDate}|37.06
-acme|quoteGroup|1|1|1|MARKET CAP|%{documentFromDate}|382,642.57
-acme|quoteGroup|1|1|1|EPS (TTM)|%{documentFromDate}|-
-acme|quoteGroup|1|1|1|DIV YIELD|%{documentFromDate}|2.70%
+acme|snapshotGroup|P/C|%{documentFromDate}|-
+acme|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme|snapshotGroup|P/E|%{documentFromDate}|-
+acme|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%

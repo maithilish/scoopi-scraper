@@ -1,8 +1,8 @@
 locatorGroups:
 
-  quoteGroup:   
+  snapshotGroup:   
     locators: [
-       { name: acme, url: "/defs/examples/fin/page/acme-quote.html" }  
+       { name: acme, url: "/defs/examples/fin/page/acme-snapshot.html" }  
     ]
  
   bsGroup:   
@@ -13,7 +13,7 @@ locatorGroups:
 
 taskGroups:
 
-  quoteGroup:
+  snapshotGroup:
     priceTask:
       dataDef: price
   

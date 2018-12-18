@@ -205,11 +205,27 @@ Filter type = Exclude all.
 Applies to = File and Folders (check all children recursive)
 File and Folder Attributes: Project Relative Path matches src/main/web/scoopiw
 
+## Node.js and Angular
+
+On new machine install nodejs and angular cli
+
+    curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
+    yum install nodejs
+
+    npm install -g @angular/cli
+
+## Scoopi dashboard
+
+install modules
+
+	cd src/main/web/scoopiw
+	rm -rf node_modules
+	npm install
+
+
 ## Scoopi Metric
 
-Jetty server starts at port 9010 
-Angular app source is located at src/main/web/scoopiw dir. During dev, in memory
-datastore is used and in prod build, it fetches data from localhost:9010/api/metrics
+Jetty server starts at port 9010. Angular app source is located at src/main/web/scoopiw dir. During dev, in memory datastore is used and in prod build, it fetches data from localhost:9010/api/metrics
 
 mvn package, builds the angular app with 
  
@@ -306,6 +322,18 @@ to run scoopi.bat, get into window command prompt and run bat file
      wine cmd
      C:\scoopi-0.9.0-beta>scoopi.bat
 
+# Docker local build
+
+for io.fabric8:docker-maven-plugin prefix is docker
+
+list goals 
+
+     mvn docker:help
+     
+build image and add image to local image repository
+
+     mvn docker:build
+          
 # Github
 
 clone and create new project in workspace
@@ -324,17 +352,21 @@ travis maven and build steps
  - https://docs.travis-ci.com/user/languages/java/#Projects-Using-Maven
  - https://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Build-Step
      
-release
-     change version in pom.xml and commit
+Github release
+
+- change version in pom.xml and commit
           
      git tag <version>          // add local tag
      git push origin --tags
      
-  create new release in github and attach zip
+- create new release in github and attach zip
      
-docker hub
-     mvn clean verify docker:build
-     mvn docker:push           
+Docker image release
+
+- build an push image to docker hub
+
+      mvn clean verify docker:build
+      mvn docker:push           
 
 # Design and coding notes
 

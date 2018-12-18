@@ -1,1 +1,1 @@
-acme|quoteGroup|1|1|1|Price|%{runDateTime}|315.25
+acme|snapshotGroup|Price|%{runDateTime}|315.25

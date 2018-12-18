@@ -11,6 +11,8 @@ import net.jcip.annotations.GuardedBy;
 @Singleton
 public class Sequence {
 
+    // FIXME check page and item sequence
+
     @GuardedBy("this")
     private Map<String, AtomicInteger> seqs = new HashMap<>();
 

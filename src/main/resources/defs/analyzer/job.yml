@@ -27,15 +27,14 @@ locatorGroups:
   
   analyzeGroup:   
     locators: [
-       #{ name: quotes, url: "/defs/analyze/quote-1.html" }  
-       { name: quotes, url: "http://quotes.toscrape.com/scroll" }
+       { name: quotes, url: "/defs/examples/fin/page/acme-bs.html" }
     ]
  
 taskGroups:
   analyzeGroup:
     analyzeTask:
       dataDef: analyze
-      steps: jsoupDomQuery
+      steps: jsoupQuery
 
 
 # no changes required after this

@@ -7,7 +7,7 @@ import javax.script.ScriptEngine;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.model.Plugin;
 
-public class DomScript implements IScript {
+public class BasicScript implements IScript {
 
     private ScriptEngine scriptEngine;
     private Plugin plugin;

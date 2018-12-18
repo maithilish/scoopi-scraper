@@ -38,6 +38,8 @@ public class ITestBase {
     protected static MetricsHelper metricsHelper;
     protected static ConfigService configService;
 
+    // TODO add itests for books and quotes
+
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         daoUtil.deleteSchemaForClasses(schemaClasses);
@@ -105,7 +107,7 @@ public class ITestBase {
         map.put("runDateTime", runDateTime.toString());
 
         LocatorDao locatorDao = new LocatorDao(pmf);
-        Locator locator = locatorDao.getLocator("acme", "quoteGroup");
+        Locator locator = locatorDao.getLocator("acme", "snapshotGroup");
         if (locator != null) {
             Date fromDate = locator.getDocuments().get(0).getFromDate();
             map.put("documentFromDate", fromDate.toString());
