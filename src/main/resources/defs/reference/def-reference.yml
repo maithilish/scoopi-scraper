@@ -1,0 +1,99 @@
+locatorGroups:
+
+  # group name 
+  groupA:          
+    locators: [
+       { name: a1, url: "string" }  
+    ]
+
+  groupB:   
+    locators: [
+       { name: ba, url: "string" },
+       { name: bb, url: "string" }
+    ]
+
+taskGroups:
+
+  # group name should match with locator group
+  # one to one relation between locator groups and task groups
+  groupA:    
+    # task name
+    task1:
+      dataDef: dataDef1
+    
+    task2:
+      dataDef: dataDef3
+      steps:
+        jsoupDefault:
+          process:
+            class: "org.codetab.scoopi.step.process.LocatorCreator"
+            previous: parser
+            next: seeder
+
+  groupB:
+    task1:
+      dataDef: dataDef4
+      steps: fooSteps
+
+steps:
+  fooSteps:
+    jsoupDefault:
+      converter:
+        class: "step class"
+        previous: filter
+        next: appender           
+        plugins: [
+          plugin: { 
+            name: pluginA, 
+            class: "plugin class",             
+            # plugin properties            
+            property1: "value", 
+            xyz: "v" }            
+        ]
+        
+dataDefs:
+
+  dataDef1:            
+    query:
+      block: "selector or xpath"
+      selector: "selector or xpath"
+    items: [
+      item: { name: "x", match: "a" },
+      item: { name: "y", match: "b" },
+    ]  
+    dims: [ 
+      item: { name: "z", script: "script function" },
+    ]
+
+  dataDef2:
+    query:
+      block: "selector or xpath"      
+    items: [ 
+      item: { name: "bsLink", linkGroup: groupB, index: 2,
+              selector: "selector or xpath",
+              prefix: [ "prefix" ] },
+      item: { name: "plLink", linkGroup: groupA, index: 3,
+              selector: "selector or xpath",
+              prefix: [ "p1","p2" ] },              
+    ]
+
+  dataDef4:
+    query:
+      block: "selector or xpath"
+      selector: "selector or xpath"       
+    items:  
+      - item:
+          name: item
+          selector: "selector or xpath"                        
+          index: 5
+          breakAfter:
+            - "string"
+          filters:
+            - filter: { type: value, pattern: "string1" }
+            - filter: { type: value, pattern: "string2" }
+            
+    dims:  
+      - item:
+          name: year
+          selector: "selector or xpath"
+          indexRange: 2-6

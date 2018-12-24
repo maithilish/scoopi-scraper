@@ -219,8 +219,9 @@
     </dependencies>
 
     <profiles>
+        <!-- basic profile - no ng and docker builds -->
         <profile>
-            <id>production</id>
+            <id>basic</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -405,9 +406,10 @@
             </build>
         </profile>
 
-        <!-- disable local-build profile in travis-ci -->
+        <!-- release profile - ng and docker builds -->
+        <!-- for travis-ci, pass -P basic so that only basic is activated and release profile is disabled -->
         <profile>
-            <id>local-build</id>
+            <id>release</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

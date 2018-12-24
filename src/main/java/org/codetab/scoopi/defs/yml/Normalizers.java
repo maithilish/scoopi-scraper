@@ -48,14 +48,14 @@ class Normalizers {
         }
     }
 
-    public void addFact(final Entry<String, JsonNode> entry)
+    public void addFactsDim(final Entry<String, JsonNode> entry)
             throws IOException {
         JsonNode jDataDef = entry.getValue();
-        JsonNode jFact = jDataDef.findPath("fact");
+        JsonNode jFact = jDataDef.findPath("facts");
         if (jFact.isMissingNode()) {
             String factJson = jacksons.parseJson("[{item: {name: fact}}]");
-            JsonNode jFactDim = mapper.readTree(factJson);
-            ((ObjectNode) jDataDef).replace("fact", jFactDim);
+            JsonNode jFactsDim = mapper.readTree(factJson);
+            ((ObjectNode) jDataDef).replace("facts", jFactsDim);
         }
     }
 

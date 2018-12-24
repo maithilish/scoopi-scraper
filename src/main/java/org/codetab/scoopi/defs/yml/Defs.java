@@ -131,7 +131,7 @@ class Defs {
 
         JsonNode eDefs = defs.deepCopy();
         // !! don't change order of these methods !!
-        normalizer.addFactItem(eDefs);
+        normalizer.addFactsDim(eDefs);
         normalizer.addItemIndex(eDefs);
         normalizer.addItemOrder(eDefs);
         // defsNormalizer.addNoQuery(eDefs);

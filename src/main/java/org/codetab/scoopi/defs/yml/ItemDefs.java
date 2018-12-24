@@ -74,7 +74,7 @@ class ItemDefs {
     }
 
     public Map<String, List<Axis>> getFactAxisMap(final JsonNode defs) {
-        return getItemMap(defs, "fact", "fact");
+        return getItemMap(defs, "facts", "fact");
     }
 
     private Map<String, List<Axis>> getItemMap(final JsonNode defs,

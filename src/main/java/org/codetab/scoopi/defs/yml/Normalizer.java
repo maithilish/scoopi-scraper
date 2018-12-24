@@ -66,12 +66,12 @@ public class Normalizer {
      * @param defs
      * @throws IOException
      */
-    public void addFactItem(final JsonNode defs) throws IOException {
+    public void addFactsDim(final JsonNode defs) throws IOException {
         JsonNode dataDefs = defs.at("/dataDefs");
         Iterator<Entry<String, JsonNode>> entries = dataDefs.fields();
         while (entries.hasNext()) {
             Entry<String, JsonNode> entry = entries.next();
-            normalizers.addFact(entry);
+            normalizers.addFactsDim(entry);
         }
     }
 

@@ -56,20 +56,19 @@ public class Def implements IDef {
             if (isNull(defsFiles)) {
                 defsFiles = defs.getDefsFiles();
             }
+            // load defined defs and validate
             definedDefs = defs.loadDefinedDefs(defsFiles);
             JsonNode defaultSteps = defs.loadDefaultSteps();
             defs.mergeDefaultSteps(definedDefs, defaultSteps);
             LOGGER.debug("--- defined defs ---{}{}", LINE,
                     defs.pretty(definedDefs));
+            defs.validateDefinedDefs(definedDefs);
 
-            // FIXME enable validation
-            // defsHelper.validateDefinedDefs(definedDefs);
-
+            // create effective defs and validate
             effectiveDefs = defs.createEffectiveDefs(definedDefs);
             LOGGER.debug("--- effective defs ---{}{}", LINE,
                     defs.pretty(effectiveDefs));
-
-            // defsHelper.validateEffectiveDefs(effectiveDefs);
+            defs.validateEffectiveDefs(effectiveDefs);
         } catch (Exception e) {
             throw new CriticalException("unable to initialize defs", e);
         }
