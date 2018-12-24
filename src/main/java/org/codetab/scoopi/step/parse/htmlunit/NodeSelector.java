@@ -57,9 +57,13 @@ public class NodeSelector {
                 taskInfo.getLabel(), subElements.size());
 
         for (Object o : subElements) {
-            DomNode childNode = (DomNode) o;
-            value = childNode.getTextContent();
-            traceElement(selector, childNode);
+            if (o instanceof DomNode) {
+                value = ((DomNode) o).getTextContent();
+            }
+            if (o instanceof String) {
+                value = (String) o;
+            }
+            traceElement(selector, o);
         }
         return value;
     }
@@ -68,8 +72,13 @@ public class NodeSelector {
         if (!LOGGER.isTraceEnabled()) {
             return;
         }
-        DomNode node = (DomNode) element;
-        String trace = Util.strip(node.asXml(), outerLines);
+        String trace = null;
+        if (element instanceof DomNode) {
+            DomNode node = (DomNode) element;
+            trace = Util.strip(node.asXml(), outerLines);
+        } else {
+            trace = element.toString();
+        }
         LOGGER.trace(taskInfo.getMarker(), "selector: {}{}{}{}{}", selector,
                 LINE, LINE, Util.indent(trace, "  "), LINE);
     }

@@ -26,7 +26,8 @@ dataDefs:
       block: "//li[@class='next']"              
     items: [ 
       item: { name: "link",  selector: "a/@href", 
-        linkGroup: bookGroup, prefix: [ "/defs/examples/book/page/" ] },
+        linkGroup: bookGroup, prefix: [ "/defs/examples/book/page/" ],
+        linkBreakOn: [ "/defs/examples/book/page/page-3.html"] },
     ]
 
   bookData:           
@@ -41,7 +42,7 @@ dataDefs:
       item: { name: "imgUrl", selector: "div[1]/a/img/@src" },      
       item: { name: "price", selector: "div[2]/p[@class='price_color']" },
       item: { name: "avail", 
-        selector: "normalize-space(div[2]/p[@class='instock availability'])" },
+          selector: "normalize-space(div[2]/p[@class='instock availability'])" },
       item: { name: "date", script: "document.getFromDate()" },      
     ]
     

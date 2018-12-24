@@ -1,4 +1,4 @@
-package org.codetab.scoopi.itest;
+package org.codetab.scoopi.itest.fin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

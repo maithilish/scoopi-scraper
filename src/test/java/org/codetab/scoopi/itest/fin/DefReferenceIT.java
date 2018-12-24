@@ -1,4 +1,4 @@
-package org.codetab.scoopi.itest;
+package org.codetab.scoopi.itest.fin;
 
 import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.di.DInjector;

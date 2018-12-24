@@ -177,8 +177,7 @@ public abstract class BaseLoader extends Step {
          * use the active document else reset toDate to runDateTime - 1 and set
          * activeDocument to null so that new document is created
          */
-        Document activeDoc =
-                documentHelper.getActiveDocument(locator.getDocuments());
+        Document activeDoc = documentHelper.getActiveDocument(locator);
         if (nonNull(activeDoc)) {
             Date newToDate = documentHelper.getToDate(activeDoc.getFromDate(),
                     live, getJobInfo());

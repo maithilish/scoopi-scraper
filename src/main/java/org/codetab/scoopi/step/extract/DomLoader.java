@@ -28,6 +28,7 @@ public class DomLoader extends BaseLoader {
     @Inject
     private ScriptExecutor scriptExecutor;
 
+    // TODO WebDriver get local file and itest local quote files
     @Override
     public byte[] fetchDocumentObject(final String url) throws IOException {
         try {

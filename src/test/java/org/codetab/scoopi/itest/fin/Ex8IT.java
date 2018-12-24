@@ -1,4 +1,4 @@
-package org.codetab.scoopi.itest;
+package org.codetab.scoopi.itest.fin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,9 +8,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class Ex8aIT extends ITestBase {
+public class Ex8IT extends ITestBase {
 
-    private String exName = "ex-8a";
+    private String exName = "ex-8";
     private String exBase = "/defs/examples/fin";
 
     @Test

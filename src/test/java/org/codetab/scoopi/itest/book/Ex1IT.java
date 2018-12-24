@@ -1,4 +1,4 @@
-package org.codetab.scoopi.itest;
+package org.codetab.scoopi.itest.book;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,7 +11,7 @@ import org.junit.Test;
 public class Ex1IT extends ITestBase {
 
     private String exName = "ex-1";
-    private String exBase = "/defs/examples/fin";
+    private String exBase = "/defs/examples/book";
 
     @Test
     public void jsoupTest() throws FileNotFoundException, IOException {

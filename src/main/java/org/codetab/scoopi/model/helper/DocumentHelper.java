@@ -25,6 +25,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
+import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
@@ -90,17 +91,18 @@ public class DocumentHelper {
         return activeDocumentId;
     }
 
-    public Document getActiveDocument(final List<Document> documents) {
+    public Document getActiveDocument(final Locator locator) {
         validState(nonNull(configService), "configService is not set");
 
-        if (isNull(documents)) {
+        if (isNull(locator)) {
             return null;
         }
         Document activeDocument = null;
         Date runDateTime = configService.getRunDateTime();
-        for (Document document : documents) {
+        for (Document document : locator.getDocuments()) {
             // toDate > rundate
-            if (document.getToDate().compareTo(runDateTime) >= 0) {
+            if (document.getToDate().compareTo(runDateTime) >= 0
+                    && locator.getUrl().equals(document.getUrl())) {
                 activeDocument = document;
             }
         }

@@ -1,4 +1,4 @@
-package org.codetab.scoopi.itest;
+package org.codetab.scoopi.itest.fin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,8 +37,6 @@ public class ITestBase {
     protected static HashSet<String> schemaClasses;
     protected static MetricsHelper metricsHelper;
     protected static ConfigService configService;
-
-    // TODO add itests for books and quotes
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
