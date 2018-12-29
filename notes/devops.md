@@ -354,6 +354,8 @@ travis maven and build steps
      
 Github release
 
+- merge branch if any
+
 - change version in pom.xml and commit
           
      git tag <version>          // add local tag

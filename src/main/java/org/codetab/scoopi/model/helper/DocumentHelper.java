@@ -165,7 +165,7 @@ public class DocumentHelper {
      * @param fields
      *            list of fields, not null
      * @return a Date which is document expire date, not null
-     * @throws org.codetab.gotz.exception.FieldsParseException
+     * @throws org.codetab.scoopi.exception.FieldsParseException
      * @see java.time.Duration
      */
     public Date getToDate(final Date fromDate, final String live,
@@ -196,7 +196,7 @@ public class DocumentHelper {
             // if live is not Duration string then parse it as Date
             try {
                 String[] patterns =
-                        configService.getConfigArray("gotz.dateParsePattern"); //$NON-NLS-1$
+                        configService.getConfigArray("scoopi.dateParsePattern"); //$NON-NLS-1$
                 // multiple patterns so needs DateUtils
                 Date td = DateUtils.parseDateStrictly(documentlive, patterns);
                 toDate = ZonedDateTime.ofInstant(td.toInstant(),

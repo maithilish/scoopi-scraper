@@ -3,6 +3,7 @@ package org.codetab.scoopi.step.parse;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.codetab.scoopi.util.Util.LINE;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
+import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
@@ -41,9 +43,9 @@ public class ValueProcessor {
 
     public void setAxisValues(final String dataDef, final Item item,
             final Map<String, Integer> indexMap, final Indexer indexer,
-            final IValueParser valueParser)
-            throws ScriptException, IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
+            final IValueParser valueParser) throws ScriptException,
+            IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException, InvalidDefException {
         // as index of AxisName.FACT is zero, process in reverse so that
         // all other axis are processed before the fact
         for (Axis axis : item.getAxes()) {
@@ -51,6 +53,7 @@ public class ValueProcessor {
             // if (isNull(axis.getIndex())) {
             // }
         }
+
         for (Axis axis : item.getAxes()) {
             String axisName = axis.getAxisName();
             String itemName = axis.getItemName();
@@ -98,9 +101,18 @@ public class ValueProcessor {
                     } catch (NoSuchElementException e) {
                     }
                 }
-                if (nonNull(value)
-                        && breakAfter.check(dataDef, itemName, value)) {
-                    indexer.markBreakAfter(itemName);
+
+                Optional<List<String>> breakAfters =
+                        breakAfter.getBreakAfters(dataDef, itemName);
+                if (breakAfters.isPresent()) {
+                    if (isNull(value)) {
+                        throw new InvalidDefException(spaceit("axis:", axisName,
+                                "value is null, unable to apply breakAfter"));
+                    } else {
+                        if (breakAfter.check(breakAfters, value)) {
+                            indexer.markBreakAfter(itemName);
+                        }
+                    }
                 }
 
                 if (nonNull(value)) {
@@ -113,7 +125,6 @@ public class ValueProcessor {
                                 value);
                     }
                 }
-
                 axis.setValue(value);
             }
         }

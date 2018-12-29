@@ -18,6 +18,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataComponent;
@@ -63,6 +64,8 @@ public abstract class BaseParser extends Step {
      */
     private IValueParser valueParser;
 
+    private boolean parseData;
+
     @Override
     public boolean initialize() {
         validState(nonNull(getPayload()), "payload is null");
@@ -87,12 +90,16 @@ public abstract class BaseParser extends Step {
 
     @Override
     public boolean load() {
+        parseData = true;
         try {
             String dataDefName = getJobInfo().getDataDef();
             Long dataDefId = dataDefDef.getDataDefId(dataDefName);
             Long documentId = document.getId();
             if (nonNull(documentId) && nonNull(dataDefId)) {
                 data = dataPersistence.loadData(dataDefId, documentId);
+                if (nonNull(data)) {
+                    parseData = false;
+                }
             }
             return true;
         } catch (DataDefNotFoundException e) {
@@ -103,13 +110,15 @@ public abstract class BaseParser extends Step {
 
     @Override
     public boolean store() {
-        if (persist()) {
+        boolean persist = persist();
+        if (persist && parseData) {
             if (dataPersistence.storeData(data)) {
                 data = dataPersistence.loadData(data.getId());
                 setOutput(data);
                 LOGGER.debug(marker, getLabeled("data stored"));
             }
-        } else {
+        }
+        if (!persist) {
             LOGGER.debug(marker, getLabeled("persist false, data not stored"));
         }
         return true;
@@ -121,7 +130,8 @@ public abstract class BaseParser extends Step {
                 metricsHelper.getCounter(this, "data", "parse");
         Counter dataReuseCounter =
                 metricsHelper.getCounter(this, "data", "reuse");
-        if (data == null) {
+
+        if (parseData) {
             try {
                 LOGGER.debug(marker, "{}", getLabeled("parse data"));
                 String dataDefName = getJobInfo().getDataDef();
@@ -137,7 +147,7 @@ public abstract class BaseParser extends Step {
                 dataParseCounter.inc();
             } catch (IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException | DataDefNotFoundException
-                    | ScriptException e) {
+                    | ScriptException | InvalidDefException e) {
                 String message = "unable to parse data";
                 throw new StepRunException(message, e);
             }
@@ -159,9 +169,9 @@ public abstract class BaseParser extends Step {
         this.valueParser = valueParser;
     }
 
-    private void parse()
-            throws IllegalAccessException, InvocationTargetException,
-            NoSuchMethodException, DataDefNotFoundException, ScriptException {
+    private void parse() throws IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException,
+            DataDefNotFoundException, ScriptException, InvalidDefException {
 
         valueProcessor.addScriptObject("document", document);
         valueProcessor.addScriptObject("configs", configService);
@@ -176,6 +186,7 @@ public abstract class BaseParser extends Step {
             while (indexer.hasNext()) {
                 Item newItem = item.copy();
                 newItem.setParent(data);
+
                 Map<String, Integer> indexMap = indexer.next();
                 valueProcessor.setAxisValues(dataDefName, newItem, indexMap,
                         indexer, valueParser);

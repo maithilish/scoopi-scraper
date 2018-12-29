@@ -58,7 +58,7 @@ public final class PageLoader extends BaseLoader {
      *            URL string
      * @return byte[] document content fetched from web, file system or
      *         classpath
-     * @see org.codetab.gotz.step.base.BaseLoader#fetchDocumentObject(String)
+     * @see org.codetab.scoopi.step.base.BaseLoader#fetchDocumentObject(String)
      */
     @Override
     public byte[] fetchDocumentObject(final String urlSpec) throws IOException {
@@ -127,7 +127,7 @@ public final class PageLoader extends BaseLoader {
      * <p>
      * default value - 120000 ms
      * <p>
-     * configurable using config key - gotz.webClient.timeout
+     * configurable using config key - scoopi.webClient.timeout
      *
      * @return timeout value
      */
@@ -156,13 +156,13 @@ public final class PageLoader extends BaseLoader {
      * <p>
      * Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0
      * <p>
-     * configurable using config key - gotz.webClient.userAgent
+     * configurable using config key - scoopi.webClient.userAgent
      * @return user agent string
      */
     private String getUserAgent() {
         String userAgent =
                 "Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0"; //$NON-NLS-1$
-        String key = "gotz.webClient.userAgent";
+        String key = "scoopi.webClient.userAgent";
         try {
             userAgent = configService.getConfig(key);
         } catch (ConfigNotFoundException e) {

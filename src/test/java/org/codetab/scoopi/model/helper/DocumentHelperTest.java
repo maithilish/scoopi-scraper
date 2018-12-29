@@ -182,7 +182,7 @@ public class DocumentHelperTest {
         String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
         String live = "01-08-2017 11:00:00.000";
 
-        given(configService.getConfigArray("gotz.dateParsePattern"))
+        given(configService.getConfigArray("scoopi.dateParsePattern"))
                 .willReturn(parsePatterns);
         Date expected = DateUtils.parseDate(live, parsePatterns);
 
@@ -198,7 +198,7 @@ public class DocumentHelperTest {
         Date fromDate = new Date();
         String live = "01-xx-2017 11:00:00.000";
 
-        given(configService.getConfigArray("gotz.dateParsePattern"))
+        given(configService.getConfigArray("scoopi.dateParsePattern"))
                 .willReturn(parsePatterns);
 
         // when
@@ -212,7 +212,7 @@ public class DocumentHelperTest {
         Date fromDate = new Date();
         String live = "01-xx-2017 11:00:00.000";
 
-        given(configService.getConfigArray("gotz.dateParsePattern"))
+        given(configService.getConfigArray("scoopi.dateParsePattern"))
                 .willThrow(ConfigNotFoundException.class);
 
         // when

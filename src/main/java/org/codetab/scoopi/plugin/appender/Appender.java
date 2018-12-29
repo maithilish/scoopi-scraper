@@ -74,7 +74,7 @@ public abstract class Appender implements Runnable {
      * <p>
      * Initialises the blocking queue which is used to hold the objected pushed
      * to appender. By default, queue size is 4096 and it is configurable
-     * globally with gotz.appender.queuesize config. It is also possible to
+     * globally with scoopi.appender.queuesize config. It is also possible to
      * override global size and configure size for an appender by adding
      * queuesize field to appender definition.
      * <p>

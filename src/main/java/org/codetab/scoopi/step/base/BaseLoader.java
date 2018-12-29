@@ -75,7 +75,7 @@ public abstract class BaseLoader extends Step {
     /**
      * Creates log marker from locator name and group.
      * @return true
-     * @see org.codetab.gotz.step.IStep#initialize()
+     * @see org.codetab.scoopi.step.IStep#initialize()
      */
     @Override
     public boolean initialize() {
@@ -99,7 +99,7 @@ public abstract class BaseLoader extends Step {
      * locator found in db, then input locator with its fields is used.
      *
      * @return true
-     * @see org.codetab.gotz.step.IStep#load()
+     * @see org.codetab.scoopi.step.IStep#load()
      */
     @Override
     public boolean load() {
@@ -157,7 +157,7 @@ public abstract class BaseLoader extends Step {
      * @return true
      * @throws StepRunException
      *             if error when fetch document content or compressing it
-     * @see org.codetab.gotz.step.IStep#process()
+     * @see org.codetab.scoopi.step.IStep#process()
      */
     @Override
     public boolean process() {
@@ -246,7 +246,7 @@ public abstract class BaseLoader extends Step {
      * @return true;
      * @throws StepRunException
      *             if error when persist.
-     * @see org.codetab.gotz.step.IStep#store()
+     * @see org.codetab.scoopi.step.IStep#store()
      */
     @Override
     public boolean store() {

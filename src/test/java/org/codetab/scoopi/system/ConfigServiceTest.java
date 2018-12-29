@@ -340,8 +340,7 @@ public class ConfigServiceTest {
         assertThat(defaultConfigs.getString("scoopi.highDate"))
                 .isEqualTo("31-12-2037 23:59:59.999");
 
-        assertThat(defaultConfigs.getString("scoopi.waitForHeapDump"))
-                .isEqualTo("false");
+        assertThat(defaultConfigs.getString("scoopi.wait")).isEqualTo("false");
         assertThat(defaultConfigs.getString("scoopi.fork.locator"))
                 .isEqualTo("0");
 

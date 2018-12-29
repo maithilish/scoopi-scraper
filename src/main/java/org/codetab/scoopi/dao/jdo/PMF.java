@@ -24,7 +24,7 @@ import net.jcip.annotations.ThreadSafe;
  * <p>
  * Singleton which provides JDO PersistenceManagerFactory to DAO layer.
  * Initialize JDO PersistenceManagerFactory from properties file specified by
- * config property gotz.datastore.configFile.
+ * config property scoopi.datastore.configFile.
  * @author Maithilish
  *
  */
@@ -80,11 +80,11 @@ public class PMF {
     /**
      * <p>
      * Initialize JDO PersistenceManagerFactory from properties file specified
-     * by config property gotz.datastore.configFile.
+     * by config property scoopi.datastore.configFile.
      * @throws CriticalException
-     *             if gotz.datastore.configFile config not found or if unable to
-     *             read properties file or unable to create persistence manager
-     *             factory
+     *             if scoopi.datastore.configFile config not found or if unable
+     *             to read properties file or unable to create persistence
+     *             manager factory
      */
     public synchronized void init() {
         if (factory == null) {
