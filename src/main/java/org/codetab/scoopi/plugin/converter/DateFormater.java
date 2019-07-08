@@ -40,11 +40,13 @@ public class DateFormater implements IConverter {
             throws ParseException, DefNotFoundException {
         notNull(input, "input must not be null");
 
-        String patternIn = pluginDef.getValue(plugin, "patternIn");
-        String patternOut = pluginDef.getValue(plugin, "patternOut");
+        // TODO optimise: add PluginCache and get value from it
+        String inPattern = pluginDef.getValue(plugin, "inPattern");
+        String[] inPatterns = inPattern.split("\\|");
+        String outPattern = pluginDef.getValue(plugin, "outPattern");
 
-        Date date = DateUtils.parseDate(input, patternIn);
-        return DateFormatUtils.format(date, patternOut);
+        Date date = DateUtils.parseDate(input, inPatterns);
+        return DateFormatUtils.format(date, outPattern);
     }
 
     @Override

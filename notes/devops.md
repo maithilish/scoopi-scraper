@@ -40,11 +40,11 @@ generate coverage report
 only tests
       
       mvn clean test jacoco:report
-      	or    
-      mvn clean verify      
+      	or
+      mvn clean verify
 include itest
                           
-      mvn clean verify jacoco:report  
+      mvn clean verify jacoco:report
 
 find selector
 
@@ -54,7 +54,7 @@ find selector
 selector example
 
      mvn exec:java -Dexec.mainClass="org.codetab.scoopi.util.FindSelector"
-   -Dexec.args="src/main/resources/devdefs/mc/parse-locator-file/itc-quote.html 'div#mktdet_2 div:matchesOwn(^P/E$)' "        
+   -Dexec.args="src/main/resources/devdefs/mc/parse-locator-file/itc-quote.html 'div#mktdet_2 div:matchesOwn(^P/E$)' "
 
 generate JavaDoc
 
@@ -97,7 +97,7 @@ for context help, install JavaDoc and sources.
     dnf install java-1.8.0-openjdk-javadoc
     dnf install java-1.8.0-openjdk-src
 
-- in Fedora, source src.zip is installed under /usr/lib/jvm/jdk<xxx>/  
+- in Fedora, source src.zip is installed under /usr/lib/jvm/jdk<xxx>/
 
 - use alternatives to find location of JavaDoc  `alternatives --list`
 
@@ -111,11 +111,15 @@ to know src.zip location use
 
     rpm -ql java-1.8.0-openjdk-src
 
+ubuntu
+javadoc - url - file:///usr/share/doc/openjdk-8-jre-headless/api
+source - external location - /usr/lib/jvm/java-8-openjdk-amd64/src.zip
+
 #### add imports
 
 For static import of AssertJ and Mockito go to, _Static import - Preference -> Java -> Editor -> Content Assist -> Favorites_ and add New Types
 
-    org.mockito.Mockito    
+    org.mockito.Mockito
     org.mockito.BDDMockito
     org.mockito.Matchers
     org.mockito.ArgumentMatchers
@@ -354,21 +358,25 @@ travis maven and build steps
      
 Github release
 
-- merge branch if any
+merge branch if any
 
-- change version in pom.xml and commit
+change version in pom.xml and commit
           
      git tag <version>          // add local tag
      git push origin --tags
      
-- create new release in github and attach zip
+create new release in github and attach zip
      
 Docker image release
 
-- build an push image to docker hub
+build image
 
       mvn clean verify docker:build
-      mvn docker:push           
+
+push image
+
+      docker login            // one time
+      mvn docker:push
 
 # Design and coding notes
 
@@ -394,7 +402,7 @@ Validate param for null or illegal argument (not required for private methods). 
   - use @see to link any project classes and also for java or external classes and methods
     - @see in text creates inline link
     - if used after tags (param,return) then added in See also section
-  - use @throws both for checked and unchecked exception.  
+  - use @throws both for checked and unchecked exception.
   - In method signature, add only the checked exceptions. Mention unchecked exceptions in JavaDoc with @throws
 
 #### Tricky errors

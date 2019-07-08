@@ -137,3 +137,6 @@ fedora
 var
 analyze
 analyzer
+replicator
+replictor
+closeable
