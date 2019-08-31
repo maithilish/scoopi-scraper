@@ -24,6 +24,6 @@ Libraries such as JSoup and HtmlUnit makes it quite easy to scrape web pages in 
 
 ## Scoopi Installation
 
-To install and run Scoopi see [CodeTab Scoopi Guide](https://www.codetab.org/tutorial/scoopi-web-scraper/introduction/>. 
+To install and run Scoopi refer <a href="https://www.codetab.org/tutorial/scoopi-web-scraper/introduction/">Quickstart and Guide</a>.
 
 
