@@ -23,7 +23,7 @@
         <guice.version>4.2.0</guice.version>
         <hsqldb.version>2.4.1</hsqldb.version>
         <htmlunit.version>2.31</htmlunit.version>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.10.0</jackson.version>
         <jaxb-xjc.version>2.3.0.1</jaxb-xjc.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
         <jetty.version>9.4.8.v20180619</jetty.version>
