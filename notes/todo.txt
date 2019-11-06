@@ -1,0 +1,4 @@
+add defs/analyzer folder to distribution
+link based on match
+	in dataDef finLink when match is used in item selector,
+        match is assigned to URL and no proper error in tasklog 

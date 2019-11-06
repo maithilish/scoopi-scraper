@@ -140,3 +140,4 @@ analyzer
 replicator
 replictor
 closeable
+callables

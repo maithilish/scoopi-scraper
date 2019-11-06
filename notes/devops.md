@@ -34,6 +34,12 @@ run tests and Integration tests
 skip tests and run integration tests (itests)
 
     mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P production
+    
+run single itest
+
+	mvn test -Dtest=HttpHelperIT.java -P production
+		or
+	mvn integration-test -Dtest=HttpHelperIT.java -P production    
 
 generate coverage report
 
@@ -42,6 +48,7 @@ only tests
       mvn clean test jacoco:report
       	or
       mvn clean verify
+
 include itest
                           
       mvn clean verify jacoco:report
@@ -69,18 +76,9 @@ download JavaDoc and source
     mvn dependency:resolve -Dclassifier=JavaDoc
     mvn dependency:sources
     
-## Docker Mariadb DB 
+## Services for Integration Test 
 
-Mariadb docker container is used for dev and integration tests. Unit tests doesn't require db. 
- 
-    $ cd src/main/db
-    $ docker-compose up 
-
-This creates three databases, scoopidev, scoopitest and scoopi with required user and privileges. The scoopi database is used to test the release and it is not for production as container data is deleted on shutdown.
-
-To login, use
-
-    $ mysql -p -u foo -h 127.0.0.1 -P 3306 scoopidev
+Docker compose file for services required for itest is located at src/test/itestresources. See readme.txt for details.
  
 ## Eclipse setup
 
@@ -209,6 +207,11 @@ Filter type = Exclude all.
 Applies to = File and Folders (check all children recursive)
 File and Folder Attributes: Project Relative Path matches src/main/web/scoopiw
 
+#### Shorten Package Name
+
+ Preferences > Java > Appearance
+ Abbreviate Package Names: org.codetab.scoopi=s
+ 
 ## Node.js and Angular
 
 On new machine install nodejs and angular cli

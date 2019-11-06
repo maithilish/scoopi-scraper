@@ -34,10 +34,10 @@ public abstract class Appender implements Runnable {
      *
      */
     public enum Marker {
-    /**
-     * End of input.
-     */
-    EOF
+        /**
+         * End of input.
+         */
+        EOF
     }
 
     private static final Logger LOGGER =

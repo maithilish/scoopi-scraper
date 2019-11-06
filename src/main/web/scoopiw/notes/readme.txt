@@ -1,3 +1,12 @@
+Install node, npm and angular
+-----------------------------
+
+# sudo apt install nodejs
+# sudo apt install npm
+# sudo npm install -g @angular/cli@6.0.5
+
+# ng version
+
 Angular CLI: 6.0.5
 Node: 10.1.0
 OS: linux x64
