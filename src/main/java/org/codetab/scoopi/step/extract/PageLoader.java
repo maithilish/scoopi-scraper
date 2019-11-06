@@ -3,16 +3,15 @@ package org.codetab.scoopi.step.extract;
 import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
-import org.codetab.scoopi.helper.URLConnectionHelper;
+import org.codetab.scoopi.helper.HttpHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.step.base.BaseLoader;
+import org.codetab.scoopi.system.ConfigHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +32,14 @@ public final class PageLoader extends BaseLoader {
             LoggerFactory.getLogger(PageLoader.class);
 
     /**
-     * default timeout value in ms.
-     */
-    private static final int TIMEOUT_MILLIS = 120000;
-
-    /**
      * Helper to handle URLConnection.
      */
     @Inject
-    private URLConnectionHelper ucHelper;
+    private HttpHelper httpHelper;
     @Inject
     private MetricsHelper metricsHelper;
+    @Inject
+    private ConfigHelper configHelper;
 
     /**
      * Fetch document content from web, file system or classpath using the URL
@@ -65,7 +61,7 @@ public final class PageLoader extends BaseLoader {
         // TODO charset encoding
         byte[] bytes = null;
 
-        String protocol = ucHelper.getProtocol(urlSpec);
+        String protocol = httpHelper.getProtocol(urlSpec);
         if (protocol.equals("resource")) {
             LOGGER.info(marker, "fetch resource: {}", urlSpec);
             try {
@@ -94,24 +90,14 @@ public final class PageLoader extends BaseLoader {
 
         if (protocol.equals("http") || protocol.equals("https")) {
 
-            String urlSpecEscaped = ucHelper.escapeUrl(urlSpec);
+            int timeout = configHelper.getTimeout();
+            String userAgent = configHelper.getUserAgent();
+
+            String urlSpecEscaped = httpHelper.escapeUrl(urlSpec);
             LOGGER.info(marker, "fetch web resource: {}", urlSpecEscaped);
 
-            HttpURLConnection uc = (HttpURLConnection) ucHelper
-                    .getURLConnection(urlSpecEscaped);
-            int timeout = getTimeout();
-            uc.setConnectTimeout(timeout);
-            uc.setReadTimeout(timeout);
-            ucHelper.setRequestProperty(uc, "User-Agent", getUserAgent());
+            bytes = httpHelper.getContent(urlSpecEscaped, userAgent, timeout);
 
-            uc.connect();
-            int respCode = uc.getResponseCode();
-            if (respCode != HttpURLConnection.HTTP_OK) {
-                throw new IOException(spaceit(
-                        "HTTP response:" + respCode + ", URL:", urlSpec));
-            }
-
-            bytes = ucHelper.getContent(uc);
             metricsHelper.getCounter(this, "fetch", "web").inc();
             LOGGER.debug(marker, "fetched: {}, length: {}", urlSpecEscaped,
                     bytes.length);
@@ -119,58 +105,6 @@ public final class PageLoader extends BaseLoader {
         }
 
         throw new IOException(spaceit("unknown protocol:", urlSpec));
-    }
-
-    /**
-     * <p>
-     * Timeout value (in ms) for connection and read time out.
-     * <p>
-     * default value - 120000 ms
-     * <p>
-     * configurable using config key - scoopi.webClient.timeout
-     *
-     * @return timeout value
-     */
-    private int getTimeout() {
-        int timeout = TIMEOUT_MILLIS;
-        String key = "scoopi.webClient.timeout";
-        try {
-            timeout = Integer.parseInt(configService.getConfig(key));
-        } catch (ConfigNotFoundException e) {
-            String message = spaceit("config not found:", key,
-                    ", defaults to: ", String.valueOf(timeout), "millis");
-            LOGGER.debug(marker, "{}, {}", e, message);
-        } catch (NumberFormatException e) {
-            String message = spaceit("config:", key, ", defaults to: ",
-                    String.valueOf(timeout), "millis");
-            LOGGER.error(marker, "{}, {}", e, message);
-        }
-        return timeout;
-    }
-
-    /**
-     * <p>
-     * User Agent string used for request.
-     * <p>
-     * default value
-     * <p>
-     * Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0
-     * <p>
-     * configurable using config key - scoopi.webClient.userAgent
-     * @return user agent string
-     */
-    private String getUserAgent() {
-        String userAgent =
-                "Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0"; //$NON-NLS-1$
-        String key = "scoopi.webClient.userAgent";
-        try {
-            userAgent = configService.getConfig(key);
-        } catch (ConfigNotFoundException e) {
-            String message = spaceit("config not found:", key,
-                    ", defaults to: ", userAgent);
-            LOGGER.debug(marker, "{}, {}", e, message);
-        }
-        return userAgent;
     }
 
 }
