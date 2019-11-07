@@ -292,6 +292,15 @@ public class ConfigService {
     }
 
     /**
+     * This method returns boolean for a key and if not found then false;
+     * @param configKey
+     * @return
+     */
+    public boolean isTrue(final String configKey) {
+        return configs.getBoolean(configKey, false);
+    }
+
+    /**
      *
      * <p>
      * Return value for the key scoopi.useDatastore

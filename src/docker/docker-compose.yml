@@ -1,7 +1,7 @@
 version: "3"
 services:
   scoopi-db:
-      image: mariadb:latest
+      image: mariadb:10.3
       container_name: scoopi-db
       command: 
           --log_warnings=1

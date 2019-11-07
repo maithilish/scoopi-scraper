@@ -1,8 +1,8 @@
-acme|bsGroup|Sources Of Funds|Dec '16|
-acme|bsGroup|Sources Of Funds|Dec '15|
-acme|bsGroup|Sources Of Funds|Dec '14|
-acme|bsGroup|Sources Of Funds|Dec '13|
-acme|bsGroup|Sources Of Funds|Dec '12|null
+acme|bsGroup|Sources Of Funds|Dec '16|-
+acme|bsGroup|Sources Of Funds|Dec '15|-
+acme|bsGroup|Sources Of Funds|Dec '14|-
+acme|bsGroup|Sources Of Funds|Dec '13|-
+acme|bsGroup|Sources Of Funds|Dec '12|-
 acme|bsGroup|Total Share Capital|Dec '16|804.72
 acme|bsGroup|Total Share Capital|Dec '15|801.55
 acme|bsGroup|Total Share Capital|Dec '14|795.32
@@ -48,26 +48,26 @@ acme|bsGroup||Dec '15|Dec '15
 acme|bsGroup||Dec '14|Dec '14
 acme|bsGroup||Dec '13|Dec '13
 acme|bsGroup||Dec '12|Dec '12
-acme|bsGroup||Dec '16|null
-acme|bsGroup||Dec '15|null
-acme|bsGroup||Dec '14|null
-acme|bsGroup||Dec '13|null
-acme|bsGroup||Dec '12|null
+acme|bsGroup||Dec '16|-
+acme|bsGroup||Dec '15|-
+acme|bsGroup||Dec '14|-
+acme|bsGroup||Dec '13|-
+acme|bsGroup||Dec '12|-
 acme|bsGroup||Dec '16|12 mths
 acme|bsGroup||Dec '15|12 mths
 acme|bsGroup||Dec '14|12 mths
 acme|bsGroup||Dec '13|12 mths
 acme|bsGroup||Dec '12|12 mths
-acme|bsGroup||Dec '16|null
-acme|bsGroup||Dec '15|null
-acme|bsGroup||Dec '14|null
-acme|bsGroup||Dec '13|null
-acme|bsGroup||Dec '12|null
-acme|bsGroup|Application Of Funds|Dec '16|
-acme|bsGroup|Application Of Funds|Dec '15|
-acme|bsGroup|Application Of Funds|Dec '14|
-acme|bsGroup|Application Of Funds|Dec '13|
-acme|bsGroup|Application Of Funds|Dec '12|null
+acme|bsGroup||Dec '16|-
+acme|bsGroup||Dec '15|-
+acme|bsGroup||Dec '14|-
+acme|bsGroup||Dec '13|-
+acme|bsGroup||Dec '12|-
+acme|bsGroup|Application Of Funds|Dec '16|-
+acme|bsGroup|Application Of Funds|Dec '15|-
+acme|bsGroup|Application Of Funds|Dec '14|-
+acme|bsGroup|Application Of Funds|Dec '13|-
+acme|bsGroup|Application Of Funds|Dec '12|-
 acme|bsGroup|Gross Block|Dec '16|22,256.11
 acme|bsGroup|Gross Block|Dec '15|21,392.12
 acme|bsGroup|Gross Block|Dec '14|18,239.65
@@ -153,11 +153,11 @@ acme|bsGroup|Total Assets|Dec '15|30,721.99
 acme|bsGroup|Total Assets|Dec '14|26,260.75
 acme|bsGroup|Total Assets|Dec '13|22,301.50
 acme|bsGroup|Total Assets|Dec '12|18,817.93
-acme|bsGroup||Dec '16|null
-acme|bsGroup||Dec '15|null
-acme|bsGroup||Dec '14|null
-acme|bsGroup||Dec '13|null
-acme|bsGroup||Dec '12|null
+acme|bsGroup||Dec '16|-
+acme|bsGroup||Dec '15|-
+acme|bsGroup||Dec '14|-
+acme|bsGroup||Dec '13|-
+acme|bsGroup||Dec '12|-
 acme|bsGroup|Contingent Liabilities|Dec '16|2,648.78
 acme|bsGroup|Contingent Liabilities|Dec '15|1,864.99
 acme|bsGroup|Contingent Liabilities|Dec '14|1,916.00

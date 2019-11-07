@@ -15,10 +15,13 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
+import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
+import org.codetab.scoopi.system.ConfigService;
+import org.seleniumhq.jetty9.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +41,8 @@ public class ValueProcessor {
     private BreakAfter breakAfter;
     @Inject
     private TaskInfo taskInfo;
+    @Inject
+    private ConfigService configService;
 
     private Map<String, Object> scriptObjectMap;
 
@@ -46,6 +51,14 @@ public class ValueProcessor {
             final IValueParser valueParser) throws ScriptException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException, InvalidDefException {
+
+        boolean replaceBlank = configService.isTrue("scoopi.fact.replaceBlank");
+        String replaceWith = "-";
+        try {
+            replaceWith = configService.getConfig("scoopi.fact.replaceWith");
+        } catch (ConfigNotFoundException e) {
+        }
+
         // as index of AxisName.FACT is zero, process in reverse so that
         // all other axis are processed before the fact
         for (Axis axis : item.getAxes()) {
@@ -123,6 +136,12 @@ public class ValueProcessor {
                                 prefixes.get());
                         LOGGER.trace(taskInfo.getMarker(), "prefixed value: {}",
                                 value);
+                    }
+                }
+
+                if (axisName.equals("fact") && StringUtil.isBlank(value)) {
+                    if (replaceBlank) {
+                        value = replaceWith;
                     }
                 }
                 axis.setValue(value);

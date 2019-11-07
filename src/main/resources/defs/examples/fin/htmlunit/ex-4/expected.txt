@@ -38,31 +38,31 @@ acme|bsGroup|Total Liabilities|Dec '15|30,721.99
 acme|bsGroup|Total Liabilities|Dec '14|26,260.75
 acme|bsGroup|Total Liabilities|Dec '13|22,301.50
 acme|bsGroup|Total Liabilities|Dec '12|18,817.93
-acme|bsGroup||Dec '16|
-acme|bsGroup||Dec '15|
-acme|bsGroup||Dec '14|
+acme|bsGroup||Dec '16|-
+acme|bsGroup||Dec '15|-
+acme|bsGroup||Dec '14|-
 acme|bsGroup||Dec '13|12 mths
 acme|bsGroup||Dec '12|12 mths
-acme|bsGroup||Dec '16|
-acme|bsGroup||Dec '15|
-acme|bsGroup||Dec '14|
+acme|bsGroup||Dec '16|-
+acme|bsGroup||Dec '15|-
+acme|bsGroup||Dec '14|-
 acme|bsGroup||Dec '13|12 mths
 acme|bsGroup||Dec '12|12 mths
-acme|bsGroup||Dec '16|
-acme|bsGroup||Dec '15|
-acme|bsGroup||Dec '14|
+acme|bsGroup||Dec '16|-
+acme|bsGroup||Dec '15|-
+acme|bsGroup||Dec '14|-
 acme|bsGroup||Dec '13|12 mths
 acme|bsGroup||Dec '12|12 mths
-acme|bsGroup||Dec '16|
-acme|bsGroup||Dec '15|
-acme|bsGroup||Dec '14|
+acme|bsGroup||Dec '16|-
+acme|bsGroup||Dec '15|-
+acme|bsGroup||Dec '14|-
 acme|bsGroup||Dec '13|12 mths
 acme|bsGroup||Dec '12|12 mths
-acme|bsGroup|Application Of Funds|Dec '16|
-acme|bsGroup|Application Of Funds|Dec '15|
-acme|bsGroup|Application Of Funds|Dec '14|
-acme|bsGroup|Application Of Funds|Dec '13|
-acme|bsGroup|Application Of Funds|Dec '12|null
+acme|bsGroup|Application Of Funds|Dec '16|-
+acme|bsGroup|Application Of Funds|Dec '15|-
+acme|bsGroup|Application Of Funds|Dec '14|-
+acme|bsGroup|Application Of Funds|Dec '13|-
+acme|bsGroup|Application Of Funds|Dec '12|-
 acme|bsGroup|Gross Block|Dec '16|22,256.11
 acme|bsGroup|Gross Block|Dec '15|21,392.12
 acme|bsGroup|Gross Block|Dec '14|18,239.65
@@ -148,9 +148,9 @@ acme|bsGroup|Total Assets|Dec '15|30,721.99
 acme|bsGroup|Total Assets|Dec '14|26,260.75
 acme|bsGroup|Total Assets|Dec '13|22,301.50
 acme|bsGroup|Total Assets|Dec '12|18,817.93
-acme|bsGroup||Dec '16|
-acme|bsGroup||Dec '15|
-acme|bsGroup||Dec '14|
+acme|bsGroup||Dec '16|-
+acme|bsGroup||Dec '15|-
+acme|bsGroup||Dec '14|-
 acme|bsGroup||Dec '13|12 mths
 acme|bsGroup||Dec '12|12 mths
 acme|bsGroup|Contingent Liabilities|Dec '16|2,648.78

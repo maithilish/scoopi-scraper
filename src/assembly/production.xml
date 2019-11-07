@@ -61,12 +61,13 @@
             </includes>
         </fileSet>
 
-        <!-- copy examples -->
+        <!-- copy examples and analyzer defs-->
         <fileSet>
             <directory>${project.build.directory}/classes</directory>
             <outputDirectory>${file.separator}</outputDirectory>
             <includes>
                 <include>defs/examples/**</include>
+                <include>defs/analyzer/**</include>
             </includes>
         </fileSet>
     </fileSets>

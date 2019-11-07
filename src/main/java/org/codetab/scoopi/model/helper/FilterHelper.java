@@ -1,6 +1,5 @@
 package org.codetab.scoopi.model.helper;
 
-import static java.util.Objects.isNull;
 import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.List;
@@ -10,6 +9,7 @@ import java.util.regex.PatternSyntaxException;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Axis;
@@ -37,18 +37,17 @@ public class FilterHelper {
     }
 
     private boolean requireFilter(final Axis axis, final List<Filter> filters) {
+        String axisValue = axis.getValue();
+        String axisMatch = axis.getMatch();
         for (Filter filter : filters) {
-            String value = null;
-            if (filter.getType().equals("value")) {
-                value = axis.getValue();
-            }
+            String value = axisValue;
             if (filter.getType().equals("match")) {
-                value = axis.getMatch();
-            }
-            if (isNull(value)) {
-                return false;
+                value = axisMatch;
             }
             String pattern = filter.getPattern();
+            if (pattern.equals(" ") && StringUtils.isBlank(value)) {
+                return true;
+            }
             if (value.equals(pattern)) {
                 return true;
             }
@@ -63,5 +62,4 @@ public class FilterHelper {
         }
         return false;
     }
-
 }

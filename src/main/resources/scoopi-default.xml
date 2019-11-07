@@ -13,6 +13,11 @@
             </effectiveSchema>
         </defs>
 
+        <fact>  
+            <replaceBlank>true</replaceBlank>
+            <replaceWith>-</replaceWith>
+        </fact>
+        
         <seederClass>
             <![CDATA[
               org.codetab.scoopi.step.extract.LocatorSeeder
