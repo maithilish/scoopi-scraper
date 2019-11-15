@@ -1,7 +1,5 @@
 package org.codetab.scoopi.defs.yml;
 
-import static java.util.Objects.isNull;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,8 +13,6 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonParser;
 
 class Jacksons {
-
-    private JsonParser jsonParser;
 
     public List<String> getFieldNames(final JsonNode jNode) {
         return Lists.newArrayList(jNode.fieldNames());
@@ -103,9 +99,6 @@ class Jacksons {
     }
 
     public String parseJson(final String json) {
-        if (isNull(jsonParser)) {
-            jsonParser = new JsonParser();
-        }
-        return jsonParser.parse(json).toString();
+        return JsonParser.parseString(json).toString();
     }
 }

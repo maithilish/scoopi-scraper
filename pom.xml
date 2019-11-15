@@ -9,39 +9,58 @@
     <url>http://www.codetab.org/scoopi</url>
 
     <properties>
-        <assertj.version>3.10.0</assertj.version>
-        <commons-beanutils.version>1.9.3</commons-beanutils.version>
-        <commons-configuration2.version>2.2</commons-configuration2.version>
-        <commons-csv.version>1.5</commons-csv.version>
-        <commons-dbcp2.version>2.4.0</commons-dbcp2.version>
-        <commons-lang3.version>3.7</commons-lang3.version>
-        <commons-pool.version>2.6.0</commons-pool.version>
-        <commons-text.version>1.4</commons-text.version>
+        <java-release>11</java-release>
+
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-configuration2.version>2.6</commons-configuration2.version>
+        <commons-csv.version>1.7</commons-csv.version>
+        <commons-dbcp2.version>2.7.0</commons-dbcp2.version>
+        <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-pool2.version>2.7.0</commons-pool2.version>
+        <commons-text.version>1.8</commons-text.version>
         <commons-validator.version>1.6</commons-validator.version>
-        <guava.version>25.1-jre</guava.version>
-        <gson.version>2.8.5</gson.version>
-        <guice.version>4.2.0</guice.version>
+        <guava.version>28.1-jre</guava.version>
+        <gson.version>2.8.6</gson.version>
+        <guice.version>4.2.2</guice.version>
         <hsqldb.version>2.4.1</hsqldb.version>
-        <htmlunit.version>2.31</htmlunit.version>
-        <jackson.version>2.10.0</jackson.version>
+        <htmlunit.version>2.36.0</htmlunit.version>
+        <jackson.version>2.10.1</jackson.version>
         <jaxb-xjc.version>2.3.0.1</jaxb-xjc.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jetty.version>9.4.8.v20180619</jetty.version>
-        <json-validator.version>2.2.10</json-validator.version>
-        <jsoup.version>1.11.3</jsoup.version>
-        <junit.version>4.12</junit.version>
+        <jetty.version>9.4.14.v20181114</jetty.version>
+        <json-validator.version>2.2.11</json-validator.version>
+        <jsoup.version>1.12.1</jsoup.version>
+
         <log4j.version>1.2.17</log4j.version>
         <logback.version>1.2.3</logback.version>
-        <metrics.version>4.1.0-rc2</metrics.version>
-        <mockito.version>2.19.1</mockito.version>
-        <selenium.version>3.14.0</selenium.version>
+        <metrics.version>4.1.1</metrics.version>
+        <selenium.version>3.141.59</selenium.version>
 
-        <datanucleus.version>5.0.6</datanucleus.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>3.1.0</mockito.version>
+        <byte-budy.version>1.9.10</byte-budy.version>
+        <assertj.version>3.14.0</assertj.version>
+
+        <datanucleus.version>5.2.2</datanucleus.version>
         <mariadb-client.version>2.2.5</mariadb-client.version>
         <mysql-connector.version>5.1.43</mysql-connector.version>
 
+        <!-- plugin version -->
+        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <jar-plugin.version>3.2.0</jar-plugin.version>
+        <dependency-plugin.version>3.1.1</dependency-plugin.version>
+        <assembly-plugin.version>3.2.0</assembly-plugin.version>
+        <failsafe-plugin.version>3.0.0-M3</failsafe-plugin.version>
+        <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
+        <datanucleus-enhancer.version>5.2.1</datanucleus-enhancer.version>
+        <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
+        <versions-plugin.version>2.7</versions-plugin.version>
+        <exec-plugin.version>1.6.0</exec-plugin.version>
+        <docker-plugin.version>2.3</docker-plugin.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     </properties>
 
     <dependencies>
@@ -162,13 +181,14 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
-            <version>${commons-pool.version}</version>
+            <version>${commons-pool2.version}</version>
         </dependency>
         <dependency>
             <groupId>net.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
             <version>${jcip-annotations.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -182,10 +202,23 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${byte-budy.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>${byte-budy.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -241,10 +274,10 @@
                     <!-- java source level -->
                     <plugin>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.6.0</version>
+                        <version>${compiler-plugin.version}</version>
                         <configuration>
-                            <source>1.8</source>
-                            <target>1.8</target>
+                            <source>${java-release}</source>
+                            <target>${java-release}</target>
                             <compilerArgs>
                                 <arg>-g</arg>
                             </compilerArgs>
@@ -256,7 +289,7 @@
                     <plugin>
                         <groupId>org.datanucleus</groupId>
                         <artifactId>datanucleus-maven-plugin</artifactId>
-                        <version>5.0.2</version>
+                        <version>${datanucleus-enhancer.version}</version>
                         <configuration>
                             <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
                         </configuration>
@@ -274,7 +307,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.0.2</version>
+                        <version>${jar-plugin.version}</version>
                         <configuration>
                             <excludes>
                                 <exclude>*.properties</exclude>
@@ -290,7 +323,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>${dependency-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-dependencies</id>
@@ -310,7 +343,7 @@
                     <!-- customise production assembly -->
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>${assembly-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>assemble-distribution</id>
@@ -329,7 +362,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.20</version>
+                        <version>${failsafe-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>integration-test</id>
@@ -348,7 +381,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.7.9</version>
+                        <version>${jacoco-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>default-prepare-agent</id>
@@ -393,14 +426,14 @@
                     <plugin>
                         <groupId>org.eluder.coveralls</groupId>
                         <artifactId>coveralls-maven-plugin</artifactId>
-                        <version>4.3.0</version>
+                        <version>${coveralls-plugin.version}</version>
                     </plugin>
             
                     <!-- know latest versions of dependency, plugin etc -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>versions-maven-plugin</artifactId>
-                        <version>2.3</version>
+                        <version>${versions-plugin.version}</version>
                     </plugin>
                 </plugins>
             </build>
@@ -418,7 +451,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.6.0</version>
+                        <version>${exec-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>ng-build</id>
@@ -443,7 +476,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.23.0</version>
+                        <version>${docker-plugin.version}</version>
                         <configuration>
                             <images>
                                 <image>
@@ -470,5 +503,8 @@
 
     <inceptionYear>2018</inceptionYear>
     <name>Scoopi</name>
+    <prerequisites>
+        <maven>3.5.0</maven>
+    </prerequisites>
 
 </project>

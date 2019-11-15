@@ -12,11 +12,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 
-import com.google.gson.JsonParser;
-
 public class TestUtils {
-
-    private static JsonParser jsonParser = new JsonParser();
 
     private TestUtils() {
     }
@@ -38,8 +34,7 @@ public class TestUtils {
         Assert.assertEquals("There must be only one constructor", 1,
                 clazz.getDeclaredConstructors().length);
         final Constructor<?> constructor = clazz.getDeclaredConstructor();
-        if (constructor.isAccessible()
-                || !Modifier.isPrivate(constructor.getModifiers())) {
+        if (!Modifier.isPrivate(constructor.getModifiers())) {
             Assert.fail("constructor is not private");
         }
         constructor.setAccessible(true);
@@ -51,9 +46,5 @@ public class TestUtils {
                 Assert.fail("there exists a non-static method:" + method);
             }
         }
-    }
-
-    public static String parseJson(final String json) {
-        return jsonParser.parse(json).toString();
     }
 }

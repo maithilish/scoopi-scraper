@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * @author Maithilish
  *
  */
-public final class PageLoader extends BaseLoader {
+public class PageLoader extends BaseLoader {
 
     /**
      * logger.

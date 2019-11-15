@@ -3,7 +3,7 @@ package org.codetab.scoopi.step;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
@@ -106,7 +106,7 @@ public class StepTest {
 
         assertThat(actual).isTrue();
 
-        verifyZeroInteractions(taskMediator, objectFactory, taskDef);
+        verifyNoInteractions(taskMediator, objectFactory, taskDef);
     }
 
     @Test

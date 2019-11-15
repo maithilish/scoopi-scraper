@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -62,7 +62,7 @@ public class TaskMediatorTest {
     public void testWaitForFinish() throws InterruptedException {
         taskMediator.waitForFinish();
         verify(taskRunner).join();
-        verifyZeroInteractions(errorLogger);
+        verifyNoInteractions(errorLogger);
     }
 
     @Test

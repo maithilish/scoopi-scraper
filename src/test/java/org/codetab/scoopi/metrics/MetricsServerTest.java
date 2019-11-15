@@ -3,8 +3,8 @@ package org.codetab.scoopi.metrics;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -118,7 +118,7 @@ public class MetricsServerTest {
 
         verify(configService).getConfig("scoopi.metrics.server.enable");
         verifyNoMoreInteractions(configService);
-        verifyZeroInteractions(ioHelper, factory);
+        verifyNoInteractions(ioHelper, factory);
     }
 
     @Test
@@ -130,7 +130,7 @@ public class MetricsServerTest {
 
         verify(configService).getConfig("scoopi.metrics.server.enable");
         verifyNoMoreInteractions(configService);
-        verifyZeroInteractions(ioHelper, factory);
+        verifyNoInteractions(ioHelper, factory);
     }
 
     @Test
