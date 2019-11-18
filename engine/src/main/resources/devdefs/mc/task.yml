@@ -1,0 +1,10 @@
+taskGroups:
+
+  bsGroup:
+    bsTask:
+      dataDef: bs
+      steps: finYearRoller
+
+    live: P1M
+                  
+

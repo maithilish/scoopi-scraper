@@ -52,6 +52,7 @@
             class="ch.qos.logback.core.filter.EvaluatorFilter">
             <evaluator
                 class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>task-amararajabatteries-plGroup-plTask</marker>
                 <marker>task-acme-quoteGroup-linkTask</marker>
                 <marker>task-acme-bsGroup-bsTask</marker>
                 <marker>datadef-links</marker>

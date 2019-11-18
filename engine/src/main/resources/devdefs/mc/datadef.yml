@@ -1,0 +1,211 @@
+dataDefs:
+
+  price:            
+    query:
+      block: "div.nsedata_bx"
+      selector: "div.div_live_price_wrap > span:nth-child(1)"
+    items: [ 
+      item: { name: "Price", value: "Price" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]        
+
+  snapshot:            
+    query:
+      block: "div#standalone_valuation"
+      selector: "div:matchesOwn(^%{item.match}) + div"
+    items: [
+      item: { name: "MC", match: "Market Cap \\(Rs Cr.\\)" },
+      item: { name: "EPS", match: "EPS \\(TTM\\)" },
+      item: { name: "PE", match: "P/E" },
+      item: { name: "PC", match: "P/C" },
+      item: { name: "BV", match: "Book Value \\(Rs\\)" },
+      item: { name: "PB", match: "Price/Book" },
+      item: { name: "DIV", match: "Dividend \\(%\\)" },
+      item: { name: "DY", match: "Dividend Yield.\\(%\\)" },
+      item: { name: "FV", match: "Face Value \\(RS\\)" },
+      item: { name: "IND PE", match: "Industry P/E" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]
+
+  highLow:
+    query:
+      block: "div.nsedata_bx div.week52_lowhigh_wrap" 
+      selector: "div:nth-child(%{item.index})"
+    items: [
+      item: { name: "52 Wk Low", value: "52 Wk Low", index: 1 },
+      item: { name: "52 Wk High", value: "52 Wk High", index: 3 },
+    ]
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]
+
+  finLink:
+    query:
+      block: "div.main_wrapper_res div.quick_wraplink > div:contains(Financials)"      
+    items: [ 
+      item: { name: "bsLink", linkGroup: bsGroup, index: 1,              
+              selector: "li:nth-child(%{index}) > a attribute: href" },
+      item: { name: "plLink", linkGroup: plGroup, index: 2,
+              selector: "li:nth-child(%{index}) > a attribute: href" },
+      item: { name: "qtLink", linkGroup: qtGroup, index: 3,
+              selector: "li:nth-child(%{index}) > a attribute: href" },
+      item: { name: "cashflowLink", linkGroup: cashflowGroup, index: 7,
+              selector: "li:nth-child(%{index}) > a attribute: href" },
+      item: { name: "ratioLink", linkGroup: ratioGroup, index: 8,
+              selector: "li:nth-child(%{index}) > a attribute: href" },
+    ]
+
+  holdingLink:
+    query:
+      block: "div.leftNav > dl#slider > dd:contains(Shareholding Pattern) ul"
+    items: [ 
+      item: { name: "holdingLink", linkGroup: holdingGroup, index: 1,
+              selector: "li:nth-child(%{index}) > a attribute: href",
+              prefix: [ "https://www.moneycontrol.com" ] },
+    ]
+
+  bs:
+    query:
+      block: "table:contains(EQUITIES AND LIABILITIES)"
+      selector: "tr:nth-child(%{item.index}) > td:nth-child(%{dim.year.index})"       
+    items:  
+      - item:
+          name: item
+          selector: "tr:nth-child(%{index}) > td:nth-child(1)"                        
+          index: 5
+          breakAfter:
+            - "Non-Current Investments Unquoted Book Value"
+            - "Current Investments Unquoted Book Value"
+            - "Net NPA"
+          filters: 
+            - filter: { type: value, pattern: " " }
+            - filter: { type: value, pattern: "EQUITIES AND LIABILITIES" }
+            - filter: { type: value, pattern: "SHAREHOLDER'S FUNDS" }
+            - filter: { type: value, pattern: "NON-CURRENT LIABILITIES" }
+            - filter: { type: value, pattern: "CURRENT LIABILITIES" }
+            - filter: { type: value, pattern: "ASSETS" }
+            - filter: { type: value, pattern: "NON-CURRENT ASSETS" }
+            - filter: { type: value, pattern: "CURRENT ASSETS" }
+    dims:  
+      - item:
+          name: year
+          selector: "tr:nth-child(1) > td:nth-child(%{index})"
+          indexRange: 2-6
+
+  pl:
+    query:
+      block: "table:contains(INCOME)"
+      selector: "tr:nth-child(%{item.index}) > td:nth-child(%{dim.year.index})"             
+    items:  
+      - item:
+          name: item
+          selector: "tr:nth-child(%{index}) > td:nth-child(1)"                        
+          index: 6
+          breakAfter:
+            - "Diluted EPS (Rs.)"
+          filters: 
+            - filter: { type: value, pattern: " " }
+            - filter: { type: value, pattern: "INCOME" }
+            - filter: { type: value, pattern: "EXPENSES" }
+            - filter: { type: value, pattern: "Tax Expenses-Continued Operations"}
+            - filter: { type: value, pattern: "OTHER ADDITIONAL INFORMATION" }
+            - filter: { type: value, pattern: "EARNINGS PER SHARE" }
+            - filter: { type: value, pattern: "VALUE OF IMPORTED AND INDIGENIOUS RAW MATERIALS" }
+            - filter: { type: value, pattern: "STORES, SPARES AND LOOSE TOOLS" }
+            - filter: { type: value, pattern: "DIVIDEND AND DIVIDEND PERCENTAGE" }
+            - filter: { type: value, pattern: "APPROPRIATIONS" }
+            - filter: { type: value, pattern: "OTHER INFORMATION" }
+            - filter: { type: value, pattern: "DIVIDEND PERCENTAGE" }
+    dims:  
+      - item:
+          name: year
+          selector: "tr:nth-child(1) > td:nth-child(%{index})"
+          indexRange: 2-6
+
+  qt:
+    query:
+      block: "table:contains(Employees Cost)"
+      selector: "tr:nth-child(%{item.index}) > td:nth-child(%{dim.year.index})"             
+    items:  
+      - item:
+          name: item
+          selector: "tr:nth-child(%{index}) > td:nth-child(1)"                        
+          index: 5
+          breakAfter:
+            - "Public Share Holding"
+          filters: 
+            - filter: { type: value, pattern: " " }
+            - filter: { type: value, pattern: "EXPENDITURE" }
+            - filter: { type: value, pattern: "EPS Before Extra Ordinary" }
+            - filter: { type: value, pattern: "EPS After Extra Ordinary" }
+            - filter: { type: value, pattern: "Public Share Holding" }
+    dims:  
+      - item:
+          name: year
+          selector: "tr:nth-child(3) > td:nth-child(%{index})"
+          indexRange: 2-6
+
+  cashflow:
+    query:
+      block: "table:contains(Net CashFlow)"
+      selector: "tr:nth-child(%{item.index}) > td:nth-child(%{dim.year.index})"
+    items:  
+      - item:
+          name: item
+          selector: "tr:nth-child(%{index}) > td:nth-child(1)"
+          index: 5
+          breakAfter:
+            - "Cash And Cash Equivalents End Of Year"
+          filters: 
+            - filter: { type: value, pattern: " " }
+    dims:  
+      - item:
+          name: year
+          selector: "tr:nth-child(1) > td:nth-child(%{index})"
+          indexRange: 2-6
+
+  ratio:
+    query:
+      block: "table:contains(Per Share Ratios)"
+      selector: "tr:nth-child(%{item.index}) > td:nth-child(%{dim.year.index})"
+    items:  
+      - item:
+          name: item
+          selector: "tr:nth-child(%{index}) > td:nth-child(1)"
+          index: 5
+          breakAfter:
+            - "Earnings Yield"
+            - "Earnings Yield (X)"
+          filters: 
+            - filter: { type: value, pattern: " " }
+            - filter: { type: value, pattern: "Per Share Ratios" }
+            - filter: { type: value, pattern: "Profitability Ratios" }
+            - filter: { type: value, pattern: "Liquidity Ratios" }
+            - filter: { type: value, pattern: "Valuation Ratios" }
+            - filter: { type: value, pattern: "Key Performance Ratios" }
+            - filter: { type: value, pattern: "Per Branch Ratios" }
+            - filter: { type: value, pattern: "Per Employee Ratios" }
+    dims:  
+      - item:
+          name: year
+          selector: "tr:nth-child(3) > td:nth-child(%{index})"
+          indexRange: 2-6
+
+
+  holding:
+    query:
+      block: "table:contains(Shareholding of Promoter and Promoter Group)"
+      selector: "tr:nth-child(%{item.index}) > td:nth-child(5) > b"
+    items: [
+      item: { name: "Promoter Holding", value: "Promoter Holding", index: 16 },
+      item: { name: "Institutional", value: "Institutional", index: 30 },
+      item: { name: "Public", value: "Public", index: 38 },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]
+

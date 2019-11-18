@@ -8,6 +8,11 @@
 
     <url>http://www.codetab.org/scoopi</url>
 
+    <packaging>pom</packaging>
+    <modules>
+        <module>engine</module>        
+    </modules>
+
     <properties>
         <java-release>8</java-release>
 
@@ -461,7 +466,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
+                        <configuration>                   
                             <workingDirectory>${project.basedir}/src/main/web/scoopiw</workingDirectory>
                             <executable>ng</executable>
                             <arguments>

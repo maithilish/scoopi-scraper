@@ -1,0 +1,39 @@
+steps:
+  finYearRoller:
+    jsoupDefault:
+      converter:
+        class: "org.codetab.scoopi.step.process.DataConverter"
+        previous: filter
+        next: appender           
+        plugins: [
+          plugin: { 
+            name: yearRoller, 
+            class: "org.codetab.scoopi.plugin.converter.DateRoller", 
+            item: year, 
+            inPattern: "MMM YY|MMM ''YY", 
+            outPattern: "yyyy-MM-dd", 
+            roll: "DAY_OF_MONTH=ceil" } 
+        ]
+
+  finDateFormater:
+    jsoupDefault:
+      converter:
+        class: "org.codetab.scoopi.step.process.DataConverter"
+        previous: filter
+        next: appender           
+        plugins: [
+          plugin: { 
+            name: dateFormater, 
+            class: "org.codetab.scoopi.plugin.converter.DateFormater", 
+            item: date, 
+            inPattern: "EEE MMM d HH:mm:ss z yyyy",
+            outPattern: "yyyy-MM-dd" }            
+        ]
+
+  finLink:
+    jsoupDefault:
+      process:
+        class: "org.codetab.scoopi.step.process.LocatorCreator"
+        previous: parser
+        next: seeder
+

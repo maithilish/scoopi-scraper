@@ -1,85 +1,71 @@
-## Maven build
+## Project Build
 
-to switch default conf files :
+``` BASH
 
-- for dev, use -Dscoopi.mode=dev 
-     - uses scoopi-dev.properties instead of default scoopi.properties
-     - to use dev db, in scoopi-dev.properties, scoopi.datastore.configFile is set to jdoconfig-dev.properties 
-
-- for logback-dev.xml use -Dlogback.configurationFile=src/main/resources/logback-dev.xml, default logback.xml
-
-### Maven commands
-
-to add new run configuration, go to Run As -> Maven Build and enter
-
-     Main -> Base directory - ${project_loc:scoopi}
-     Goals -> process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" -Dexec.cleanupDaemonThreads=false -Dlogback.configurationFile=src/main/resources/logback-dev.xml -Dscoopi.mode=dev
-
-maven dev run
-
-     mvn process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" -Dexec.cleanupDaemonThreads=false -Dlogback.configurationFile=src/main/resources/logback-dev.xml -Dscoopi.mode=dev
-
-for profile memory and cpu
-
-      mvn process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" -Dexec.cleanupDaemonThreads=false -Dlogback.configurationFile=src/main/resources/logback-dev.xml -Dscoopi.mode=dev -Dscoopi.waitForHeapDump=true
-
-compile, enhance JDO classes and run tests
-
-    mvn test
-
-run tests and Integration tests
-
-    mvn verify
-
-skip tests and run integration tests (itests)
-
-    mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P production
-    
-run single itest
-
-	mvn test -Dtest=HttpHelperIT.java -P production
-		or
-	mvn integration-test -Dtest=HttpHelperIT.java -P production    
-
-generate coverage report
-
-only tests
-      
-      mvn clean test jacoco:report
-      	or
-      mvn clean verify
-
-include itest
-                          
-      mvn clean verify jacoco:report
-
-find selector
-
-    mvn exec:java -Dexec.mainClass="org.codetab.scoopi.util.FindSelector"
-       -Dexec.args="fileName 'selector' "
-
-selector example
-
-     mvn exec:java -Dexec.mainClass="org.codetab.scoopi.util.FindSelector"
-   -Dexec.args="src/main/resources/devdefs/mc/parse-locator-file/itc-quote.html 'div#mktdet_2 div:matchesOwn(^P/E$)' "
-
-generate JavaDoc
-
-    mvn JavaDoc:JavaDoc
-
-to know dependency updates
-
-    mvn versions:display-dependency-updates
-
-download JavaDoc and source
-
-    mvn dependency:resolve -Dclassifier=JavaDoc
-    mvn dependency:sources
-    
-## Services for Integration Test 
-
-Docker compose file for services required for itest is located at src/test/itestresources. See readme.txt for details.
+mvn test
+mvn verify
  
+mvn test -Dtest=HttpHelperIT.java -P basic
+mvn integration-test -Dtest=HttpHelperIT.java -P basic
+
+# skip test and run itests
+mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P basic
+
+mvn test jacoco:report					# without itest
+mvn verify jacoco:report				# with itest
+mvn JavaDoc:JavaDoc
+
+mvn docker:build					# build local image
+mvn docker:push						# push imaget to hub
+
+mvn versions:display-dependency-updates
+mvn versions:display-plugin-updates
+mvn dependency:resolve -Dclassifier=JavaDoc		# download javadoc
+mvn dependency:sources					# download source
+
+# run, skips exec in all modules except in engine
+mvn process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" -Dexec.cleanupDaemonThreads=false -Dlogback.configurationFile=src/main/resources/logback-dev.xml -Dscoopi.mode=dev -Dexec.skip=true
+
+```
+
+### Run as Java Application
+
+Select Scoopi class -> Run As -> Java Application
+Go to Run Configuration and select Scoopi, in Arguments Tab enter following in VM arguments text box
+
+-Dlogback.configurationFile=src/main/resources/logback-dev.xml
+-Dscoopi.mode=dev
+
+### Properties
+
+swtich config file to scoopi-dev.properties
+
+-Dscoopi.mode=dev
+-Dlogback.configurationFile=src/main/resources/logback-dev.xml
+
+-Dscoopi.waitForHeapDump=true				# profile
+
+scoopi.datastore.configFile=jdoconfig-dev.properties  	# use dev db
+
+  
+### Docker Services for ITest 
+
+Docker compose file for services for itest is located at src/test/itestresources. 
+See readme.txt for details.
+
+ 
+### Integration Tests
+
+maven failsafe plugin treats all files \*IT.java as integration test.
+
+mvn clean integration-test -Dtest=zzz.java -DfailIfNoTests=false
+
+- compiles all tests 
+- copies test resources
+- skips unit tests 
+- build is not failed because of failure of unit tests
+- runs \*IT.java tests
+
 ## Eclipse setup
 
 For Scoopi development, eclipse requires some setup.
@@ -87,7 +73,7 @@ For Scoopi development, eclipse requires some setup.
 **! ! !  install eclipse-cs and ecl-emma
 import preferences only after cs and emma are installed**
 
-#### install and attach Java JavaDoc and source
+### Install Java JavaDoc and source
 
 for context help, install JavaDoc and sources.
 
@@ -113,7 +99,7 @@ ubuntu
 javadoc - url - file:///usr/share/doc/openjdk-8-jre-headless/api
 source - external location - /usr/lib/jvm/java-8-openjdk-amd64/src.zip
 
-#### add imports
+### Add Imports
 
 For static import of AssertJ and Mockito go to, _Static import - Preference -> Java -> Editor -> Content Assist -> Favorites_ and add New Types
 
@@ -125,11 +111,16 @@ For static import of AssertJ and Mockito go to, _Static import - Preference -> J
     java.util.Objects
     java.util.stream.Collectors
 
-#### change author name
+### change author name
 
 edit eclipse.ini and add `-Duser.name=<user name>`
 
-#### M2E plugin
+### Shorten Package Name
+
+Preferences > Java > Appearance
+  Abbreviate Package Names: org.codetab.scoopi=s
+
+### M2E plugin
 
 to download JavaDoc and sources, go to  Project Context Menu-> Maven
 
@@ -144,7 +135,7 @@ or download manually
 in case, _doc location not set error_ is thrown then
 Build Path -> Configure Build Path -> Libraries remove extra entries of M2_REPO and update maven. Only JRE and Maven Dependencies entries are enough.
 
-#### Setup CheckStyle
+### Setup CheckStyle
 
 go to Preferences -> Checkstyle and slide to right side end, click New and enter
  - type - External Configuration
@@ -168,8 +159,7 @@ about suppression configuration
 
 in project properties select Scoopi Checks module and activate CheckStyle for the project.
 
-
-#### Code Style - Formatter
+### Code Style - Formatter
 
 For Checkstyle compliant formatter, import scoopi/src/main/resources/eclipse/formatter.xml
 which creates Eclipse-cs Scoopi formatter profile.
@@ -183,12 +173,12 @@ For XML files, change format options in Preferences -> XML -> XML file -> Editor
   - uncheck format comments
   - indent using spaces - Indention Size 4
 
-#### Debug perspective
+### Debug perspective
 
 To  allot maximum screen space to variables and editors reorganize the Debug perspective.
 
  - if view is dropped to top bar of area, view will be added to that area.
- - if view is dropped on area then area is resized to accommodate new view.   
+ - if view is dropped on area then area is resized to accommodate new view.
 
 to split bottom row into two, drag n drop Debug view to Console view area.
 to remove Outline view, close it.
@@ -200,17 +190,39 @@ In debugger, you will get line number error, even when line number generation is
 
 to debug XML objects such as Fields in Locator see https://goo.gl/JEukUP
 
-#### Exclude web dir from errors
+### Exclude web dir from errors
 
 Project > Properties > Resource > Resource Filters > Add...
 Filter type = Exclude all.
 Applies to = File and Folders (check all children recursive)
 File and Folder Attributes: Project Relative Path matches src/main/web/scoopiw
 
-#### Shorten Package Name
+### Run Configuration
 
- Preferences > Java > Appearance
- Abbreviate Package Names: org.codetab.scoopi=s
+In Eclipse, add new run configuration, go to Run As -> Maven Build and enter
+
+Main 	-> Base directory - ${project_loc:scoopi}
+Goals 	-> process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" 
+	    -Dlogback.configurationFile=src/main/resources/logback-dev.xml 
+	    -Dscoopi.mode=dev -Dexec.cleanupDaemonThreads=false -Dexec.skip=true
+
+skips exec in all modules except engine module. 
+
+### Run Configuration Variables
+
+For Run As - Java Application, the arguments:
+
+- Program Arguments
+  - space delimited values
+  - get from args[] in main method
+
+- VM Arguments
+  - -Dxyz=abcd
+  - use System.getProperty("xyz") to get value
+
+- Environment Variables
+  - variable + value
+  - use System.getenv(key) to get value
  
 ## Node.js and Angular
 
@@ -221,7 +233,7 @@ On new machine install nodejs and angular cli
 
     npm install -g @angular/cli
 
-## Scoopi dashboard
+### Scoopi dashboard
 
 install modules
 
@@ -230,7 +242,7 @@ install modules
 	npm install
 
 
-## Scoopi Metric
+### Scoopi Metric
 
 Jetty server starts at port 9010. Angular app source is located at src/main/web/scoopiw dir. During dev, in memory datastore is used and in prod build, it fetches data from localhost:9010/api/metrics
 
@@ -241,33 +253,11 @@ mvn package, builds the angular app with
           --delete-output-path=false
           
 in POM the ng build is in separate profile ng-build which is disabled
-for travis ci build in .travis.yml             
+for travis ci build in .travis.yml
 
-## Model Generation
+### Model Generation
 
 to generate model java files from schema files, run src/main/scripts/schemagen.sh from project base dir. Beans are validated against the schema. It generates the file in target dir and after verification it has to copied to model dir in src.
-
-
-## Integration Tests
-
-maven failsafe plugin treats all files \*IT.java as integration test.
-
-mvn clean integration-test -Dtest=zzz.java -DfailIfNoTests=false
-
-this ensures
- - all tests are compiled
- - test resources are copied
- - unit tests are skipped  (as no such file named zzz.java)
- - build is not failed because of failure of unit tests
- - \*IT.java tests are run
-
-
-## Find selector or xpath from chrome
-
-open the page in chrome, select any text, select Inspect from context menu
-in Inspector pane, right click on element and select Copy where you
-can copy selector and xpath and paste it to editor. In selector or xpath use
-single quotes instead of double quotes
 
 ## Versions
 
@@ -329,7 +319,8 @@ to run scoopi.bat, get into window command prompt and run bat file
      wine cmd
      C:\scoopi-0.9.0-beta>scoopi.bat
 
-# Docker local build
+
+## Docker local build
 
 for io.fabric8:docker-maven-plugin prefix is docker
 
@@ -340,8 +331,8 @@ list goals
 build image and add image to local image repository
 
      mvn docker:build
-          
-# Github
+         
+## Github
 
 clone and create new project in workspace
 
@@ -359,7 +350,7 @@ travis maven and build steps
  - https://docs.travis-ci.com/user/languages/java/#Projects-Using-Maven
  - https://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Build-Step
      
-Github release
+### Github release
 
 merge branch if any
 
@@ -370,7 +361,7 @@ change version in pom.xml and commit
      
 create new release in github and attach zip
      
-Docker image release
+### Docker Image release
 
 build image
 
@@ -381,61 +372,4 @@ push image
       docker login            // one time
       mvn docker:push
 
-# Design and coding notes
 
-Apart from model classes, as far as possible, try to use primitives as validation of method param is not required for primitives.
-
-As XML schema allows optional elements, JAXB uses wrappers for primitives since primitives can't be null. XJC generated models will have Long, Integer etc.
-
-Validate param for null or illegal argument (not required for private methods). validate IllegalState for state vars, injected state vars (not required for private methods).
-
-## Coding notes
-
-- for string join use Util.join(), for delimited join use String.join()
-- in steps, if exception is recoverable then catch and handle it otherwise if unrecoverable throw StepRunException (unchecked exception)
-- in steps, while throwing StepRunException don't log or add activity as tasks' exception handling takes care of it.
-- in steps, for StepRunException don't use getLabeled() as task will handle label,  for others use getLabeled() to create message which prefixes label. If message is used only with logger, then use {} and getLabel()
-
-#### JavaDoc guidelines
-
-  - add /** and press enter to generate JavaDoc comments
-  - remove any non-JavaDoc comments generated by eclipse
-  - for methods that doesn't do anything add do nothing
-  - for overridden method, add JavaDoc comments
-  - use @see to link any project classes and also for java or external classes and methods
-    - @see in text creates inline link
-    - if used after tags (param,return) then added in See also section
-  - use @throws both for checked and unchecked exception.
-  - In method signature, add only the checked exceptions. Mention unchecked exceptions in JavaDoc with @throws
-
-#### Tricky errors
-
-###### XML namespace
-
-  getNamespaceURI() on document returns null but for jaxb elementNSImpl it returns uri.
-  better option is to use lookupNamespaceURI() with null for default ns.
-
-###### JDO
-
-  JDODataStoreException - Exception thrown flushing changes to datastore
-
-  Set detachable as true in package.jdo for the class.
-
-  In case detached object is persisted again and detachable is not true for the class then instead of update jdo inserts new object. If this results in constraint violation then jdo throws NullPointerExcetpion.
-  
-###### Jackson
-
-find field in node or child nodes
-
-	findValue(String fieldName) - JsonNode or null 
-	findPath(String fieldName) - JsonNode or MissingNode
-
-find direct field 
-
-	get(String fieldName) - JsonNode or null
-	path(String fieldName) - JsonNode or MissingNode
-
-set nodes
-
-	set(fieldName, node) - add field and set node 
-	setAll(node) - add node directly 
