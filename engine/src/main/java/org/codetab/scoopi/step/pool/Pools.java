@@ -14,11 +14,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -10,7 +10,10 @@
 
     <packaging>pom</packaging>
     <modules>
-        <module>engine</module>        
+        <module>engine</module>
+        <module>exception</module>
+        <module>config</module>
+        <module>util</module>
     </modules>
 
     <properties>
@@ -288,26 +291,7 @@
                             </compilerArgs>
                         </configuration>
                     </plugin>
-                    <!-- datanucleus enhance -->
-                    <!-- we need classes without enhancement for jaxb schemagen hence they 
-                         are enhanced in process-classes phases instead of compile -->
-                    <plugin>
-                        <groupId>org.datanucleus</groupId>
-                        <artifactId>datanucleus-maven-plugin</artifactId>
-                        <version>${datanucleus-enhancer.version}</version>
-                        <configuration>
-                            <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>enhance</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                                
+
                     <!-- include essential config files in jar -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -419,7 +403,7 @@
                                                 <limit>
                                                     <counter>COMPLEXITY</counter>
                                                     <value>COVEREDRATIO</value>
-                                                    <minimum>0.60</minimum>
+                                                    <minimum>0.50</minimum>
                                                 </limit>
                                             </limits>
                                         </rule>
@@ -466,7 +450,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>                   
+                        <configuration>
                             <workingDirectory>${project.basedir}/src/main/web/scoopiw</workingDirectory>
                             <executable>ng</executable>
                             <arguments>

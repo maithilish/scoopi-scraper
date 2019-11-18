@@ -2,7 +2,7 @@ package org.codetab.scoopi.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.codetab.scoopi.system.ConfigHelper;
+import org.codetab.scoopi.config.ConfigHelper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

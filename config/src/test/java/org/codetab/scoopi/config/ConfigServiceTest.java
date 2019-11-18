@@ -1,4 +1,4 @@
-package org.codetab.scoopi.system;
+package org.codetab.scoopi.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertArrayEquals;
@@ -11,11 +11,9 @@ import java.util.Date;
 import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.dao.ORM;
-import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.config.ConfigService.ConfigIndex;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.system.ConfigService.ConfigIndex;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,16 +55,17 @@ public class ConfigServiceTest {
                 .isEqualTo(ConfigIndex.valueOf("DEFAULTS"));
     }
 
-    @Test
-    public void testSingleton() {
-        DInjector dInjector = new DInjector().instance(DInjector.class);
-
-        ConfigService instanceA = dInjector.instance(ConfigService.class);
-        ConfigService instanceB = dInjector.instance(ConfigService.class);
-
-        assertThat(instanceA).isNotNull();
-        assertThat(instanceA).isSameAs(instanceB);
-    }
+    // TODO enable after moving DI as module
+    // @Test
+    // public void testSingleton() {
+    // DInjector dInjector = new DInjector().instance(DInjector.class);
+    //
+    // ConfigService instanceA = dInjector.instance(ConfigService.class);
+    // ConfigService instanceB = dInjector.instance(ConfigService.class);
+    //
+    // assertThat(instanceA).isNotNull();
+    // assertThat(instanceA).isSameAs(instanceB);
+    // }
 
     @Test
     public void testGetConfig() throws ConfigNotFoundException {
@@ -207,19 +206,6 @@ public class ConfigServiceTest {
         Date actual = configService.getHighDate();
 
         assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testGetOrmType() throws Exception {
-        given(configs.getString("scoopi.datastore.orm")).willReturn("jdo")
-                .willReturn("jDo").willReturn("jpa").willReturn("jPa")
-                .willReturn(null);
-
-        assertThat(configService.getOrmType()).isEqualTo(ORM.JDO);
-        assertThat(configService.getOrmType()).isEqualTo(ORM.JDO);
-        assertThat(configService.getOrmType()).isEqualTo(ORM.JPA);
-        assertThat(configService.getOrmType()).isEqualTo(ORM.JPA);
-        assertThat(configService.getOrmType()).isEqualTo(ORM.JDO);
     }
 
     @Test

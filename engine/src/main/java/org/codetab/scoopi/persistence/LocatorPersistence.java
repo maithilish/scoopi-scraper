@@ -7,13 +7,13 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.dao.ConfigHelper;
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.ILocatorDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Locator;
-import org.codetab.scoopi.system.ConfigService;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ public class LocatorPersistence {
      * Config service.
      */
     @Inject
-    private ConfigService configService;
+    private ConfigHelper configService;
 
     /**
      * DaoFactory provider.

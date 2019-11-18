@@ -1,4 +1,4 @@
-package org.codetab.scoopi.system;
+package org.codetab.scoopi.config;
 
 import static org.codetab.scoopi.util.Util.spaceit;
 

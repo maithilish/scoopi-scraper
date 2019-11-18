@@ -22,12 +22,12 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.util.CompressionUtil;
 import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;

@@ -7,13 +7,13 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.dao.ConfigHelper;
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.IDataDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Data;
-import org.codetab.scoopi.system.ConfigService;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ public class DataPersistence {
      * ConfigService.
      */
     @Inject
-    private ConfigService configService;
+    private ConfigHelper configHelper;
 
     /**
      * DaoFactoryProvider.
@@ -48,7 +48,7 @@ public class DataPersistence {
      */
     public Data loadData(final long dataDefId, final long documentId) {
         try {
-            ORM orm = configService.getOrmType();
+            ORM orm = configHelper.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
             IDataDao dao = daoFactory.getDataDao();
             Data data = dao.getData(documentId, dataDefId);
@@ -72,7 +72,7 @@ public class DataPersistence {
      */
     public Data loadData(final long id) {
         try {
-            ORM orm = configService.getOrmType();
+            ORM orm = configHelper.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
             IDataDao dao = daoFactory.getDataDao();
             Data data = dao.getData(id);
@@ -97,7 +97,7 @@ public class DataPersistence {
         notNull(data, "data must not be null");
 
         try {
-            ORM orm = configService.getOrmType();
+            ORM orm = configHelper.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
             IDataDao dao = daoFactory.getDataDao();
             dao.storeData(data);
@@ -133,11 +133,11 @@ public class DataPersistence {
      * @return true or false
      */
     public boolean persist(final Optional<Boolean> taskLevelPersistence) {
-        if (!configService.useDataStore()) {
+        if (!configHelper.useDataStore()) {
             // disabled at global level
             return false;
         }
-        if (!configService.isPersist("scoopi.persist.data")) { //$NON-NLS-1$
+        if (!configHelper.isPersist("scoopi.persist.data")) { //$NON-NLS-1$
             // enabled at global but disabled at model level
             return false;
         }

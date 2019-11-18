@@ -17,10 +17,10 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;

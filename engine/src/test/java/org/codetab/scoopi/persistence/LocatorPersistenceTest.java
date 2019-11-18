@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.Optional;
 
+import org.codetab.scoopi.dao.ConfigHelper;
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.ILocatorDao;
 import org.codetab.scoopi.dao.ORM;
@@ -15,7 +16,6 @@ import org.codetab.scoopi.dao.jdo.JdoDaoFactory;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,7 +34,7 @@ import org.mockito.MockitoAnnotations;
 public class LocatorPersistenceTest {
 
     @Mock
-    private ConfigService configService;
+    private ConfigHelper configHelper;
 
     @Mock
     private DaoFactoryProvider daoFactoryProvider;
@@ -63,7 +63,7 @@ public class LocatorPersistenceTest {
     public void testLoadLocatorByNameGroup() {
         Locator locator = objectFactory.createLocator("name", "group", "url");
 
-        given(configService.getOrmType()).willReturn(ORM.JDO);
+        given(configHelper.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO)).willReturn(jdoDao);
         given(jdoDao.getLocatorDao()).willReturn(locatorDao);
         given(locatorDao.getLocator("n", "g")).willReturn(locator);
@@ -72,18 +72,18 @@ public class LocatorPersistenceTest {
 
         assertThat(actual).isSameAs(locator);
         InOrder inOrder =
-                inOrder(configService, daoFactoryProvider, locatorDao, jdoDao);
-        inOrder.verify(configService).getOrmType();
+                inOrder(configHelper, daoFactoryProvider, locatorDao, jdoDao);
+        inOrder.verify(configHelper).getOrmType();
         inOrder.verify(daoFactoryProvider).getDaoFactory(ORM.JDO);
         inOrder.verify(jdoDao).getLocatorDao();
         inOrder.verify(locatorDao).getLocator("n", "g");
-        verifyNoMoreInteractions(configService, daoFactoryProvider, locatorDao,
+        verifyNoMoreInteractions(configHelper, daoFactoryProvider, locatorDao,
                 jdoDao);
     }
 
     @Test
     public void testLoadLocatorByNameGroupShouldThrowException() {
-        given(configService.getOrmType()).willReturn(ORM.JDO);
+        given(configHelper.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO))
                 .willThrow(RuntimeException.class);
 
@@ -112,7 +112,7 @@ public class LocatorPersistenceTest {
     public void testLoadLocatorById() {
         Locator locator = objectFactory.createLocator("name", "group", "url");
 
-        given(configService.getOrmType()).willReturn(ORM.JDO);
+        given(configHelper.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO)).willReturn(jdoDao);
         given(jdoDao.getLocatorDao()).willReturn(locatorDao);
         given(locatorDao.getLocator(1L)).willReturn(locator);
@@ -121,18 +121,18 @@ public class LocatorPersistenceTest {
 
         assertThat(actual).isSameAs(locator);
         InOrder inOrder =
-                inOrder(configService, daoFactoryProvider, locatorDao, jdoDao);
-        inOrder.verify(configService).getOrmType();
+                inOrder(configHelper, daoFactoryProvider, locatorDao, jdoDao);
+        inOrder.verify(configHelper).getOrmType();
         inOrder.verify(daoFactoryProvider).getDaoFactory(ORM.JDO);
         inOrder.verify(jdoDao).getLocatorDao();
         inOrder.verify(locatorDao).getLocator(1L);
-        verifyNoMoreInteractions(configService, daoFactoryProvider, locatorDao,
+        verifyNoMoreInteractions(configHelper, daoFactoryProvider, locatorDao,
                 jdoDao);
     }
 
     @Test
     public void testLoadLocatorByIdShouldThrowException() {
-        given(configService.getOrmType()).willReturn(ORM.JDO);
+        given(configHelper.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO))
                 .willThrow(RuntimeException.class);
 
@@ -144,19 +144,19 @@ public class LocatorPersistenceTest {
     public void testStoreLocator() {
         Locator locator = objectFactory.createLocator("name", "group", "url");
 
-        given(configService.getOrmType()).willReturn(ORM.JDO);
+        given(configHelper.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO)).willReturn(jdoDao);
         given(jdoDao.getLocatorDao()).willReturn(locatorDao);
 
         locatorPersistence.storeLocator(locator);
 
         InOrder inOrder =
-                inOrder(configService, daoFactoryProvider, locatorDao, jdoDao);
-        inOrder.verify(configService).getOrmType();
+                inOrder(configHelper, daoFactoryProvider, locatorDao, jdoDao);
+        inOrder.verify(configHelper).getOrmType();
         inOrder.verify(daoFactoryProvider).getDaoFactory(ORM.JDO);
         inOrder.verify(jdoDao).getLocatorDao();
         inOrder.verify(locatorDao).storeLocator(locator);
-        verifyNoMoreInteractions(configService, daoFactoryProvider, locatorDao,
+        verifyNoMoreInteractions(configHelper, daoFactoryProvider, locatorDao,
                 jdoDao);
     }
 
@@ -164,7 +164,7 @@ public class LocatorPersistenceTest {
     public void testStoreLocatorShouldThrowException() {
         Locator locator = objectFactory.createLocator("name", "group", "url");
 
-        given(configService.getOrmType()).willReturn(ORM.JDO);
+        given(configHelper.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO))
                 .willThrow(RuntimeException.class);
 
@@ -185,7 +185,7 @@ public class LocatorPersistenceTest {
     @Test
     public void testPersistUseDataStoreFalse() {
         // globally disabled
-        given(configService.useDataStore()).willReturn(false);
+        given(configHelper.useDataStore()).willReturn(false);
 
         Optional<Boolean> persistDefined = Optional.ofNullable(null);
         assertThat(locatorPersistence.persist(persistDefined)).isFalse();
@@ -194,9 +194,9 @@ public class LocatorPersistenceTest {
     @Test
     public void testPersistConfigSet() {
         // enabled at global but disabled at model level
-        given(configService.useDataStore()).willReturn(true);
-        given(configService.isPersist("scoopi.persist.locator"))
-                .willReturn(true).willReturn(false);
+        given(configHelper.useDataStore()).willReturn(true);
+        given(configHelper.isPersist("scoopi.persist.locator")).willReturn(true)
+                .willReturn(false);
 
         Optional<Boolean> persistDefined = Optional.ofNullable(null);
         assertThat(locatorPersistence.persist(persistDefined)).isTrue();
@@ -206,8 +206,8 @@ public class LocatorPersistenceTest {
     @Test
     public void testPersistTaskLevelPersistenceDefined() {
         // enabled at global and model level
-        given(configService.useDataStore()).willReturn(true);
-        given(configService.isPersist("scoopi.persist.locator"))
+        given(configHelper.useDataStore()).willReturn(true);
+        given(configHelper.isPersist("scoopi.persist.locator"))
                 .willReturn(true);
 
         // enabled at task level

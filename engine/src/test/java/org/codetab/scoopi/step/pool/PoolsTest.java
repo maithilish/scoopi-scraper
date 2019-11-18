@@ -21,11 +21,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

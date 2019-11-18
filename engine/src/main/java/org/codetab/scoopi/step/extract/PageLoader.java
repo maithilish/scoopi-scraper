@@ -8,10 +8,10 @@ import java.net.URL;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.codetab.scoopi.config.ConfigHelper;
 import org.codetab.scoopi.helper.HttpHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.step.base.BaseLoader;
-import org.codetab.scoopi.system.ConfigHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

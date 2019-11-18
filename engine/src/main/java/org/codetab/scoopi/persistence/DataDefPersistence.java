@@ -8,13 +8,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.dao.ConfigHelper;
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.IDataDefDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.model.DataDef;
-import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class DataDefPersistence {
      * ConfigService.
      */
     @Inject
-    private ConfigService configService;
+    private ConfigHelper configHelper;
 
     /**
      * DaoFactoryProvider.
@@ -54,11 +54,11 @@ public class DataDefPersistence {
     public List<DataDef> loadDataDefs() {
 
         try {
-            ORM orm = configService.getOrmType();
+            ORM orm = configHelper.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
             IDataDefDao dao = daoFactory.getDataDefDao();
             List<DataDef> dataDefs =
-                    dao.getDataDefs(configService.getRunDateTime());
+                    dao.getDataDefs(configHelper.getRunDateTime());
             LOGGER.debug("dataDefs loaded {}", dataDefs.size());
             return dataDefs;
         } catch (RuntimeException e) {
@@ -78,7 +78,7 @@ public class DataDefPersistence {
         notNull(dataDef, "dataDef must not be null");
 
         try {
-            ORM orm = configService.getOrmType();
+            ORM orm = configHelper.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
             IDataDefDao dao = daoFactory.getDataDefDao();
             String name = dataDef.getName();
@@ -107,7 +107,7 @@ public class DataDefPersistence {
         notNull(dataDefs, "dataDefs must not be null");
 
         try {
-            ORM orm = configService.getOrmType();
+            ORM orm = configHelper.getOrmType();
             IDaoFactory daoFactory = daoFactoryProvider.getDaoFactory(orm);
             IDataDefDao dao = daoFactory.getDataDefDao();
             for (DataDef dataDef : dataDefs) {
@@ -143,11 +143,11 @@ public class DataDefPersistence {
      * @return true or false
      */
     public boolean persistDataDef() {
-        if (!configService.useDataStore()) {
+        if (!configHelper.useDataStore()) {
             // disabled at global level
             return false;
         }
-        if (!configService.isPersist("scoopi.persist.dataDef")) { //$NON-NLS-1$
+        if (!configHelper.isPersist("scoopi.persist.dataDef")) { //$NON-NLS-1$
             // enabled at global but disabled at model level
             return false;
         }

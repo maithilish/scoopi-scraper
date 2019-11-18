@@ -9,9 +9,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;

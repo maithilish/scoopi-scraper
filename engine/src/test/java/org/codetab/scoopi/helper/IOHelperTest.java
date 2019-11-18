@@ -130,7 +130,7 @@ public class IOHelperTest {
 
     @Test
     public void testGetFile() throws IOException, URISyntaxException {
-        String file = "/scoopi-default.xml";
+        String file = "/jdoconfig.properties";
         File expected = new File(IOHelper.class.getResource(file).toURI());
 
         File actual = ioHelper.getFile(file);

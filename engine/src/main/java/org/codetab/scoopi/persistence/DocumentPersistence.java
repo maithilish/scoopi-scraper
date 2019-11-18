@@ -4,13 +4,13 @@ import static org.codetab.scoopi.util.Util.spaceit;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.dao.ConfigHelper;
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Document;
-import org.codetab.scoopi.system.ConfigService;
 
 /**
  * <p>
@@ -24,7 +24,7 @@ public class DocumentPersistence {
      * Config service.
      */
     @Inject
-    private ConfigService configService;
+    private ConfigHelper configService;
     /**
      * DaoFactory provider.
      */

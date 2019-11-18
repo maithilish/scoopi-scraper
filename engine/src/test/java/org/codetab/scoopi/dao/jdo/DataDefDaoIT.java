@@ -10,11 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;

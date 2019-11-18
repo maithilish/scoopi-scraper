@@ -13,11 +13,11 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.ValidationException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.system.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

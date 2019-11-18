@@ -15,12 +15,12 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
-import org.codetab.scoopi.system.ConfigService;
 import org.seleniumhq.jetty9.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

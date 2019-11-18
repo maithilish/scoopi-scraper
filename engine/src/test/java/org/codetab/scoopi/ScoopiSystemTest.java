@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
@@ -30,7 +31,6 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.factory.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.codetab.scoopi.system.ShutdownHook;
 import org.junit.Before;

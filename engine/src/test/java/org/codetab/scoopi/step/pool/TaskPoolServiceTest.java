@@ -3,9 +3,9 @@ package org.codetab.scoopi.step.pool;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

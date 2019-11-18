@@ -3,11 +3,11 @@ package org.codetab.scoopi.metrics;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.IOHelper;
 import org.codetab.scoopi.model.Log.CAT;
-import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;

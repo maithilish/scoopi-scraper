@@ -1,8 +1,8 @@
 package org.codetab.scoopi.itest.fin;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Test;
 

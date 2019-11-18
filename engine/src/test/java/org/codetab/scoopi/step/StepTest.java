@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
@@ -14,7 +15,6 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.process.DataFilter;
-import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
 import org.junit.BeforeClass;

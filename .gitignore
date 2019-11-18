@@ -1,0 +1,7 @@
+/target/
+src/main/web/scoopiw/package-lock.json
+.classpath
+.project
+.settings/
+.checkstyle
+logs/ 

@@ -9,12 +9,12 @@ import java.util.concurrent.BlockingQueue;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Plugin;
-import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package org.codetab.scoopi.system;
+package org.codetab.scoopi.config;
 
 import static java.util.Objects.isNull;
 import static org.codetab.scoopi.util.Util.LINE;
@@ -23,7 +23,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.dao.ORM;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.util.Util;
@@ -161,23 +160,6 @@ public class ConfigService {
         return highDate;
     }
 
-    public ORM getOrmType() {
-        ORM orm = ORM.JDO;
-        try {
-            String ormName = getConfig("scoopi.datastore.orm"); //$NON-NLS-1$
-            if (StringUtils.compareIgnoreCase(ormName, "jdo") == 0) { //$NON-NLS-1$
-                orm = ORM.JDO;
-            }
-            if (StringUtils.compareIgnoreCase(ormName, "jpa") == 0) { //$NON-NLS-1$
-                orm = ORM.JPA;
-            }
-        } catch (ConfigNotFoundException e) {
-            LOGGER.warn("{}", e.getMessage());
-            LOGGER.debug("", e);
-        }
-        return orm;
-    }
-
     public boolean isTestMode() {
         StackTraceElement[] stackElements =
                 Thread.currentThread().getStackTrace();
@@ -298,6 +280,19 @@ public class ConfigService {
      */
     public boolean isTrue(final String configKey) {
         return configs.getBoolean(configKey, false);
+    }
+
+    /**
+     * This method returns boolean for a key and if not found then true;
+     * @param configKey
+     * @return
+     */
+    public boolean getBoolean(final String configKey) {
+        return configs.getBoolean(configKey, true);
+    }
+
+    public Object getProperty(final String configKey) {
+        return configs.getProperty(configKey);
     }
 
     /**

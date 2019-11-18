@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
@@ -25,7 +26,6 @@ import org.codetab.scoopi.model.factory.PayloadFactory;
 import org.codetab.scoopi.plugin.appender.AppenderMediator;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.step.pool.AppenderPoolService;
-import org.codetab.scoopi.system.ConfigService;
 import org.codetab.scoopi.system.ErrorLogger;
 import org.codetab.scoopi.system.ShutdownHook;
 import org.codetab.scoopi.system.Stats;

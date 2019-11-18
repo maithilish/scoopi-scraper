@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.Date;
 
+import org.codetab.scoopi.dao.ConfigHelper;
 import org.codetab.scoopi.dao.DaoFactoryProvider;
 import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.dao.ORM;
@@ -14,7 +15,6 @@ import org.codetab.scoopi.dao.jdo.JdoDaoFactory;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.system.ConfigService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +33,7 @@ import org.mockito.MockitoAnnotations;
 public class DocumentPersistenceTest {
 
     @Mock
-    private ConfigService configService;
+    private ConfigHelper configHelper;
     @Mock
     private DaoFactoryProvider daoFactoryProvider;
     @Mock
@@ -57,7 +57,7 @@ public class DocumentPersistenceTest {
         Document document = new ObjectFactory().createDocument("name", "url",
                 new Date(), new Date());
 
-        given(configService.getOrmType()).willReturn(ORM.JDO);
+        given(configHelper.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO)).willReturn(jdoDao);
         given(jdoDao.getDocumentDao()).willReturn(documentDao);
         given(documentDao.getDocument(1L)).willReturn(document);
@@ -66,18 +66,18 @@ public class DocumentPersistenceTest {
 
         assertThat(actual).isSameAs(document);
         InOrder inOrder =
-                inOrder(configService, daoFactoryProvider, documentDao, jdoDao);
-        inOrder.verify(configService).getOrmType();
+                inOrder(configHelper, daoFactoryProvider, documentDao, jdoDao);
+        inOrder.verify(configHelper).getOrmType();
         inOrder.verify(daoFactoryProvider).getDaoFactory(ORM.JDO);
         inOrder.verify(jdoDao).getDocumentDao();
         inOrder.verify(documentDao).getDocument(1L);
-        verifyNoMoreInteractions(configService, daoFactoryProvider, documentDao,
+        verifyNoMoreInteractions(configHelper, daoFactoryProvider, documentDao,
                 jdoDao);
     }
 
     @Test
     public void testLoadDataByIdShouldThrowException() {
-        given(configService.getOrmType()).willReturn(ORM.JDO);
+        given(configHelper.getOrmType()).willReturn(ORM.JDO);
         given(daoFactoryProvider.getDaoFactory(ORM.JDO))
                 .willThrow(RuntimeException.class);
 
