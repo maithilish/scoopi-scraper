@@ -3,9 +3,9 @@ package org.codetab.scoopi;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +45,8 @@ public class ScoopiEngine {
             scoopiSystem.startMetricsServer();
 
             scoopiSystem.initDefs();
+            
+            scoopiSystem.updateDataDefs();
 
             scoopiSystem.seedLocatorGroups();
 

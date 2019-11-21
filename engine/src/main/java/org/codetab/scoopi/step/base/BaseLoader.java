@@ -15,16 +15,16 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Locator;
-import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.factory.PayloadFactory;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DocumentPersistence;
 import org.codetab.scoopi.persistence.LocatorPersistence;
 import org.codetab.scoopi.step.Step;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

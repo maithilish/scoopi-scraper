@@ -26,6 +26,7 @@ import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.MetricsHelper;
+import org.codetab.scoopi.metrics.PoolStat;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

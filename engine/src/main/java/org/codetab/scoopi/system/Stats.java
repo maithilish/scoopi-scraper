@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.metrics.SystemStat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

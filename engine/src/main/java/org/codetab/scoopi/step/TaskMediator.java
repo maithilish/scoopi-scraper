@@ -8,11 +8,11 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.pool.TaskPoolService;
 import org.codetab.scoopi.store.IStore;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -12,11 +12,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codetab.scoopi.exception.DefNotFoundException;
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.plugin.appender.Appender.Marker;
 import org.codetab.scoopi.step.pool.AppenderPoolService;
-import org.codetab.scoopi.system.ErrorLogger;
 
 @Singleton
 public class AppenderMediator {

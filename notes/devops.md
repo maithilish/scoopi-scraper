@@ -208,6 +208,13 @@ Goals 	-> process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi"
 
 skips exec in all modules except engine module. 
 
+Dao Enhance
+
+Main 	-> Base directory - ${project_loc:dao}
+Goals 	-> clean test-compile datanucleus:enhance
+Resolve Workspace Artifacts - check (otherwise mvn tries to download modules)
+
+
 ### Run Configuration Variables
 
 For Run As - Java Application, the arguments:

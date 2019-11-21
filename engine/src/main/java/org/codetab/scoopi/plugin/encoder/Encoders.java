@@ -14,9 +14,9 @@ import javax.inject.Inject;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Plugin;
-import org.codetab.scoopi.system.ErrorLogger;
 
 public class Encoders extends HashMap<String, List<IEncoder<?>>> {
 

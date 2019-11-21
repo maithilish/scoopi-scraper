@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.codetab</groupId>
+    <artifactId>scoopi</artifactId>
+    <version>0.9.6-beta</version>
+  </parent>
+  <artifactId>model</artifactId>
+  
+  <dependencies>        
+        <dependency>
+            <groupId>org.codetab</groupId>
+            <artifactId>util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    
+    <profiles>
+        <!-- basic profile - no ng and docker builds -->
+        <profile>
+            <id>basic</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>                                       
+                    <!-- datanucleus enhance -->
+                    <!-- we need classes without enhancement for jaxb schemagen hence they 
+                         are enhanced in process-classes phases instead of compile -->
+                    <plugin>
+                        <groupId>org.datanucleus</groupId>
+                        <artifactId>datanucleus-maven-plugin</artifactId>
+                        <version>${datanucleus-enhancer.version}</version>
+                        <configuration>
+                            <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>enhance</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

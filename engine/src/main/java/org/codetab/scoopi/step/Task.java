@@ -4,10 +4,10 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.TaskInfo;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;

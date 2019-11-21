@@ -10,8 +10,9 @@ import java.util.Timer;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log;
 import org.codetab.scoopi.metrics.SystemStat;
-import org.codetab.scoopi.model.Log;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

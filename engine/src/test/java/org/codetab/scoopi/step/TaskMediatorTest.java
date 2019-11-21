@@ -11,13 +11,13 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.TaskMediator.TaskRunnerThread;
 import org.codetab.scoopi.step.pool.TaskPoolService;
 import org.codetab.scoopi.store.IStore;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -9,24 +9,27 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.defs.IDataDefDef;
+import org.codetab.scoopi.defs.IDef;
 import org.codetab.scoopi.defs.ILocatorDef;
-import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.helper.SystemHelper;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
 import org.codetab.scoopi.metrics.SystemStat;
+import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.LocatorGroup;
-import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.factory.PayloadFactory;
+import org.codetab.scoopi.persistence.DataDefPersistence;
 import org.codetab.scoopi.plugin.appender.AppenderMediator;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.step.pool.AppenderPoolService;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.codetab.scoopi.system.ShutdownHook;
 import org.codetab.scoopi.system.Stats;
 import org.slf4j.Logger;
@@ -39,11 +42,15 @@ public class ScoopiSystem {
     @Inject
     private ConfigService configService;
     @Inject
-    private Def def;
-    @Inject
-    private TaskMediator taskMediator;
+    private IDef def;
     @Inject
     private ILocatorDef locatorDef;
+    @Inject
+    private IDataDefDef dataDefDef;
+    @Inject
+    private DataDefPersistence dataDefPersistence;
+    @Inject
+    private TaskMediator taskMediator;
     @Inject
     private MetricsServer metricsServer;
     @Inject
@@ -104,6 +111,23 @@ public class ScoopiSystem {
         } catch (DefNotFoundException | InvalidDefException e) {
             String message = "unable init defs";
             throw new CriticalException(message, e);
+        }
+        return true;
+    }
+
+    public boolean updateDataDefs() {
+        if (dataDefPersistence.persistDataDef()) {
+            List<DataDef> newDataDefs = dataDefDef.getDefinedDataDefs();
+            List<DataDef> oldDataDefs = dataDefPersistence.loadDataDefs();
+            List<DataDef> effDataDefs = oldDataDefs;
+            // old list is updated with changes
+            boolean isChanged = dataDefPersistence.markForUpdation(newDataDefs,
+                    oldDataDefs);
+            if (isChanged) {
+                dataDefPersistence.storeDataDefs(oldDataDefs);
+                effDataDefs = dataDefPersistence.loadDataDefs();
+            }
+            dataDefDef.updateDataDefs(effDataDefs);
         }
         return true;
     }

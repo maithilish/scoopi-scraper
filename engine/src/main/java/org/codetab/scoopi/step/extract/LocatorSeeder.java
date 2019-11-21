@@ -11,13 +11,13 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.helper.ThreadSleep;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
-import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.factory.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseSeeder;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

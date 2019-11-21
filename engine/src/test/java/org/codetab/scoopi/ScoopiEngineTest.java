@@ -7,9 +7,9 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -55,6 +55,7 @@ public class ScoopiEngineTest {
                 userConfigFile);
         inOrder.verify(scoopiSystem).startMetricsServer();
         inOrder.verify(scoopiSystem).initDefs();
+        inOrder.verify(scoopiSystem).updateDataDefs();
         inOrder.verify(scoopiSystem).seedLocatorGroups();
         inOrder.verify(scoopiSystem).waitForInput();
 

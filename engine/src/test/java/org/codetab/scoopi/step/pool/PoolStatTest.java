@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.codetab.scoopi.metrics.PoolStat;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

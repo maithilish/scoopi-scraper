@@ -10,11 +10,11 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.TaskInfo;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

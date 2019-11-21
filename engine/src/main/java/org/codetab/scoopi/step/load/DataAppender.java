@@ -8,11 +8,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.DefNotFoundException;
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.plugin.appender.Appender;
 import org.codetab.scoopi.plugin.encoder.IEncoder;
 import org.codetab.scoopi.step.base.BaseAppender;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

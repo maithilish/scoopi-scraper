@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.model.Log.CAT;
+import org.codetab.scoopi.log.Log.CAT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

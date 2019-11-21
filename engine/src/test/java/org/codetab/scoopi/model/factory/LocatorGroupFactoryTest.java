@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.codetab.scoopi.defs.IItemDef;
+import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
-import org.codetab.scoopi.model.Log.CAT;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.system.ErrorLogger;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +25,6 @@ import org.codetab.scoopi.dao.jdo.LocatorDao;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Locator;
-import org.codetab.scoopi.util.TestUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -55,7 +55,7 @@ public class ITestBase {
         schemaClasses.add("org.codetab.scoopi.model.Data");
 
         configService = di.instance(ConfigService.class);
-        configService.init("scoopi.properties", "scoopi-default.xml");
+        configService.init("scoopi-test.properties", "scoopi-default.xml");
 
         daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
         pmf = daoUtil.getPersistenceManagerFactory();
@@ -92,7 +92,7 @@ public class ITestBase {
     }
 
     protected List<String> getExpectedList(final String expectedFile) {
-        List<String> expectedList = TestUtils.readFileAsList(expectedFile);
+        List<String> expectedList = readFileAsList(expectedFile);
         expectedList = substituteVariables(expectedList);
         return expectedList;
     }
@@ -131,5 +131,14 @@ public class ITestBase {
     public String getExpectedFile(final String exName, final String exBase,
             final String cat) {
         return String.join("/", exBase, cat, exName, "expected.txt");
+    }
+
+    private static List<String> readFileAsList(final String fileName) {
+        try {
+            InputStream is = ITestBase.class.getResourceAsStream(fileName);
+            return IOUtils.readLines(is, "UTF-8");
+        } catch (IOException e) {
+            return new ArrayList<String>();
+        }
     }
 }
