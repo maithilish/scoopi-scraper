@@ -54,6 +54,7 @@ public class Stats {
     }
 
     public void outputStats() {
+        LOGGER.info("{}", "");
         LOGGER.info("{}", "--- Summary ---");
         long errorCount = errorLogger.getErrorCount();
         if (errorCount == 0) {
@@ -66,6 +67,7 @@ public class Stats {
     }
 
     public void outputMemStats() {
+        LOGGER.info("{}", "");
         LOGGER.info("{}", "--- Memory Usage ---");
         LOGGER.info("Max   : {}", systemStat.getMaxMemory());
         LOGGER.info("Total : Avg {} High {} Low {}",
