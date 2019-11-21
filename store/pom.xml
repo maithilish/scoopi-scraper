@@ -3,14 +3,14 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.codetab</groupId>
-        <artifactId>scoopi</artifactId>
+      <groupId>org.codetab.scoopi</groupId>
+        <artifactId>scoopi-scraper</artifactId>
         <version>0.9.6-beta</version>
     </parent>
     <artifactId>store</artifactId>
     <dependencies>
         <dependency>
-            <groupId>org.codetab</groupId>
+           <groupId>org.codetab.scoopi</groupId>
             <artifactId>model</artifactId>
             <version>${project.version}</version>
         </dependency>

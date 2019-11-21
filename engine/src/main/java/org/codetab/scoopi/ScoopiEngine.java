@@ -45,7 +45,7 @@ public class ScoopiEngine {
             scoopiSystem.startMetricsServer();
 
             scoopiSystem.initDefs();
-            
+
             scoopiSystem.updateDataDefs();
 
             scoopiSystem.seedLocatorGroups();

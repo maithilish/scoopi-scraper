@@ -2,8 +2,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.codetab</groupId>
-    <artifactId>scoopi</artifactId>
+    <groupId>org.codetab.scoopi</groupId>
+    <artifactId>scoopi-scraper</artifactId>
     <version>0.9.6-beta</version>
 
     <url>http://www.codetab.org/scoopi</url>
@@ -22,7 +22,7 @@
         <module>dao</module>
         <module>di</module>
         <module>store</module>
-        <module>distribution</module>
+        <module>scoopi</module>
     </modules>
 
     <properties>
@@ -67,6 +67,7 @@
         <jar-plugin.version>3.2.0</jar-plugin.version>
         <dependency-plugin.version>3.1.1</dependency-plugin.version>
         <assembly-plugin.version>3.2.0</assembly-plugin.version>
+        <install-plugin.version>3.0.0-M1</install-plugin.version>
         <failsafe-plugin.version>3.0.0-M3</failsafe-plugin.version>
         <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
         <datanucleus-enhancer.version>5.2.1</datanucleus-enhancer.version>
@@ -491,7 +492,7 @@
     </profiles>
 
     <inceptionYear>2018</inceptionYear>
-    <name>Scoopi</name>
+    <name>Scoopi Scraper</name>
     <prerequisites>
         <maven>3.5.0</maven>
     </prerequisites>
