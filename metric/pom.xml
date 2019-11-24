@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-      <groupId>org.codetab.scoopi</groupId>
+        <groupId>org.codetab.scoopi</groupId>
         <artifactId>scoopi-scraper</artifactId>
         <version>0.9.6-beta</version>
     </parent>
@@ -14,7 +14,24 @@
             <groupId>org.codetab.scoopi</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
-        </dependency>       
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-servlets</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
