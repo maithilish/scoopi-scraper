@@ -1,4 +1,4 @@
-package org.codetab.scoopi.system;
+package org.codetab.scoopi.model.helper;
 
 import java.util.HashMap;
 import java.util.Map;

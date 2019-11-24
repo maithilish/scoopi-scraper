@@ -47,6 +47,16 @@
         </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
+            <artifactId>step</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>org.codetab.scoopi</groupId>
+            <artifactId>pool</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codetab.scoopi</groupId>
             <artifactId>log</artifactId>
             <version>${project.version}</version>
         </dependency>

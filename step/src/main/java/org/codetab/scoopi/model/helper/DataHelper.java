@@ -11,7 +11,6 @@ import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.DataIterator;
-import org.codetab.scoopi.system.Sequence;
 
 public class DataHelper {
 
