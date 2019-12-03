@@ -1,4 +1,4 @@
-package org.codetab.scoopi.pool;
+package org.codetab.scoopi.plugin.script;
 
 import static org.codetab.scoopi.util.Util.dashit;
 

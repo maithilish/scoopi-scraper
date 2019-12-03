@@ -11,7 +11,6 @@ import javax.script.ScriptException;
 
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Plugin;
-import org.codetab.scoopi.pool.ScriptEnginePool;
 
 public class ScriptExecutor {
 

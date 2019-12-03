@@ -24,7 +24,8 @@
         <module>store</module>
         <module>scoopi</module>
         <module>step</module>
-        <module>pool</module>        
+        <module>pool</module>
+        <module>plugin</module>
     </modules>
 
     <properties>

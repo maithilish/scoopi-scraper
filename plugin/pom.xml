@@ -7,7 +7,7 @@
         <artifactId>scoopi-scraper</artifactId>
         <version>0.9.6-beta</version>
     </parent>
-    <artifactId>step</artifactId>
+    <artifactId>plugin</artifactId>
 
     <dependencies>
         <dependency>
@@ -17,17 +17,7 @@
         </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
-            <artifactId>config</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codetab.scoopi</groupId>
             <artifactId>log</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codetab.scoopi</groupId>
-            <artifactId>model</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -40,33 +30,14 @@
             <artifactId>di</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.codetab.scoopi</groupId>
-            <artifactId>dao</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codetab.scoopi</groupId>
-            <artifactId>pool</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codetab.scoopi</groupId>
-            <artifactId>plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.htmlunit</groupId>
-            <artifactId>htmlunit</artifactId>
-        </dependency>
         <dependency>
             <groupId>net.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
         </dependency>
     </dependencies>
 </project>

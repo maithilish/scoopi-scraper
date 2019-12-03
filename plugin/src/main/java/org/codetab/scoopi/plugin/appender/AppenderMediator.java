@@ -16,7 +16,7 @@ import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.plugin.appender.Appender.Marker;
-import org.codetab.scoopi.step.pool.AppenderPoolService;
+import org.codetab.scoopi.plugin.pool.AppenderPoolService;
 
 @Singleton
 public class AppenderMediator {

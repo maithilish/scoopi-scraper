@@ -1,4 +1,4 @@
-package org.codetab.scoopi.pool;
+package org.codetab.scoopi.plugin.script;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
