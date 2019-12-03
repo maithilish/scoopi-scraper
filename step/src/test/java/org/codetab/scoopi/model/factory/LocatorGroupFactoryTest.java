@@ -18,6 +18,7 @@ import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
+import org.codetab.scoopi.step.process.LocatorGroupFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;

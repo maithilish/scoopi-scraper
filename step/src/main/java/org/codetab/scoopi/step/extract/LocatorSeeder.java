@@ -16,7 +16,7 @@ import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.factory.PayloadFactory;
+import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseSeeder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

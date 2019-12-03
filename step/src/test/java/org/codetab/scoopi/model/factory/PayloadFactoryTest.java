@@ -13,6 +13,7 @@ import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
+import org.codetab.scoopi.step.PayloadFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;

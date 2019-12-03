@@ -7,7 +7,6 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.Item;
-import org.codetab.scoopi.model.helper.FilterHelper;
 import org.codetab.scoopi.step.base.BaseProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -23,8 +23,7 @@
         <module>di</module>
         <module>store</module>
         <module>scoopi</module>
-        <module>step</module>
-        <module>pool</module>
+        <module>step</module>       
         <module>plugin</module>
     </modules>
 

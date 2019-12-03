@@ -1,4 +1,4 @@
-package org.codetab.scoopi.pool;
+package org.codetab.scoopi.step.webdriver;
 
 import java.util.concurrent.TimeUnit;
 

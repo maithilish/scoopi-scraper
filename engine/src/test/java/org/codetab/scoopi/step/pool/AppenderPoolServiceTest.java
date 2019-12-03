@@ -7,6 +7,7 @@ import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.PoolStat;
+import org.codetab.scoopi.plugin.pool.AppenderPoolService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package org.codetab.scoopi.model.factory;
+package org.codetab.scoopi.step.base;
 
 import javax.inject.Inject;
 

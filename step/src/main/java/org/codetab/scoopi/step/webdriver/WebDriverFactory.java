@@ -1,4 +1,4 @@
-package org.codetab.scoopi.pool;
+package org.codetab.scoopi.step.webdriver;
 
 import java.io.File;
 import java.nio.file.Paths;

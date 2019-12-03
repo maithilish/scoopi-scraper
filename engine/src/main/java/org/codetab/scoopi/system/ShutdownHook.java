@@ -3,7 +3,7 @@ package org.codetab.scoopi.system;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.pool.WebDriverPool;
+import org.codetab.scoopi.step.webdriver.WebDriverPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

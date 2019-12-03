@@ -24,7 +24,6 @@ import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Item;
-import org.codetab.scoopi.model.factory.DataFactory;
 import org.codetab.scoopi.model.helper.DataHelper;
 import org.codetab.scoopi.persistence.DataPersistence;
 import org.codetab.scoopi.step.Step;

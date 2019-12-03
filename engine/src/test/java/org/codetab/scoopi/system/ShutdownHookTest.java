@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.inOrder;
 
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.pool.WebDriverPool;
+import org.codetab.scoopi.step.webdriver.WebDriverPool;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

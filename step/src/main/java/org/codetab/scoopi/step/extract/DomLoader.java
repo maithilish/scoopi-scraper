@@ -12,9 +12,9 @@ import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.plugin.script.ScriptExecutor;
-import org.codetab.scoopi.pool.WebDriverPool;
-import org.codetab.scoopi.pool.WebDrivers;
 import org.codetab.scoopi.step.base.BaseLoader;
+import org.codetab.scoopi.step.webdriver.WebDriverPool;
+import org.codetab.scoopi.step.webdriver.WebDrivers;
 import org.openqa.selenium.WebDriver;
 
 public class DomLoader extends BaseLoader {

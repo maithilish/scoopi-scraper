@@ -30,7 +30,7 @@ import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.factory.PayloadFactory;
+import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.system.ShutdownHook;
 import org.junit.Before;

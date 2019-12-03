@@ -1,4 +1,4 @@
-package org.codetab.scoopi.model.factory;
+package org.codetab.scoopi.step.process;
 
 import static org.codetab.scoopi.util.Util.spaceit;
 
