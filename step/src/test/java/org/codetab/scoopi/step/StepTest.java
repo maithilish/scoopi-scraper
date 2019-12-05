@@ -15,7 +15,6 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
 import org.codetab.scoopi.step.process.DataFilter;
-import org.codetab.scoopi.system.Stats;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -32,8 +31,6 @@ public class StepTest {
     protected ConfigService configService;
     @Mock
     protected TaskFactory taskFactory;
-    @Mock
-    protected Stats activityService;
     @Mock
     protected MetricsHelper metricsHelper;
     @Mock

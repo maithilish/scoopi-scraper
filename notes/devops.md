@@ -15,8 +15,9 @@ mvn test jacoco:report					# without itest
 mvn verify jacoco:report				# with itest
 mvn JavaDoc:JavaDoc
 
-mvn docker:build					# build local image
-mvn docker:push						# push imaget to hub
+mvn clean verify -P basic,release  	# create release zip and docker image
+mvn clean verify -DskipTests -P basic,release 	# skip all tests
+
 
 mvn versions:display-dependency-updates
 mvn versions:display-plugin-updates
@@ -192,6 +193,8 @@ to debug XML objects such as Fields in Locator see https://goo.gl/JEukUP
 
 ### Exclude web dir from errors
 
+in metric module 
+
 Project > Properties > Resource > Resource Filters > Add...
 Filter type = Exclude all.
 Applies to = File and Folders (check all children recursive)
@@ -242,16 +245,18 @@ On new machine install nodejs and angular cli
 
 ### Scoopi dashboard
 
+scoopiw is in metric module src/main/web dir
+
 install modules
 
-	cd src/main/web/scoopiw
+	cd metric/src/main/web/scoopiw
 	rm -rf node_modules
 	npm install
 
 
 ### Scoopi Metric
 
-Jetty server starts at port 9010. Angular app source is located at src/main/web/scoopiw dir. During dev, in memory datastore is used and in prod build, it fetches data from localhost:9010/api/metrics
+Jetty server starts at port 9010. Angular app source is located in metric/src/main/web/scoopiw dir. During dev, in memory datastore is used and in prod build, it fetches data from localhost:9010/api/metrics
 
 mvn package, builds the angular app with 
  
@@ -357,7 +362,7 @@ travis maven and build steps
  - https://docs.travis-ci.com/user/languages/java/#Projects-Using-Maven
  - https://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Build-Step
      
-### Github release
+## Release
 
 merge branch if any and change version in all modules
 
@@ -369,17 +374,19 @@ commit and add tag
 	git tag <version>          // add local tag
 	git push origin --tags
      
+build release 
+
+	mvn clean verify -P basic,release
+
+release profile creates release zip and installs docker image in local repository.
+	
 create new release in github and attach zip
-     
-### Docker Image release
 
-build and install image in local repository.
-
-      mvn clean verify docker:build
-
-push image to docker hub.
+push image to docker hub
 
       docker login            // one time
-      mvn docker:push
+      docker push codetab/scoopi:<version>
+    
+
 
 
