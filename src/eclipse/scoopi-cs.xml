@@ -44,9 +44,6 @@
     <module name="UnusedImports">
       <property name="processJavadoc" value="false"/>
     </module>
-    <module name="LineLength">
-      <property name="max" value="120"/>
-    </module>
     <module name="MethodLength"/>
     <module name="ParameterNumber"/>
     <module name="EmptyForIteratorPad"/>
@@ -97,6 +94,9 @@
     <module name="TodoComment"/>
     <module name="UpperEll"/>
   </module>
+  <module name="LineLength">
+    <property name="max" value="120"/>
+  </module>
   <module name="JavadocPackage">
     <property name="severity" value="ignore"/>
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
@@ -111,6 +111,6 @@
   </module>
   <module name="SuppressWarningsFilter"/>
   <module name="SuppressionFilter">
-    <property name="file" value="/orange/data/eclipse-workspace/scoopi/src/eclipse/suppressions.xml"/>
+    <property name="file" value="/orange/data/eclipse-workspace/scoopi-scraper/src/eclipse/suppressions.xml"/>
   </module>
 </module>

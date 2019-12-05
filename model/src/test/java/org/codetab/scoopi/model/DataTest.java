@@ -2,9 +2,12 @@ package org.codetab.scoopi.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -94,12 +97,15 @@ public class DataTest {
     }
 
     @Test
-    public void testHashCode() {
+    public void testHashCode() throws ParseException {
+        Date runDateTime = DateUtils.parseDate("2018-12-18 20:59:59",
+                new String[] {"yyyy-MM-dd HH:mm:ss"});
         data.setName("x");
         data.setDataDef("d");
         data.setDataDefId(2L);
         data.setDocumentId(3L);
-        assertThat(data.hashCode()).isEqualTo(586561028L);
+        data.setRunDate(runDateTime);
+        assertThat(data.hashCode()).isEqualTo(716012563L);
     }
 
     @Test

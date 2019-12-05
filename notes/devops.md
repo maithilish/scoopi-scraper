@@ -359,22 +359,25 @@ travis maven and build steps
      
 ### Github release
 
-merge branch if any
+merge branch if any and change version in all modules
 
-change version in pom.xml and commit
-          
-     git tag <version>          // add local tag
-     git push origin --tags
+	mvn versions:set -DnewVersion=0.9.7-beta
+	mvn versions:commit   # or versions:revert 
+
+commit and add tag 
+		
+	git tag <version>          // add local tag
+	git push origin --tags
      
 create new release in github and attach zip
      
 ### Docker Image release
 
-build image
+build and install image in local repository.
 
       mvn clean verify docker:build
 
-push image
+push image to docker hub.
 
       docker login            // one time
       mvn docker:push

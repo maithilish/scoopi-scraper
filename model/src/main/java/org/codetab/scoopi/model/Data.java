@@ -2,6 +2,7 @@ package org.codetab.scoopi.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -18,6 +19,7 @@ public final class Data extends DataComponent implements Serializable {
     private String dataDef;
     private Long dataDefId;
     private Long documentId;
+    private Date runDate;
     private Tag tag = new Tag();
     private List<DataComponent> items = new ArrayList<>();
 
@@ -62,6 +64,14 @@ public final class Data extends DataComponent implements Serializable {
 
     public void setDocumentId(final Long documentId) {
         this.documentId = documentId;
+    }
+
+    public Date getRunDate() {
+        return runDate;
+    }
+
+    public void setRunDate(final Date runDate) {
+        this.runDate = runDate;
     }
 
     public List<Item> getItems() {

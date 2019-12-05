@@ -135,7 +135,8 @@ public abstract class BaseParser extends Step {
                 LOGGER.debug(marker, "{}", getLabeled("parse data"));
                 String dataDefName = getJobInfo().getDataDef();
                 data = dataFactory.createData(dataDefName, document.getId(),
-                        getJobInfo().getLabel());
+                        getJobInfo().getLabel(),
+                        configService.getRunDateTime());
 
                 dataHelper.addPageTag(data);
                 dataHelper.addItemTag(data);

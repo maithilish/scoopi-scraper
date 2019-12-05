@@ -3,8 +3,6 @@
     "-//Sun Microsystems, Inc.//DTD Java Data Objects Metadata 2.0//EN"
     "http://java.sun.com/dtd/jdo_2_0.dtd">
 
-<!-- Fields are not persisted so we need to copy them from beans -->
-
 <!-- Metadata reference : http://www.datanucleus.org:15080/products/accessplatform_5_0/jdo/metadata_xml.html -->
 <!-- Java types persistable by default : http://www.datanucleus.org/products/accessplatform_4_1/jdo/types.html -->
 <jdo>
@@ -56,6 +54,7 @@
             <field name="name" />
             <field name="dataDefId" />
             <field name="documentId" />
+            <field name="runDate" />
             <field name="items" persistence-modifier="persistent"
                 serialized="true" />
             <unique name="UNIQUE_DATA">

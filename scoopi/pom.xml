@@ -28,19 +28,63 @@
             <build>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <version>${install-plugin.version}</version>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- assemble release zip -->
+                    <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>assemble-distribution</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <descriptors>
                                 <descriptor>src/assembly/release.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </plugin>
+                    <!-- build docker image -->
                     <plugin>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <version>${install-plugin.version}</version>
-                        <configuration>
-                            <skip>true</skip>
-                        </configuration>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>docker image</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${basedir}/src/docker/dockerbuild.sh</executable>
+                                    <!-- name, image name, docker file, release zip -->
+                                    <!-- version, build dir -->
+                                    <arguments>
+                                        <argument>scoopi</argument>
+                                        <argument>codetab/scoopi</argument>
+                                        <argument>src/docker/Dockerfile</argument>
+                                        <argument>scoopi-${project.version}-release.zip</argument>
+                                        <argument>${project.version}</argument>
+                                        <argument>${project.build.directory}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

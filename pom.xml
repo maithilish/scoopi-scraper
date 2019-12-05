@@ -23,7 +23,7 @@
         <module>di</module>
         <module>store</module>
         <module>scoopi</module>
-        <module>step</module>       
+        <module>step</module>
         <module>plugin</module>
     </modules>
 
@@ -80,7 +80,6 @@
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
         <versions-plugin.version>2.7</versions-plugin.version>
         <exec-plugin.version>1.6.0</exec-plugin.version>
-        <docker-plugin.version>0.31.0</docker-plugin.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -315,21 +314,6 @@
                 </resources>
                 <pluginManagement>
                     <plugins>
-                       <!-- release assembly -->
-                        <plugin>
-                            <artifactId>maven-assembly-plugin</artifactId>
-                            <version>${assembly-plugin.version}</version>
-                            <executions>
-                                <execution>
-                                    <id>assemble-distribution</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>single</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-failsafe-plugin</artifactId>
@@ -354,7 +338,6 @@
                 
                 <!--  plugin required by all modules -->
                 <plugins>
-                    <!-- java source level -->
                     <plugin>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>${compiler-plugin.version}</version>
@@ -452,63 +435,25 @@
             </build>
         </profile>
 
-        <!-- release profile - ng and docker builds -->
-        <!-- for travis-ci, pass -P basic so that only basic is activated and release profile is disabled -->
         <profile>
+            <!-- profile - release, builds metrics web app and docker image -->
+            <!-- for travis, pass "-P basic" to activate only the basic and not release profile -->
             <id>release</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <pluginManagement>
                     <plugins>
+                    <!-- release assembly -->
+                        <plugin>
+                            <artifactId>maven-assembly-plugin</artifactId>
+                            <version>${assembly-plugin.version}</version>
+                        </plugin>
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>exec-maven-plugin</artifactId>
                             <version>${exec-plugin.version}</version>
-                            <executions>
-                                <execution>
-                                    <id>ng-build</id>
-                                    <phase>prepare-package</phase>
-                                    <goals>
-                                        <goal>exec</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                            <configuration>
-                                <workingDirectory>${project.basedir}/src/main/web/scoopiw</workingDirectory>
-                                <executable>ng</executable>
-                                <arguments>
-                                    <argument>build</argument>
-                                    <argument>--prod</argument>
-                                    <argument>--build-optimizer</argument>
-                                    <argument>--output-path=${project.build.directory}/classes/webapp</argument>
-                                    <argument>--delete-output-path=false</argument>
-                                </arguments>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>io.fabric8</groupId>
-                            <artifactId>docker-maven-plugin</artifactId>
-                            <version>${docker-plugin.version}</version>
-                            <configuration>
-                                <images>
-                                    <image>
-                                        <name>codetab/scoopi</name>
-                                        <build>
-                                            <dockerFileDir>${project.basedir}/src/docker</dockerFileDir>
-                                            <assembly>
-                                                <name>scoopi</name>
-                                                <descriptor>${project.basedir}/src/assembly/production.xml</descriptor>
-                                            </assembly>
-                                            <tags>
-                                                <tag>latest</tag>
-                                                <tag>${project.version}</tag>
-                                            </tags>
-                                        </build>
-                                    </image>
-                                </images>
-                            </configuration>
                         </plugin>
                     </plugins>
                 </pluginManagement>
