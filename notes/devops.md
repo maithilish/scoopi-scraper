@@ -370,10 +370,11 @@ merge branch if any and change version in all modules
 	mvn versions:commit   # or versions:revert 
 
 commit and add tag 
-		
+	
+	git push
 	git tag <version>          // add local tag
 	git push origin --tags
-     
+	
 build release 
 
 	mvn clean verify -P basic,release
