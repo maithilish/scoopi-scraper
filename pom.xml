@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.codetab.scoopi</groupId>
     <artifactId>scoopi-scraper</artifactId>
-    <version>0.9.6-beta</version>
+    <version>0.9.7-beta</version>
 
     <url>http://www.codetab.org/scoopi</url>
 
