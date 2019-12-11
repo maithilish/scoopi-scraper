@@ -17,12 +17,13 @@ import javax.jdo.PersistenceManagerFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
-import org.codetab.scoopi.ScoopiEngine;
 import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.dao.jdo.JdoDaoUtilFactory;
 import org.codetab.scoopi.dao.jdo.LocatorDao;
 import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.di.InitModule;
+import org.codetab.scoopi.engine.ScoopiEngine;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Locator;
 import org.junit.After;
@@ -46,7 +47,7 @@ public class ITestBase {
 
     @Before
     public void setUp() {
-        di = new DInjector();
+        di = new DInjector(new InitModule());
 
         schemaClasses = new HashSet<>();
         schemaClasses.add("org.codetab.scoopi.model.DataDef");

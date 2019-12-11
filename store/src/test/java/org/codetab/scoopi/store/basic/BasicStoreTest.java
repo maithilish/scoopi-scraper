@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.util.concurrent.BlockingQueue;
 
 import org.codetab.scoopi.model.Payload;
+import org.codetab.scoopi.store.local.simple.PayloadStore;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -22,7 +23,7 @@ public class BasicStoreTest {
     private BlockingQueue<Payload> payloads;
 
     @InjectMocks
-    private BasicStore store;
+    private PayloadStore store;
 
     @Before
     public void setUp() throws Exception {

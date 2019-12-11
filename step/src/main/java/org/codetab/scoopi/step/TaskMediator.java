@@ -12,7 +12,7 @@ import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.pool.TaskPoolService;
-import org.codetab.scoopi.store.IStore;
+import org.codetab.scoopi.store.IPayloadStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class TaskMediator {
     @Inject
     private TaskPoolService poolService;
     @Inject
-    private IStore store;
+    private IPayloadStore payloadStore;
     @Inject
     private TaskFactory taskFactory;
     @Inject
@@ -57,7 +57,7 @@ public class TaskMediator {
         synchronized (this) {
             ++reservations;
         }
-        store.putPayload(payload);
+        payloadStore.putPayload(payload);
         return true;
     }
 
@@ -68,7 +68,7 @@ public class TaskMediator {
     private void initiateTask()
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException, InterruptedException {
-        Payload payload = store.takePayload();
+        Payload payload = payloadStore.takePayload();
         synchronized (this) {
             --reservations;
         }

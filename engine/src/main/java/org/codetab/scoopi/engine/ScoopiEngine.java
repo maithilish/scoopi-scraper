@@ -1,4 +1,4 @@
-package org.codetab.scoopi;
+package org.codetab.scoopi.engine;
 
 import javax.inject.Inject;
 
@@ -38,15 +38,7 @@ public class ScoopiEngine {
 
             scoopiSystem.addShutdownHook();
 
-            String defaultConfigFile = "scoopi-default.xml"; //$NON-NLS-1$
-            String userConfigFile = scoopiSystem.getPropertyFileName();
-            scoopiSystem.initConfigService(defaultConfigFile, userConfigFile);
-
             scoopiSystem.startMetricsServer();
-
-            scoopiSystem.initDefs();
-
-            scoopiSystem.updateDataDefs();
 
             scoopiSystem.seedLocatorGroups();
 

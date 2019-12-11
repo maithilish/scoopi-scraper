@@ -2,6 +2,7 @@ package org.codetab.scoopi;
 
 import static org.mockito.Mockito.verify;
 
+import org.codetab.scoopi.engine.ScoopiEngine;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

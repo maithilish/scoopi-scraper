@@ -17,7 +17,7 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.TaskMediator.TaskRunnerThread;
 import org.codetab.scoopi.step.pool.TaskPoolService;
-import org.codetab.scoopi.store.IStore;
+import org.codetab.scoopi.store.IPayloadStore;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class TaskMediatorTest {
     @Mock
     private TaskPoolService poolService;
     @Mock
-    private IStore store;
+    private IPayloadStore payloadStore;
     @Mock
     private TaskFactory taskFactory;
     @Mock
@@ -85,7 +85,7 @@ public class TaskMediatorTest {
 
         assertThat(actual).isTrue();
         assertThat(reservations).isEqualTo(1);
-        verify(store).putPayload(payload);
+        verify(payloadStore).putPayload(payload);
     }
 
     @Test

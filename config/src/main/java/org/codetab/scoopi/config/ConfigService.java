@@ -312,4 +312,15 @@ public class ConfigService {
         String configKey = "scoopi.useDatastore";
         return configs.getBoolean(configKey, true);
     }
+
+    public String getStage() {
+        String modeInfo = "stage: production";
+        if (isTestMode()) {
+            modeInfo = "stage: test";
+        }
+        if (isDevMode()) {
+            modeInfo = "stage: dev";
+        }
+        return modeInfo;
+    }
 }

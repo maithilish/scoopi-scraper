@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.IOHelper;
@@ -56,7 +57,8 @@ public class PMFIT {
     @Test
     public void testSingleton() {
         // given
-        DInjector dInjector = new DInjector().instance(DInjector.class);
+        DInjector dInjector =
+                new DInjector(new InitModule()).instance(DInjector.class);
 
         // when
         PMF instanceA = dInjector.instance(PMF.class);

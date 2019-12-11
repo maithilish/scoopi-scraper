@@ -16,6 +16,7 @@
             <version>${project.version}</version>
         </dependency>
         
+        
         <!-- TODO - remove this once selenium is bumped to higher version  -->
         <!--  selenium uses 1.19 and jackson requires 1.24 -->
         <dependency>

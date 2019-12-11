@@ -15,6 +15,7 @@ import java.util.List;
 import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.yml.Def;
+import org.codetab.scoopi.engine.ScoopiSystem;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DefNotFoundException;
@@ -30,9 +31,9 @@ import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
+import org.codetab.scoopi.stat.ShutdownHook;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.system.ShutdownHook;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -263,14 +264,14 @@ public class ScoopiSystemTest {
     @Test
     public void testGetModeInfo() {
         given(configService.isTestMode()).willReturn(true);
-        assertThat(sSystem.getModeInfo()).isEqualTo("mode: test");
+        assertThat(sSystem.getStage()).isEqualTo("mode: test");
 
         given(configService.isDevMode()).willReturn(true);
-        assertThat(sSystem.getModeInfo()).isEqualTo("mode: dev");
+        assertThat(sSystem.getStage()).isEqualTo("mode: dev");
 
         given(configService.isTestMode()).willReturn(false);
         given(configService.isDevMode()).willReturn(false);
-        assertThat(sSystem.getModeInfo()).isEqualTo("mode: production");
+        assertThat(sSystem.getStage()).isEqualTo("mode: production");
     }
 
     @Test

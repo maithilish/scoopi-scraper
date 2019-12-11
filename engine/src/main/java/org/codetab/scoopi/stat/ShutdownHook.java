@@ -1,4 +1,4 @@
-package org.codetab.scoopi.system;
+package org.codetab.scoopi.stat;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

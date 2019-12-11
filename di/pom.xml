@@ -13,7 +13,7 @@
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
             <artifactId>def</artifactId>
-            <version>${project.version}</version>            
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>

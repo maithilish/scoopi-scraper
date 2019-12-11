@@ -13,6 +13,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.junit.Before;
@@ -46,7 +47,7 @@ public class DataDefDaoIT {
     @BeforeClass
     public static void setUpBeforeClass()
             throws IOException, IllegalAccessException, URISyntaxException {
-        di = new DInjector();
+        di = new DInjector(new InitModule());
 
         configService = di.instance(ConfigService.class);
         configService.init("scoopi-test.properties", "scoopi-default.xml");

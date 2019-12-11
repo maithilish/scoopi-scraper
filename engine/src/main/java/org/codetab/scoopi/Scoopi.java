@@ -2,7 +2,10 @@ package org.codetab.scoopi;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.bootstrap.Bootstrap;
 import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.di.InitModule;
+import org.codetab.scoopi.engine.ScoopiEngine;
 
 public final class Scoopi {
 
@@ -10,8 +13,13 @@ public final class Scoopi {
     private ScoopiEngine engine;
 
     public static void main(final String[] args) {
-        // create DInjector singleton
-        DInjector dInjector = new DInjector().instance(DInjector.class);
+        DInjector initInjector =
+                new DInjector(new InitModule()).instance(DInjector.class);
+        Bootstrap bootstrap = initInjector.instance(Bootstrap.class);
+        bootstrap.init();
+        bootstrap.start();
+
+        DInjector dInjector = bootstrap.getdInjector();
         Scoopi scoopi = dInjector.instance(Scoopi.class);
         scoopi.start();
     }

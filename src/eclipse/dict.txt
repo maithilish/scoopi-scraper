@@ -142,3 +142,4 @@ replictor
 closeable
 callables
 jdbc
+injector

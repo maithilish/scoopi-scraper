@@ -13,7 +13,7 @@ import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.TaskMediator.TaskRunnerThread;
 import org.codetab.scoopi.step.pool.TaskPoolService;
-import org.codetab.scoopi.store.IStore;
+import org.codetab.scoopi.store.IPayloadStore;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class TaskRunnerTest {
     @Mock
     private TaskPoolService poolService;
     @Mock
-    private IStore store;
+    private IPayloadStore payloadStore;
     @Mock
     private TaskFactory taskFactory;
     @Mock
@@ -69,7 +69,7 @@ public class TaskRunnerTest {
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(true);
 
-        given(store.takePayload()).willReturn(payload);
+        given(payloadStore.takePayload()).willReturn(payload);
         given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);
         given(step.getStepName()).willReturn(poolName);
@@ -92,7 +92,7 @@ public class TaskRunnerTest {
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(false).willReturn(true);
 
-        given(store.takePayload()).willReturn(payload);
+        given(payloadStore.takePayload()).willReturn(payload);
         given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);
         given(step.getStepName()).willReturn(poolName);
@@ -129,7 +129,7 @@ public class TaskRunnerTest {
 
         Payload payload = Mockito.mock(Payload.class);
 
-        given(store.takePayload()).willReturn(payload);
+        given(payloadStore.takePayload()).willReturn(payload);
         given(taskFactory.createTask(payload))
                 .willThrow(ClassNotFoundException.class)
                 .willThrow(InstantiationException.class)
@@ -167,7 +167,7 @@ public class TaskRunnerTest {
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(false).willReturn(true);
 
-        given(store.takePayload()).willThrow(InterruptedException.class)
+        given(payloadStore.takePayload()).willThrow(InterruptedException.class)
                 .willReturn(payload);
         given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);

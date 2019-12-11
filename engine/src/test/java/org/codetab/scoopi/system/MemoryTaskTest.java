@@ -2,6 +2,8 @@ package org.codetab.scoopi.system;
 
 import static org.mockito.Mockito.verify;
 
+import org.codetab.scoopi.stat.MemoryTask;
+import org.codetab.scoopi.stat.Stats;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

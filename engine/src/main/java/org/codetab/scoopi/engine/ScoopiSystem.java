@@ -1,4 +1,4 @@
-package org.codetab.scoopi;
+package org.codetab.scoopi.engine;
 
 import static org.codetab.scoopi.util.Util.LINE;
 import static org.codetab.scoopi.util.Util.spaceit;
@@ -7,31 +7,24 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.config.ConfigService;
-import org.codetab.scoopi.defs.IDataDefDef;
-import org.codetab.scoopi.defs.IDef;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.exception.DefNotFoundException;
-import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.MetricsServer;
 import org.codetab.scoopi.metrics.SystemStat;
-import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.persistence.DataDefPersistence;
 import org.codetab.scoopi.plugin.appender.AppenderMediator;
 import org.codetab.scoopi.plugin.pool.AppenderPoolService;
+import org.codetab.scoopi.stat.ShutdownHook;
+import org.codetab.scoopi.stat.Stats;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.system.ShutdownHook;
-import org.codetab.scoopi.system.Stats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +35,7 @@ public class ScoopiSystem {
     @Inject
     private ConfigService configService;
     @Inject
-    private IDef def;
-    @Inject
     private ILocatorDef locatorDef;
-    @Inject
-    private IDataDefDef dataDefDef;
-    @Inject
-    private DataDefPersistence dataDefPersistence;
     @Inject
     private TaskMediator taskMediator;
     @Inject
@@ -96,42 +83,6 @@ public class ScoopiSystem {
         return true;
     }
 
-    public boolean initConfigService(final String defaultConfigFile,
-            final String userConfigFile) {
-        configService.init(userConfigFile, defaultConfigFile);
-        LOGGER.info(getModeInfo());
-        LOGGER.info("rundate {}", configService.getRunDate());
-        return true;
-    }
-
-    public boolean initDefs() {
-        def.init();
-        try {
-            def.initDefProviders();
-        } catch (DefNotFoundException | InvalidDefException e) {
-            String message = "unable init defs";
-            throw new CriticalException(message, e);
-        }
-        return true;
-    }
-
-    public boolean updateDataDefs() {
-        if (dataDefPersistence.persistDataDef()) {
-            List<DataDef> newDataDefs = dataDefDef.getDefinedDataDefs();
-            List<DataDef> oldDataDefs = dataDefPersistence.loadDataDefs();
-            List<DataDef> effDataDefs = oldDataDefs;
-            // old list is updated with changes
-            boolean isChanged = dataDefPersistence.markForUpdation(newDataDefs,
-                    oldDataDefs);
-            if (isChanged) {
-                dataDefPersistence.storeDataDefs(oldDataDefs);
-                effDataDefs = dataDefPersistence.loadDataDefs();
-            }
-            dataDefDef.updateDataDefs(effDataDefs);
-        }
-        return true;
-    }
-
     public boolean startMetricsServer() {
         metricsServer.start();
         metricsHelper.initMetrics();
@@ -144,9 +95,6 @@ public class ScoopiSystem {
         return true;
     }
 
-    /*
-     *
-     */
     public boolean seedLocatorGroups() {
         LOGGER.info("seed defined locator groups");
         String stepName = "start"; //$NON-NLS-1$
@@ -173,60 +121,9 @@ public class ScoopiSystem {
         return true;
     }
 
-    /**
-     * Get user defined properties file name. The properties file to be is used
-     * as user defined properties is set either through environment variable or
-     * system property.
-     * <p>
-     * <ul>
-     * <li>if system property [scoopi.propertyFile] is set then its value is
-     * used</li>
-     * <li>else if system property [scoopi.mode=dev] is set then
-     * scoopi-dev.properties file is used</li>
-     * <li>else environment variable [scoopi_property_file] is set then its
-     * value is used</li>
-     * <li>when none of above is set, then default file scoopi.properties file
-     * is used</li>
-     * </ul>
-     * </p>
-     *
-     * @return
-     */
-    public String getPropertyFileName() {
-        String fileName = null;
-
-        String system = System.getProperty("scoopi.propertyFile"); //$NON-NLS-1$
-        if (system != null) {
-            fileName = system;
-        }
-
-        if (fileName == null) {
-            String mode = System.getProperty("scoopi.mode", "prod");
-            if (StringUtils.equalsIgnoreCase(mode, "dev")) {
-                fileName = "scoopi-dev.properties";
-            }
-        }
-
-        if (fileName == null) {
-            fileName = System.getenv("scoopi_property_file"); //$NON-NLS-1$
-        }
-
-        // default nothing is set then production property file
-        if (fileName == null) {
-            fileName = "scoopi.properties"; //$NON-NLS-1$
-        }
-        return fileName;
-    }
-
-    public String getModeInfo() {
-        String modeInfo = "mode: production";
-        if (configService.isTestMode()) {
-            modeInfo = "mode: test";
-        }
-        if (configService.isDevMode()) {
-            modeInfo = "mode: dev";
-        }
-        return modeInfo;
+    public void waitForFinish() {
+        appenderMediator.closeAll();
+        appenderPoolService.waitForFinish();
     }
 
     public void waitForInput() {
@@ -243,10 +140,5 @@ public class ScoopiSystem {
                     "Press enter to continue ...");
             systemHelper.readLine();
         }
-    }
-
-    public void waitForFinish() {
-        appenderMediator.closeAll();
-        appenderPoolService.waitForFinish();
     }
 }

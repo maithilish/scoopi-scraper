@@ -14,6 +14,7 @@ import javax.jdo.JDODataStoreException;
 import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Item;
@@ -43,7 +44,7 @@ public class DataDaoIT {
     @BeforeClass
     public static void setUpBeforeClass()
             throws IOException, IllegalAccessException, URISyntaxException {
-        di = new DInjector();
+        di = new DInjector(new InitModule());
 
         configService = di.instance(ConfigService.class);
         configService.init("scoopi-test.properties", "scoopi-default.xml");

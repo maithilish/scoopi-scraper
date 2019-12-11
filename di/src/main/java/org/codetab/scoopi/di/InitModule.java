@@ -6,6 +6,7 @@ import java.lang.management.RuntimeMXBean;
 
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.config.ConfigService;
 import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.defs.IDef;
 import org.codetab.scoopi.defs.IItemDef;
@@ -18,8 +19,12 @@ import org.codetab.scoopi.defs.yml.ItemDef;
 import org.codetab.scoopi.defs.yml.LocatorDef;
 import org.codetab.scoopi.defs.yml.PluginDef;
 import org.codetab.scoopi.defs.yml.TaskDef;
-import org.codetab.scoopi.store.IStore;
-import org.codetab.scoopi.store.basic.BasicStore;
+import org.codetab.scoopi.store.IPayloadStore;
+import org.codetab.scoopi.store.cluster.IClusterStore;
+import org.codetab.scoopi.store.cluster.ignite.IgniteStore;
+import org.codetab.scoopi.store.local.ILocalStore;
+import org.codetab.scoopi.store.local.simple.LocalStore;
+import org.codetab.scoopi.store.local.simple.PayloadStore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -27,12 +32,16 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
-public class BasicModule extends AbstractModule {
+public class InitModule extends AbstractModule {
 
     @Override
     protected void configure() {
 
+        bind(ILocalStore.class).to(LocalStore.class).in(Singleton.class);
+        bind(IClusterStore.class).to(IgniteStore.class).in(Singleton.class);
+
         // bind yaml defs
+        bind(ConfigService.class).in(Singleton.class);
         bind(IDef.class).to(Def.class).in(Singleton.class);
         bind(ILocatorDef.class).to(LocatorDef.class).in(Singleton.class);
         bind(ITaskDef.class).to(TaskDef.class).in(Singleton.class);
@@ -41,7 +50,7 @@ public class BasicModule extends AbstractModule {
         bind(IPluginDef.class).to(PluginDef.class).in(Singleton.class);
 
         // bind basic store
-        bind(IStore.class).to(BasicStore.class).in(Singleton.class);
+        bind(IPayloadStore.class).to(PayloadStore.class).in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));

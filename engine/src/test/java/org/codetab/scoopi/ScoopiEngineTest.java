@@ -6,6 +6,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import org.codetab.scoopi.engine.ScoopiEngine;
+import org.codetab.scoopi.engine.ScoopiSystem;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;

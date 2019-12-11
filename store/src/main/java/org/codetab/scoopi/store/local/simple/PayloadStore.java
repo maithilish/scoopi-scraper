@@ -1,4 +1,4 @@
-package org.codetab.scoopi.store.basic;
+package org.codetab.scoopi.store.local.simple;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -6,9 +6,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.store.IStore;
+import org.codetab.scoopi.store.IPayloadStore;
 
-public class BasicStore implements IStore {
+public class PayloadStore implements IPayloadStore {
 
     private static final int QUEUE_SIZE = 32768;
 
