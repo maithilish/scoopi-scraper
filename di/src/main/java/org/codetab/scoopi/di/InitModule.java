@@ -6,7 +6,7 @@ import java.lang.management.RuntimeMXBean;
 
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.defs.IDef;
 import org.codetab.scoopi.defs.IItemDef;
@@ -41,7 +41,7 @@ public class InitModule extends AbstractModule {
         bind(IClusterStore.class).to(IgniteStore.class).in(Singleton.class);
 
         // bind yaml defs
-        bind(ConfigService.class).in(Singleton.class);
+        bind(Configs.class).in(Singleton.class);
         bind(IDef.class).to(Def.class).in(Singleton.class);
         bind(ILocatorDef.class).to(LocatorDef.class).in(Singleton.class);
         bind(ITaskDef.class).to(TaskDef.class).in(Singleton.class);

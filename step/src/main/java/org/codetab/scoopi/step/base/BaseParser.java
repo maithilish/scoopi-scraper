@@ -135,8 +135,7 @@ public abstract class BaseParser extends Step {
                 LOGGER.debug(marker, "{}", getLabeled("parse data"));
                 String dataDefName = getJobInfo().getDataDef();
                 data = dataFactory.createData(dataDefName, document.getId(),
-                        getJobInfo().getLabel(),
-                        configService.getRunDateTime());
+                        getJobInfo().getLabel(), configs.getRunDateTime());
 
                 dataHelper.addPageTag(data);
                 dataHelper.addItemTag(data);
@@ -174,7 +173,7 @@ public abstract class BaseParser extends Step {
             DataDefNotFoundException, ScriptException, InvalidDefException {
 
         valueProcessor.addScriptObject("document", document);
-        valueProcessor.addScriptObject("configs", configService);
+        valueProcessor.addScriptObject("configs", configs);
 
         // expanded item list
         List<DataComponent> newItems = new ArrayList<>();

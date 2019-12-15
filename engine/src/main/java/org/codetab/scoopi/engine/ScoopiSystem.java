@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
@@ -33,7 +33,7 @@ public class ScoopiSystem {
     static final Logger LOGGER = LoggerFactory.getLogger(ScoopiSystem.class);
 
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     @Inject
     private ILocatorDef locatorDef;
     @Inject
@@ -100,7 +100,7 @@ public class ScoopiSystem {
         String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
         try {
-            seederClzName = configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
+            seederClzName = configs.getConfig("scoopi.seederClass"); //$NON-NLS-1$
         } catch (ConfigNotFoundException e) {
             String message = "unable seed locator group";
             throw new CriticalException(message, e);
@@ -129,7 +129,7 @@ public class ScoopiSystem {
     public void waitForInput() {
         String wait = "false"; //$NON-NLS-1$
         try {
-            wait = configService.getConfig("scoopi.wait"); //$NON-NLS-1$
+            wait = configs.getConfig("scoopi.wait"); //$NON-NLS-1$
         } catch (ConfigNotFoundException e) {
         }
         if (wait.equalsIgnoreCase("true")) { //$NON-NLS-1$

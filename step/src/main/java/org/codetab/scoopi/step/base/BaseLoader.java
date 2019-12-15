@@ -202,7 +202,7 @@ public abstract class BaseLoader extends Step {
             }
 
             // document metadata
-            Date fromDate = configService.getRunDateTime();
+            Date fromDate = configs.getRunDateTime();
             Date toDate =
                     documentHelper.getToDate(fromDate, live, getJobInfo());
 

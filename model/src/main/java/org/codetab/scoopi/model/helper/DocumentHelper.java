@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
@@ -50,7 +50,7 @@ public class DocumentHelper {
      * ConfigService singleton.
      */
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     /**
      * ObjectFactory
      */
@@ -74,7 +74,7 @@ public class DocumentHelper {
      *         input is empty or null.
      */
     public Long getActiveDocumentId(final List<Document> documents) {
-        validState(nonNull(configService), "configService is not set");
+        validState(nonNull(configs), "configService is not set");
 
         if (isNull(documents)) {
             return null;
@@ -82,7 +82,7 @@ public class DocumentHelper {
         Long activeDocumentId = null;
         for (Document doc : documents) {
             Date toDate = doc.getToDate();
-            Date runDateTime = configService.getRunDateTime();
+            Date runDateTime = configs.getRunDateTime();
             // toDate > today
             if (toDate.compareTo(runDateTime) >= 0) {
                 activeDocumentId = doc.getId();
@@ -92,13 +92,13 @@ public class DocumentHelper {
     }
 
     public Document getActiveDocument(final Locator locator) {
-        validState(nonNull(configService), "configService is not set");
+        validState(nonNull(configs), "configService is not set");
 
         if (isNull(locator)) {
             return null;
         }
         Document activeDocument = null;
-        Date runDateTime = configService.getRunDateTime();
+        Date runDateTime = configs.getRunDateTime();
         for (Document document : locator.getDocuments()) {
             // toDate > rundate
             if (document.getToDate().compareTo(runDateTime) >= 0
@@ -116,13 +116,13 @@ public class DocumentHelper {
      * created
      */
     public boolean resetToDate(final Document document, final Date newToDate) {
-        validState(nonNull(configService), "configService is not set");
+        validState(nonNull(configs), "configService is not set");
 
         document.setToDate(newToDate);
         // expired for new toDate
-        if (newToDate.compareTo(configService.getRunDateTime()) < 0) {
+        if (newToDate.compareTo(configs.getRunDateTime()) < 0) {
             Date runDateMinusOne =
-                    DateUtils.addSeconds(configService.getRunDateTime(), -1);
+                    DateUtils.addSeconds(configs.getRunDateTime(), -1);
             document.setToDate(runDateMinusOne);
             return true;
         } else {
@@ -175,7 +175,7 @@ public class DocumentHelper {
         notNull(live, "live must not be null");
         notNull(jobInfo, "jobInfo must not be null");
 
-        validState(nonNull(configService), "configService is not set");
+        validState(nonNull(configs), "configService is not set");
 
         // convert fromDate to DateTime
         ZonedDateTime fromDateTime = ZonedDateTime
@@ -196,7 +196,7 @@ public class DocumentHelper {
             // if live is not Duration string then parse it as Date
             try {
                 String[] patterns =
-                        configService.getConfigArray("scoopi.dateParsePattern"); //$NON-NLS-1$
+                        configs.getConfigArray("scoopi.dateParsePattern"); //$NON-NLS-1$
                 // multiple patterns so needs DateUtils
                 Date td = DateUtils.parseDateStrictly(documentlive, patterns);
                 toDate = ZonedDateTime.ofInstant(td.toInstant(),

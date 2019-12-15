@@ -2,7 +2,7 @@ package org.codetab.scoopi.bootstrap;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.BootstrapConfig;
+import org.codetab.scoopi.config.BootstrapConfigs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.di.RunModule;
 import org.codetab.scoopi.exception.CriticalException;
@@ -19,7 +19,7 @@ public class Bootstrap {
     static final Logger LOGGER = LoggerFactory.getLogger(Bootstrap.class);
 
     @Inject
-    private BootstrapConfig bootstrapConfig;
+    private BootstrapConfigs bootstrapConfigs;
     @Inject
     private DInjector initInjector;
     @Inject
@@ -33,7 +33,7 @@ public class Bootstrap {
     private DInjector dInjector; // actual injector to run scoopi
 
     public void init() {
-        if (bootstrapConfig.isSolo()) {
+        if (bootstrapConfigs.isSolo()) {
             LOGGER.info("Scoopi [solo/cluster]: solo"); //$NON-NLS-1$
             store = initInjector.instance(ILocalStore.class);
             dInjector = new DInjector(new RunModule(store))

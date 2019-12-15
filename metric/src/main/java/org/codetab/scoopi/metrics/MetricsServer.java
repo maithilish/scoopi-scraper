@@ -3,7 +3,7 @@ package org.codetab.scoopi.metrics;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.eclipse.jetty.server.Server;
@@ -18,7 +18,7 @@ public class MetricsServer {
     static final Logger LOGGER = LoggerFactory.getLogger(MetricsServer.class);
 
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     @Inject
     private MetricsHelper metricsHelper;
     @Inject
@@ -34,8 +34,8 @@ public class MetricsServer {
 
         int port;
         try {
-            port = Integer.parseInt(
-                    configService.getConfig("scoopi.metrics.server.port"));
+            port = Integer
+                    .parseInt(configs.getConfig("scoopi.metrics.server.port"));
         } catch (ConfigNotFoundException | NumberFormatException e) {
             port = Integer.parseInt("9010");
         }
@@ -82,7 +82,7 @@ public class MetricsServer {
         boolean enable = false;
         try {
             enable = Boolean.parseBoolean(
-                    configService.getConfig("scoopi.metrics.server.enable"));
+                    configs.getConfig("scoopi.metrics.server.enable"));
         } catch (ConfigNotFoundException e1) {
         }
         return enable;

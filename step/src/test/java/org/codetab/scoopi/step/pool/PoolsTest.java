@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.ThreadSleep;
@@ -47,7 +47,7 @@ import org.mockito.MockitoAnnotations;
 public class PoolsTest {
 
     @Mock
-    private ConfigService configService;
+    private Configs configs;
     @Mock
     private MetricsHelper metricsHelper;
     @Mock
@@ -159,7 +159,7 @@ public class PoolsTest {
         Runnable task = () -> {
         };
 
-        given(configService.getConfig("scoopi.poolsize.x")).willReturn("11");
+        given(configs.getConfig("scoopi.poolsize.x")).willReturn("11");
         given(dInjector.instance(PoolStat.class)).willReturn(poolStat);
 
         // when

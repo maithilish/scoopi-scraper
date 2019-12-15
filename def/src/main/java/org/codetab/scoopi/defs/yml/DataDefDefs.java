@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -35,7 +35,7 @@ class DataDefDefs {
             LoggerFactory.getLogger(DataDefDefs.class);
 
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     @Inject
     private ObjectFactory objectFactory;
     @Inject
@@ -57,8 +57,8 @@ class DataDefDefs {
             String dataDefName = entry.getKey();
             JsonNode jDataDef = entry.getValue();
             String defJson = yamls.toJson(jDataDef);
-            Date fromDate = configService.getRunDateTime();
-            Date toDate = configService.getHighDate();
+            Date fromDate = configs.getRunDateTime();
+            Date toDate = configs.getHighDate();
             DataDef dataDef = objectFactory.createDataDef(dataDefName, fromDate,
                     toDate, defJson);
             dataDefs.add(dataDef);

@@ -8,7 +8,7 @@ import java.net.URL;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.codetab.scoopi.config.ConfigHelper;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.helper.HttpHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.step.base.BaseLoader;
@@ -39,7 +39,7 @@ public class PageLoader extends BaseLoader {
     @Inject
     private MetricsHelper metricsHelper;
     @Inject
-    private ConfigHelper configHelper;
+    private Configs configs;
 
     /**
      * Fetch document content from web, file system or classpath using the URL
@@ -90,8 +90,8 @@ public class PageLoader extends BaseLoader {
 
         if (protocol.equals("http") || protocol.equals("https")) {
 
-            int timeout = configHelper.getTimeout();
-            String userAgent = configHelper.getUserAgent();
+            int timeout = configs.getTimeout();
+            String userAgent = configs.getUserAgent();
 
             String urlSpecEscaped = httpHelper.escapeUrl(urlSpec);
             LOGGER.info(marker, "fetch web resource: {}", urlSpecEscaped);

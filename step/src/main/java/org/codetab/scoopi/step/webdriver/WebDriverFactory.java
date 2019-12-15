@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -18,14 +18,13 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 class WebDriverFactory extends BasePooledObjectFactory<WebDriver> {
 
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     @Inject
     private WebDrivers webDrivers;
 
     @Override
     public WebDriver create() throws Exception {
-        String driverPath =
-                configService.getConfig("scoopi.webDriver.driverPath");
+        String driverPath = configs.getConfig("scoopi.webDriver.driverPath");
         if (!Paths.get(driverPath).isAbsolute()) {
             driverPath = String.join(File.separator,
                     System.getProperty("user.home"), driverPath);
@@ -33,7 +32,7 @@ class WebDriverFactory extends BasePooledObjectFactory<WebDriver> {
 
         String driverLogFile = String.join(File.separator,
                 System.getProperty("java.io.tmpdir"),
-                configService.getConfig("scoopi.webDriver.log"));
+                configs.getConfig("scoopi.webDriver.log"));
 
         Logger l = Logger
                 .getLogger("org.openqa.selenium.remote.ProtocolHandshake");

@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.ValidationException;
@@ -34,13 +34,13 @@ class Defs {
     @Inject
     private IOHelper ioHelper;
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     @Inject
     private Normalizer normalizer;
 
     public Collection<String> getDefsFiles()
             throws ConfigNotFoundException, IOException, URISyntaxException {
-        String defsDir = configService.getConfig("scoopi.defs.dir"); //$NON-NLS-1$
+        String defsDir = configs.getConfig("scoopi.defs.dir"); //$NON-NLS-1$
         Collection<String> defsFiles =
                 ioHelper.getFilesInDir(defsDir, new String[] {"yml", "yaml"});
         if (defsFiles.isEmpty()) {
@@ -64,7 +64,7 @@ class Defs {
         LOGGER.info("load default steps");
 
         String defaultStepsFile =
-                configService.getConfig("scoopi.defs.defaultStepsFile");
+                configs.getConfig("scoopi.defs.defaultStepsFile");
 
         JsonNode defaultSteps = yamls.loadYaml(defaultStepsFile);
 
@@ -97,7 +97,7 @@ class Defs {
             ConfigNotFoundException, ValidationException {
         LOGGER.info("validate defined defs");
 
-        String schema = configService.getConfig("scoopi.defs.definedSchema"); //$NON-NLS-1$
+        String schema = configs.getConfig("scoopi.defs.definedSchema"); //$NON-NLS-1$
 
         try (InputStream schemaStream = ioHelper.getInputStream(schema)) {
             yamls.validateSchema(schema, schemaStream, definedDefs);
@@ -110,7 +110,7 @@ class Defs {
             ConfigNotFoundException, ValidationException {
         LOGGER.info("validate effective defs");
 
-        String schema = configService.getConfig("scoopi.defs.effectiveSchema"); //$NON-NLS-1$
+        String schema = configs.getConfig("scoopi.defs.effectiveSchema"); //$NON-NLS-1$
         yamls.validateSchema(schema, ioHelper.getInputStream(schema),
                 effectiveDefs);
 
@@ -123,8 +123,7 @@ class Defs {
 
         String defaultStepsName;
         try {
-            defaultStepsName =
-                    configService.getConfig("scoopi.defs.defaultSteps");
+            defaultStepsName = configs.getConfig("scoopi.defs.defaultSteps");
         } catch (ConfigNotFoundException e) {
             defaultStepsName = "jsoupDefault";
         }

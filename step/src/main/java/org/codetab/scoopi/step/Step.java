@@ -6,7 +6,7 @@ import static org.apache.commons.lang3.Validate.validState;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
@@ -34,7 +34,7 @@ public abstract class Step implements IStep {
     protected Marker marker;
 
     @Inject
-    protected ConfigService configService;
+    protected Configs configs;
     @Inject
     protected TaskFactory taskFactory;
     @Inject

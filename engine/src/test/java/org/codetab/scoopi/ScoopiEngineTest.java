@@ -39,11 +39,6 @@ public class ScoopiEngineTest {
     @Test
     public void testStart() {
 
-        String defaultConfigFile = "scoopi-default.xml";
-        String userConfigFile = "scoopi-config.properties";
-
-        given(scoopiSystem.getPropertyFileName()).willReturn(userConfigFile);
-
         // when
         scoopiEngine.start();
 
@@ -52,12 +47,7 @@ public class ScoopiEngineTest {
         inOrder.verify(scoopiSystem).startStats();
         inOrder.verify(scoopiSystem).startErrorLogger();
         inOrder.verify(scoopiSystem).addShutdownHook();
-        inOrder.verify(scoopiSystem).getPropertyFileName();
-        inOrder.verify(scoopiSystem).initConfigService(defaultConfigFile,
-                userConfigFile);
         inOrder.verify(scoopiSystem).startMetricsServer();
-        inOrder.verify(scoopiSystem).initDefs();
-        inOrder.verify(scoopiSystem).updateDataDefs();
         inOrder.verify(scoopiSystem).seedLocatorGroups();
         inOrder.verify(scoopiSystem).waitForInput();
 

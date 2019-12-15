@@ -6,7 +6,7 @@ import java.lang.management.RuntimeMXBean;
 
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.defs.ILocatorDef;
@@ -41,9 +41,9 @@ public class RunModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ConfigService provideConfigService() {
+    Configs provideConfigService() {
         System.out.println("configService provider: " + store.getName());
-        return (ConfigService) store.get("configService");
+        return (Configs) store.get("configService");
     }
 
     @Provides

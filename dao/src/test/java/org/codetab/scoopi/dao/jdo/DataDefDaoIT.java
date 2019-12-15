@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.di.InitModule;
@@ -36,7 +36,7 @@ public class DataDefDaoIT {
     private static IDaoUtil daoUtil;
     private static HashSet<String> schemaClasses;
     private static ObjectFactory factory;
-    private static ConfigService configService;
+    private static Configs configs;
 
     private DataDefDao dao;
 
@@ -49,9 +49,10 @@ public class DataDefDaoIT {
             throws IOException, IllegalAccessException, URISyntaxException {
         di = new DInjector(new InitModule());
 
-        configService = di.instance(ConfigService.class);
-        configService.init("scoopi-test.properties", "scoopi-default.xml");
-        configService.getConfigs().setProperty("scoopi.useDatastore", "true");
+        configs = di.instance(Configs.class);
+        configs.initConfigService("scoopi-test.properties",
+                "scoopi-default.xml");
+        configs.setProperty("scoopi.useDatastore", "true");
 
         daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
         factory = di.instance(ObjectFactory.class);

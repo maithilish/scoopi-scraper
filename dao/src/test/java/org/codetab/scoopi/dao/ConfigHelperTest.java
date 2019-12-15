@@ -3,7 +3,7 @@ package org.codetab.scoopi.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import org.mockito.MockitoAnnotations;
 public class ConfigHelperTest {
 
     @Mock
-    private ConfigService configService;
+    private Configs configs;
 
     @InjectMocks
     private ConfigHelper configHelper;
@@ -30,7 +30,7 @@ public class ConfigHelperTest {
 
     @Test
     public void testGetOrmType() throws Exception {
-        given(configService.getConfig("scoopi.datastore.orm")).willReturn("jdo")
+        given(configs.getConfig("scoopi.datastore.orm")).willReturn("jdo")
                 .willReturn("jDo").willReturn("jpa").willReturn("jPa")
                 .willReturn(null);
 

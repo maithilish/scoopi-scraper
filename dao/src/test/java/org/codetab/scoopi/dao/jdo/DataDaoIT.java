@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.jdo.JDODataStoreException;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.di.InitModule;
@@ -33,7 +33,7 @@ public class DataDaoIT {
     private static IDaoUtil daoUtil;
     private static HashSet<String> schemaClasses;
     private static ObjectFactory factory;
-    private static ConfigService configService;
+    private static Configs configs;
 
     private DataDao dao;
 
@@ -46,9 +46,10 @@ public class DataDaoIT {
             throws IOException, IllegalAccessException, URISyntaxException {
         di = new DInjector(new InitModule());
 
-        configService = di.instance(ConfigService.class);
-        configService.init("scoopi-test.properties", "scoopi-default.xml");
-        configService.getConfigs().setProperty("scoopi.useDatastore", "true");
+        configs = di.instance(Configs.class);
+        configs.initConfigService("scoopi-test.properties",
+                "scoopi-default.xml");
+        configs.setProperty("scoopi.useDatastore", "true");
 
         daoUtil = new JdoDaoUtilFactory(di).getUtilDao();
         factory = di.instance(ObjectFactory.class);

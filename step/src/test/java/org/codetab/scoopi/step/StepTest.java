@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
@@ -28,7 +28,7 @@ import org.slf4j.Marker;
 public class StepTest {
 
     @Mock
-    protected ConfigService configService;
+    protected Configs configs;
     @Mock
     protected TaskFactory taskFactory;
     @Mock

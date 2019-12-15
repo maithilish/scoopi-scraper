@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +16,12 @@ public class ConfigHelper {
             LoggerFactory.getLogger(ConfigHelper.class);
 
     @Inject
-    private ConfigService configService;
+    private Configs configs;
 
     public ORM getOrmType() {
         ORM orm = ORM.JDO;
         try {
-            String ormName = configService.getConfig("scoopi.datastore.orm"); //$NON-NLS-1$
+            String ormName = configs.getConfig("scoopi.datastore.orm"); //$NON-NLS-1$
             if (StringUtils.compareIgnoreCase(ormName, "jdo") == 0) { //$NON-NLS-1$
                 orm = ORM.JDO;
             }
@@ -36,7 +36,7 @@ public class ConfigHelper {
     }
 
     public Date getRunDateTime() {
-        return configService.getRunDateTime();
+        return configs.getRunDateTime();
     }
 
     /**
@@ -54,7 +54,7 @@ public class ConfigHelper {
      * @return value of key and if not found then true
      */
     public boolean isPersist(final String configKey) {
-        return configService.isPersist(configKey);
+        return configs.isPersist(configKey);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ConfigHelper {
      * @return value of key and if not found then true
      */
     public boolean useDataStore() {
-        return configService.getBoolean("scoopi.useDatastore");
+        return configs.getBoolean("scoopi.useDatastore");
     }
 
 }

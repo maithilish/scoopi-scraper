@@ -6,11 +6,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.text.ParseException;
-import java.util.Date;
 
 import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.config.ConfigService.ConfigIndex;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
@@ -68,41 +66,6 @@ public class ConfigServiceTest {
     // }
 
     @Test
-    public void testGetConfig() throws ConfigNotFoundException {
-        given(configs.getString("xyz")).willReturn("xxx");
-
-        configService.getConfig("xyz");
-        verify(configs).getString("xyz");
-    }
-
-    @Test
-    public void testGetConfigNull() throws ConfigNotFoundException {
-        given(configs.getString("xyz")).willReturn(null);
-
-        testRule.expect(ConfigNotFoundException.class);
-        configService.getConfig("xyz"); // sut
-    }
-
-    @Test
-    public void testGetConfigArray() throws ConfigNotFoundException {
-        String[] array = {"x", "y"};
-        given(configs.getStringArray("xyz")).willReturn(array);
-
-        configService.getConfigArray("xyz");
-
-        verify(configs).getStringArray("xyz");
-    }
-
-    @Test
-    public void testGetConfigArrayNull() throws ConfigNotFoundException {
-        String[] array = {}; // zero length
-        given(configs.getStringArray("xyz")).willReturn(array);
-
-        testRule.expect(ConfigNotFoundException.class);
-        configService.getConfigArray("xyz"); // sut
-    }
-
-    @Test
     public void testConfigsInvalidFiles() {
         testRule.expect(CriticalException.class);
         configService.init("xyz", "xyz");
@@ -138,125 +101,6 @@ public class ConfigServiceTest {
 
         System.clearProperty("scoopi.runDateTime");
         System.clearProperty("scoopi.runDate");
-    }
-
-    @Test
-    public void testGetRunDate()
-            throws ConfigNotFoundException, ParseException {
-        configService.init("xyz", "scoopi-default.xml");
-        String runDate = configService.getConfig("scoopi.runDate");
-        String[] patterns =
-                configService.getConfigArray("scoopi.dateParsePattern");
-        Date expected = DateUtils.parseDate(runDate, patterns);
-
-        Date actual = configService.getRunDate();
-
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testGetRunDateInvalidPattern() throws Exception {
-        configService.init("xyz", "scoopi-default.xml");
-        Configuration configuration =
-                configService.getConfiguration(ConfigIndex.DEFAULTS);
-        String[] invalidPattern = {"ddMMYYYY"};
-        configuration.setProperty("scoopi.dateParsePattern", invalidPattern);
-
-        testRule.expect(CriticalException.class);
-        configService.getRunDate();
-    }
-
-    @Test
-    public void testGetRunDateTime() throws Exception {
-        configService.init("xyz", "scoopi-default.xml");
-        String runDate =
-                configService.getConfigs().getString("scoopi.runDateTime");
-        String[] patterns = configService.getConfigs()
-                .getStringArray("scoopi.dateTimeParsePattern");
-        Date expected = DateUtils.parseDate(runDate, patterns);
-
-        Date actual = configService.getRunDateTime();
-
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testGetRunDateTimeInvalidPattern() throws Exception {
-        configService.init("xyz", "scoopi-default.xml");
-        Configuration configuration =
-                configService.getConfiguration(ConfigIndex.DEFAULTS);
-
-        String[] invalidPattern = {"ddMMYYYY"};
-        configuration.setProperty("scoopi.dateTimeParsePattern",
-                invalidPattern);
-
-        testRule.expect(CriticalException.class);
-        configService.getRunDateTime();
-    }
-
-    @Test
-    public void testHighDate() throws Exception {
-        configService.init("xyz", "scoopi-default.xml");
-        String runDate =
-                configService.getConfigs().getString("scoopi.highDate");
-        String[] patterns = configService.getConfigs()
-                .getStringArray("scoopi.dateTimeParsePattern");
-        Date expected = DateUtils.parseDate(runDate, patterns);
-
-        Date actual = configService.getHighDate();
-
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testGetHighDateInvalidPattern() throws Exception {
-        configService.init("xyz", "scoopi-default.xml");
-        Configuration configuration =
-                configService.getConfiguration(ConfigIndex.DEFAULTS);
-        String[] invalidPattern = {"ddMMYYYY"};
-        configuration.setProperty("scoopi.dateTimeParsePattern",
-                invalidPattern);
-
-        testRule.expect(CriticalException.class);
-        configService.getHighDate();
-    }
-
-    @Test
-    public void testIsTestMode() {
-        assertThat(configService.isTestMode()).isTrue();
-    }
-
-    @Test
-    public void testIsDevMode() {
-        configService.init("xyz", "scoopi-default.xml");
-        Configuration configuration =
-                configService.getConfiguration(ConfigIndex.DEFAULTS);
-        assertThat(configService.isDevMode()).isFalse();
-        configuration.setProperty("scoopi.mode", "dev");
-
-        boolean devMode = configService.isDevMode();
-
-        assertThat(devMode).isTrue();
-    }
-
-    @Test
-    public void testIsPersist() {
-        configService.init("xyz", "scoopi-default.xml");
-        Configuration configuration =
-                configService.getConfiguration(ConfigIndex.DEFAULTS);
-
-        configuration.setProperty("scoopi.persist.locator", "true");
-        assertThat(configService.isPersist("scoopi.persist.locator")).isTrue();
-
-        configuration.setProperty("scoopi.persist.locator", "false");
-        assertThat(configService.isPersist("scoopi.persist.locator")).isFalse();
-    }
-
-    @Test
-    public void testUseDataStore() {
-        configService.init("xyz", "scoopi-default.xml");
-
-        assertThat(configService.useDataStore()).isTrue();
     }
 
     // TODO test should fail when new configs are not tested
@@ -382,5 +226,139 @@ public class ConfigServiceTest {
                 .isEqualTo("/defs/examples/fin/jsoup/quickstart");
         assertThat(userConfigs.getString("scoopi.useDatastore"))
                 .isEqualTo("false");
+    }
+
+    @Test
+    public void testGetConfigs() {
+        assertThat(configService.getConfigs()).isEqualTo(configs);
+    }
+
+    @Test
+    public void testGetRunnerClass() {
+        String eclipseTestRunner =
+                "org.eclipse.jdt.internal.junit.runner.RemoteTestRunner"; //$NON-NLS-1$
+        String mavenTestRunner =
+                "org.apache.maven.surefire.booter.ForkedBooter"; //$NON-NLS-1$
+
+        assertThat(configService.getRunnerClass()).isIn(eclipseTestRunner,
+                mavenTestRunner);
+    }
+
+    @Test
+    public void testGetConfig() throws ConfigNotFoundException {
+        String key = "key";
+        String value = "value";
+        given(configs.getString(key)).willReturn(value);
+
+        String actual = configService.getConfig(key);
+
+        assertThat(actual).isEqualTo(value);
+    }
+
+    @Test
+    public void testGetConfigConfigNotFoundException()
+            throws ConfigNotFoundException {
+        String key = "key";
+        String value = null;
+        given(configs.getString(key)).willReturn(value);
+
+        testRule.expect(ConfigNotFoundException.class);
+        configService.getConfig(key);
+    }
+
+    @Test
+    public void testGetConfigArray() throws ConfigNotFoundException {
+        String key = "key";
+        String[] value = {"value", "value2"};
+        given(configs.getStringArray(key)).willReturn(value);
+
+        String[] actual = configService.getConfigArray(key);
+
+        assertThat(actual).isEqualTo(value);
+    }
+
+    @Test
+    public void testGetConfigArrayConfigNotFoundException()
+            throws ConfigNotFoundException {
+        String key = "key";
+        String[] value = {};
+        given(configs.getStringArray(key)).willReturn(value);
+
+        testRule.expect(ConfigNotFoundException.class);
+        configService.getConfigArray(key);
+    }
+
+    @Test
+    public void testGetString() {
+        String key = "key";
+        String value = "value";
+        given(configs.getString(key)).willReturn(value);
+
+        String actual = configService.getString(key);
+
+        assertThat(actual).isEqualTo(value);
+    }
+
+    @Test
+    public void testGetStringNull() {
+        String key = "key";
+        String value = null;
+        given(configs.getString(key)).willReturn(value);
+
+        String actual = configService.getString(key);
+
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    public void testGetBoolean() {
+        String key = "key";
+        boolean defaultValue = true;
+        given(configs.getBoolean(key, defaultValue)).willReturn(true, false);
+
+        assertThat(configService.getBoolean(key, defaultValue)).isTrue();
+        assertThat(configService.getBoolean(key, defaultValue)).isFalse();
+    }
+
+    @Test
+    public void testGetProperty() {
+        String key = "key";
+        String value = "value";
+        given(configs.getProperty(key)).willReturn(value);
+
+        Object actual = configService.getProperty(key);
+
+        assertThat(actual).isEqualTo(value);
+    }
+
+    @Test
+    public void testGetPropertyNull() {
+        String key = "key";
+        String value = null;
+        given(configs.getProperty(key)).willReturn(value);
+
+        Object actual = configService.getProperty(key);
+
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    public void testSetProperty() {
+        String key = "key";
+        String value = "value";
+
+        configService.setProperty(key, value);
+
+        verify(configs).setProperty(key, value);
+    }
+
+    @Test
+    public void testAddProperty() {
+        String key = "key";
+        String value = "value";
+
+        configService.addProperty(key, value);
+
+        verify(configs).addProperty(key, value);
     }
 }

@@ -2,7 +2,7 @@ package org.codetab.scoopi.bootstrap;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.config.ProvidedProperties;
 import org.codetab.scoopi.store.IStore;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ public class ConfigBootstrap {
     static final Logger LOGGER = LoggerFactory.getLogger(ConfigBootstrap.class);
 
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     @Inject
     private ProvidedProperties providedProperties;
 
@@ -22,12 +22,12 @@ public class ConfigBootstrap {
 
         String defaultConfigFile = "scoopi-default.xml"; //$NON-NLS-1$
         String userConfigFile = providedProperties.getFileName();
-        configService.init(userConfigFile, defaultConfigFile);
+        configs.initConfigService(userConfigFile, defaultConfigFile);
 
-        LOGGER.info("rundate {}", configService.getRunDate());
-        LOGGER.info(configService.getStage());
+        LOGGER.info("rundate {}", configs.getRunDate());
+        LOGGER.info(configs.getStage());
 
-        store.put("configService", configService);
+        store.put("configService", configs);
 
         return true;
     }

@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.ThreadSleep;
@@ -54,7 +54,7 @@ public abstract class Pools {
      * config service.
      */
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     /**
      * helper - metrics
      */
@@ -175,7 +175,7 @@ public abstract class Pools {
             int poolSize = POOL_SIZE;
             String key = "scoopi.poolsize." + poolName; //$NON-NLS-1$
             try {
-                String ps = configService.getConfig(key);
+                String ps = configs.getConfig(key);
                 poolSize = Integer.valueOf(ps);
             } catch (NumberFormatException | ConfigNotFoundException e) {
                 LOGGER.warn(

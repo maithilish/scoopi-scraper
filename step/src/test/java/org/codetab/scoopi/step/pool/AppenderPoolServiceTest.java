@@ -3,7 +3,7 @@ package org.codetab.scoopi.step.pool;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.PoolStat;
@@ -23,7 +23,7 @@ import org.mockito.MockitoAnnotations;
 public class AppenderPoolServiceTest {
 
     @Mock
-    private ConfigService configService;
+    private Configs configs;
     @Mock
     private MetricsHelper metricsHelper;
     @Mock

@@ -15,7 +15,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
@@ -42,7 +42,7 @@ public class ValueProcessor {
     @Inject
     private TaskInfo taskInfo;
     @Inject
-    private ConfigService configService;
+    private Configs configs;
 
     private Map<String, Object> scriptObjectMap;
 
@@ -52,10 +52,10 @@ public class ValueProcessor {
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException, InvalidDefException {
 
-        boolean replaceBlank = configService.isTrue("scoopi.fact.replaceBlank");
+        boolean replaceBlank = configs.isTrue("scoopi.fact.replaceBlank");
         String replaceWith = "-";
         try {
-            replaceWith = configService.getConfig("scoopi.fact.replaceWith");
+            replaceWith = configs.getConfig("scoopi.fact.replaceWith");
         } catch (ConfigNotFoundException e) {
         }
 

@@ -3,7 +3,6 @@ package org.codetab.scoopi.config;
 import static java.util.Objects.isNull;
 import static org.codetab.scoopi.util.Util.LINE;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -20,7 +19,6 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
@@ -30,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class ConfigService {
+class ConfigService {
 
     enum ConfigIndex {
         SYSTEM, PROVIDED, DEFAULTS
@@ -39,31 +37,32 @@ public class ConfigService {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ConfigService.class);
 
-    private CompositeConfiguration configs;
+    private CompositeConfiguration configuration;
 
     @Inject
     private ConfigService() {
     }
 
-    public void init(final String userProvidedFile, final String defaultsFile) {
+    public void init(final String userConfigFile,
+            final String defaultConfigFile) {
         LOGGER.info("initialize config service");
 
-        configs = new CompositeConfiguration();
+        configuration = new CompositeConfiguration();
 
         SystemConfiguration systemConfigs = new SystemConfiguration();
-        configs.addConfiguration(systemConfigs);
+        configuration.addConfiguration(systemConfigs);
 
         try {
-            Configuration userProvided = getPropertiesConfigs(userProvidedFile);
-            configs.addConfiguration(userProvided);
+            Configuration userProvided = getPropertiesConfigs(userConfigFile);
+            configuration.addConfiguration(userProvided);
         } catch (ConfigurationException e) {
-            configs.addConfiguration(new PropertiesConfiguration());
+            configuration.addConfiguration(new PropertiesConfiguration());
             LOGGER.info("{}, {}", e.getMessage(), "use default configs");
         }
 
         try {
-            Configuration defaults = getXMLConfigs(defaultsFile);
-            configs.addConfiguration(defaults);
+            Configuration defaults = getXMLConfigs(defaultConfigFile);
+            configuration.addConfiguration(defaults);
         } catch (ConfigurationException e) {
             throw new CriticalException("unable to create config service", e);
         }
@@ -80,108 +79,76 @@ public class ConfigService {
                 "use scoopi.properties or system property to override defaults");
     }
 
-    // when config not found, default value may be used in some cases
-    // otherwise usually exceptionRule is translated to higher level
-    // CriticalException
-    // which is unrecoverable. Hence warn is used in here instead of error
+    public final CompositeConfiguration getConfigs() {
+        return configuration;
+    }
+
+    public final Configuration getConfiguration(final ConfigIndex index) {
+        return configuration.getConfiguration(index.ordinal());
+    }
+
+    /**
+     * Throws ConfigNotFound if no config is defined, which is recoverable with
+     * default otherwise higher level methods can throw unrecoverable
+     * CriticalException.
+     * @param key
+     * @return
+     * @throws ConfigNotFoundException
+     */
     public String getConfig(final String key) throws ConfigNotFoundException {
-        String value = configs.getString(key);
-        if (value == null) {
+        String value = configuration.getString(key);
+        if (isNull(value)) {
             throw new ConfigNotFoundException(key);
         }
         return value;
     }
 
+    /**
+     * Throws ConfigNotFound if no config is defined, which is recoverable with
+     * default value otherwise higher level methods can throw unrecoverable
+     * CriticalException.
+     * @param key
+     * @return
+     * @throws ConfigNotFoundException
+     */
     public String[] getConfigArray(final String key)
             throws ConfigNotFoundException {
-        String[] values = configs.getStringArray(key);
+        String[] values = configuration.getStringArray(key);
         if (values.length == 0) {
             throw new ConfigNotFoundException(key);
         }
         return values;
     }
 
-    public final CompositeConfiguration getConfigs() {
-        return configs;
+    // wrapper methods - if key not found returns null and doesn't throw
+    // ConfigNotFoundException
+    public String getString(final String key) {
+        return configuration.getString(key);
     }
 
-    protected void setConfigs(final CompositeConfiguration configs) {
-        this.configs = configs;
+    public boolean getBoolean(final String key, final boolean defaultValue) {
+        return configuration.getBoolean(key, defaultValue);
     }
 
-    public final Configuration getConfiguration(final ConfigIndex index) {
-        return configs.getConfiguration(index.ordinal());
+    public Object getProperty(final String key) {
+        return configuration.getProperty(key);
     }
 
-    public Date getRunDate() {
-        String key = "scoopi.parsed.runDate";
-        Date runDate = (Date) configs.getProperty(key);
-        if (isNull(runDate)) {
-            try {
-                String dateStr = getConfig("scoopi.runDate"); //$NON-NLS-1$
-                String patterns = getConfig("scoopi.dateParsePattern"); //$NON-NLS-1$
-                runDate = DateUtils.parseDate(dateStr, new String[] {patterns});
-                configs.setProperty(key, runDate);
-            } catch (ParseException | ConfigNotFoundException e) {
-                throw new CriticalException("unable to parse runDate", e);
-            }
-        }
-        return runDate;
+    public void setProperty(final String key, final Object value) {
+        configuration.setProperty(key, value);
     }
 
-    public Date getRunDateTime() {
-        String key = "scoopi.parsed.runDateTime";
-        Date runDateTime = (Date) configs.getProperty(key);
-        if (isNull(runDateTime)) {
-            try {
-                String dateTimeStr = getConfig("scoopi.runDateTime"); //$NON-NLS-1$
-                String patterns = getConfig("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
-                runDateTime = DateUtils.parseDate(dateTimeStr,
-                        new String[] {patterns});
-                configs.setProperty(key, runDateTime);
-            } catch (ParseException | ConfigNotFoundException e) {
-                throw new CriticalException("unable to parse runDateTime", e);
-            }
-        }
-        return runDateTime;
+    public void addProperty(final String key, final String value) {
+        configuration.addProperty(key, value);
     }
 
-    public Date getHighDate() {
-        String key = "scoopi.parsed.runHighDate";
-        Date highDate = (Date) configs.getProperty(key);
-        try {
-            String dateStr = getConfig("scoopi.highDate"); //$NON-NLS-1$
-            String[] patterns = getConfigArray("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
-            highDate = DateUtils.parseDate(dateStr, patterns);
-            configs.setProperty(key, highDate);
-        } catch (ParseException | ConfigNotFoundException e) {
-            throw new CriticalException("unable to parse highDate", e);
-        }
-        return highDate;
-    }
-
-    public boolean isTestMode() {
+    public String getRunnerClass() {
         StackTraceElement[] stackElements =
                 Thread.currentThread().getStackTrace();
         StackTraceElement stackElement =
                 stackElements[stackElements.length - 1];
         String mainClass = stackElement.getClassName();
-        String eclipseTestRunner =
-                "org.eclipse.jdt.internal.junit.runner.RemoteTestRunner"; //$NON-NLS-1$
-        String mavenTestRunner =
-                "org.apache.maven.surefire.booter.ForkedBooter"; //$NON-NLS-1$
-        if (mainClass.equals(mavenTestRunner)) {
-            return true;
-        }
-        if (mainClass.equals(eclipseTestRunner)) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isDevMode() {
-        return StringUtils.equalsIgnoreCase(configs.getString("scoopi.mode"), //$NON-NLS-1$
-                "dev"); //$NON-NLS-1$
+        return mainClass;
     }
 
     // private methods
@@ -216,24 +183,25 @@ public class ConfigService {
     }
 
     private void addRunDate() {
-        String runDateStr = configs.getString("scoopi.runDate"); //$NON-NLS-1$
+        String runDateStr = configuration.getString("scoopi.runDate"); //$NON-NLS-1$
         if (runDateStr == null) {
             Date runDate = DateUtils.truncate(new Date(), Calendar.SECOND);
-            String dateFormat = configs.getString("scoopi.dateParsePattern"); //$NON-NLS-1$
+            String dateFormat =
+                    configuration.getString("scoopi.dateParsePattern"); //$NON-NLS-1$
             runDateStr = DateFormatUtils.format(runDate, dateFormat);
-            configs.addProperty("scoopi.runDate", runDateStr); //$NON-NLS-1$
+            configuration.addProperty("scoopi.runDate", runDateStr); //$NON-NLS-1$
         }
     }
 
     private void addRunDateTime() {
-        String runDateTimeStr = configs.getString("scoopi.runDateTime"); //$NON-NLS-1$
+        String runDateTimeStr = configuration.getString("scoopi.runDateTime"); //$NON-NLS-1$
         if (runDateTimeStr == null) {
             Date runDateTime = DateUtils.truncate(new Date(), Calendar.SECOND);
             String dateTimeFormat =
-                    configs.getString("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
+                    configuration.getString("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
             runDateTimeStr =
                     DateFormatUtils.format(runDateTime, dateTimeFormat);
-            configs.addProperty("scoopi.runDateTime", runDateTimeStr); //$NON-NLS-1$
+            configuration.addProperty("scoopi.runDateTime", runDateTimeStr); //$NON-NLS-1$
         }
     }
 
@@ -249,78 +217,10 @@ public class ConfigService {
             sb.append(Util.logIndent());
             sb.append(key);
             sb.append(" = "); //$NON-NLS-1$
-            sb.append(configs.getProperty(key));
+            sb.append(configuration.getProperty(key));
             sb.append(LINE);
         }
         return sb.toString();
     }
 
-    /**
-     * Return effective persist for a type based on user provided config.
-     * <p>
-     * User can define persist config scoopi.useDatastore=true|false or for a
-     * type as scoopi.persist.locator=true|false in config file
-     * scoopi.properties.
-     * </p>
-     * <p>
-     * This method returns boolean for a key and if not found then true;
-     * </p>
-     * @param key
-     *            scoopi.persist.locator|data|datadef
-     * @return value of key and if not found then true
-     */
-    public boolean isPersist(final String configKey) {
-        return configs.getBoolean(configKey, true);
-    }
-
-    /**
-     * This method returns boolean for a key and if not found then false;
-     * @param configKey
-     * @return
-     */
-    public boolean isTrue(final String configKey) {
-        return configs.getBoolean(configKey, false);
-    }
-
-    /**
-     * This method returns boolean for a key and if not found then true;
-     * @param configKey
-     * @return
-     */
-    public boolean getBoolean(final String configKey) {
-        return configs.getBoolean(configKey, true);
-    }
-
-    public Object getProperty(final String configKey) {
-        return configs.getProperty(configKey);
-    }
-
-    /**
-     *
-     * <p>
-     * Return value for the key scoopi.useDatastore
-     * </p>
-     * <p>
-     * This method returns for the key scoopi.useDatastore and if not found then
-     * true;
-     * </p>
-     * @param key
-     *            scoopi.useDatastore
-     * @return value of key and if not found then true
-     */
-    public boolean useDataStore() {
-        String configKey = "scoopi.useDatastore";
-        return configs.getBoolean(configKey, true);
-    }
-
-    public String getStage() {
-        String modeInfo = "stage: production";
-        if (isTestMode()) {
-            modeInfo = "stage: test";
-        }
-        if (isDevMode()) {
-            modeInfo = "stage: dev";
-        }
-        return modeInfo;
-    }
 }

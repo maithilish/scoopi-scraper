@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -28,7 +28,7 @@ public class MetricsServerTest {
     @Mock
     private ServerFactory factory;
     @Mock
-    private ConfigService configService;
+    private Configs configs;
     @Mock
     private MetricsHelper metricsHelper;
 
@@ -55,9 +55,8 @@ public class MetricsServerTest {
         String webAppDescriptor =
                 String.join("/", webAppBase.toString(), "WEB-INF/web.xml");
 
-        given(configService.getConfig("scoopi.metrics.server.port"))
-                .willReturn(port);
-        given(configService.getConfig("scoopi.metrics.server.enable"))
+        given(configs.getConfig("scoopi.metrics.server.port")).willReturn(port);
+        given(configs.getConfig("scoopi.metrics.server.enable"))
                 .willReturn("true");
         given(factory.createServer(Integer.parseInt(port))).willReturn(server);
         given(factory.createWebAppContext()).willReturn(webAppContext);
@@ -86,9 +85,9 @@ public class MetricsServerTest {
         String webAppDescriptor =
                 String.join("/", webAppBase.toString(), "WEB-INF/web.xml");
 
-        given(configService.getConfig("scoopi.metrics.server.port"))
+        given(configs.getConfig("scoopi.metrics.server.port"))
                 .willThrow(ConfigNotFoundException.class);
-        given(configService.getConfig("scoopi.metrics.server.enable"))
+        given(configs.getConfig("scoopi.metrics.server.enable"))
                 .willReturn("true");
         given(factory.createServer(Integer.parseInt(port))).willReturn(server);
         given(factory.createWebAppContext()).willReturn(webAppContext);
@@ -107,34 +106,33 @@ public class MetricsServerTest {
 
     @Test
     public void testStartServerNotEnabled() throws Exception {
-        given(configService.getConfig("scoopi.metrics.server.enable"))
+        given(configs.getConfig("scoopi.metrics.server.enable"))
                 .willReturn("false");
 
         metricsServer.start();
 
-        verify(configService).getConfig("scoopi.metrics.server.enable");
-        verifyNoMoreInteractions(configService);
+        verify(configs).getConfig("scoopi.metrics.server.enable");
+        verifyNoMoreInteractions(configs);
         verifyNoInteractions(metricsHelper, factory);
     }
 
     @Test
     public void testStartServerNoEnableConfig() throws Exception {
-        given(configService.getConfig("scoopi.metrics.server.enable"))
+        given(configs.getConfig("scoopi.metrics.server.enable"))
                 .willThrow(ConfigNotFoundException.class);
 
         metricsServer.start();
 
-        verify(configService).getConfig("scoopi.metrics.server.enable");
-        verifyNoMoreInteractions(configService);
+        verify(configs).getConfig("scoopi.metrics.server.enable");
+        verifyNoMoreInteractions(configs);
         verifyNoInteractions(metricsHelper, factory);
     }
 
     @Test
     public void testStartShouldThrowException() throws Exception {
         String port = "10000";
-        given(configService.getConfig("scoopi.metrics.server.port"))
-                .willReturn(port);
-        given(configService.getConfig("scoopi.metrics.server.enable"))
+        given(configs.getConfig("scoopi.metrics.server.port")).willReturn(port);
+        given(configs.getConfig("scoopi.metrics.server.enable"))
                 .willReturn("true");
         given(metricsHelper.getURL("/webapp"))
                 .willThrow(FileNotFoundException.class);
@@ -153,9 +151,8 @@ public class MetricsServerTest {
 
         URL webAppBase = new URL("file://scoopi/web");
 
-        given(configService.getConfig("scoopi.metrics.server.port"))
-                .willReturn(port);
-        given(configService.getConfig("scoopi.metrics.server.enable"))
+        given(configs.getConfig("scoopi.metrics.server.port")).willReturn(port);
+        given(configs.getConfig("scoopi.metrics.server.enable"))
                 .willReturn("true");
         given(factory.createServer(Integer.parseInt(port))).willReturn(server);
         given(factory.createWebAppContext()).willReturn(webAppContext);

@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
@@ -37,7 +37,7 @@ import org.mockito.Spy;
 public class PMFIT {
 
     @Mock
-    private ConfigService configService;
+    private Configs configs;
     @Spy
     private IOHelper ioHelper;
     @Spy
@@ -78,13 +78,13 @@ public class PMFIT {
         if (dsConfigFile == null) {
             dsConfigFile = "jdoconfig-dev.properties";
         }
-        given(configService.getConfig("scoopi.datastore.configFile"))
+        given(configs.getConfig("scoopi.datastore.configFile"))
                 .willReturn(dsConfigFile);
 
         pmf.init();
 
-        InOrder inOrder = inOrder(configService, ioHelper, jdoProperties);
-        inOrder.verify(configService).getConfig("scoopi.datastore.configFile");
+        InOrder inOrder = inOrder(configs, ioHelper, jdoProperties);
+        inOrder.verify(configs).getConfig("scoopi.datastore.configFile");
         inOrder.verify(ioHelper).getInputStream("/" + dsConfigFile);
         inOrder.verify(jdoProperties).load(any(InputStream.class));
 
@@ -101,29 +101,29 @@ public class PMFIT {
             dsConfigFile = "jdoconfig-dev.properties";
         }
 
-        given(configService.getConfig("scoopi.datastore.configFile"))
+        given(configs.getConfig("scoopi.datastore.configFile"))
                 .willReturn(dsConfigFile);
 
         pmf.init();
 
-        InOrder inOrder = inOrder(configService, ioHelper, jdoProperties);
-        inOrder.verify(configService).getConfig("scoopi.datastore.configFile");
+        InOrder inOrder = inOrder(configs, ioHelper, jdoProperties);
+        inOrder.verify(configs).getConfig("scoopi.datastore.configFile");
         inOrder.verify(ioHelper).getInputStream("/" + dsConfigFile);
         inOrder.verify(jdoProperties).load(any(InputStream.class));
 
         assertThat(pmf.getFactory()).isNotNull();
 
-        verifyNoMoreInteractions(configService, ioHelper);
+        verifyNoMoreInteractions(configs, ioHelper);
 
         pmf.init();
 
-        verifyNoMoreInteractions(configService, ioHelper);
+        verifyNoMoreInteractions(configs, ioHelper);
     }
 
     @Test
     public void testInitThrowConfigNotFoundException()
             throws ConfigNotFoundException {
-        given(configService.getConfig("scoopi.datastore.configFile"))
+        given(configs.getConfig("scoopi.datastore.configFile"))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(CriticalException.class);
@@ -133,7 +133,7 @@ public class PMFIT {
     @Test
     public void testInitThrowFileNotFoundException()
             throws FileNotFoundException, ConfigNotFoundException {
-        given(configService.getConfig("scoopi.datastore.configFile"))
+        given(configs.getConfig("scoopi.datastore.configFile"))
                 .willReturn("x.properties");
 
         testRule.expect(CriticalException.class);

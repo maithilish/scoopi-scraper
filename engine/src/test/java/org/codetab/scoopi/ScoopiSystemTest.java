@@ -8,18 +8,15 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.yml.Def;
 import org.codetab.scoopi.engine.ScoopiSystem;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.exception.DefNotFoundException;
-import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
@@ -50,7 +47,7 @@ import com.google.common.collect.Lists;
 public class ScoopiSystemTest {
 
     @Mock
-    private ConfigService configService;
+    private Configs configs;
     @Mock
     private Def def;
     // @Inject
@@ -113,31 +110,6 @@ public class ScoopiSystemTest {
     }
 
     @Test
-    public void testInitConfigService() {
-        String defaultConfigFile = "a.xml";
-        String userConfigFile = "b.properties";
-        boolean result =
-                sSystem.initConfigService(defaultConfigFile, userConfigFile);
-
-        assertThat(result).isTrue();
-        verify(configService).init(userConfigFile, defaultConfigFile);
-    }
-
-    @Test
-    public void testInitDefsProvider()
-            throws DefNotFoundException, InvalidDefException {
-        boolean result = sSystem.initDefs();
-
-        assertThat(result).isTrue();
-
-        InOrder inOrder = inOrder(def);
-
-        inOrder.verify(def).init();
-        inOrder.verify(def).initDefProviders();
-        verifyNoMoreInteractions(def);
-    }
-
-    @Test
     public void testStartMetricsServer() {
         boolean result = sSystem.startMetricsServer();
 
@@ -174,7 +146,7 @@ public class ScoopiSystemTest {
         Payload payload2 = Mockito.mock(Payload.class);
         List<Payload> payloads = Lists.newArrayList(payload1, payload2);
 
-        given(configService.getConfig("scoopi.seederClass"))
+        given(configs.getConfig("scoopi.seederClass"))
                 .willReturn(seederClzName);
         given(locatorDef.getLocatorGroups()).willReturn(lGroups);
         given(payloadFactory.createSeedPayloads(lGroups, stepName,
@@ -207,7 +179,7 @@ public class ScoopiSystemTest {
         Payload payload2 = factory.createPayload(jobInfo2, null, null);
         List<Payload> payloads = Lists.newArrayList(payload1, payload2);
 
-        given(configService.getConfig("scoopi.seederClass"))
+        given(configs.getConfig("scoopi.seederClass"))
                 .willReturn(seederClzName);
         given(locatorDef.getLocatorGroups()).willReturn(lGroups);
         given(payloadFactory.createSeedPayloads(lGroups, stepName,
@@ -234,7 +206,7 @@ public class ScoopiSystemTest {
     public void testSeedLocatorGroupsThrowsException()
             throws ConfigNotFoundException, InterruptedException {
 
-        given(configService.getConfig("scoopi.seederClass"))
+        given(configs.getConfig("scoopi.seederClass"))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(CriticalException.class);
@@ -242,41 +214,8 @@ public class ScoopiSystemTest {
     }
 
     @Test
-    public void testGetPropertyFileName() throws IOException {
-        String propFile = "scoopi.properties";
-        String devPropFile = "scoopi-dev.properties";
-
-        System.setProperty("scoopi.propertyFile", propFile);
-        String result = sSystem.getPropertyFileName();
-        assertThat(result).isEqualTo(propFile);
-
-        System.clearProperty("scoopi.propertyFile");
-        System.setProperty("scoopi.mode", "dev");
-        result = sSystem.getPropertyFileName();
-        assertThat(result).isEqualTo(devPropFile);
-
-        // can't test env - skipped
-        System.clearProperty("scoopi.mode");
-        result = sSystem.getPropertyFileName();
-        assertThat(result).isEqualTo(propFile);
-    }
-
-    @Test
-    public void testGetModeInfo() {
-        given(configService.isTestMode()).willReturn(true);
-        assertThat(sSystem.getStage()).isEqualTo("mode: test");
-
-        given(configService.isDevMode()).willReturn(true);
-        assertThat(sSystem.getStage()).isEqualTo("mode: dev");
-
-        given(configService.isTestMode()).willReturn(false);
-        given(configService.isDevMode()).willReturn(false);
-        assertThat(sSystem.getStage()).isEqualTo("mode: production");
-    }
-
-    @Test
     public void testWaitForInput() throws ConfigNotFoundException {
-        given(configService.getConfig("scoopi.wait")).willReturn("false")
+        given(configs.getConfig("scoopi.wait")).willReturn("false")
                 .willThrow(ConfigNotFoundException.class).willReturn("true");
         sSystem.waitForInput();
         sSystem.waitForInput();

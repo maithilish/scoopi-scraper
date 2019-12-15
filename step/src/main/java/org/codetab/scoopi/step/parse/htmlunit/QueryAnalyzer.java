@@ -76,7 +76,7 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
         int timeout = TIMEOUT_MILLIS;
         String key = "scoopi.webClient.timeout"; //$NON-NLS-1$
         try {
-            timeout = Integer.parseInt(configService.getConfig(key));
+            timeout = Integer.parseInt(configs.getConfig(key));
         } catch (NumberFormatException | ConfigNotFoundException e) {
         }
 

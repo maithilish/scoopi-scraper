@@ -81,7 +81,7 @@ public class Parser extends BaseParser {
         int timeout = TIMEOUT_MILLIS;
         String key = "scoopi.webClient.timeout"; //$NON-NLS-1$
         try {
-            timeout = Integer.parseInt(configService.getConfig(key));
+            timeout = Integer.parseInt(configs.getConfig(key));
         } catch (NumberFormatException | ConfigNotFoundException e) {
             String message =
                     spaceit("use default value:", String.valueOf(timeout));

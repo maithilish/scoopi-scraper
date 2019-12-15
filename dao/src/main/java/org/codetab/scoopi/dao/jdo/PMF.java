@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.IOHelper;
@@ -41,7 +41,7 @@ public class PMF {
      * ConfigService.
      */
     @Inject
-    private ConfigService configService;
+    private Configs configs;
 
     /**
      * ResourceStream.
@@ -91,7 +91,7 @@ public class PMF {
             try {
                 logger.info("initalize JDO PMF");
                 String configFile = String.join("", "/",
-                        configService.getConfig("scoopi.datastore.configFile"));
+                        configs.getConfig("scoopi.datastore.configFile"));
                 try (InputStream propStream =
                         ioHelper.getInputStream(configFile)) {
 

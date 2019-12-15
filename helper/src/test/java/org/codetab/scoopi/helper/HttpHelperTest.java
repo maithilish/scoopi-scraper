@@ -2,7 +2,7 @@ package org.codetab.scoopi.helper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.codetab.scoopi.config.ConfigHelper;
+import org.codetab.scoopi.config.Configs;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import org.mockito.MockitoAnnotations;
 public class HttpHelperTest {
 
     @Mock
-    private ConfigHelper configHelper;
+    private Configs configs;
 
     @InjectMocks
     private HttpHelper httpHelper;

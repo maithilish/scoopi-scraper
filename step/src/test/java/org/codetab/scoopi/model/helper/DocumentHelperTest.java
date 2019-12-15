@@ -14,7 +14,7 @@ import java.util.zip.DataFormatException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.config.ConfigService;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.JobInfo;
@@ -38,7 +38,7 @@ import org.mockito.MockitoAnnotations;
 public class DocumentHelperTest {
 
     @Mock
-    private ConfigService configService;
+    private Configs configs;
     @Mock
     private ObjectFactory objectFactory;
 
@@ -70,21 +70,21 @@ public class DocumentHelperTest {
         Date runDate =
                 DateUtils.parseDate("01-07-2017 10:00:00.000", parsePatterns);
 
-        given(configService.getRunDateTime()).willReturn(runDate);
+        given(configs.getRunDateTime()).willReturn(runDate);
 
         Long actual = documentHelper.getActiveDocumentId(documents);
 
         assertThat(actual).isEqualTo(2L);
 
         runDate = DateUtils.parseDate("01-07-2017 09:59:59.999", parsePatterns);
-        given(configService.getRunDateTime()).willReturn(runDate);
+        given(configs.getRunDateTime()).willReturn(runDate);
 
         actual = documentHelper.getActiveDocumentId(documents);
 
         assertThat(actual).isEqualTo(2L);
 
         runDate = DateUtils.parseDate("01-07-2017 10:00:00.001", parsePatterns);
-        given(configService.getRunDateTime()).willReturn(runDate);
+        given(configs.getRunDateTime()).willReturn(runDate);
 
         actual = documentHelper.getActiveDocumentId(documents);
 
@@ -126,8 +126,7 @@ public class DocumentHelperTest {
 
     @Test
     public void testSetDatesIllegalState() throws IllegalAccessException {
-        FieldUtils.writeDeclaredField(documentHelper, "configService", null,
-                true);
+        FieldUtils.writeDeclaredField(documentHelper, "configs", null, true);
         try {
             documentHelper.getActiveDocumentId(new ArrayList<>());
             fail("should throw IllegalStateException");
@@ -182,7 +181,7 @@ public class DocumentHelperTest {
         String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
         String live = "01-08-2017 11:00:00.000";
 
-        given(configService.getConfigArray("scoopi.dateParsePattern"))
+        given(configs.getConfigArray("scoopi.dateParsePattern"))
                 .willReturn(parsePatterns);
         Date expected = DateUtils.parseDate(live, parsePatterns);
 
@@ -198,7 +197,7 @@ public class DocumentHelperTest {
         Date fromDate = new Date();
         String live = "01-xx-2017 11:00:00.000";
 
-        given(configService.getConfigArray("scoopi.dateParsePattern"))
+        given(configs.getConfigArray("scoopi.dateParsePattern"))
                 .willReturn(parsePatterns);
 
         // when
@@ -212,7 +211,7 @@ public class DocumentHelperTest {
         Date fromDate = new Date();
         String live = "01-xx-2017 11:00:00.000";
 
-        given(configService.getConfigArray("scoopi.dateParsePattern"))
+        given(configs.getConfigArray("scoopi.dateParsePattern"))
                 .willThrow(ConfigNotFoundException.class);
 
         // when
@@ -246,8 +245,7 @@ public class DocumentHelperTest {
 
     @Test
     public void testGetToDateIllegalState() throws IllegalAccessException {
-        FieldUtils.writeDeclaredField(documentHelper, "configService", null,
-                true);
+        FieldUtils.writeDeclaredField(documentHelper, "configs", null, true);
         try {
             documentHelper.getToDate(new Date(), "", jobInfo);
             fail("should throw IllegalStateException");

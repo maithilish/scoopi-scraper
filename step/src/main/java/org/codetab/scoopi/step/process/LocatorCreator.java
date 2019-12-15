@@ -52,7 +52,7 @@ public class LocatorCreator extends BaseProcessor {
         String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
         try {
-            seederClzName = configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
+            seederClzName = configs.getConfig("scoopi.seederClass"); //$NON-NLS-1$
         } catch (ConfigNotFoundException e) {
             throw new StepRunException("unable to handover", e);
         }
