@@ -2,7 +2,7 @@ package org.codetab.scoopi.store;
 
 /**
  * IStore - Interface to local or distributed Cache
- * 
+ *
  * @author m
  *
  */

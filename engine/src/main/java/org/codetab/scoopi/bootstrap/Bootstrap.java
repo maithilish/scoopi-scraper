@@ -3,14 +3,15 @@ package org.codetab.scoopi.bootstrap;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.config.BootstrapConfigs;
+import org.codetab.scoopi.di.ClusterModule;
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.di.RunModule;
+import org.codetab.scoopi.di.SoloModule;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.store.cluster.IClusterStore;
-import org.codetab.scoopi.store.local.ILocalStore;
+import org.codetab.scoopi.store.solo.ISoloStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +36,13 @@ public class Bootstrap {
     public void init() {
         if (bootstrapConfigs.isSolo()) {
             LOGGER.info("Scoopi [solo/cluster]: solo"); //$NON-NLS-1$
-            store = initInjector.instance(ILocalStore.class);
-            dInjector = new DInjector(new RunModule(store))
+            store = initInjector.instance(ISoloStore.class);
+            dInjector = new DInjector(new SoloModule(store))
                     .instance(DInjector.class);
         } else {
             LOGGER.info("Scoopi [solo/cluster]: cluster"); //$NON-NLS-1$
             store = initInjector.instance(IClusterStore.class);
-            dInjector = new DInjector(new RunModule(store))
+            dInjector = new DInjector(new ClusterModule(store))
                     .instance(DInjector.class);
         }
     }

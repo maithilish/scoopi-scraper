@@ -11,6 +11,7 @@ import org.codetab.scoopi.engine.ScoopiSystem;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.TaskMediator;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,8 @@ public class ScoopiEngineTest {
     private ErrorLogger errorLogger;
     @Mock
     private TaskMediator taskMediator;
+    @Mock
+    private JobMediator jobMediator;
 
     @InjectMocks
     private ScoopiEngine scoopiEngine;
@@ -43,7 +46,7 @@ public class ScoopiEngineTest {
         scoopiEngine.start();
 
         // then
-        InOrder inOrder = inOrder(scoopiSystem, taskMediator);
+        InOrder inOrder = inOrder(scoopiSystem, taskMediator, jobMediator);
         inOrder.verify(scoopiSystem).startStats();
         inOrder.verify(scoopiSystem).startErrorLogger();
         inOrder.verify(scoopiSystem).addShutdownHook();
@@ -52,13 +55,15 @@ public class ScoopiEngineTest {
         inOrder.verify(scoopiSystem).waitForInput();
 
         inOrder.verify(taskMediator).start();
+        inOrder.verify(jobMediator).start();
         inOrder.verify(taskMediator).waitForFinish();
+        inOrder.verify(jobMediator).waitForFinish();
         inOrder.verify(scoopiSystem).waitForFinish();
         inOrder.verify(scoopiSystem).waitForInput();
 
         inOrder.verify(scoopiSystem).stopMetricsServer();
         inOrder.verify(scoopiSystem).stopStats();
-        verifyNoMoreInteractions(scoopiSystem, taskMediator);
+        verifyNoMoreInteractions(scoopiSystem, taskMediator, jobMediator);
     }
 
     @Test

@@ -33,15 +33,15 @@ public class Configs {
     private Configs() {
     }
 
-    public void initConfigService(String userConfigFile,
-            String defaultConfigFile) {
+    public void initConfigService(final String userConfigFile,
+            final String defaultConfigFile) {
         configService.init(userConfigFile, defaultConfigFile);
     }
 
     // general property methods
 
     /**
-     * 
+     *
      * @param key
      * @return String
      * @throws ConfigNotFoundException
@@ -51,7 +51,7 @@ public class Configs {
     }
 
     /**
-     * 
+     *
      * @param key
      * @return array of String
      * @throws ConfigNotFoundException
@@ -83,7 +83,7 @@ public class Configs {
         return configService.getProperty(configKey);
     }
 
-    public void setProperty(String key, Object value) {
+    public void setProperty(final String key, final Object value) {
         configService.setProperty(key, value);
     }
 

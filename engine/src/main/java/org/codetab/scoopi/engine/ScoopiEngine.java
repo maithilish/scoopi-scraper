@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.TaskMediator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ public class ScoopiEngine {
     private ScoopiSystem scoopiSystem;
     @Inject
     private TaskMediator taskMediator;
+    @Inject
+    private JobMediator jobMediator;
     @Inject
     private ErrorLogger errorLogger;
 
@@ -33,31 +36,24 @@ public class ScoopiEngine {
 
             LOGGER.info("initialize basic system");
             scoopiSystem.startStats();
-
             scoopiSystem.startErrorLogger();
-
             scoopiSystem.addShutdownHook();
-
             scoopiSystem.startMetricsServer();
-
             scoopiSystem.seedLocatorGroups();
-
             LOGGER.info("scoopi initialized");
 
             scoopiSystem.waitForInput();
 
             // multi thread
-
             LOGGER.info("--- switch to multi thread system ---");
-
             taskMediator.start();
+            jobMediator.start();
 
             taskMediator.waitForFinish();
-
+            jobMediator.waitForFinish();
             scoopiSystem.waitForFinish();
 
             scoopiSystem.waitForInput();
-
             LOGGER.info("shutdown ...");
         } catch (CriticalException e) {
             String message = "terminate scoopi";

@@ -2,8 +2,9 @@ package org.codetab.scoopi.config;
 
 /**
  * Helper for User Defined Properties file.
- * 
+ *
  * @author m
+ *
  *
  */
 public class ProvidedProperties {

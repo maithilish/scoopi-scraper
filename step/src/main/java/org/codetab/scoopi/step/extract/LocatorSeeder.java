@@ -16,6 +16,7 @@ import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
+import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseSeeder;
 import org.slf4j.Logger;
@@ -54,6 +55,8 @@ public final class LocatorSeeder extends BaseSeeder {
     private PayloadFactory payloadFactory;
     @Inject
     private ErrorLogger errorLogger;
+    @Inject
+    private JobMediator jobMediator;
 
     /**
      * <p>
@@ -103,7 +106,7 @@ public final class LocatorSeeder extends BaseSeeder {
                 if (payloads.size() == 1) {
                     for (Payload payload : payloads) {
                         try {
-                            taskMediator.pushPayload(payload);
+                            jobMediator.pushPayload(payload);
                             meter.mark();
                         } catch (InterruptedException e) {
                             String message = spaceit("handover locator,",

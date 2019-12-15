@@ -7,12 +7,12 @@ import java.util.Properties;
 /**
  * Bare minimum configuration required to start Scoopi. It is used before DI
  * exists. After DI activation, ConfigService provides configurations.
- * 
+ *
  * Only system and user defined properties are allowed; former takes precedence.
  * Default values are hard coded in the methods.
- * 
+ *
  * @author m
- * 
+ *
  */
 public class BootstrapConfigs {
 

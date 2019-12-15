@@ -10,7 +10,7 @@ public class IgniteStore implements IClusterStore {
     private String name = "Apache Ignite store";
     private StoreStatus status = StoreStatus.STARTED;
 
-    Map<String, Object> cache = new HashMap<>();
+    private Map<String, Object> cache = new HashMap<>();
 
     @Override
     public StoreStatus getStatus() {
@@ -18,18 +18,18 @@ public class IgniteStore implements IClusterStore {
     }
 
     @Override
-    public void setStatus(StoreStatus status) {
+    public void setStatus(final StoreStatus status) {
         this.status = status;
     }
 
     @Override
-    public boolean put(String key, Object value) {
+    public boolean put(final String key, final Object value) {
         cache.put(key, value);
         return true;
     }
 
     @Override
-    public Object get(String key) {
+    public Object get(final String key) {
         return cache.get(key);
     }
 

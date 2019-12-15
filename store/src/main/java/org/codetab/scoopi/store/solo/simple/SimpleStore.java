@@ -1,17 +1,17 @@
-package org.codetab.scoopi.store.local.simple;
+package org.codetab.scoopi.store.solo.simple;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codetab.scoopi.store.local.ILocalStore;
+import org.codetab.scoopi.store.solo.ISoloStore;
 
-public class LocalStore implements ILocalStore {
+public class SimpleStore implements ISoloStore {
 
     private String name = "Local store";
 
     private StoreStatus status = StoreStatus.STARTED;
 
-    Map<String, Object> cache = new HashMap<>();
+    private Map<String, Object> cache = new HashMap<>();
 
     @Override
     public StoreStatus getStatus() {
@@ -19,18 +19,18 @@ public class LocalStore implements ILocalStore {
     }
 
     @Override
-    public void setStatus(StoreStatus status) {
+    public void setStatus(final StoreStatus status) {
         this.status = status;
     }
 
     @Override
-    public boolean put(String key, Object value) {
+    public boolean put(final String key, final Object value) {
         cache.put(key, value);
         return true;
     }
 
     @Override
-    public Object get(String key) {
+    public Object get(final String key) {
         return cache.get(key);
     }
 

@@ -12,7 +12,7 @@ public class DInjector {
 
     private Injector injector;
 
-    public DInjector(AbstractModule module) {
+    public DInjector(final AbstractModule module) {
         injector = Guice.createInjector(module);
     }
 

@@ -1,4 +1,4 @@
-package org.codetab.scoopi.store.local.simple;
+package org.codetab.scoopi.store.solo.simple;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
