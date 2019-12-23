@@ -11,6 +11,7 @@ import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.store.cluster.IClusterStore;
+import org.codetab.scoopi.store.cluster.ignite.Cluster;
 import org.codetab.scoopi.store.solo.ISoloStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class Bootstrap {
 
     private IStore store;
     private DInjector dInjector; // actual injector to run scoopi
+    private Cluster cluster;
 
     public void init() {
         if (bootstrapConfigs.isSolo()) {
@@ -41,9 +43,13 @@ public class Bootstrap {
                     .instance(DInjector.class);
         } else {
             LOGGER.info("Scoopi [solo/cluster]: cluster"); //$NON-NLS-1$
+            cluster = initInjector.instance(Cluster.class);
+            cluster.start();
+
             store = initInjector.instance(IClusterStore.class);
-            dInjector = new DInjector(new ClusterModule(store))
+            dInjector = new DInjector(new ClusterModule(store, cluster))
                     .instance(DInjector.class);
+
         }
     }
 

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 public class TaskMediator {
 
     static final Logger LOGGER = LoggerFactory.getLogger(TaskMediator.class);
+    private static final long SLEEP_MILLIS = 1000;
 
     @Inject
     private TaskPoolService poolService;
@@ -37,6 +38,8 @@ public class TaskMediator {
     private int reservations = 0;
     @GuardedBy("this")
     private boolean done = false;
+    @GuardedBy("this")
+    private boolean jobsDone = false;
 
     public void start() {
         taskRunner.start();
@@ -56,9 +59,7 @@ public class TaskMediator {
 
     public boolean pushPayload(final Payload payload)
             throws InterruptedException {
-
         notNull(payload, "payload must not be null");
-
         synchronized (this) {
             ++reservations;
         }
@@ -82,17 +83,22 @@ public class TaskMediator {
         poolService.submit(poolName, task);
     }
 
+    public void setJobsDone(final boolean jobsDone) {
+        synchronized (this) {
+            this.jobsDone = jobsDone;
+        }
+    }
+
     public boolean isDone() {
-        return done;
+        return (done && jobsDone);
     }
 
     class TaskRunnerThread extends Thread {
-
         @Override
         public void run() {
             while (true) {
                 synchronized (this) {
-                    if (poolService.isDone() && reservations == 0) {
+                    if (jobsDone && poolService.isDone() && reservations == 0) {
                         poolService.waitForFinish();
                         break;
                     }
@@ -100,6 +106,9 @@ public class TaskMediator {
                 try {
                     if (reservations > 0) {
                         initiateTask();
+                    } else {
+                        LOGGER.info("sleep 1s");
+                        Thread.sleep(SLEEP_MILLIS);
                     }
                 } catch (ClassNotFoundException | InstantiationException
                         | IllegalAccessException | InterruptedException e) {
@@ -109,4 +118,5 @@ public class TaskMediator {
             }
         }
     }
+
 }

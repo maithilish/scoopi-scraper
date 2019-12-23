@@ -200,6 +200,30 @@ Filter type = Exclude all.
 Applies to = File and Folders (check all children recursive)
 File and Folder Attributes: Project Relative Path matches src/main/web/scoopiw
 
+### Save Actions
+
+Pref -> Java -> Editor -> Save Actions
+
+Enable Perform the selected action
+ - Format Source Code 
+    - Edited lines
+ - Organize imports
+
+Additional Actions -> Configure
+
+Code Organizing:
+ - Remove trailing white spaces on all lines
+Code Style: 
+ - Add final modifier to method parameters
+ - Add final modifier to local variables
+Missing Code:
+ - Add missing '@Override' annotations
+ - Add missing '@Override' annotations to implementations of interface methods
+ - Add missing '@Deprecated' annotations
+Unnecessary Code:
+ - Remove unnecessary casts
+ - Remove unused imports
+
 ### Run Configuration
 
 In Eclipse, add new run configuration, go to Run As -> Maven Build and enter

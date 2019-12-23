@@ -14,6 +14,11 @@ public class LocatorGroup implements Serializable {
 
     private String group;
     private List<Locator> locators;
+    /*
+     * LocatorGroup defined by defs or created by parsed link default true
+     * (defined by defs)
+     */
+    private boolean byDef = true;
 
     LocatorGroup() {
     }
@@ -40,6 +45,14 @@ public class LocatorGroup implements Serializable {
             copy.getLocators().add(locator.copy());
         }
         return copy;
+    }
+
+    public boolean isByDef() {
+        return byDef;
+    }
+
+    public void setByDef(final boolean byDef) {
+        this.byDef = byDef;
     }
 
     @Override

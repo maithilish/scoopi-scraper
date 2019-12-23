@@ -5,9 +5,12 @@ import static org.apache.commons.lang3.Validate.notNull;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import javax.inject.Singleton;
+
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.IPayloadStore;
 
+@Singleton
 public class PayloadStore implements IPayloadStore {
 
     private static final int QUEUE_SIZE = 32768;

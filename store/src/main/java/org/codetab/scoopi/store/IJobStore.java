@@ -4,12 +4,27 @@ import org.codetab.scoopi.model.Payload;
 
 public interface IJobStore {
 
-    void putPayload(Payload payload) throws InterruptedException;
+    enum State {
+        NEW, INITIALIZE, READY
+    }
 
-    Payload takePayload() throws InterruptedException;
+    boolean init();
 
-    int getPayloadsCount();
+    boolean createTables();
 
-    void clear();
+    boolean putJob(Payload payload) throws InterruptedException;
 
+    Payload takeJob() throws InterruptedException;
+
+    boolean markFinished(long id);
+
+    int getJobCount();
+
+    boolean isDone();
+
+    State getState();
+
+    void setState(State state);
+
+    boolean changeStateToInitialize();
 }

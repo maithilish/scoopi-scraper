@@ -139,6 +139,10 @@ public class Configs {
         return highDate;
     }
 
+    public boolean isCluster() {
+        return configService.getBoolean("scoopi.cluster", false);
+    }
+
     public boolean isTestMode() {
         String eclipseTestRunner =
                 "org.eclipse.jdt.internal.junit.runner.RemoteTestRunner"; //$NON-NLS-1$

@@ -23,8 +23,10 @@ import org.codetab.scoopi.plugin.appender.AppenderMediator;
 import org.codetab.scoopi.plugin.pool.AppenderPoolService;
 import org.codetab.scoopi.stat.ShutdownHook;
 import org.codetab.scoopi.stat.Stats;
+import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.store.cluster.ignite.Cluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +41,15 @@ public class ScoopiSystem {
     @Inject
     private TaskMediator taskMediator;
     @Inject
+    private JobMediator jobMediator;
+    @Inject
     private MetricsServer metricsServer;
     @Inject
     private MetricsHelper metricsHelper;
     @Inject
     private Stats stats;
+    @Inject
+    private Cluster cluster;
     @Inject
     private ErrorLogger errorLogger;
     @Inject
@@ -73,6 +79,14 @@ public class ScoopiSystem {
         return true;
     }
 
+    // bootstrap starts cluster
+    public boolean stopCluster() {
+        if (configs.isCluster()) {
+            cluster.stop();
+        }
+        return true;
+    }
+
     public boolean startErrorLogger() {
         errorLogger.start();
         return true;
@@ -96,29 +110,37 @@ public class ScoopiSystem {
     }
 
     public boolean seedLocatorGroups() {
-        LOGGER.info("seed defined locator groups");
-        String stepName = "start"; //$NON-NLS-1$
-        String seederClzName = null;
-        try {
-            seederClzName = configs.getConfig("scoopi.seederClass"); //$NON-NLS-1$
-        } catch (ConfigNotFoundException e) {
-            String message = "unable seed locator group";
-            throw new CriticalException(message, e);
-        }
-
-        List<LocatorGroup> locatorGroups = locatorDef.getLocatorGroups();
-        List<Payload> payloads = payloadFactory
-                .createSeedPayloads(locatorGroups, stepName, seederClzName);
-        for (Payload payload : payloads) {
+        if (jobMediator.isSeedJobs()) {
+            LOGGER.info("seed defined locator groups");
+            String stepName = "start"; //$NON-NLS-1$
+            String seederClzName = null;
             try {
-                taskMediator.pushPayload(payload);
-            } catch (InterruptedException e) {
-                String group = payload.getJobInfo().getGroup();
-                String message = spaceit("seed locator group: ", group);
-                errorLogger.log(CAT.INTERNAL, message, e);
+                seederClzName = configs.getConfig("scoopi.seederClass"); //$NON-NLS-1$
+            } catch (ConfigNotFoundException e) {
+                String message = "unable seed locator group";
+                throw new CriticalException(message, e);
             }
+
+            List<LocatorGroup> locatorGroups = locatorDef.getLocatorGroups();
+            jobMediator.setSeedDoneSignal(locatorGroups.size()); // CountDownLatch
+
+            List<Payload> payloads = payloadFactory
+                    .createSeedPayloads(locatorGroups, stepName, seederClzName);
+            for (Payload payload : payloads) {
+                try {
+                    taskMediator.pushPayload(payload);
+                } catch (InterruptedException e) {
+                    String group = payload.getJobInfo().getGroup();
+                    String message = spaceit("seed locator group: ", group);
+                    errorLogger.log(CAT.INTERNAL, message, e);
+                }
+            }
+            return true;
+        } else {
+            LOGGER.info("not init node, no seeding");
+            jobMediator.setSeedDoneSignal(0);
+            return false;
         }
-        return true;
     }
 
     public void waitForFinish() {

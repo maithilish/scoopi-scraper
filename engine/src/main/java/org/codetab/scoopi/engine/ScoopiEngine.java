@@ -39,6 +39,8 @@ public class ScoopiEngine {
             scoopiSystem.startErrorLogger();
             scoopiSystem.addShutdownHook();
             scoopiSystem.startMetricsServer();
+
+            jobMediator.init();
             scoopiSystem.seedLocatorGroups();
             LOGGER.info("scoopi initialized");
 
@@ -59,6 +61,7 @@ public class ScoopiEngine {
             String message = "terminate scoopi";
             errorLogger.log(CAT.FATAL, message, e);
         } finally {
+            scoopiSystem.stopCluster();
             scoopiSystem.stopMetricsServer();
             scoopiSystem.stopStats();
             LOGGER.info("scoopi completed");

@@ -68,6 +68,9 @@
         <mariadb-client.version>2.2.5</mariadb-client.version>
         <mysql-connector.version>5.1.43</mysql-connector.version>
 
+        <ignite.version>2.7.6</ignite.version>
+        <jdbi.version>3.11.1</jdbi.version>
+
         <!-- plugin version -->
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <jar-plugin.version>3.2.0</jar-plugin.version>
@@ -235,6 +238,26 @@
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-servlets</artifactId>
                 <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-core</artifactId>
+                <version>${ignite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-spring</artifactId>
+                <version>${ignite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-indexing</artifactId>
+                <version>${ignite.version}</version>
+            </dependency>        
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-core</artifactId>
+                <version>${jdbi.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

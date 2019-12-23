@@ -2,13 +2,17 @@ package org.codetab.scoopi.model;
 
 import static org.codetab.scoopi.util.Util.dashit;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-public class JobInfo {
+public class JobInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final long id;
     private final String locator;

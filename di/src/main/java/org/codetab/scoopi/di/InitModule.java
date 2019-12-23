@@ -20,9 +20,7 @@ import org.codetab.scoopi.defs.yml.LocatorDef;
 import org.codetab.scoopi.defs.yml.PluginDef;
 import org.codetab.scoopi.defs.yml.TaskDef;
 import org.codetab.scoopi.store.cluster.IClusterStore;
-import org.codetab.scoopi.store.cluster.ignite.IgniteStore;
 import org.codetab.scoopi.store.solo.ISoloStore;
-import org.codetab.scoopi.store.solo.simple.SimpleStore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -35,8 +33,12 @@ public class InitModule extends AbstractModule {
     @Override
     protected void configure() {
 
-        bind(ISoloStore.class).to(SimpleStore.class).in(Singleton.class);
-        bind(IClusterStore.class).to(IgniteStore.class).in(Singleton.class);
+        bind(ISoloStore.class)
+                .to(org.codetab.scoopi.store.solo.simple.Store.class)
+                .in(Singleton.class);
+        bind(IClusterStore.class)
+                .to(org.codetab.scoopi.store.cluster.ignite.Store.class)
+                .in(Singleton.class);
 
         // bind yaml defs
         bind(Configs.class).in(Singleton.class);

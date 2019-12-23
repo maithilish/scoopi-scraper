@@ -106,7 +106,17 @@ public final class LocatorSeeder extends BaseSeeder {
                 if (payloads.size() == 1) {
                     for (Payload payload : payloads) {
                         try {
-                            jobMediator.pushPayload(payload);
+                            if (locatorGroup.isByDef()) {
+                                // if seed, push to JM (local or cluster)
+                                System.out.println("push to JM");
+                                System.out.println(payload);
+                                jobMediator.pushPayload(payload);
+                            } else {
+                                // if from parse link, push to TM (local)
+                                System.out.println("push to TM");
+                                System.out.println(payload);
+                                taskMediator.pushPayload(payload);
+                            }
                             meter.mark();
                         } catch (InterruptedException e) {
                             String message = spaceit("handover locator,",
@@ -128,6 +138,9 @@ public final class LocatorSeeder extends BaseSeeder {
                 errorLogger.log(CAT.ERROR, message);
             }
             threadSleep.sleep(SLEEP_MILLIS);
+        }
+        if (locatorGroup.isByDef()) {
+            jobMediator.countDownSeedDone();
         }
         LOGGER.debug("locator group: {}, locators: {}, queued to taskpool",
                 locatorGroup.getGroup(), locatorGroup.getLocators().size());

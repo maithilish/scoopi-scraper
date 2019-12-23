@@ -62,6 +62,8 @@ public class LocatorGroupFactory {
                     if (!lgs.containsKey(linkGroup)) {
                         LocatorGroup lg =
                                 objectFactory.createLocatorGroup(linkGroup);
+                        // LocatorGroup not defined by defs
+                        lg.setByDef(false);
                         lgs.put(linkGroup, lg);
                     }
                     LocatorGroup lg = lgs.get(linkGroup);

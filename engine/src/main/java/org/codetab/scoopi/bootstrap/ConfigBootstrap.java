@@ -27,7 +27,7 @@ public class ConfigBootstrap {
         LOGGER.info("rundate {}", configs.getRunDate());
         LOGGER.info(configs.getStage());
 
-        store.put("configService", configs);
+        store.put("configs", configs);
 
         return true;
     }
