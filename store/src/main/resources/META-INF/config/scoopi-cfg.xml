@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    Ignite Spring configuration file to startup Ignite cache.
-    Provided cache    will be created on node startup.
-    When starting Ignite from Java IDE, pass path to this file to Ignition:
-    Ignition.start("examples/config/example-cache.xml");
+    Ignite Spring configuration file to startup Ignite cache. Provided cache
+    will be created on node startup. When starting Ignite from Java IDE, pass path
+    to this file to Ignition: Ignition.start("examples/config/example-cache.xml")
 -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
@@ -13,9 +13,9 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="ignite.cfg"
         class="org.apache.ignite.configuration.IgniteConfiguration">
+
         <!--
         <property name="peerClassLoadingEnabled" value="true" />
-
 
         <property name="gridLogger">
             <bean
@@ -24,18 +24,20 @@
                     value="ignite-log4j.xml" />
             </bean>
         </property>
--->
+        -->
 
         <property name="cacheConfiguration">
             <list>
-                <!-- Partitioned cache example configuration (Atomic mode). -->
                 <bean
                     class="org.apache.ignite.configuration.CacheConfiguration">
-                    <property name="name" value="default" />
+                    <property name="name" value="scoopi" />
                     <property name="statisticsEnabled"
                         value="false" />
+                    <property name="cacheMode"
+                        value="REPLICATED" />
                     <property name="atomicityMode"
                         value="ATOMIC" />
+                    <property name="rebalanceMode" value="SYNC" />
                     <property name="backups" value="1" />
                 </bean>
             </list>

@@ -26,8 +26,6 @@ public class PayloadFactory {
     @Inject
     private ITaskDef taskDef;
     @Inject
-    private TaskMediator taskMediator;
-    @Inject
     private ObjectFactory objectFactory;
     @Inject
     private ErrorLogger errorLogger;
@@ -35,17 +33,17 @@ public class PayloadFactory {
     public List<Payload> createSeedPayloads(
             final List<LocatorGroup> locatorGroups, final String stepName,
             final String seederClzName) {
-        List<Payload> payloads = new ArrayList<>();
-        for (LocatorGroup locatorGroup : locatorGroups) {
+        final List<Payload> payloads = new ArrayList<>();
+        for (final LocatorGroup locatorGroup : locatorGroups) {
             // for init payload, only stepName, className and taskGroup are
             // set. Next and previous steps, taskName, dataDef are undefined
-            String undefined = "undefined";
-            StepInfo stepInfo = objectFactory.createStepInfo(stepName,
+            final String undefined = "undefined";
+            final StepInfo stepInfo = objectFactory.createStepInfo(stepName,
                     undefined, undefined, seederClzName);
-            JobInfo jobInfo = objectFactory.createJobInfo(0, undefined,
+            final JobInfo jobInfo = objectFactory.createJobInfo(undefined,
                     locatorGroup.getGroup(), undefined, undefined, undefined);
-            Payload payload = objectFactory.createPayload(jobInfo, stepInfo,
-                    locatorGroup);
+            final Payload payload = objectFactory.createPayload(jobInfo,
+                    stepInfo, locatorGroup);
             payloads.add(payload);
         }
         return payloads;
@@ -54,8 +52,8 @@ public class PayloadFactory {
     public List<Payload> createPayloads(final String taskGroup,
             final List<String> taskNames, final StepInfo stepInfo,
             final String jobName, final Object payloadData) {
-        List<Payload> payloads = new ArrayList<>();
-        for (String taskName : taskNames) {
+        final List<Payload> payloads = new ArrayList<>();
+        for (final String taskName : taskNames) {
             try {
                 StepInfo thisStep = stepInfo;
                 /*
@@ -71,21 +69,20 @@ public class PayloadFactory {
                             stepInfo.getStepName());
                 }
                 if (!thisStep.getNextStepName().equalsIgnoreCase("end")) {
-                    String stepsName =
+                    final String stepsName =
                             taskDef.getStepsName(taskGroup, taskName);
-                    String dataDefName = taskDef.getFieldValue(taskGroup,
+                    final String dataDefName = taskDef.getFieldValue(taskGroup,
                             taskName, "dataDef");
-                    StepInfo nextStep = taskDef.getNextStep(taskGroup, taskName,
-                            thisStep.getStepName());
-                    JobInfo jobInfo = objectFactory.createJobInfo(
-                            taskMediator.getJobId(), jobName, taskGroup,
-                            taskName, stepsName, dataDefName);
-                    Payload nextStepPayload = objectFactory
+                    final StepInfo nextStep = taskDef.getNextStep(taskGroup,
+                            taskName, thisStep.getStepName());
+                    final JobInfo jobInfo = objectFactory.createJobInfo(jobName,
+                            taskGroup, taskName, stepsName, dataDefName);
+                    final Payload nextStepPayload = objectFactory
                             .createPayload(jobInfo, nextStep, payloadData);
                     payloads.add(nextStepPayload);
                 }
-            } catch (DefNotFoundException e) {
-                String message = spaceit(
+            } catch (final DefNotFoundException e) {
+                final String message = spaceit(
                         "unable to create payload for taskGroup:taskName ",
                         taskGroup + ":" + taskName);
                 errorLogger.log(CAT.ERROR, message, e);

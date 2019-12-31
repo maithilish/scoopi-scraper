@@ -32,10 +32,13 @@ public class LocatorCreator extends BaseProcessor {
 
     private List<LocatorGroup> locatorGroups;
 
+    private long jobId;
+
     @Override
     public boolean process() {
-        String locatorName = getPayload().getJobInfo().getName();
-        String dataDef = getPayload().getJobInfo().getDataDef();
+        final String locatorName = getPayload().getJobInfo().getName();
+        final String dataDef = getPayload().getJobInfo().getDataDef();
+        jobId = getPayload().getJobInfo().getId();
         locatorGroups = locatorGroupFactory.createLocatorGroups(dataDef,
                 data.getItems(), locatorName);
         setOutput(locatorGroups);
@@ -49,21 +52,23 @@ public class LocatorCreator extends BaseProcessor {
         validState(isConsistent(), "step inconsistent");
         validState(nonNull(locatorGroups), "locatorGroups is null");
 
-        String stepName = "start"; //$NON-NLS-1$
+        final String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
         try {
             seederClzName = configs.getConfig("scoopi.seederClass"); //$NON-NLS-1$
-        } catch (ConfigNotFoundException e) {
+        } catch (final ConfigNotFoundException e) {
             throw new StepRunException("unable to handover", e);
         }
 
-        List<Payload> payloads = payloadFactory
+        final List<Payload> payloads = payloadFactory
                 .createSeedPayloads(locatorGroups, stepName, seederClzName);
-        for (Payload payload : payloads) {
+        for (final Payload payload : payloads) {
             try {
+                // reuse jobId for new payload
+                payload.getJobInfo().setId(jobId);
                 taskMediator.pushPayload(payload);
-            } catch (InterruptedException e) {
-                String message =
+            } catch (final InterruptedException e) {
+                final String message =
                         spaceit("handover link locators,", payload.toString());
                 errorLogger.log(marker, CAT.INTERNAL, message, e);
             }

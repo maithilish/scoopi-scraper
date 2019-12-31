@@ -144,3 +144,6 @@ callables
 jdbc
 injector
 deserialize
+seq
+ignite
+dao

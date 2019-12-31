@@ -39,20 +39,20 @@ public class TaskFactoryTest {
     @Test
     public void testCreateTaskFromPayload() throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        ObjectFactory mf = new ObjectFactory();
-        JobInfo jobInfo = mf.createJobInfo(0, "locator", "group", "task",
+        final ObjectFactory mf = new ObjectFactory();
+        final JobInfo jobInfo = mf.createJobInfo("locator", "group", "task",
                 "steps", "dataDef");
-        StepInfo stepInfo = mf.createStepInfo("s1", "s0", "s2", clzName);
-        String data = "data";
-        Payload payload = mf.createPayload(jobInfo, stepInfo, data);
+        final StepInfo stepInfo = mf.createStepInfo("s1", "s0", "s2", clzName);
+        final String data = "data";
+        final Payload payload = mf.createPayload(jobInfo, stepInfo, data);
 
-        PageLoader step = Mockito.mock(PageLoader.class);
-        Task task = Mockito.mock(Task.class);
+        final PageLoader step = Mockito.mock(PageLoader.class);
+        final Task task = Mockito.mock(Task.class);
 
         given(dInjector.instance(PageLoader.class)).willReturn(step);
         given(dInjector.instance(Task.class)).willReturn(task);
 
-        Task actual = taskFactory.createTask(payload);
+        final Task actual = taskFactory.createTask(payload);
 
         verify(step).setPayload(payload);
         verify(task).setStep(step);
@@ -61,12 +61,12 @@ public class TaskFactoryTest {
 
     @Test
     public void testCreateTaskFromStep() {
-        PageLoader step = Mockito.mock(PageLoader.class);
-        Task task = Mockito.mock(Task.class);
+        final PageLoader step = Mockito.mock(PageLoader.class);
+        final Task task = Mockito.mock(Task.class);
 
         given(dInjector.instance(Task.class)).willReturn(task);
 
-        Task actual = taskFactory.createTask(step);
+        final Task actual = taskFactory.createTask(step);
 
         verify(task).setStep(step);
         assertThat(actual).isSameAs(task);
@@ -75,10 +75,10 @@ public class TaskFactoryTest {
     @Test
     public void testGetStep() throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        PageLoader step = Mockito.mock(PageLoader.class);
+        final PageLoader step = Mockito.mock(PageLoader.class);
         given(dInjector.instance(PageLoader.class)).willReturn(step);
 
-        IStep actual = taskFactory.createStep(clzName);
+        final IStep actual = taskFactory.createStep(clzName);
 
         assertThat(actual).isInstanceOf(IStep.class);
         assertThat(actual).isSameAs(step);
@@ -87,7 +87,7 @@ public class TaskFactoryTest {
     @Test
     public void testGetStepClassCastException() throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        String notAStepClzName = "org.codetab.scoopi.model.Locator";
+        final String notAStepClzName = "org.codetab.scoopi.model.Locator";
 
         testRule.expect(ClassCastException.class);
         taskFactory.createStep(notAStepClzName);
@@ -97,7 +97,7 @@ public class TaskFactoryTest {
     public void testGetStepClassNotFoundException()
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException {
-        String invalidClzName = "org.codetab.scoopi.XYZ";
+        final String invalidClzName = "org.codetab.scoopi.XYZ";
 
         testRule.expect(ClassNotFoundException.class);
         taskFactory.createStep(invalidClzName);

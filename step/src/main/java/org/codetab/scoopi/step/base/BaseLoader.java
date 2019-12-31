@@ -23,6 +23,7 @@ import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.persistence.DocumentPersistence;
 import org.codetab.scoopi.persistence.LocatorPersistence;
+import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.Step;
 import org.slf4j.Logger;
@@ -72,6 +73,11 @@ public abstract class BaseLoader extends Step {
     @Inject
     private ErrorLogger errorLogger;
 
+    @Inject
+    private JobMediator jobMediator;
+
+    private long jobId;
+
     /**
      * Creates log marker from locator name and group.
      * @return true
@@ -82,12 +88,14 @@ public abstract class BaseLoader extends Step {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
-        Object pData = getPayload().getData();
+        jobId = getPayload().getJobInfo().getId();
+        final Object pData = getPayload().getData();
         if (pData instanceof Locator) {
             this.locator = (Locator) pData;
         } else {
-            String message = spaceit("payload is not instance of Locator, but",
-                    pData.getClass().getName());
+            final String message =
+                    spaceit("payload is not instance of Locator, but",
+                            pData.getClass().getName());
             throw new StepRunException(message);
         }
         return true;
@@ -115,7 +123,7 @@ public abstract class BaseLoader extends Step {
 
         if (isNull(savedLocator)) {
             // use the locator from payload passed to this step
-            String message = getLabeled("use locator defined in defs");
+            final String message = getLabeled("use locator defined in defs");
             LOGGER.debug(marker, "{}", message);
             LOGGER.trace(marker, "defined locator:{}{}", LINE, locator);
         } else {
@@ -124,7 +132,7 @@ public abstract class BaseLoader extends Step {
 
             // switch locator to persisted locator (detached locator)
             locator = savedLocator;
-            String message = getLabeled("use locator loaded from store");
+            final String message = getLabeled("use locator loaded from store");
             LOGGER.debug(marker, "{}", message);
             LOGGER.trace(marker, "loaded locator:{}{}", LINE, locator);
         }
@@ -163,11 +171,11 @@ public abstract class BaseLoader extends Step {
     public boolean process() {
         validState(nonNull(locator), "locator is null");
 
-        String taskGroup = getJobInfo().getGroup();
+        final String taskGroup = getJobInfo().getGroup();
         String live;
         try {
             live = taskDef.getLive(taskGroup);
-        } catch (DefNotFoundException e1) {
+        } catch (final DefNotFoundException e1) {
             live = "PT0S";
         }
 
@@ -179,8 +187,8 @@ public abstract class BaseLoader extends Step {
          */
         Document activeDoc = documentHelper.getActiveDocument(locator);
         if (nonNull(activeDoc)) {
-            Date newToDate = documentHelper.getToDate(activeDoc.getFromDate(),
-                    live, getJobInfo());
+            final Date newToDate = documentHelper
+                    .getToDate(activeDoc.getFromDate(), live, getJobInfo());
             if (documentHelper.resetToDate(activeDoc, newToDate)) {
                 activeDoc = null;
             }
@@ -196,14 +204,14 @@ public abstract class BaseLoader extends Step {
             try {
                 // fetch documentObject as byte[]
                 documentObject = fetchDocumentObject(locator.getUrl());
-            } catch (IOException e) {
-                String message = "unable to fetch document page";
+            } catch (final IOException e) {
+                final String message = "unable to fetch document page";
                 throw new StepRunException(message, e);
             }
 
             // document metadata
-            Date fromDate = configs.getRunDateTime();
-            Date toDate =
+            final Date fromDate = configs.getRunDateTime();
+            final Date toDate =
                     documentHelper.getToDate(fromDate, live, getJobInfo());
 
             // create new document
@@ -213,8 +221,8 @@ public abstract class BaseLoader extends Step {
             // compress and set documentObject
             try {
                 documentHelper.setDocumentObject(activeDoc, documentObject);
-            } catch (IOException e) {
-                String message = "unable to compress document page";
+            } catch (final IOException e) {
+                final String message = "unable to compress document page";
                 throw new StepRunException(message, e);
             }
 
@@ -254,17 +262,17 @@ public abstract class BaseLoader extends Step {
         validState(nonNull(document), "document is null");
 
         try {
-            boolean persist = persist();
+            final boolean persist = persist();
             // store locator
             if (persist && locatorPersistence.storeLocator(locator)) {
                 // if stored then reload locator and document
-                Locator tLocator =
+                final Locator tLocator =
                         locatorPersistence.loadLocator(locator.getId());
                 if (nonNull(tLocator)) {
                     locator = tLocator;
                 }
 
-                Document tDocument =
+                final Document tDocument =
                         documentPersistence.loadDocument(document.getId());
                 if (nonNull(tDocument)) {
                     document = tDocument;
@@ -274,8 +282,8 @@ public abstract class BaseLoader extends Step {
                         getLabel());
                 LOGGER.trace(marker, "stored locator{}{}", LINE, locator);
             }
-        } catch (RuntimeException e) {
-            String message = "unable to store locator and document";
+        } catch (final RuntimeException e) {
+            final String message = "unable to store locator and document";
             throw new StepRunException(message, e);
         }
         return true;
@@ -286,27 +294,39 @@ public abstract class BaseLoader extends Step {
         validState(isConsistent(), "step inconsistent");
 
         LOGGER.debug("push document tasks to taskpool");
-        String group = getJobInfo().getGroup();
+        final String group = getJobInfo().getGroup();
 
-        List<String> taskNames = taskDef.getTaskNames(group);
-        List<Payload> payloads = payloadFactory.createPayloads(group, taskNames,
-                getStepInfo(), getJobInfo().getName(), getOutput());
+        /*
+         * one or more tasks are applied to a document, create new payloads for
+         * each task
+         */
+        final List<String> taskNames = taskDef.getTaskNames(group);
+        final List<Payload> payloads = payloadFactory.createPayloads(group,
+                taskNames, getStepInfo(), getJobInfo().getName(), getOutput());
 
-        for (Payload payload : payloads) {
+        for (final Payload payload : payloads) {
             try {
-                taskMediator.pushPayload(payload);
-            } catch (InterruptedException e) {
-                String message =
+                // treat each task as new job with new seq job id
+                payload.getJobInfo().setId(jobMediator.getJobIdSequence());
+                jobMediator.pushPayload(payload);
+            } catch (final InterruptedException e) {
+                final String message =
                         spaceit("handover document,", payload.toString());
                 errorLogger.log(CAT.INTERNAL, message, e);
             }
         }
+        // TODO push multiple payloads and mark finish - should be atomic batch
+        // mark job finished
+        jobMediator.markJobFinished(jobId);
+
         return true;
     }
 
     private boolean persist() {
-        Optional<Boolean> locatorLevelPersistence = Optional.ofNullable(true);
-        boolean persist = locatorPersistence.persist(locatorLevelPersistence);
+        final Optional<Boolean> locatorLevelPersistence =
+                Optional.ofNullable(true);
+        final boolean persist =
+                locatorPersistence.persist(locatorLevelPersistence);
         return persist;
     }
 

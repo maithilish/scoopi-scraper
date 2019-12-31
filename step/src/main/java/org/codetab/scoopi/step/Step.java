@@ -44,6 +44,8 @@ public abstract class Step implements IStep {
     @Inject
     protected TaskMediator taskMediator;
     @Inject
+    protected JobMediator jobMediator;
+    @Inject
     protected ObjectFactory factory;
 
     @Override
@@ -58,17 +60,18 @@ public abstract class Step implements IStep {
         validState(isConsistent(), "step inconsistent");
 
         try {
-            String group = getJobInfo().getGroup();
-            String stepName = getStepInfo().getStepName();
-            String taskName = getJobInfo().getTask();
+            final String group = getJobInfo().getGroup();
+            final String stepName = getStepInfo().getStepName();
+            final String taskName = getJobInfo().getTask();
 
             if (getStepInfo().getNextStepName().equalsIgnoreCase("end")) {
+                jobMediator.markJobFinished(getJobInfo().getId());
                 LOGGER.info(marker, "job: {} finished",
                         getJobInfo().getLabel());
             } else {
-                StepInfo nextStep =
+                final StepInfo nextStep =
                         taskDef.getNextStep(group, taskName, stepName);
-                Payload nextStepPayload =
+                final Payload nextStepPayload =
                         factory.createPayload(getJobInfo(), nextStep, output);
                 taskMediator.pushPayload(nextStepPayload);
                 LOGGER.debug(marker, "{} handover to step: {}", getLabel(),

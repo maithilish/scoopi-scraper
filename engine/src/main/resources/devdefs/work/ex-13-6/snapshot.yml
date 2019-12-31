@@ -1,0 +1,76 @@
+locatorGroups:
+
+  snapshotGroup:
+    locators: [       
+       { name: acme0, url: "/defs/examples/fin/page/acme-snapshot-links.html" },
+       { name: acme1, url: "/defs/examples/fin/page/acme-snapshot-links.html" },
+       { name: acme2, url: "/defs/examples/fin/page/acme-snapshot-links.html" },
+       { name: acme3, url: "/defs/examples/fin/page/acme-snapshot-links.html" },
+       { name: acme4, url: "/defs/examples/fin/page/acme-snapshot-links.html" },
+       { name: acme5, url: "/defs/examples/fin/page/acme-snapshot-links.html" },       
+    ]
+
+taskGroups:
+
+  snapshotGroup:
+    
+    priceTask:
+      dataDef: price
+      
+    snapshotTask:
+      dataDef: snapshot        
+    
+    linkTask:
+      dataDef: links
+      steps:
+        jsoupDefault:
+          process:
+            class: "org.codetab.scoopi.step.process.LocatorCreator"
+            previous: parser
+            next: seeder
+      
+dataDefs:
+
+  price:            
+    query:
+      block: "div#price_tick"
+      selector: "*"
+    items: [ 
+      item: { name: "Price", value: "Price" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]        
+
+  snapshot:            
+    query:
+      block: "div#snapshot"
+      selector: "div:matchesOwn(^%{item.match}) + div"
+    items: [
+      item: { name: "MC", match: "MARKET CAP" },
+      item: { name: "EPS", match: "EPS \\(TTM\\)" },
+      item: { name: "PE", match: "P/E" },
+      item: { name: "PC", match: "P/C" },
+      item: { name: "BV", match: "BOOK VALUE" },
+      item: { name: "PB", match: "PRICE/BOOK" },
+      item: { name: "DIV", match: "DIV \\(%\\)" },
+      item: { name: "DY", match: "DIV YIELD" },
+      item: { name: "FV", match: "FACE VALUE" },
+      item: { name: "IND PE", match: "INDUSTRY P/E" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]
+
+  links:
+    query:
+      block: "#page_links > table > tbody > tr > td:nth-child(4) > ul"
+      
+    items: [ 
+      item: { name: "bsLink", linkGroup: bsGroup, index: 2,
+              selector: "li:nth-child(%{index}) > a attribute: href",
+              prefix: [ "/defs/examples/fin/page/" ] },
+      item: { name: "plLink", linkGroup: plGroup, index: 3,
+              selector: "li:nth-child(%{index}) > a attribute: href",
+              prefix: [ "/defs/examples/fin/page/" ] },              
+    ]

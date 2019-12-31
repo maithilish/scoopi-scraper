@@ -253,11 +253,11 @@
                 <groupId>org.apache.ignite</groupId>
                 <artifactId>ignite-indexing</artifactId>
                 <version>${ignite.version}</version>
-            </dependency>        
+            </dependency>
             <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-core</artifactId>
-                <version>${jdbi.version}</version>
+                <groupId>org.apache.ignite</groupId>
+                <artifactId>ignite-log4j</artifactId>
+                <version>${ignite.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

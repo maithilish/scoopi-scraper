@@ -8,6 +8,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,7 +96,7 @@ public class ScoopiSystemTest {
 
     @Test
     public void testStartErrorLogger() {
-        boolean result = sSystem.startErrorLogger();
+        final boolean result = sSystem.startErrorLogger();
 
         assertThat(result).isTrue();
         verify(errorLogger).start();
@@ -103,7 +104,7 @@ public class ScoopiSystemTest {
 
     @Test
     public void testAddShutdownHook() {
-        boolean result = sSystem.addShutdownHook();
+        final boolean result = sSystem.addShutdownHook();
 
         assertThat(result).isTrue();
         verify(runTime).addShutdownHook(shutdownHook);
@@ -111,10 +112,10 @@ public class ScoopiSystemTest {
 
     @Test
     public void testStartMetricsServer() {
-        boolean result = sSystem.startMetricsServer();
+        final boolean result = sSystem.startMetricsServer();
 
         assertThat(result).isTrue();
-        InOrder inOrder = inOrder(metricsServer, metricsHelper);
+        final InOrder inOrder = inOrder(metricsServer, metricsHelper);
 
         inOrder.verify(metricsServer).start();
         inOrder.verify(metricsHelper).initMetrics();
@@ -125,10 +126,10 @@ public class ScoopiSystemTest {
 
     @Test
     public void testStopMetricsServer() {
-        boolean result = sSystem.stopMetricsServer();
+        final boolean result = sSystem.stopMetricsServer();
 
         assertThat(result).isTrue();
-        InOrder inOrder = inOrder(metricsServer);
+        final InOrder inOrder = inOrder(metricsServer);
 
         inOrder.verify(metricsServer).stop();
         verifyNoMoreInteractions(metricsServer);
@@ -137,14 +138,14 @@ public class ScoopiSystemTest {
     @Test
     public void testSeedLocatorGroups()
             throws ConfigNotFoundException, InterruptedException {
-        String stepName = "start";
-        String seederClzName = "seeder.class";
+        final String stepName = "start";
+        final String seederClzName = "seeder.class";
 
-        List<LocatorGroup> lGroups = getTestLocatorGroups();
+        final List<LocatorGroup> lGroups = getTestLocatorGroups();
 
-        Payload payload1 = Mockito.mock(Payload.class);
-        Payload payload2 = Mockito.mock(Payload.class);
-        List<Payload> payloads = Lists.newArrayList(payload1, payload2);
+        final Payload payload1 = Mockito.mock(Payload.class);
+        final Payload payload2 = Mockito.mock(Payload.class);
+        final List<Payload> payloads = Lists.newArrayList(payload1, payload2);
 
         given(configs.getConfig("scoopi.seederClass"))
                 .willReturn(seederClzName);
@@ -152,11 +153,11 @@ public class ScoopiSystemTest {
         given(payloadFactory.createSeedPayloads(lGroups, stepName,
                 seederClzName)).willReturn(payloads);
 
-        boolean result = sSystem.seedLocatorGroups();
+        final boolean result = sSystem.seedLocatorGroups();
 
         assertThat(result).isTrue();
 
-        InOrder inOrder = inOrder(taskMediator);
+        final InOrder inOrder = inOrder(taskMediator);
 
         inOrder.verify(taskMediator).pushPayload(payload1);
         inOrder.verify(taskMediator).pushPayload(payload2);
@@ -166,18 +167,18 @@ public class ScoopiSystemTest {
     @Test
     public void testSeedLocatorGroupsInterrupted()
             throws ConfigNotFoundException, InterruptedException {
-        String stepName = "start";
-        String seederClzName = "seeder.class";
+        final String stepName = "start";
+        final String seederClzName = "seeder.class";
 
-        List<LocatorGroup> lGroups = getTestLocatorGroups();
+        final List<LocatorGroup> lGroups = getTestLocatorGroups();
 
-        JobInfo jobInfo1 = factory.createJobInfo(0, "acme", "group1", "task1",
-                "steps", "def1");
-        JobInfo jobInfo2 = factory.createJobInfo(0, "acme", "group2", "task2",
-                "steps", "def2");
-        Payload payload1 = factory.createPayload(jobInfo1, null, null);
-        Payload payload2 = factory.createPayload(jobInfo2, null, null);
-        List<Payload> payloads = Lists.newArrayList(payload1, payload2);
+        final JobInfo jobInfo1 = factory.createJobInfo("acme", "group1",
+                "task1", "steps", "def1");
+        final JobInfo jobInfo2 = factory.createJobInfo("acme", "group2",
+                "task2", "steps", "def2");
+        final Payload payload1 = factory.createPayload(jobInfo1, null, null);
+        final Payload payload2 = factory.createPayload(jobInfo2, null, null);
+        final List<Payload> payloads = Lists.newArrayList(payload1, payload2);
 
         given(configs.getConfig("scoopi.seederClass"))
                 .willReturn(seederClzName);
@@ -188,11 +189,11 @@ public class ScoopiSystemTest {
         given(taskMediator.pushPayload(payload1))
                 .willThrow(InterruptedException.class);
 
-        boolean result = sSystem.seedLocatorGroups();
+        final boolean result = sSystem.seedLocatorGroups();
 
         assertThat(result).isTrue();
 
-        InOrder inOrder = inOrder(taskMediator, errorLogger);
+        final InOrder inOrder = inOrder(taskMediator, errorLogger);
 
         inOrder.verify(taskMediator).pushPayload(payload1);
         inOrder.verify(errorLogger).log(eq(CAT.INTERNAL), any(String.class),
@@ -214,7 +215,7 @@ public class ScoopiSystemTest {
     }
 
     @Test
-    public void testWaitForInput() throws ConfigNotFoundException {
+    public void testWaitForInput() throws ConfigNotFoundException, IOException {
         given(configs.getConfig("scoopi.wait")).willReturn("false")
                 .willThrow(ConfigNotFoundException.class).willReturn("true");
         sSystem.waitForInput();
@@ -226,9 +227,9 @@ public class ScoopiSystemTest {
     }
 
     public List<LocatorGroup> getTestLocatorGroups() {
-        ObjectFactory mf = new ObjectFactory();
+        final ObjectFactory mf = new ObjectFactory();
 
-        List<LocatorGroup> lGroups = new ArrayList<>();
+        final List<LocatorGroup> lGroups = new ArrayList<>();
 
         Locator l = mf.createLocator("l1", "lg1", "url1");
         LocatorGroup lg = mf.createLocatorGroup("lg1");

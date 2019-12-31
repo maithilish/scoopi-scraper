@@ -11,8 +11,8 @@ public class JobInfoTest {
 
     @Before
     public void setUp() throws Exception {
-        jobInfo =
-                new JobInfo(1, "locator", "group", "task", "steps", "dataDef");
+        jobInfo = new JobInfo("locator", "group", "task", "steps", "dataDef");
+        jobInfo.setId(1);
     }
 
     @Test
@@ -53,14 +53,15 @@ public class JobInfoTest {
 
     @Test
     public void testHashCode() {
-        int actual = jobInfo.hashCode();
+        final int actual = jobInfo.hashCode();
         assertThat(actual).isEqualTo(1945591254);
     }
 
     @Test
     public void testEqual() {
-        JobInfo another =
-                new JobInfo(1, "locator", "group", "task", "steps", "dataDef");
+        final JobInfo another =
+                new JobInfo("locator", "group", "task", "steps", "dataDef");
+        another.setId(1);
         assertThat(jobInfo).isEqualTo(another);
     }
 }

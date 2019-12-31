@@ -61,16 +61,16 @@ public class PageLoader extends BaseLoader {
         // TODO charset encoding
         byte[] bytes = null;
 
-        String protocol = httpHelper.getProtocol(urlSpec);
+        final String protocol = httpHelper.getProtocol(urlSpec);
         if (protocol.equals("resource")) {
             LOGGER.info(marker, "fetch resource: {}", urlSpec);
             try {
-                URL fileURL = PageLoader.class.getResource(urlSpec);
+                final URL fileURL = PageLoader.class.getResource(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
                 LOGGER.debug(marker, "fetched resource: {}", urlSpec);
                 return bytes;
-            } catch (IOException e1) {
+            } catch (final IOException e1) {
                 throw new IOException(spaceit("file not found: ", urlSpec));
             }
         }
@@ -78,7 +78,7 @@ public class PageLoader extends BaseLoader {
         if (protocol.equals("file")) {
             LOGGER.info(marker, "fetch file: {}", urlSpec);
             try {
-                URL fileURL = new URL(urlSpec);
+                final URL fileURL = new URL(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "file").inc();
                 LOGGER.debug(marker, "fetched file: {}", urlSpec);
@@ -90,10 +90,10 @@ public class PageLoader extends BaseLoader {
 
         if (protocol.equals("http") || protocol.equals("https")) {
 
-            int timeout = configs.getTimeout();
-            String userAgent = configs.getUserAgent();
+            final int timeout = configs.getTimeout();
+            final String userAgent = configs.getUserAgent();
 
-            String urlSpecEscaped = httpHelper.escapeUrl(urlSpec);
+            final String urlSpecEscaped = httpHelper.escapeUrl(urlSpec);
             LOGGER.info(marker, "fetch web resource: {}", urlSpecEscaped);
 
             bytes = httpHelper.getContent(urlSpecEscaped, userAgent, timeout);

@@ -16,6 +16,11 @@
         </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
+            <artifactId>log</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codetab.scoopi</groupId>
             <artifactId>model</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -33,8 +38,12 @@
             <artifactId>ignite-indexing</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jdbi</groupId>
-            <artifactId>jdbi3-core</artifactId>
+            <groupId>org.apache.ignite</groupId>
+            <artifactId>ignite-log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
         </dependency>
     </dependencies>
 </project>

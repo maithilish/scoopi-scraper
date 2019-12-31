@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Singleton;
 
@@ -17,10 +18,12 @@ public class JobStore implements ISoloJobStore {
 
     private BlockingQueue<Payload> jobs = new ArrayBlockingQueue<>(QUEUE_SIZE);
 
+    private AtomicLong jobIdCounter = new AtomicLong();
+
     private State state = State.NEW;
 
     @Override
-    public boolean init() {
+    public boolean open() {
         return true;
     }
 
@@ -75,5 +78,32 @@ public class JobStore implements ISoloJobStore {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String getNodeId() {
+        return "solo";
+    }
+
+    @Override
+    public int getJobTakenCount() {
+        // solo no limit
+        return 0;
+    }
+
+    @Override
+    public int getJobQueueSize() {
+        // solo - no take job limit
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public long getJobIdSeq() {
+        return jobIdCounter.getAndIncrement();
+    }
+
+    @Override
+    public boolean close() {
+        return true;
     }
 }

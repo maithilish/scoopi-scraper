@@ -26,10 +26,9 @@ public class ObjectFactory {
                 className);
     }
 
-    public JobInfo createJobInfo(final long id, final String locator,
-            final String group, final String task, final String steps,
-            final String dataDef) {
-        return new JobInfo(id, locator, group, task, steps, dataDef);
+    public JobInfo createJobInfo(final String locator, final String group,
+            final String task, final String steps, final String dataDef) {
+        return new JobInfo(locator, group, task, steps, dataDef);
     }
 
     public Payload createPayload(final JobInfo jobInfo, final StepInfo stepInfo,
@@ -38,14 +37,14 @@ public class ObjectFactory {
     }
 
     public LocatorGroup createLocatorGroup(final String group) {
-        LocatorGroup lg = new LocatorGroup();
+        final LocatorGroup lg = new LocatorGroup();
         lg.setGroup(group);
         return lg;
     }
 
     public Locator createLocator(final String name, final String group,
             final String url) {
-        Locator locator = new Locator();
+        final Locator locator = new Locator();
         locator.setName(name);
         locator.setGroup(group);
         locator.setUrl(url);
@@ -54,7 +53,7 @@ public class ObjectFactory {
 
     public Document createDocument(final String name, final String url,
             final Date fromDate, final Date toDate) {
-        Document document = new Document();
+        final Document document = new Document();
         document.setName(name);
         document.setUrl(url);
         document.setFromDate(DateUtils.truncate(fromDate, Calendar.SECOND));
@@ -63,25 +62,25 @@ public class ObjectFactory {
     }
 
     public Data createData(final String dataDef) {
-        Data data = new Data();
+        final Data data = new Data();
         data.setDataDef(dataDef);
         return data;
     }
 
     public Item createItem() {
-        Item item = new Item();
+        final Item item = new Item();
         return item;
     }
 
     public Axis createAxis(final String name, final String itemName) {
-        Axis axis = new Axis(name, itemName);
+        final Axis axis = new Axis(name, itemName);
         return axis;
     }
 
     public Axis createAxis(final String name, final String itemName,
             final String value, final String match, final int index,
             final int order) {
-        Axis axis = new Axis(name, itemName);
+        final Axis axis = new Axis(name, itemName);
         axis.setValue(value);
         axis.setMatch(match);
         axis.setIndex(index);
@@ -92,7 +91,7 @@ public class ObjectFactory {
     public Axis createAxis(final String name, final String itemName,
             final String value, final String match, final Integer index,
             final Integer order) {
-        Axis axis = new Axis(name, itemName);
+        final Axis axis = new Axis(name, itemName);
         axis.setValue(value);
         axis.setMatch(match);
         axis.setIndex(index);
@@ -102,7 +101,7 @@ public class ObjectFactory {
 
     public DataDef createDataDef(final String name, final Date fromDate,
             final Date toDate, final String defJson) {
-        DataDef dataDef = new DataDef();
+        final DataDef dataDef = new DataDef();
         dataDef.setName(name);
         dataDef.setFromDate(fromDate);
         dataDef.setToDate(toDate);
@@ -111,13 +110,13 @@ public class ObjectFactory {
     }
 
     public DataDef createDataDef(final String name) {
-        DataDef dataDef = new DataDef();
+        final DataDef dataDef = new DataDef();
         dataDef.setName(name);
         return dataDef;
     }
 
     public Filter createFilter(final String type, final String pattern) {
-        Filter filter = new Filter();
+        final Filter filter = new Filter();
         filter.setType(type);
         filter.setPattern(pattern);
         return filter;

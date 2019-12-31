@@ -2,53 +2,64 @@ package org.codetab.scoopi.store.cluster.ignite.dao;
 
 import static org.codetab.scoopi.util.Util.spaceit;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.jdbi.v3.core.Jdbi;
 
 public class KeyStoreDao {
 
     @Inject
-    private Configs configs;
+    private Jdbc jdbc;
 
-    private Jdbi jdbi;
-
-    public boolean initJdbi() {
-        try {
-            final String url =
-                    configs.getConfig("scoopi.clusterStore.connectionUrl");
-            jdbi = Jdbi.create(url);
-        } catch (final ConfigNotFoundException e) {
-            throw new CriticalException(e);
-        }
-        return true;
+    public boolean init() {
+        return jdbc.init();
     }
 
-    public boolean createKeyStoreTable() {
-        jdbi.useHandle(handle -> handle.execute(
+    public boolean close() {
+        return jdbc.close();
+    }
+
+    public boolean createTables() throws SQLException {
+        final String sql =
                 spaceit("create table IF NOT EXISTS keystore (key varchar(128)",
-                        "PRIMARY KEY not null, value varchar(128) not null)")));
-        return true;
+                        "PRIMARY KEY not null, value varchar(128) not null)",
+                        "WITH \"template=REPLICATED,atomicity=ATOMIC\"");
+        return jdbc.update(sql) == 0;
     }
 
     // insert or replace
     public boolean putValue(final String key, final String value) {
-        jdbi.useHandle(handle -> handle
-                .createUpdate(
-                        "merge into keystore(key,value) KEY (key) values(?,?)")
-                .bind(0, key).bind(1, value).execute());
-        return true;
+        String sql = "merge into keystore(key,value) KEY (key) values(?,?)";
+        try {
+            jdbc.update(sql, key, value);
+            return true;
+        } catch (final SQLException e) {
+            String message = "keystore put";
+            throw new CriticalException(message, e);
+        }
     }
 
     public String getValue(final String key) {
-        return jdbi.withHandle(handle -> handle
-                .select("select value from keystore where key = ?", key)
-                .mapTo(String.class).one());
+        String sql = "select value from keystore where key = ?";
+        try {
+            return jdbc.select(sql, (rs -> {
+                if (rs.next()) {
+                    return rs.getString(1);
+                } else {
+                    throw new NoSuchElementException(key);
+                }
+            }), key);
+        } catch (final SQLException e) {
+            String message = "keystore get";
+            throw new CriticalException(message, e);
+        }
     }
 
     /*
@@ -57,42 +68,62 @@ public class KeyStoreDao {
      * data_grid_state is NEW change it to INITIALIZE, if no such key then
      * insert and set it to INITIALIZE
      */
-    public String changeValue(final String key, final String value,
-            final String newValue) {
-        return jdbi.inTransaction(handle -> {
-            try {
-                final String existingValue = handle
-                        .select("select value from keystore where key = ?", key)
-                        .mapTo(String.class).one();
-                if (existingValue.equals(value)) {
-                    handle.createUpdate(
-                            "update keystore set value = ? where key = ?")
-                            .bind(0, newValue).bind(1, key).execute();
+    public boolean changeValue(final String key, final String value,
+            final String newValue) throws SQLException {
+        SqlFunction<String, Boolean> sqlFunc = (dummy -> {
+            try (Connection conn = jdbc.getConnection()) {
+                conn.setAutoCommit(false);
+
+                String sql = "select value from keystore where key = ?";
+                Optional<String> existingValue = jdbc.select(conn, sql, (rs -> {
+                    Optional<String> o = Optional.empty();
+                    if (rs.next()) {
+                        o = Optional.of(rs.getString(1));
+                    }
+                    return o;
+                }), key);
+                boolean r = false;
+                if (existingValue.isPresent()) {
+                    if (existingValue.get().equals(value)) {
+                        sql = spaceit("update keystore set value = ?",
+                                "where key = ? and value = ?");
+                        if (jdbc.update(conn, sql, newValue, key, value) == 1) {
+                            r = true;
+                        } else {
+                            r = false;
+                        }
+                    }
+                } else {
+                    sql = "insert into keystore values (?,?)";
+                    if (jdbc.update(conn, sql, key, newValue) == 1) {
+                        r = true;
+                    } else {
+                        r = false;
+                    }
                 }
-            } catch (final IllegalStateException e) {
-                handle.execute("insert into keystore values (?,?)", key,
-                        newValue);
+                conn.commit();
+                return r;
             }
-            return handle
-                    .select("select value from keystore where key = ?", key)
-                    .mapTo(String.class).one();
         });
+        // execute with retry
+        return jdbc.execute(sqlFunc, "");
     }
 
-    public boolean contains(final String key) {
-        try {
-            jdbi.withHandle(handle -> handle
-                    .select("select value from keystore where key = ?", key)
-                    .mapTo(String.class).one());
-            return true;
-        } catch (final IllegalStateException e) {
-            return false;
-        }
+    public boolean contains(final String key) throws SQLException {
+        String sql = "select value from keystore where key = ?";
+        return jdbc.select(sql, (rs -> {
+            return rs.next();
+        }), key);
     }
 
-    public List<String> getKeys(final String value) {
-        return jdbi.withHandle(handle -> handle
-                .select("select key from keystore where value = ?", value)
-                .mapTo(String.class).list());
+    public List<String> getKeys(final String value) throws SQLException {
+        String sql = "select key from keystore where value = ?";
+        return jdbc.select(sql, (rs -> {
+            List<String> keys = new ArrayList<>();
+            while (rs.next()) {
+                keys.add(rs.getString(1));
+            }
+            return keys;
+        }));
     }
 }

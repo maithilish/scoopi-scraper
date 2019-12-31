@@ -55,17 +55,17 @@ public class DocumentHelperTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        jobInfo = factory.createJobInfo(0, "locator1", "group1", "task1",
-                "steps1", "dataDef1");
+        jobInfo = factory.createJobInfo("locator1", "group1", "task1", "steps1",
+                "dataDef1");
         document =
                 factory.createDocument("name", "url", new Date(), new Date());
     }
 
     @Test
     public void testGetActiveDocumentId() throws ParseException {
-        String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
+        final String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
 
-        List<Document> documents = getTestDocuments();
+        final List<Document> documents = getTestDocuments();
 
         Date runDate =
                 DateUtils.parseDate("01-07-2017 10:00:00.000", parsePatterns);
@@ -93,21 +93,21 @@ public class DocumentHelperTest {
 
     @Test
     public void testGetActiveDocumentIdDocumentsNull() throws ParseException {
-        List<Document> documents = null;
-        Long actual = documentHelper.getActiveDocumentId(documents);
+        final List<Document> documents = null;
+        final Long actual = documentHelper.getActiveDocumentId(documents);
         assertThat(actual).isNull();
     }
 
     @Test
     public void testGetActiveDocumentIdDocumentsEmpty() throws ParseException {
-        List<Document> documents = new ArrayList<>();
-        Long actual = documentHelper.getActiveDocumentId(documents);
+        final List<Document> documents = new ArrayList<>();
+        final Long actual = documentHelper.getActiveDocumentId(documents);
         assertThat(actual).isNull();
     }
 
     @Test
     public void testgetDocument() throws ParseException {
-        List<Document> documents = getTestDocuments();
+        final List<Document> documents = getTestDocuments();
 
         Document actual = documentHelper.getDocument(1L, documents);
         assertThat(actual).isEqualTo(documents.get(0));
@@ -118,7 +118,7 @@ public class DocumentHelperTest {
 
     @Test
     public void testgetDocumentShouldThrowException() throws ParseException {
-        List<Document> documents = getTestDocuments();
+        final List<Document> documents = getTestDocuments();
 
         testRule.expect(NoSuchElementException.class);
         documentHelper.getDocument(3L, documents);
@@ -130,92 +130,92 @@ public class DocumentHelperTest {
         try {
             documentHelper.getActiveDocumentId(new ArrayList<>());
             fail("should throw IllegalStateException");
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             assertThat(e.getMessage()).isEqualTo("configService is not set");
         }
     }
 
     @Test
     public void testGetToDateWithLiveField() throws ParseException {
-        String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
-        Date fromDate =
+        final String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
+        final Date fromDate =
                 DateUtils.parseDate("01-07-2017 10:00:00.000", parsePatterns);
-        String live = "P2D";
+        final String live = "P2D";
 
-        Date expected = DateUtils.addDays(fromDate, 2);
+        final Date expected = DateUtils.addDays(fromDate, 2);
 
         // when
-        Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
+        final Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     public void testGetToDateBlankLive() throws ParseException {
-        String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
-        Date fromDate =
+        final String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
+        final Date fromDate =
                 DateUtils.parseDate("01-07-2017 10:00:00.000", parsePatterns);
-        String live = "";
+        final String live = "";
 
         // when
-        Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
+        final Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
 
         assertThat(actual).isEqualTo(fromDate);
     }
 
     @Test
     public void testGetToDateWithZeroLive() throws ParseException {
-        String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
-        Date fromDate =
+        final String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
+        final Date fromDate =
                 DateUtils.parseDate("01-07-2017 10:00:00.000", parsePatterns);
-        String live = "0";
+        final String live = "0";
 
         // when
-        Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
+        final Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
         assertThat(actual).isEqualTo(fromDate);
     }
 
     @Test
     public void testGetToDateWithDateString()
             throws ParseException, ConfigNotFoundException {
-        Date fromDate = new Date();
-        String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
-        String live = "01-08-2017 11:00:00.000";
+        final Date fromDate = new Date();
+        final String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
+        final String live = "01-08-2017 11:00:00.000";
 
         given(configs.getConfigArray("scoopi.dateParsePattern"))
                 .willReturn(parsePatterns);
-        Date expected = DateUtils.parseDate(live, parsePatterns);
+        final Date expected = DateUtils.parseDate(live, parsePatterns);
 
         // when
-        Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
+        final Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     public void testGetToDateWithInvalidDateString()
             throws ParseException, ConfigNotFoundException {
-        String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
-        Date fromDate = new Date();
-        String live = "01-xx-2017 11:00:00.000";
+        final String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
+        final Date fromDate = new Date();
+        final String live = "01-xx-2017 11:00:00.000";
 
         given(configs.getConfigArray("scoopi.dateParsePattern"))
                 .willReturn(parsePatterns);
 
         // when
-        Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
+        final Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
         assertThat(actual).isEqualTo(fromDate);
     }
 
     @Test
     public void testGetToDateParsePatternNotFound()
             throws ParseException, ConfigNotFoundException {
-        Date fromDate = new Date();
-        String live = "01-xx-2017 11:00:00.000";
+        final Date fromDate = new Date();
+        final String live = "01-xx-2017 11:00:00.000";
 
         given(configs.getConfigArray("scoopi.dateParsePattern"))
                 .willThrow(ConfigNotFoundException.class);
 
         // when
-        Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
+        final Date actual = documentHelper.getToDate(fromDate, live, jobInfo);
         assertThat(actual).isEqualTo(fromDate);
     }
 
@@ -224,21 +224,21 @@ public class DocumentHelperTest {
         try {
             documentHelper.getToDate(null, "0", jobInfo);
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("fromDate must not be null");
         }
 
         try {
             documentHelper.getToDate(new Date(), null, jobInfo);
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("live must not be null");
         }
 
         try {
             documentHelper.getToDate(new Date(), "", null);
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("jobInfo must not be null");
         }
     }
@@ -249,20 +249,20 @@ public class DocumentHelperTest {
         try {
             documentHelper.getToDate(new Date(), "", jobInfo);
             fail("should throw IllegalStateException");
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             assertThat(e.getMessage()).isEqualTo("configService is not set");
         }
     }
 
     @Test
     public void testSetDocumentObjectCompression() throws IOException {
-        byte[] documentObject = String.valueOf("some string").getBytes();
+        final byte[] documentObject = String.valueOf("some string").getBytes();
 
         // when
-        boolean actual =
+        final boolean actual =
                 documentHelper.setDocumentObject(document, documentObject);
 
-        byte[] expected =
+        final byte[] expected =
                 CompressionUtil.compressByteArray(documentObject, 1024);
 
         assertThat(actual).isTrue();
@@ -274,14 +274,14 @@ public class DocumentHelperTest {
         try {
             documentHelper.setDocumentObject(null, new String().getBytes());
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("document must not be null");
         }
 
         try {
             documentHelper.setDocumentObject(document, null);
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage())
                     .isEqualTo("documentObject must not be null");
         }
@@ -293,7 +293,7 @@ public class DocumentHelperTest {
         try {
             documentHelper.getDocumentObject(null);
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("document must not be null");
         }
 
@@ -301,7 +301,7 @@ public class DocumentHelperTest {
             // document without documentObject
             documentHelper.getDocumentObject(document);
             fail("must throw NullPointerException");
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             assertThat(e.getMessage()).isEqualTo("documentObject is null");
         }
     }
@@ -309,24 +309,24 @@ public class DocumentHelperTest {
     @Test
     public void testGetDocumentObject()
             throws IOException, DataFormatException {
-        byte[] documentObject = String.valueOf("some string").getBytes();
+        final byte[] documentObject = String.valueOf("some string").getBytes();
         documentHelper.setDocumentObject(document, documentObject);
 
         // when
-        byte[] actual = documentHelper.getDocumentObject(document);
+        final byte[] actual = documentHelper.getDocumentObject(document);
 
         assertThat(actual).isEqualTo(documentObject);
     }
 
     @Test
     public void testCreateDocument() {
-        Date fromDate = document.getFromDate();
-        Date toDate = document.getToDate();
+        final Date fromDate = document.getFromDate();
+        final Date toDate = document.getToDate();
 
         given(objectFactory.createDocument("name", "url", fromDate, toDate))
                 .willReturn(document);
 
-        Document actual =
+        final Document actual =
                 documentHelper.createDocument("name", "url", fromDate, toDate);
 
         assertThat(actual).isSameAs(document);
@@ -337,49 +337,49 @@ public class DocumentHelperTest {
         try {
             documentHelper.createDocument(null, "y", new Date(), new Date());
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("name must not be null");
         }
 
         try {
             documentHelper.createDocument("x", null, new Date(), new Date());
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("url must not be null");
         }
 
         try {
             documentHelper.createDocument("x", "y", null, new Date());
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("fromDate must not be null");
         }
 
         try {
             documentHelper.createDocument("x", "y", new Date(), null);
             fail("must throw NullPointerException");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             assertThat(e.getMessage()).isEqualTo("toDate must not be null");
         }
     }
 
     private List<Document> getTestDocuments() throws ParseException {
 
-        String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
-        Document doc1 =
+        final String[] parsePatterns = {"dd-MM-yyyy HH:mm:ss.SSS"};
+        final Document doc1 =
                 factory.createDocument("name", "url", new Date(), new Date());
         doc1.setId(1L);
         Date toDate =
                 DateUtils.parseDate("01-07-2017 09:59:59.999", parsePatterns);
         doc1.setToDate(toDate);
 
-        Document doc2 =
+        final Document doc2 =
                 factory.createDocument("name", "url", new Date(), new Date());
         doc2.setId(2L);
         toDate = DateUtils.parseDate("01-07-2017 10:00:00.000", parsePatterns);
         doc2.setToDate(toDate);
 
-        List<Document> documents = new ArrayList<>();
+        final List<Document> documents = new ArrayList<>();
         documents.add(doc1);
         documents.add(doc2);
         return documents;

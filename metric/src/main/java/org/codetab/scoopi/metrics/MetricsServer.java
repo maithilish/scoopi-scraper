@@ -5,7 +5,6 @@ import javax.inject.Singleton;
 
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
-import org.codetab.scoopi.exception.CriticalException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -41,11 +40,12 @@ public class MetricsServer {
         }
 
         try {
-            String webappBase = metricsHelper.getURL("/webapp").toString();
-            String descriptorPath =
+            final String webappBase =
+                    metricsHelper.getURL("/webapp").toString();
+            final String descriptorPath =
                     String.join("/", webappBase, "WEB-INF/web.xml");
 
-            WebAppContext webappContext = factory.createWebAppContext();
+            final WebAppContext webappContext = factory.createWebAppContext();
             webappContext.setContextPath("/");
             webappContext.setResourceBase(webappBase);
             webappContext.setDescriptor(descriptorPath);
@@ -54,14 +54,14 @@ public class MetricsServer {
             server.setHandler(webappContext);
             server.start();
 
-            int serverPort = ((ServerConnector) server.getConnectors()[0])
+            final int serverPort = ((ServerConnector) server.getConnectors()[0])
                     .getLocalPort();
             LOGGER.info("metrics server started at port: {}", serverPort);
 
             // no server.join() - don't wait
 
-        } catch (Exception e) {
-            throw new CriticalException("unable to start metrics server", e);
+        } catch (final Exception e) {
+            // throw new CriticalException("unable to start metrics server", e);
         }
     }
 
@@ -70,7 +70,7 @@ public class MetricsServer {
             try {
                 server.stop();
                 LOGGER.info("metrics server stopped");
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // don't throw e as stop is outside the try in ScoopiEngine
                 // can't use ErrorLog (circular dependency)
                 LOGGER.error("stop metrics server", e);
@@ -83,7 +83,7 @@ public class MetricsServer {
         try {
             enable = Boolean.parseBoolean(
                     configs.getConfig("scoopi.metrics.server.enable"));
-        } catch (ConfigNotFoundException e1) {
+        } catch (final ConfigNotFoundException e1) {
         }
         return enable;
     }

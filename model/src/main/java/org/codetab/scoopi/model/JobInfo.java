@@ -14,7 +14,7 @@ public class JobInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final long id;
+    private long id;
     private final String locator;
     private final String group;
     private final String task;
@@ -23,16 +23,16 @@ public class JobInfo implements Serializable {
     private final String label;
     private final Marker marker;
 
-    JobInfo(final long id, final String locator, final String group,
-            final String task, final String steps, final String dataDef) {
+    JobInfo(final String locator, final String group, final String task,
+            final String steps, final String dataDef) {
 
-        Validate.notNull(id, "id must not be null");
+        // Validate.notNull(id, "id must not be null");
         Validate.notNull(locator, "locator name must not be null");
         Validate.notNull(group, "group must not be null");
         Validate.notNull(task, "task must not be null");
         Validate.notNull(dataDef, "dataDef must not be null");
 
-        this.id = id;
+        // this.id = id;
         this.locator = locator;
         this.group = group;
         this.task = task;
@@ -40,12 +40,16 @@ public class JobInfo implements Serializable {
         this.dataDef = dataDef;
         this.label = String.join(":", locator, task, dataDef);
 
-        String markerName = dashit("task", locator, group, task);
+        final String markerName = dashit("task", locator, group, task);
         marker = MarkerFactory.getMarker(markerName);
     }
 
     public long getId() {
         return id;
+    }
+
+    public void setId(final long id) {
+        this.id = id;
     }
 
     public String getName() {

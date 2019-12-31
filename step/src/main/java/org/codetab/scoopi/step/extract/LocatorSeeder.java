@@ -64,18 +64,18 @@ public final class LocatorSeeder extends BaseSeeder {
      */
     @Override
     public boolean initialize() {
-        Object pData = getPayload().getData();
+        final Object pData = getPayload().getData();
         if (pData instanceof LocatorGroup) {
             locatorGroup = (LocatorGroup) pData;
             setOutput(pData);
             setConsistent(true);
         } else {
-            String message =
+            final String message =
                     spaceit("payload data is not instance of locator, but",
                             pData.getClass().getName());
             throw new StepRunException(message);
         }
-        Meter meter = metricsHelper.getMeter(this, "locator", "provided");
+        final Meter meter = metricsHelper.getMeter(this, "locator", "provided");
         meter.mark(locatorGroup.getLocators().size());
         return true;
     }
@@ -88,44 +88,46 @@ public final class LocatorSeeder extends BaseSeeder {
     public boolean handover() {
         validState(isConsistent(), "step inconsistent");
 
-        Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
+        final Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
 
         LOGGER.debug("push locators to taskpool");
-        String group = locatorGroup.getGroup();
+        final String group = locatorGroup.getGroup();
 
-        for (Locator locator : locatorGroup.getLocators()) {
+        for (final Locator locator : locatorGroup.getLocators()) {
             // create and push first task payload for each locator
             // so that loader fetch only one document for each locator
-            Optional<String> firstTask = taskDef.getFirstTaskName(group);
+            final Optional<String> firstTask = taskDef.getFirstTaskName(group);
             if (firstTask.isPresent()) {
-                ArrayList<String> firstTaskName =
+                final ArrayList<String> firstTaskName =
                         Lists.newArrayList(firstTask.get());
-                List<Payload> payloads =
+                final List<Payload> payloads =
                         payloadFactory.createPayloads(group, firstTaskName,
                                 getStepInfo(), locator.getName(), locator);
                 if (payloads.size() == 1) {
-                    for (Payload payload : payloads) {
+                    for (final Payload payload : payloads) {
                         try {
                             if (locatorGroup.isByDef()) {
                                 // if seed, push to JM (local or cluster)
-                                System.out.println("push to JM");
-                                System.out.println(payload);
+                                payload.getJobInfo()
+                                        .setId(jobMediator.getJobIdSequence());
                                 jobMediator.pushPayload(payload);
                             } else {
-                                // if from parse link, push to TM (local)
-                                System.out.println("push to TM");
-                                System.out.println(payload);
+                                // if from parse link, push to TM (local). JobId
+                                // of parent job is reused
+                                final long linkJobId =
+                                        getPayload().getJobInfo().getId();
+                                payload.getJobInfo().setId(linkJobId);
                                 taskMediator.pushPayload(payload);
                             }
                             meter.mark();
-                        } catch (InterruptedException e) {
-                            String message = spaceit("handover locator,",
+                        } catch (final InterruptedException e) {
+                            final String message = spaceit("handover locator,",
                                     payload.toString());
                             errorLogger.log(CAT.INTERNAL, message, e);
                         }
                     }
                 } else {
-                    String message = spaceit("unable to seed locator:",
+                    final String message = spaceit("unable to seed locator:",
                             locator.getName(),
                             ", expected one payload for taskGroup:", group,
                             "task:", firstTask.get(), "but got:",
@@ -133,7 +135,7 @@ public final class LocatorSeeder extends BaseSeeder {
                     errorLogger.log(CAT.ERROR, message);
                 }
             } else {
-                String message = spaceit(
+                final String message = spaceit(
                         "unable to get first task for locator group:", group);
                 errorLogger.log(CAT.ERROR, message);
             }

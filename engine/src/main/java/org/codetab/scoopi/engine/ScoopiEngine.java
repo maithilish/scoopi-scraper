@@ -40,6 +40,7 @@ public class ScoopiEngine {
             scoopiSystem.addShutdownHook();
             scoopiSystem.startMetricsServer();
 
+            scoopiSystem.initCluster();
             jobMediator.init();
             scoopiSystem.seedLocatorGroups();
             LOGGER.info("scoopi initialized");
@@ -57,8 +58,8 @@ public class ScoopiEngine {
 
             scoopiSystem.waitForInput();
             LOGGER.info("shutdown ...");
-        } catch (CriticalException e) {
-            String message = "terminate scoopi";
+        } catch (final CriticalException e) {
+            final String message = "terminate scoopi";
             errorLogger.log(CAT.FATAL, message, e);
         } finally {
             scoopiSystem.stopCluster();

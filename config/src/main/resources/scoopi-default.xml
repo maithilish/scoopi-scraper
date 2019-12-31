@@ -74,6 +74,17 @@
             <locator>true</locator>
             <data>true</data>
         </persist>
+        <cluster>
+            <enable>false</enable>
+            <jobQueueSize>4</jobQueueSize>
+            <datasource>
+                <driver>org.apache.ignite.IgniteJdbcThinDriver
+                </driver>
+                <url>jdbc:ignite:thin://127.0.0.1:10800..10900
+                </url>
+                <sqlRetry>4</sqlRetry>
+            </datasource>
+        </cluster>
         <metrics>
             <server>
                 <enable>true</enable>

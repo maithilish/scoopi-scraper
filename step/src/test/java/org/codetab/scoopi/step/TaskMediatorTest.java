@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -76,23 +75,16 @@ public class TaskMediatorTest {
     @Test
     public void testPushPayload()
             throws InterruptedException, IllegalAccessException {
-        ObjectFactory mf = new ObjectFactory();
-        Payload payload = mf.createPayload(null, null, null);
+        final ObjectFactory mf = new ObjectFactory();
+        final Payload payload = mf.createPayload(null, null, null);
 
-        boolean actual = taskMediator.pushPayload(payload);
-        int reservations = (int) FieldUtils.readDeclaredField(taskMediator,
-                "reservations", true);
+        final boolean actual = taskMediator.pushPayload(payload);
+        final int reservations = (int) FieldUtils
+                .readDeclaredField(taskMediator, "reservations", true);
 
         assertThat(actual).isTrue();
         assertThat(reservations).isEqualTo(1);
         verify(payloadStore).putPayload(payload);
-    }
-
-    @Test
-    public void testGetJobId() {
-        taskMediator.getJobId();
-        verify(jobIdCounter).incrementAndGet();
-        verifyNoMoreInteractions(jobIdCounter);
     }
 
 }

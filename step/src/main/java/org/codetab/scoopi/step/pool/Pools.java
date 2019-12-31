@@ -107,9 +107,9 @@ public abstract class Pools {
         notNull(poolName, "poolName must not be null");
         notNull(task, "task must not be null");
 
-        ExecutorService pool = getPool(poolName);
-        Future<?> f = pool.submit(task);
-        NamedFuture nf = new NamedFuture(poolName, f);
+        final ExecutorService pool = getPool(poolName);
+        final Future<?> f = pool.submit(task);
+        final NamedFuture nf = new NamedFuture(poolName, f);
         return futures.add(nf);
     }
 
@@ -159,6 +159,14 @@ public abstract class Pools {
         executorsMap.values().stream().forEach(ExecutorService::shutdown);
     }
 
+    public boolean isPoolFree(final String poolName) {
+        final ThreadPoolExecutor pool = (ThreadPoolExecutor) getPool(poolName);
+        System.out.println(poolName + " q: " + pool.getQueue().size() + " "
+                + pool.getActiveCount() + " " + pool.getPoolSize() + " "
+                + pool.getCorePoolSize());
+        return pool.getQueue().size() <= pool.getPoolSize();
+    }
+
     /**
      * <p>
      * If poolName is found in executorsMap the ExecutorService is returned.
@@ -173,9 +181,9 @@ public abstract class Pools {
         ExecutorService executor = executorsMap.get(poolName);
         if (executor == null) {
             int poolSize = POOL_SIZE;
-            String key = "scoopi.poolsize." + poolName; //$NON-NLS-1$
+            final String key = "scoopi.poolsize." + poolName; //$NON-NLS-1$
             try {
-                String ps = configs.getConfig(key);
+                final String ps = configs.getConfig(key);
                 poolSize = Integer.valueOf(ps);
             } catch (NumberFormatException | ConfigNotFoundException e) {
                 LOGGER.warn(
@@ -186,7 +194,7 @@ public abstract class Pools {
             LOGGER.info("create executor pool: {}, size: {}", poolName, //$NON-NLS-1$
                     poolSize);
             executorsMap.put(poolName, executor);
-            PoolStat poolStat = di.instance(PoolStat.class);
+            final PoolStat poolStat = di.instance(PoolStat.class);
             poolStat.setThreadPool((ThreadPoolExecutor) executor);
             metricsHelper.registerGuage(poolStat, this, "pool", poolName);
         }

@@ -8,7 +8,9 @@ public interface IJobStore {
         NEW, INITIALIZE, READY
     }
 
-    boolean init();
+    boolean open();
+
+    boolean close();
 
     boolean createTables();
 
@@ -27,4 +29,12 @@ public interface IJobStore {
     void setState(State state);
 
     boolean changeStateToInitialize();
+
+    String getNodeId();
+
+    int getJobTakenCount();
+
+    int getJobQueueSize();
+
+    long getJobIdSeq();
 }

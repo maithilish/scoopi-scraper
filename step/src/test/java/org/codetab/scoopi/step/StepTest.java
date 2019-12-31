@@ -65,13 +65,14 @@ public class StepTest {
     @Test
     public void testHandover() throws DefNotFoundException,
             InterruptedException, IllegalAccessException {
-        String group = step.getJobInfo().getGroup();
-        String stepName = step.getStepInfo().getStepName();
-        String taskName = step.getJobInfo().getTask();
-        String output = "test output";
+        final String group = step.getJobInfo().getGroup();
+        final String stepName = step.getStepInfo().getStepName();
+        final String taskName = step.getJobInfo().getTask();
+        final String output = "test output";
 
-        StepInfo nextStep = factory.createStepInfo("s2", "s1", "s3", "class2");
-        Payload nextStepPayload =
+        final StepInfo nextStep =
+                factory.createStepInfo("s2", "s1", "s3", "class2");
+        final Payload nextStepPayload =
                 factory.createPayload(step.getJobInfo(), nextStep, output);
         step.setOutput(output);
         step.setConsistent(true);
@@ -81,7 +82,7 @@ public class StepTest {
         given(objectFactory.createPayload(step.getJobInfo(), nextStep, output))
                 .willReturn(nextStepPayload);
 
-        boolean actual = step.handover();
+        final boolean actual = step.handover();
 
         assertThat(actual).isTrue();
         verify(taskMediator).pushPayload(nextStepPayload);
@@ -91,15 +92,16 @@ public class StepTest {
     public void testHandoverNextStepIsEnd() throws DefNotFoundException,
             InterruptedException, IllegalAccessException {
         // next step is end - case ignored
-        StepInfo stepInfo = factory.createStepInfo("s2", "s1", "ENd", "class2");
+        final StepInfo stepInfo =
+                factory.createStepInfo("s2", "s1", "ENd", "class2");
         payload = factory.createPayload(step.getJobInfo(), stepInfo,
                 step.getOutput());
-        String output = "test output";
+        final String output = "test output";
         step.setPayload(payload);
         step.setConsistent(true);
         step.setOutput(output);
 
-        boolean actual = step.handover();
+        final boolean actual = step.handover();
 
         assertThat(actual).isTrue();
 
@@ -109,10 +111,10 @@ public class StepTest {
     @Test
     public void testHandoverShouldThrowException() throws DefNotFoundException,
             InterruptedException, IllegalAccessException {
-        String group = step.getJobInfo().getGroup();
-        String stepName = step.getStepInfo().getStepName();
-        String taskName = step.getJobInfo().getTask();
-        String output = "test output";
+        final String group = step.getJobInfo().getGroup();
+        final String stepName = step.getStepInfo().getStepName();
+        final String taskName = step.getJobInfo().getTask();
+        final String output = "test output";
 
         step.setOutput(output);
         step.setConsistent(true);
@@ -144,7 +146,7 @@ public class StepTest {
 
     @Test
     public void testGetData() {
-        String data = "data";
+        final String data = "data";
         step.setOutput(data);
 
         assertThat(step.getOutput()).isEqualTo(data);
@@ -179,7 +181,7 @@ public class StepTest {
         step.setConsistent(false);
         assertThat(step.isConsistent()).isFalse();
 
-        String data = "test data";
+        final String data = "test data";
         step.setOutput(data);
 
         step.setConsistent(false);
@@ -190,10 +192,12 @@ public class StepTest {
 
     @Test
     public void testGetMarker() {
-        JobInfo jobInfo =
-                factory.createJobInfo(0, "acme", "bs", "bsTask", "steps", "bs");
-        StepInfo stepInfo = factory.createStepInfo("s1", "s0", "s2", "cls");
-        Payload payload1 = factory.createPayload(jobInfo, stepInfo, "data");
+        final JobInfo jobInfo =
+                factory.createJobInfo("acme", "bs", "bsTask", "steps", "bs");
+        final StepInfo stepInfo =
+                factory.createStepInfo("s1", "s0", "s2", "cls");
+        final Payload payload1 =
+                factory.createPayload(jobInfo, stepInfo, "data");
         step.setPayload(payload1);
 
         Marker marker = step.getMarker();
@@ -207,25 +211,25 @@ public class StepTest {
 
     @Test
     public void testGetLabel() {
-        String label = step.getLabel();
+        final String label = step.getLabel();
 
         assertThat(label).isEqualTo("step: s1, job: [locator1:task1:dataDef1]");
     }
 
     @Test
     public void testGetLabeled() {
-        String labeled = step.getLabeled("test message");
+        final String labeled = step.getLabeled("test message");
 
         assertThat(labeled).isEqualTo(
                 "step: s1, job: [locator1:task1:dataDef1], test message");
     }
 
     private Payload getTestPayload() {
-        JobInfo jobInfo = factory.createJobInfo(0, "locator1", "group1",
+        final JobInfo jobInfo = factory.createJobInfo("locator1", "group1",
                 "task1", "steps1", "dataDef1");
-        StepInfo stepInfo =
+        final StepInfo stepInfo =
                 factory.createStepInfo("s1", "s0", "s2", "clzName1");
-        String data = "data";
+        final String data = "data";
         return factory.createPayload(jobInfo, stepInfo, data);
     }
 

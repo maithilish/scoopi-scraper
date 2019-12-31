@@ -20,13 +20,13 @@ public class BootstrapConfigs {
     private Properties systemProperties;
 
     public BootstrapConfigs() {
-        String userDefinedPropertiesFile =
+        final String userDefinedPropertiesFile =
                 new ProvidedProperties().getFileName();
         try (InputStream input = BootstrapConfigs.class.getClassLoader()
                 .getResourceAsStream(userDefinedPropertiesFile)) {
             userDefinedProperties = new Properties();
             userDefinedProperties.load(input);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             userDefinedProperties = new Properties();
         }
         systemProperties = System.getProperties();
@@ -38,9 +38,10 @@ public class BootstrapConfigs {
      * @return true if solo else false
      */
     public boolean isSolo() {
-        String userDefinedClusterMode =
-                userDefinedProperties.getProperty("scoopi.cluster", "false");
-        String sysClusterMode = systemProperties.getProperty("scoopi.cluster");
+        final String userDefinedClusterMode = userDefinedProperties
+                .getProperty("scoopi.cluster.enable", "false");
+        final String sysClusterMode =
+                systemProperties.getProperty("scoopi.cluster.enable");
         if (Objects.nonNull(sysClusterMode)) {
             return !sysClusterMode.equalsIgnoreCase("true");
         } else {

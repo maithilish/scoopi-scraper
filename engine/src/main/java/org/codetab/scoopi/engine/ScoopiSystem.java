@@ -3,6 +3,7 @@ package org.codetab.scoopi.engine;
 import static org.codetab.scoopi.util.Util.LINE;
 import static org.codetab.scoopi.util.Util.spaceit;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -79,7 +80,13 @@ public class ScoopiSystem {
         return true;
     }
 
-    // bootstrap starts cluster
+    /*
+     * bootstrap starts cluster and any other init is done here
+     */
+    public void initCluster() {
+        configs.setProperty("scoopi.cluster.nodeId", cluster.getNodeId());
+    }
+
     public boolean stopCluster() {
         if (configs.isCluster()) {
             cluster.stop();
@@ -110,28 +117,30 @@ public class ScoopiSystem {
     }
 
     public boolean seedLocatorGroups() {
-        if (jobMediator.isSeedJobs()) {
+        if (jobMediator.isJobSeeder()) {
             LOGGER.info("seed defined locator groups");
-            String stepName = "start"; //$NON-NLS-1$
+            final String stepName = "start"; //$NON-NLS-1$
             String seederClzName = null;
             try {
                 seederClzName = configs.getConfig("scoopi.seederClass"); //$NON-NLS-1$
-            } catch (ConfigNotFoundException e) {
-                String message = "unable seed locator group";
+            } catch (final ConfigNotFoundException e) {
+                final String message = "unable seed locator group";
                 throw new CriticalException(message, e);
             }
 
-            List<LocatorGroup> locatorGroups = locatorDef.getLocatorGroups();
+            final List<LocatorGroup> locatorGroups =
+                    locatorDef.getLocatorGroups();
             jobMediator.setSeedDoneSignal(locatorGroups.size()); // CountDownLatch
 
-            List<Payload> payloads = payloadFactory
+            final List<Payload> payloads = payloadFactory
                     .createSeedPayloads(locatorGroups, stepName, seederClzName);
-            for (Payload payload : payloads) {
+            for (final Payload payload : payloads) {
                 try {
                     taskMediator.pushPayload(payload);
-                } catch (InterruptedException e) {
-                    String group = payload.getJobInfo().getGroup();
-                    String message = spaceit("seed locator group: ", group);
+                } catch (final InterruptedException e) {
+                    final String group = payload.getJobInfo().getGroup();
+                    final String message =
+                            spaceit("seed locator group: ", group);
                     errorLogger.log(CAT.INTERNAL, message, e);
                 }
             }
@@ -152,7 +161,7 @@ public class ScoopiSystem {
         String wait = "false"; //$NON-NLS-1$
         try {
             wait = configs.getConfig("scoopi.wait"); //$NON-NLS-1$
-        } catch (ConfigNotFoundException e) {
+        } catch (final ConfigNotFoundException e) {
         }
         if (wait.equalsIgnoreCase("true")) { //$NON-NLS-1$
             systemHelper.gc();
@@ -160,7 +169,12 @@ public class ScoopiSystem {
                     "wait to acquire heapdump", LINE);
             systemHelper.printToConsole("%s", //$NON-NLS-1$
                     "Press enter to continue ...");
-            systemHelper.readLine();
+            try {
+                systemHelper.readLine();
+            } catch (final IOException e) {
+                throw new CriticalException(e);
+            }
         }
     }
+
 }
