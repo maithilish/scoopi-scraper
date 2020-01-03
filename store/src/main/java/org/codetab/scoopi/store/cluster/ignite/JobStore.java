@@ -120,7 +120,7 @@ public class JobStore implements IClusterJobStore {
     }
 
     @Override
-    public int getJobQueueSize() {
+    public int getJobTakeLimit() {
         return jobQueueSize;
     }
 

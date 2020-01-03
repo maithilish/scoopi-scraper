@@ -15,8 +15,8 @@ import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.codetab.scoopi.store.IStore;
-import org.codetab.scoopi.store.cluster.ignite.Cluster;
-import org.codetab.scoopi.store.cluster.ignite.JobStore;
+import org.codetab.scoopi.store.cluster.ICluster;
+import org.codetab.scoopi.store.cluster.hz.JobStore;
 import org.codetab.scoopi.store.solo.simple.PayloadStore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,9 +29,9 @@ public class ClusterModule extends AbstractModule {
 
     private IStore store;
 
-    private Cluster cluster;
+    private ICluster cluster;
 
-    public ClusterModule(final IStore store, final Cluster cluster) {
+    public ClusterModule(final IStore store, final ICluster cluster) {
         this.store = store;
         this.cluster = cluster;
     }
@@ -48,7 +48,7 @@ public class ClusterModule extends AbstractModule {
 
     @Provides
     @Singleton
-    Cluster provideCluster() {
+    ICluster provideCluster() {
         return cluster;
     }
 
@@ -101,12 +101,11 @@ public class ClusterModule extends AbstractModule {
 
     @Provides
     OperatingSystemMXBean getOsMxBean() {
-        return (OperatingSystemMXBean) ManagementFactory
-                .getOperatingSystemMXBean();
+        return ManagementFactory.getOperatingSystemMXBean();
     }
 
     @Provides
     RuntimeMXBean getRuntimeMxBean() {
-        return (RuntimeMXBean) ManagementFactory.getRuntimeMXBean();
+        return ManagementFactory.getRuntimeMXBean();
     }
 }

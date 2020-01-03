@@ -27,7 +27,7 @@ import org.codetab.scoopi.stat.Stats;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.store.cluster.ignite.Cluster;
+import org.codetab.scoopi.store.cluster.ICluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ public class ScoopiSystem {
     @Inject
     private Stats stats;
     @Inject
-    private Cluster cluster;
+    private ICluster cluster;
     @Inject
     private ErrorLogger errorLogger;
     @Inject
@@ -84,12 +84,12 @@ public class ScoopiSystem {
      * bootstrap starts cluster and any other init is done here
      */
     public void initCluster() {
-        configs.setProperty("scoopi.cluster.nodeId", cluster.getNodeId());
+        configs.setProperty("scoopi.cluster.memberId", cluster.getMemberId());
     }
 
     public boolean stopCluster() {
         if (configs.isCluster()) {
-            cluster.stop();
+            cluster.shutdown();
         }
         return true;
     }

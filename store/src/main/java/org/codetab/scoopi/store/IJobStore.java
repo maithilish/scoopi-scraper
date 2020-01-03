@@ -34,7 +34,7 @@ public interface IJobStore {
 
     int getJobTakenCount();
 
-    int getJobQueueSize();
+    int getJobTakeLimit();
 
     long getJobIdSeq();
 }

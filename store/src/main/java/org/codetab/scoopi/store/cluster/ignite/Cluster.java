@@ -7,6 +7,8 @@ import org.apache.ignite.IgniteAtomicLong;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
 
+// FIXME implement ICluster
+
 @Singleton
 public class Cluster {
 

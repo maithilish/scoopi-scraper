@@ -317,6 +317,7 @@ public abstract class BaseLoader extends Step {
         }
         // TODO push multiple payloads and mark finish - should be atomic batch
         // mark job finished
+        System.out.println("base loader, mark finish: " + jobId);
         jobMediator.markJobFinished(jobId);
 
         return true;

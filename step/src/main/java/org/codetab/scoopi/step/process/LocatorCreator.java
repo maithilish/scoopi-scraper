@@ -65,14 +65,17 @@ public class LocatorCreator extends BaseProcessor {
         for (final Payload payload : payloads) {
             try {
                 // reuse jobId for new payload
-                payload.getJobInfo().setId(jobId);
-                taskMediator.pushPayload(payload);
+                // payload.getJobInfo().setId(jobId);
+                // taskMediator.pushPayload(payload);
+                payload.getJobInfo().setId(jobMediator.getJobIdSequence());
+                jobMediator.pushPayload(payload);
             } catch (final InterruptedException e) {
                 final String message =
                         spaceit("handover link locators,", payload.toString());
                 errorLogger.log(marker, CAT.INTERNAL, message, e);
             }
         }
+        jobMediator.markJobFinished(jobId);
         return true;
     }
 }

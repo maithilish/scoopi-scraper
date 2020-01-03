@@ -92,7 +92,7 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public int getJobQueueSize() {
+    public int getJobTakeLimit() {
         // solo - no take job limit
         return Integer.MAX_VALUE;
     }

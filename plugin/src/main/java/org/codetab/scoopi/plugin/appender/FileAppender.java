@@ -52,8 +52,9 @@ public final class FileAppender extends Appender {
             if (configs.isCluster()) {
                 final String fileName = FileUtils.getName(path);
                 final String dir = FileUtils.getParent(path);
-                path = dir + "/" + configs.getProperty("scoopi.cluster.nodeId")
-                        + "-" + fileName;
+                path = dir + "/"
+                        + configs.getProperty("scoopi.cluster.memberId") + "-"
+                        + fileName;
             }
             writer = ioHelper.getPrintWriter(path);
             setInitialized(true);

@@ -80,9 +80,9 @@ public class JobMediator {
             try {
                 Payload payload = jobStore.takeJob();
                 while (jobStore.getJobTakenCount() > jobStore
-                        .getJobQueueSize()) {
+                        .getJobTakeLimit()) {
                     LOGGER.debug("wait... jobs taken > q size: {}",
-                            jobStore.getJobQueueSize());
+                            jobStore.getJobTakeLimit());
                     Thread.sleep(WAIT_MILLIS);
                 }
                 taskMediator.pushPayload(payload);

@@ -76,7 +76,7 @@
         </persist>
         <cluster>
             <enable>false</enable>
-            <jobQueueSize>4</jobQueueSize>
+            <jobTakeLimit>4</jobTakeLimit>
             <datasource>
                 <driver>org.apache.ignite.IgniteJdbcThinDriver
                 </driver>

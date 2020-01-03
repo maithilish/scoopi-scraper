@@ -68,6 +68,7 @@
         <mariadb-client.version>2.2.5</mariadb-client.version>
         <mysql-connector.version>5.1.43</mysql-connector.version>
 
+        <hazelcast.version>3.12.5</hazelcast.version>
         <ignite.version>2.7.6</ignite.version>
         <jdbi.version>3.11.1</jdbi.version>
 
@@ -239,6 +240,18 @@
                 <artifactId>metrics-servlets</artifactId>
                 <version>${metrics.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast-client</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.ignite</groupId>
                 <artifactId>ignite-core</artifactId>
