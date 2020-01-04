@@ -28,11 +28,6 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public boolean createTables() {
-        return true;
-    }
-
-    @Override
     public Payload takeJob() throws InterruptedException {
         return jobs.take();
     }

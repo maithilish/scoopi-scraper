@@ -34,10 +34,10 @@ public class InitModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(IClusterStore.class)
-                .to(org.codetab.scoopi.store.cluster.hz.Store.class)
+                .to(org.codetab.scoopi.store.cluster.ignite.Store.class)
                 .in(Singleton.class);
         bind(ICluster.class)
-                .to(org.codetab.scoopi.store.cluster.hz.Cluster.class)
+                .to(org.codetab.scoopi.store.cluster.ignite.Cluster.class)
                 .in(Singleton.class);
 
         bind(ISoloStore.class)

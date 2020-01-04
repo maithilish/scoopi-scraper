@@ -16,7 +16,7 @@ import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.store.cluster.ICluster;
-import org.codetab.scoopi.store.cluster.hz.JobStore;
+import org.codetab.scoopi.store.cluster.ignite.JobStore;
 import org.codetab.scoopi.store.solo.simple.PayloadStore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

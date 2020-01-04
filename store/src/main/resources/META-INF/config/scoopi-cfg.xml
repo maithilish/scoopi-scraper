@@ -15,8 +15,6 @@
         class="org.apache.ignite.configuration.IgniteConfiguration">
 
         <!--
-        <property name="peerClassLoadingEnabled" value="true" />
-
         <property name="gridLogger">
             <bean
                 class="org.apache.ignite.logger.log4j.Log4JLogger">
@@ -26,6 +24,16 @@
         </property>
         -->
 
+        <!-- cache mode for atomic types and data structures -->
+        <property name="atomicConfiguration">
+            <bean
+                class="org.apache.ignite.configuration.AtomicConfiguration">
+                <property name="cacheMode" value="REPLICATED" />
+                <property name="backups" value="1" />
+            </bean>
+        </property>
+
+        <!-- scoopi cache - not used at present -->
         <property name="cacheConfiguration">
             <list>
                 <bean

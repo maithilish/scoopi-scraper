@@ -3,49 +3,46 @@ package org.codetab.scoopi.store.cluster.ignite;
 import javax.inject.Singleton;
 
 import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteAtomicLong;
-import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
-
-// FIXME implement ICluster
+import org.codetab.scoopi.store.cluster.ICluster;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
-public class Cluster {
+public class Cluster implements ICluster {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(Cluster.class);
 
     private Ignite ignite;
-    private IgniteAtomicLong jobIdSeq;
-    private String nodeId;
-    private IgniteCache<String, Object> cache;
+    private String memberId;
 
-    public void start() {
+    @Override
+    public boolean start() {
+        LOGGER.info("start Ignite cluster");
+
         System.setProperty("IGNITE_QUIET", "true");
         System.setProperty("IGNITE_NO_ASCII", "true");
         System.setProperty("IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED", "true");
         System.setProperty("IGNITE_CONSOLE_APPENDER", "false");
 
-        // ignite = Ignition.start();
         ignite = Ignition.start("config/scoopi-cfg.xml");
-
-        nodeId = ignite.cluster().localNode().id().toString();
-
-        jobIdSeq = ignite.atomicLong("job_id_seq", 0, true);
-        cache = ignite.getOrCreateCache("scoopi");
+        memberId = ignite.cluster().localNode().id().toString();
+        return true;
     }
 
-    public String getNodeId() {
-        return nodeId;
-    }
-
-    public void stop() {
+    @Override
+    public boolean shutdown() {
         ignite.close();
+        return true;
     }
 
-    public IgniteAtomicLong getJobIdSeq() {
-        return jobIdSeq;
+    @Override
+    public Object getInstance() {
+        return ignite;
     }
 
-    public IgniteCache<String, Object> getCache() {
-        return cache;
+    @Override
+    public String getMemberId() {
+        return memberId;
     }
-
 }

@@ -7,12 +7,12 @@ import java.io.PrintWriter;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.helper.IOHelper;
 import org.codetab.scoopi.log.Log.CAT;
-import org.h2.store.fs.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +50,8 @@ public final class FileAppender extends Appender {
         try {
             String path = getPluginField("file");
             if (configs.isCluster()) {
-                final String fileName = FileUtils.getName(path);
-                final String dir = FileUtils.getParent(path);
+                final String fileName = FilenameUtils.getName(path);
+                final String dir = FilenameUtils.getFullPath(path);
                 path = dir + "/"
                         + configs.getProperty("scoopi.cluster.memberId") + "-"
                         + fileName;

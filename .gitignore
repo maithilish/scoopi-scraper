@@ -6,4 +6,4 @@ src/main/web/scoopiw/package-lock.json
 .checkstyle
 logs/
 output/
-ignite/
+/ignite/

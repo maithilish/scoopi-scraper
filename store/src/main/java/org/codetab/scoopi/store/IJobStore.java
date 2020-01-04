@@ -12,8 +12,6 @@ public interface IJobStore {
 
     boolean close();
 
-    boolean createTables();
-
     boolean putJob(Payload payload) throws InterruptedException;
 
     Payload takeJob() throws InterruptedException;

@@ -44,29 +44,26 @@ public class JobStore implements IClusterJobStore {
     public boolean open() {
         try {
             hz = (HazelcastInstance) cluster.getInstance();
-            jobQ = hz.getQueue("job");
-            jobTakenSet = hz.getSet("takenJob");
-            keyStoreMap = hz.getMap("keyStore");
-            jobIdGenerator = hz.getFlakeIdGenerator("job_id_seq");
+
             memberId = configs.getConfig("scoopi.cluster.memberId");
             jobTakeLimit = Integer
                     .parseInt(configs.getConfig("scoopi.cluster.jobTakeLimit"));
+            jobIdGenerator = hz.getFlakeIdGenerator("job_id_seq");
+
+            // create distributed collections
+            jobQ = hz.getQueue("job");
+            jobTakenSet = hz.getSet("takenJob");
+            keyStoreMap = hz.getMap("keyStore");
+            return true;
         } catch (NumberFormatException | ConfigNotFoundException e) {
             throw new CriticalException(e);
         }
-        return false;
     }
 
     @Override
     public boolean close() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean createTables() {
-        // TODO Auto-generated method stub
-        return false;
+        // ScoopiEngine stops cluster
+        return true;
     }
 
     @Override
@@ -88,11 +85,9 @@ public class JobStore implements IClusterJobStore {
 
     @Override
     public boolean markFinished(final long id) {
-        System.out.println("remove job " + id);
         Optional<Payload> payload = jobTakenSet.stream()
                 .filter(p -> p.getJobInfo().getId() == id).findFirst();
         if (payload.isPresent()) {
-            // System.out.println("remove job " + payload.get().getJobInfo());
             return jobTakenSet.remove(payload.get());
         } else {
             throw new IllegalStateException(spaceit(
@@ -154,8 +149,6 @@ public class JobStore implements IClusterJobStore {
 
     @Override
     public long getJobIdSeq() {
-        long l = jobIdGenerator.newId();
-        System.out.println("sq " + l);
-        return l;
+        return jobIdGenerator.newId();
     }
 }

@@ -147,3 +147,4 @@ deserialize
 seq
 ignite
 dao
+hazelcast
