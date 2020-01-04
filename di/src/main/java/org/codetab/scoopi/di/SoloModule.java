@@ -15,7 +15,6 @@ import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.codetab.scoopi.store.IStore;
-import org.codetab.scoopi.store.solo.simple.JobStore;
 import org.codetab.scoopi.store.solo.simple.PayloadStore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,9 +33,12 @@ public class SoloModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        // bind basic store
+        // bind solo JobStore to simple JobStore
+        bind(IJobStore.class)
+                .to(org.codetab.scoopi.store.solo.simple.JobStore.class)
+                .in(Singleton.class);
+
         bind(IPayloadStore.class).to(PayloadStore.class).in(Singleton.class);
-        bind(IJobStore.class).to(JobStore.class).in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));
@@ -91,12 +93,11 @@ public class SoloModule extends AbstractModule {
 
     @Provides
     OperatingSystemMXBean getOsMxBean() {
-        return (OperatingSystemMXBean) ManagementFactory
-                .getOperatingSystemMXBean();
+        return ManagementFactory.getOperatingSystemMXBean();
     }
 
     @Provides
     RuntimeMXBean getRuntimeMxBean() {
-        return (RuntimeMXBean) ManagementFactory.getRuntimeMXBean();
+        return ManagementFactory.getRuntimeMXBean();
     }
 }

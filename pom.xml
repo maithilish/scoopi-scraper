@@ -69,9 +69,7 @@
         <mysql-connector.version>5.1.43</mysql-connector.version>
 
         <hazelcast.version>3.12.5</hazelcast.version>
-        <ignite.version>2.7.6</ignite.version>
-        <jdbi.version>3.11.1</jdbi.version>
-
+        
         <!-- plugin version -->
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <jar-plugin.version>3.2.0</jar-plugin.version>
@@ -251,27 +249,7 @@
                 <artifactId>hazelcast-client</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>org.apache.ignite</groupId>
-                <artifactId>ignite-core</artifactId>
-                <version>${ignite.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ignite</groupId>
-                <artifactId>ignite-spring</artifactId>
-                <version>${ignite.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ignite</groupId>
-                <artifactId>ignite-indexing</artifactId>
-                <version>${ignite.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ignite</groupId>
-                <artifactId>ignite-log4j</artifactId>
-                <version>${ignite.version}</version>
-            </dependency>
+            
         </dependencies>
     </dependencyManagement>
     

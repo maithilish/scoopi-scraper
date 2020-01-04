@@ -16,7 +16,6 @@ import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.store.cluster.ICluster;
-import org.codetab.scoopi.store.cluster.ignite.JobStore;
 import org.codetab.scoopi.store.solo.simple.PayloadStore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,9 +37,12 @@ public class ClusterModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        // bind basic store
+        // bind cluster JobStore to Hazelcast JobStore
+        bind(IJobStore.class)
+                .to(org.codetab.scoopi.store.cluster.hz.JobStore.class)
+                .in(Singleton.class);
+
         bind(IPayloadStore.class).to(PayloadStore.class).in(Singleton.class);
-        bind(IJobStore.class).to(JobStore.class).in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));

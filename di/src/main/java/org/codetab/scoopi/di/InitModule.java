@@ -33,13 +33,15 @@ public class InitModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        // bind cluster, store to hazelcast
         bind(IClusterStore.class)
-                .to(org.codetab.scoopi.store.cluster.ignite.Store.class)
+                .to(org.codetab.scoopi.store.cluster.hz.Store.class)
                 .in(Singleton.class);
         bind(ICluster.class)
-                .to(org.codetab.scoopi.store.cluster.ignite.Cluster.class)
+                .to(org.codetab.scoopi.store.cluster.hz.Cluster.class)
                 .in(Singleton.class);
 
+        // bind solo to simple store
         bind(ISoloStore.class)
                 .to(org.codetab.scoopi.store.solo.simple.Store.class)
                 .in(Singleton.class);
