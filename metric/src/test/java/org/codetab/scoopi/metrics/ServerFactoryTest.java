@@ -2,6 +2,7 @@ package org.codetab.scoopi.metrics;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.codetab.scoopi.metrics.server.ServerFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.webapp.WebAppContext;

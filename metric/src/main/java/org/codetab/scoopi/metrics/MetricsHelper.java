@@ -9,7 +9,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
+import org.codetab.scoopi.metrics.serialize.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +68,25 @@ public class MetricsHelper {
         METRICS.counter("ParserCache.parser.cache.miss");
         METRICS.counter("PageLoader.fetch.web");
         METRICS.counter("Task.system.error");
+    }
+
+    /**
+     * Serialize Metrics Registry as JSON bytes array and add it to metrics
+     * distributed map on specified intervals
+     * @param memberId
+     * @param metricsMap
+     */
+    public Serializer startJsonSerializer(final String memberId,
+            final Map<String, byte[]> metricsMap, final int period) {
+        Consumer<byte[]> outputter = metricsJsonData -> {
+            metricsMap.put(memberId, metricsJsonData);
+        };
+        Serializer serializer = Serializer.forRegistry(METRICS)
+                .consumer(outputter).convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.SECONDS)
+                .shutdownExecutorOnStop(true).build();
+        serializer.start(period, TimeUnit.SECONDS);
+        return serializer;
     }
 
     public URL getURL(final String path) throws FileNotFoundException {

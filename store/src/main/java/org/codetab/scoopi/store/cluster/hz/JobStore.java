@@ -1,5 +1,6 @@
 package org.codetab.scoopi.store.cluster.hz;
 
+import static org.apache.commons.lang3.Validate.notNull;
 import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.Map;
@@ -16,7 +17,7 @@ import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.store.cluster.ICluster;
+import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.cluster.IClusterJobStore;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -68,6 +69,7 @@ public class JobStore implements IClusterJobStore {
 
     @Override
     public boolean putJob(final Payload payload) throws InterruptedException {
+        notNull(payload, "payload must not be null");
         jobQ.offer(payload);
         return true;
     }

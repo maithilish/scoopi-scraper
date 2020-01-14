@@ -6,17 +6,17 @@
 
     <servlet>
         <servlet-name>metrics</servlet-name>
-        <servlet-class>com.codahale.metrics.servlets.AdminServlet</servlet-class>
+        <servlet-class>org.codetab.scoopi.metrics.server.MetricsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>metrics</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
     <listener>
-        <listener-class>org.codetab.scoopi.metrics.MetricsServletListener</listener-class>
+        <listener-class>org.codetab.scoopi.metrics.server.MetricsServletListener</listener-class>
     </listener>
     <listener>
-        <listener-class>org.codetab.scoopi.metrics.HealthCheckServletListener</listener-class>
+        <listener-class>org.codetab.scoopi.metrics.server.HealthCheckServletListener</listener-class>
     </listener>
 
     <filter>

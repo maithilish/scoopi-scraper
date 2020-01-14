@@ -2,8 +2,10 @@ package org.codetab.scoopi.store.solo.simple;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Singleton;
@@ -14,9 +16,9 @@ import org.codetab.scoopi.store.solo.ISoloJobStore;
 @Singleton
 public class JobStore implements ISoloJobStore {
 
-    private static final int QUEUE_SIZE = 32768;
+    // private static final int QUEUE_SIZE = 32768;
 
-    private BlockingQueue<Payload> jobs = new ArrayBlockingQueue<>(QUEUE_SIZE);
+    private Queue<Payload> jobs = new ConcurrentLinkedQueue<>();
 
     private AtomicLong jobIdCounter = new AtomicLong();
 
@@ -29,13 +31,17 @@ public class JobStore implements ISoloJobStore {
 
     @Override
     public Payload takeJob() throws InterruptedException {
-        return jobs.take();
+        Payload payload = jobs.poll();
+        if (Objects.isNull(payload)) {
+            throw new NoSuchElementException("jobs queue is empty");
+        }
+        return payload;
     }
 
     @Override
     public boolean putJob(final Payload payload) throws InterruptedException {
         notNull(payload, "payload must not be null");
-        jobs.put(payload);
+        jobs.offer(payload);
         return true;
     }
 

@@ -1,7 +1,8 @@
-package org.codetab.scoopi.metrics;
+package org.codetab.scoopi.metrics.server;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.codetab.scoopi.metrics.InetHealthCheck;
 import org.junit.Before;
 import org.junit.Test;
 

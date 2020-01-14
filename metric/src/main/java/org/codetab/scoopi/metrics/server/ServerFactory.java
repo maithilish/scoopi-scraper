@@ -1,4 +1,4 @@
-package org.codetab.scoopi.metrics;
+package org.codetab.scoopi.metrics.server;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;

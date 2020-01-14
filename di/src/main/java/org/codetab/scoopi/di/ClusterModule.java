@@ -12,10 +12,11 @@ import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.defs.ITaskDef;
+import org.codetab.scoopi.metrics.IMetricsServer;
+import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.codetab.scoopi.store.IStore;
-import org.codetab.scoopi.store.cluster.ICluster;
 import org.codetab.scoopi.store.solo.simple.PayloadStore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,31 +29,37 @@ public class ClusterModule extends AbstractModule {
 
     private IStore store;
 
-    private ICluster cluster;
+    // private ICluster cluster;
 
-    public ClusterModule(final IStore store, final ICluster cluster) {
+    public ClusterModule(final IStore store) {
         this.store = store;
-        this.cluster = cluster;
+        // this.cluster = cluster;
     }
 
     @Override
     protected void configure() {
-        // bind cluster JobStore to Hazelcast JobStore
+        bind(IPayloadStore.class).to(PayloadStore.class).in(Singleton.class);
+        bind(IMetricsServer.class)
+                .to(org.codetab.scoopi.metrics.server.MetricsServer.class)
+                .in(Singleton.class);
+
+        // bind cluster specific classes
         bind(IJobStore.class)
                 .to(org.codetab.scoopi.store.cluster.hz.JobStore.class)
                 .in(Singleton.class);
-
-        bind(IPayloadStore.class).to(PayloadStore.class).in(Singleton.class);
+        bind(ICluster.class)
+                .to(org.codetab.scoopi.store.cluster.hz.Cluster.class)
+                .in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));
     }
 
-    @Provides
-    @Singleton
-    ICluster provideCluster() {
-        return cluster;
-    }
+    // @Provides
+    // @Singleton
+    // ICluster provideCluster() {
+    // return cluster;
+    // }
 
     @Provides
     @Singleton

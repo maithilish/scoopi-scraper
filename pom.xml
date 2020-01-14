@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.codetab.scoopi</groupId>
     <artifactId>scoopi-scraper</artifactId>
-    <version>0.9.7-beta</version>
+    <version>0.9.8-beta</version>
 
     <url>http://www.codetab.org/scoopi</url>
 
@@ -249,7 +249,7 @@
                 <artifactId>hazelcast-client</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
-            
+
         </dependencies>
     </dependencyManagement>
     
@@ -307,8 +307,15 @@
         </dependency>
     </dependencies>
 
+    <!-- profiles 
+         basic - basic build
+         ng - builds scoopiw metrics angular web app 
+         release - builds release zip
+         docker - builds docker image
+     -->
     <profiles>
-        <!-- basic profile - no ng and docker builds -->
+        <!-- basic profile -->
+        <!-- for travis, pass "-P basic" to activate only the basic -->
         <profile>
             <id>basic</id>
             <activation>
@@ -450,8 +457,45 @@
         </profile>
 
         <profile>
-            <!-- profile - release, builds metrics web app and docker image -->
-            <!-- for travis, pass "-P basic" to activate only the basic and not release profile -->
+            <!-- profile - ng, builds metrics web app-->
+            <id>ng</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>exec-maven-plugin</artifactId>
+                            <version>${exec-plugin.version}</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- profile - docker, builds docker image-->
+            <id>docker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>exec-maven-plugin</artifactId>
+                            <version>${exec-plugin.version}</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- profile - release, builds release zip -->
             <id>release</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -463,11 +507,6 @@
                         <plugin>
                             <artifactId>maven-assembly-plugin</artifactId>
                             <version>${assembly-plugin.version}</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>exec-maven-plugin</artifactId>
-                            <version>${exec-plugin.version}</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>

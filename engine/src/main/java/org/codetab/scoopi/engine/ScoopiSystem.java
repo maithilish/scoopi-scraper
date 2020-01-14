@@ -5,6 +5,8 @@ import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -13,11 +15,13 @@ import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
+import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.IMetricsServer;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.metrics.MetricsServer;
 import org.codetab.scoopi.metrics.SystemStat;
+import org.codetab.scoopi.metrics.serialize.Serializer;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.plugin.appender.AppenderMediator;
@@ -27,7 +31,7 @@ import org.codetab.scoopi.stat.Stats;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.store.cluster.ICluster;
+import org.codetab.scoopi.store.ICluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +48,7 @@ public class ScoopiSystem {
     @Inject
     private JobMediator jobMediator;
     @Inject
-    private MetricsServer metricsServer;
+    private IMetricsServer metricsServer;
     @Inject
     private MetricsHelper metricsHelper;
     @Inject
@@ -69,6 +73,10 @@ public class ScoopiSystem {
     private SystemStat systemStat;
     @Inject
     private SystemHelper systemHelper;
+    @Inject
+    private ThreadSleep threadSleep;
+
+    private Serializer metricsSerializer;
 
     public boolean startStats() {
         stats.start();
@@ -104,15 +112,33 @@ public class ScoopiSystem {
         return true;
     }
 
-    public boolean startMetricsServer() {
-        metricsServer.start();
+    public boolean startMetrics() {
+        Map<String, byte[]> metricsMap = cluster.getMetricsHolder();
+
         metricsHelper.initMetrics();
         metricsHelper.registerGuage(systemStat, this, "system", "stats");
+
+        // start and schedule metrics json serializer
+        int period = Integer.parseInt(
+                configs.getConfig("scoopi.metrics.serializer.period", "5"));
+        metricsSerializer = metricsHelper
+                .startJsonSerializer(cluster.getMemberId(), metricsMap, period);
+
+        if (configs.isMetricsServerEnabled()) {
+            metricsServer.setMetricsJsonData(metricsMap);
+            metricsServer.start();
+        }
         return true;
     }
 
-    public boolean stopMetricsServer() {
-        metricsServer.stop();
+    public boolean stopMetrics() {
+        metricsSerializer.stop();
+        if (configs.isMetricsServerEnabled()) {
+            int period = Integer.parseInt(
+                    configs.getConfig("scoopi.metrics.serializer.period", "5"));
+            threadSleep.sleep(period, TimeUnit.SECONDS);
+            metricsServer.stop();
+        }
         return true;
     }
 

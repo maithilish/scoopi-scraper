@@ -1,4 +1,4 @@
-package org.codetab.scoopi.metrics;
+package org.codetab.scoopi.metrics.server;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.SharedHealthCheckRegistries;

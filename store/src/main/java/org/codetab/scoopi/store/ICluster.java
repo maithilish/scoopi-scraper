@@ -1,4 +1,6 @@
-package org.codetab.scoopi.store.cluster;
+package org.codetab.scoopi.store;
+
+import java.util.Map;
 
 public interface ICluster {
 
@@ -9,4 +11,6 @@ public interface ICluster {
     Object getInstance(); // member instance
 
     String getMemberId(); // node/member id
+
+    Map<String, byte[]> getMetricsHolder();
 }

@@ -1,10 +1,11 @@
 package org.codetab.scoopi.store.cluster.hz;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.store.cluster.ICluster;
+import org.codetab.scoopi.store.ICluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,11 @@ public class Cluster implements ICluster {
     @Override
     public String getMemberId() {
         return hz.getLocalEndpoint().getUuid();
+    }
+
+    @Override
+    public Map<String, byte[]> getMetricsHolder() {
+        return hz.getMap("metrics");
     }
 
 }

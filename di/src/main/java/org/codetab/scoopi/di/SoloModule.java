@@ -12,6 +12,8 @@ import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.defs.ITaskDef;
+import org.codetab.scoopi.metrics.IMetricsServer;
+import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.codetab.scoopi.store.IStore;
@@ -33,12 +35,19 @@ public class SoloModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        // bind solo JobStore to simple JobStore
+        bind(IPayloadStore.class).to(PayloadStore.class).in(Singleton.class);
+        bind(IMetricsServer.class)
+                .to(org.codetab.scoopi.metrics.server.MetricsServer.class)
+                .in(Singleton.class);
+
+        // bind solo specific classes
         bind(IJobStore.class)
                 .to(org.codetab.scoopi.store.solo.simple.JobStore.class)
                 .in(Singleton.class);
-
-        bind(IPayloadStore.class).to(PayloadStore.class).in(Singleton.class);
+        // solo - dummy cluster
+        bind(ICluster.class)
+                .to(org.codetab.scoopi.store.solo.simple.SoloCluster.class)
+                .in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));

@@ -50,6 +50,14 @@ public class Configs {
         return configService.getConfig(key);
     }
 
+    public String getConfig(final String key, final String defaultValue) {
+        try {
+            return configService.getConfig(key);
+        } catch (ConfigNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
     /**
      *
      * @param key
@@ -252,6 +260,22 @@ public class Configs {
             LOGGER.debug(marker, "{}, {}", e, message);
         }
         return userAgent;
+    }
+
+    public boolean isMetricsServerEnabled() {
+        boolean enabled = false;
+        try {
+            enabled = Boolean.parseBoolean(
+                    configService.getConfig("scoopi.metrics.server.enable"));
+        } catch (final ConfigNotFoundException e1) {
+        }
+        if (configService.getBoolean("scoopi.cluster.enable", false)) {
+            // by default metrics server is disabled in cluster and enabled only
+            // through system property
+            enabled = Boolean.parseBoolean(System
+                    .getProperty("scoopi.metrics.server.enable", "false"));
+        }
+        return enabled;
     }
 
 }

@@ -22,8 +22,8 @@ import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.metrics.MetricsServer;
 import org.codetab.scoopi.metrics.SystemStat;
+import org.codetab.scoopi.metrics.server.MetricsServer;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
@@ -112,7 +112,7 @@ public class ScoopiSystemTest {
 
     @Test
     public void testStartMetricsServer() {
-        final boolean result = sSystem.startMetricsServer();
+        final boolean result = sSystem.startMetrics();
 
         assertThat(result).isTrue();
         final InOrder inOrder = inOrder(metricsServer, metricsHelper);
@@ -126,7 +126,7 @@ public class ScoopiSystemTest {
 
     @Test
     public void testStopMetricsServer() {
-        final boolean result = sSystem.stopMetricsServer();
+        final boolean result = sSystem.stopMetrics();
 
         assertThat(result).isTrue();
         final InOrder inOrder = inOrder(metricsServer);

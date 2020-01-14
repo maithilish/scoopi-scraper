@@ -90,6 +90,9 @@
                 <enable>true</enable>
                 <port>9010</port>
             </server>
+            <serializer>
+                <period>5</period>
+            </serializer>
         </metrics>
     </scoopi>
 </configuration>

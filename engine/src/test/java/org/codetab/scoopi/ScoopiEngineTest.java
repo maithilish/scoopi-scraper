@@ -50,7 +50,7 @@ public class ScoopiEngineTest {
         inOrder.verify(scoopiSystem).startStats();
         inOrder.verify(scoopiSystem).startErrorLogger();
         inOrder.verify(scoopiSystem).addShutdownHook();
-        inOrder.verify(scoopiSystem).startMetricsServer();
+        inOrder.verify(scoopiSystem).startMetrics();
         inOrder.verify(scoopiSystem).seedLocatorGroups();
         inOrder.verify(scoopiSystem).waitForInput();
 
@@ -61,7 +61,7 @@ public class ScoopiEngineTest {
         inOrder.verify(scoopiSystem).waitForFinish();
         inOrder.verify(scoopiSystem).waitForInput();
 
-        inOrder.verify(scoopiSystem).stopMetricsServer();
+        inOrder.verify(scoopiSystem).stopMetrics();
         inOrder.verify(scoopiSystem).stopStats();
         verifyNoMoreInteractions(scoopiSystem, taskMediator, jobMediator);
     }
@@ -79,7 +79,7 @@ public class ScoopiEngineTest {
         inOrder.verify(scoopiSystem).startStats();
         inOrder.verify(errorLogger).log(eq(CAT.FATAL), any(String.class),
                 eq(ex));
-        inOrder.verify(scoopiSystem).stopMetricsServer();
+        inOrder.verify(scoopiSystem).stopMetrics();
         inOrder.verify(scoopiSystem).stopStats();
         verifyNoMoreInteractions(scoopiSystem, errorLogger);
     }

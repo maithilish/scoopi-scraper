@@ -11,6 +11,8 @@ import java.net.URL;
 
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
+import org.codetab.scoopi.metrics.server.MetricsServer;
+import org.codetab.scoopi.metrics.server.ServerFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.webapp.WebAppContext;

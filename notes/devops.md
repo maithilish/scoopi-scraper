@@ -15,9 +15,13 @@ mvn test jacoco:report					# without itest
 mvn verify jacoco:report				# with itest
 mvn JavaDoc:JavaDoc
 
-mvn clean verify -P basic,release  	# create release zip and docker image
-mvn clean verify -DskipTests -P basic,release 	# skip all tests
+# add -DskipTests to skip all tests
 
+# to create release zip
+mvn clean verify -P basic,ng,release
+
+# to create release zip and docker image
+mvn clean verify -P basic,ng,release,docker
 
 mvn versions:display-dependency-updates
 mvn versions:display-plugin-updates
@@ -37,9 +41,20 @@ Go to Run Configuration and select Scoopi, in Arguments Tab enter following in V
 -Dlogback.configurationFile=src/main/resources/logback-dev.xml
 -Dscoopi.mode=dev
 
+### Scoopiw in IDE
+
+To view dash board while running scoopi in IDE, build scoopiw ng module with
+
+	mvn clean verify -P basic,ng -DskipTests
+
+Optionally, create zip of scoopiw and unzip it after very clean 
+
+	cd metric
+	zip -r scoopiw.zip target/classes/webapp
+
 ### Properties
 
-swtich config file to scoopi-dev.properties
+switch config file to scoopi-dev.properties
 
 -Dscoopi.mode=dev
 -Dlogback.configurationFile=src/main/resources/logback-dev.xml

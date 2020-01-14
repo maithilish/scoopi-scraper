@@ -9,8 +9,8 @@ import org.codetab.scoopi.di.SoloModule;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IStore;
-import org.codetab.scoopi.store.cluster.ICluster;
 import org.codetab.scoopi.store.cluster.IClusterStore;
 import org.codetab.scoopi.store.solo.ISoloStore;
 import org.slf4j.Logger;
@@ -43,12 +43,14 @@ public class Bootstrap {
                     .instance(DInjector.class);
         } else {
             LOGGER.info("Scoopi [solo/cluster]: cluster"); //$NON-NLS-1$
-            cluster = initInjector.instance(ICluster.class);
-            cluster.start();
+            // cluster = initInjector.instance(ICluster.class);
+            // cluster.start();
 
             store = initInjector.instance(IClusterStore.class);
-            dInjector = new DInjector(new ClusterModule(store, cluster))
+            dInjector = new DInjector(new ClusterModule(store))
                     .instance(DInjector.class);
+            cluster = dInjector.instance(ICluster.class);
+            cluster.start();
 
         }
     }
