@@ -157,3 +157,5 @@ exec
 logback
 unzip
 webapp
+tx
+dashboard

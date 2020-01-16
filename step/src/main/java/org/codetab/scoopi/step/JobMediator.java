@@ -2,6 +2,7 @@ package org.codetab.scoopi.step;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -73,6 +74,12 @@ public class JobMediator {
         return jobStore.putJob(payload);
     }
 
+    public boolean pushPayloads(final List<Payload> payloads, final long jobId)
+            throws InterruptedException {
+        notNull(payloads, "payloads must not be null");
+        return jobStore.putJobs(payloads, jobId);
+    }
+
     private void initiateJob()
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException, InterruptedException {
@@ -88,7 +95,6 @@ public class JobMediator {
                 taskMediator.pushPayload(payload);
                 if (jobStore.isDone()) {
                     done.set(true);
-                    // taskMediator.setJobsDone(true);
                 }
             } catch (IllegalStateException e) {
                 LOGGER.debug("retry... multiple nodes try to take same job");
@@ -96,7 +102,6 @@ public class JobMediator {
             }
         } catch (NoSuchElementException e) {
             done.set(true);
-            // taskMediator.setJobsDone(true);
         }
     }
 

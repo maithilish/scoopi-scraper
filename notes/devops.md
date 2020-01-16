@@ -51,6 +51,8 @@ Optionally, create zip of scoopiw and unzip it after very clean
 
 	cd metric
 	zip -r scoopiw.zip target/classes/webapp
+	
+if ng is not passed to -P during mvn install or verify, then scoopiw is not compiled and WEB-INF dir is listed instead of dashboard.
 
 ### Properties
 

@@ -2,6 +2,7 @@ package org.codetab.scoopi.store.solo.simple;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Queue;
@@ -105,6 +106,16 @@ public class JobStore implements ISoloJobStore {
 
     @Override
     public boolean close() {
+        return true;
+    }
+
+    @Override
+    public boolean putJobs(final List<Payload> payloads, final long jobId)
+            throws InterruptedException {
+        for (Payload payload : payloads) {
+            putJob(payload);
+        }
+        markFinished(jobId);
         return true;
     }
 }

@@ -305,21 +305,19 @@ public abstract class BaseLoader extends Step {
                 taskNames, getStepInfo(), getJobInfo().getName(), getOutput());
 
         for (final Payload payload : payloads) {
-            try {
-                // treat each task as new job with new seq job id
-                payload.getJobInfo().setId(jobMediator.getJobIdSequence());
-                jobMediator.pushPayload(payload);
-            } catch (final InterruptedException e) {
-                final String message =
-                        spaceit("handover document,", payload.toString());
-                errorLogger.log(CAT.INTERNAL, message, e);
-            }
+            // treat each task as new job with new seq job id
+            payload.getJobInfo().setId(jobMediator.getJobIdSequence());
         }
-        // TODO push multiple payloads and mark finish - should be atomic batch
-        // mark job finished
-        System.out.println("base loader, mark finish: " + jobId);
-        jobMediator.markJobFinished(jobId);
 
+        // mark this job as finished and push new task jobs for this document
+        try {
+            jobMediator.pushPayloads(payloads, jobId);
+        } catch (final InterruptedException e) {
+            final String message = spaceit(
+                    "create all defined tasks for the document and push",
+                    getPayload().toString());
+            errorLogger.log(CAT.INTERNAL, message, e);
+        }
         return true;
     }
 

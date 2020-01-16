@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class TaskMediator {
 
     static final Logger LOGGER = LoggerFactory.getLogger(TaskMediator.class);
-    private static final long SLEEP_MILLIS = 1000;
+    private static final long SLEEP_MILLIS = 100;
 
     @Inject
     private TaskPoolService poolService;
@@ -34,6 +34,7 @@ public class TaskMediator {
 
     private TaskRunnerThread taskRunner = new TaskRunnerThread();
 
+    // FIXME change it AtomicBoolean
     @GuardedBy("this")
     private int reservations = 0;
     @GuardedBy("this")
@@ -55,11 +56,14 @@ public class TaskMediator {
         }
     }
 
-    // FIXME no push after done
     public boolean pushPayload(final Payload payload)
             throws InterruptedException {
         notNull(payload, "payload must not be null");
         synchronized (this) {
+            if (done) {
+                throw new IllegalStateException(
+                        "task mediator is closed, can't push payload");
+            }
             ++reservations;
         }
         payloadStore.putPayload(payload);
@@ -77,12 +81,6 @@ public class TaskMediator {
         final String poolName = task.getStep().getStepName();
         poolService.submit(poolName, task);
     }
-
-    // public void setJobsDone(final boolean jobsDone) {
-    // // synchronized (this) {
-    // // this.jobsDone = jobsDone;
-    // // }
-    // }
 
     public boolean isDone() {
         return (done);

@@ -1,5 +1,7 @@
 package org.codetab.scoopi.store;
 
+import java.util.List;
+
 import org.codetab.scoopi.model.Payload;
 
 public interface IJobStore {
@@ -15,6 +17,9 @@ public interface IJobStore {
     boolean putJob(Payload payload) throws InterruptedException;
 
     Payload takeJob() throws InterruptedException;
+
+    boolean putJobs(List<Payload> payloads, long jobId)
+            throws InterruptedException;
 
     boolean markFinished(long id);
 
@@ -35,4 +40,5 @@ public interface IJobStore {
     int getJobTakeLimit();
 
     long getJobIdSeq();
+
 }
