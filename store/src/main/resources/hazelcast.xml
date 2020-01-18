@@ -16,6 +16,10 @@
     </properties>
  -->
 
+<!--     <listeners> -->
+<!--         <listener><![CDATA[org.codetab.scoopi.store.cluster.hz.MembershipListener]]></listener> -->
+<!--     </listeners> -->
+
     <network>
         <join>
             <multicast enabled="false">

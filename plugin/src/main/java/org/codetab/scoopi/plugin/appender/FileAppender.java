@@ -85,6 +85,9 @@ public final class FileAppender extends Appender {
                 }
                 final String data = item.toString();
                 writer.println(data);
+                // FIXME - flush happens for each line,
+                // explore per job file and merge
+                writer.flush();
             } catch (final InterruptedException e) {
                 final String message = spaceit("appender:", getName());
                 errorLogger.log(CAT.INTERNAL, message, e);

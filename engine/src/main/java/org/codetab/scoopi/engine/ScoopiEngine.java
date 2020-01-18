@@ -42,6 +42,7 @@ public class ScoopiEngine {
 
             scoopiSystem.initCluster();
             jobMediator.init();
+            scoopiSystem.initClusterListeners();
             scoopiSystem.seedLocatorGroups();
             LOGGER.info("scoopi initialized");
 

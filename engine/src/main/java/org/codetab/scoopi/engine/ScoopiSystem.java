@@ -32,6 +32,8 @@ import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.store.ICluster;
+import org.codetab.scoopi.store.IJobStore;
+import org.codetab.scoopi.store.cluster.hz.MembershipListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +49,10 @@ public class ScoopiSystem {
     private TaskMediator taskMediator;
     @Inject
     private JobMediator jobMediator;
+    @Inject
+    private IJobStore jobStore;
+    @Inject
+    private MembershipListener membershipListener;
     @Inject
     private IMetricsServer metricsServer;
     @Inject
@@ -100,6 +106,10 @@ public class ScoopiSystem {
             cluster.shutdown();
         }
         return true;
+    }
+
+    public void initClusterListeners() {
+        membershipListener.setJobStore(jobStore);
     }
 
     public boolean startErrorLogger() {

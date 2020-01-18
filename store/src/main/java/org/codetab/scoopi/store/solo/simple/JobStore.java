@@ -94,6 +94,12 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
+    public int getJobTakenByMemberCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
     public int getJobTakeLimit() {
         // solo - no take job limit
         return Integer.MAX_VALUE;
@@ -116,6 +122,11 @@ public class JobStore implements ISoloJobStore {
             putJob(payload);
         }
         markFinished(jobId);
+        return true;
+    }
+
+    @Override
+    public boolean resetTakenJobs(final String memberId) {
         return true;
     }
 }

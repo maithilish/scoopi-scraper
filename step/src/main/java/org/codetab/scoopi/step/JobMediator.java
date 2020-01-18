@@ -86,7 +86,7 @@ public class JobMediator {
         try {
             try {
                 Payload payload = jobStore.takeJob();
-                while (jobStore.getJobTakenCount() > jobStore
+                while (jobStore.getJobTakenByMemberCount() > jobStore
                         .getJobTakeLimit()) {
                     LOGGER.debug("wait... jobs taken > q size: {}",
                             jobStore.getJobTakeLimit());

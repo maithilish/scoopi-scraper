@@ -23,6 +23,8 @@ public interface IJobStore {
 
     boolean markFinished(long id);
 
+    boolean resetTakenJobs(String memberId);
+
     int getJobCount();
 
     boolean isDone();
@@ -37,8 +39,9 @@ public interface IJobStore {
 
     int getJobTakenCount();
 
+    int getJobTakenByMemberCount();
+
     int getJobTakeLimit();
 
     long getJobIdSeq();
-
 }

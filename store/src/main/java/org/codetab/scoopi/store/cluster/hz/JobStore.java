@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,8 +22,11 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.cluster.IClusterJobStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.Member;
 import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.flakeidgen.FlakeIdGenerator;
 import com.hazelcast.transaction.TransactionContext;
@@ -30,6 +35,8 @@ import com.hazelcast.transaction.TransactionOptions.TransactionType;
 
 @Singleton
 public class JobStore implements IClusterJobStore {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(JobStore.class);
 
     @Inject
     private Configs configs;
@@ -48,13 +55,13 @@ public class JobStore implements IClusterJobStore {
     private FlakeIdGenerator jobIdGenerator;
 
     private TransactionOptions options = new TransactionOptions()
-            .setTransactionType(TransactionType.TWO_PHASE);
+            .setTransactionType(TransactionType.TWO_PHASE)
+            .setTimeout(3, TimeUnit.SECONDS);
 
     @Override
     public boolean open() {
         try {
             hz = (HazelcastInstance) cluster.getInstance();
-
             memberId = configs.getConfig("scoopi.cluster.memberId");
             jobTakeLimit = Integer
                     .parseInt(configs.getConfig("scoopi.cluster.jobTakeLimit"));
@@ -117,6 +124,7 @@ public class JobStore implements IClusterJobStore {
                 cPayload.setMemberId(memberId);
                 txJobMap.set(jobId, cPayload);
                 tx.commitTransaction();
+                LOGGER.debug("job taken {}", cPayload.getJobId());
                 return cPayload.getPayload();
             }
         } catch (Exception e) {
@@ -161,6 +169,63 @@ public class JobStore implements IClusterJobStore {
         } catch (Exception e) {
             tx.rollbackTransaction();
             throw e;
+        }
+    }
+
+    @Override
+    public boolean resetTakenJobs(final String removedMemberId) {
+        // only leader resets the jobs
+        if (!isLeader()) {
+            return false;
+        }
+
+        try {
+            List<Long> takenJobs = jobMap.values().stream().filter(
+                    p -> p.isTaken() && p.getMemberId().equals(removedMemberId))
+                    .map(ClusterPayload::getJobId).collect(Collectors.toList());
+            for (Long key : takenJobs) {
+                LOGGER.debug("reset taken job {}", key);
+                ClusterPayload cPayload = jobMap.get(key);
+                cPayload.setTaken(false);
+                cPayload.setMemberId(null);
+                jobMap.put(key, cPayload);
+            }
+            return true;
+        } catch (Exception e) {
+            throw e;
+        }
+        // TransactionContext tx = hz.newTransactionContext(options);
+        //
+        // try {
+        // tx.beginTransaction();
+        // TransactionalMap<Long, ClusterPayload> txJobMap = tx.getMap("job");
+        //
+        // List<Long> takenJobs = txJobMap.values().stream().filter(
+        // p -> p.isTaken() && p.getMemberId().equals(removedMemberId))
+        // .map(ClusterPayload::getJobId).collect(Collectors.toList());
+        //
+        // for (Long key : takenJobs) {
+        // ClusterPayload cPayload = txJobMap.getForUpdate(key);
+        // cPayload.setTaken(false);
+        // cPayload.setMemberId(null);
+        // txJobMap.set(key, cPayload);
+        // }
+        //
+        // tx.commitTransaction();
+        // return true;
+        // } catch (Exception e) {
+        // tx.rollbackTransaction();
+        // throw e;
+        // }
+    }
+
+    private boolean isLeader() {
+        Optional<Member> firstMember =
+                hz.getCluster().getMembers().stream().findFirst();
+        if (firstMember.isPresent()) {
+            return firstMember.get().getUuid().equals(memberId);
+        } else {
+            return false;
         }
     }
 
@@ -240,6 +305,13 @@ public class JobStore implements IClusterJobStore {
     @Override
     public int getJobTakenCount() {
         return (int) jobMap.values().stream().filter(p -> p.isTaken()).count();
+    }
+
+    @Override
+    public int getJobTakenByMemberCount() {
+        return (int) jobMap.values().stream()
+                .filter(p -> p.isTaken() && p.getMemberId().equals(memberId))
+                .count();
     }
 
     @Override
