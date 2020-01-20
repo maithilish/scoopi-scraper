@@ -32,10 +32,7 @@ public class JobMediator {
     private ErrorLogger errorLogger;
 
     private JobRunnerThread jobRunner = new JobRunnerThread();
-
-    private AtomicBoolean done = new AtomicBoolean(false);
     private AtomicBoolean jobSeeder = new AtomicBoolean(false);
-
     private CountDownLatch seedDoneSignal;
 
     /**
@@ -71,13 +68,23 @@ public class JobMediator {
     public boolean pushPayload(final Payload payload)
             throws InterruptedException {
         notNull(payload, "payload must not be null");
-        return jobStore.putJob(payload);
+        if (jobStore.putJob(payload)) {
+            taskMediator.setJobMediatorDone(false);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean pushPayloads(final List<Payload> payloads, final long jobId)
             throws InterruptedException {
         notNull(payloads, "payloads must not be null");
-        return jobStore.putJobs(payloads, jobId);
+        if (jobStore.putJobs(payloads, jobId)) {
+            taskMediator.setJobMediatorDone(false);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void initiateJob()
@@ -85,23 +92,24 @@ public class JobMediator {
             IllegalAccessException, InterruptedException {
         try {
             try {
-                Payload payload = jobStore.takeJob();
                 while (jobStore.getJobTakenByMemberCount() > jobStore
                         .getJobTakeLimit()) {
                     LOGGER.debug("wait... jobs taken > q size: {}",
                             jobStore.getJobTakeLimit());
                     Thread.sleep(WAIT_MILLIS);
                 }
+                Payload payload = jobStore.takeJob();
                 taskMediator.pushPayload(payload);
+                jobStore.resetCrashedJobs();
                 if (jobStore.isDone()) {
-                    done.set(true);
+                    taskMediator.setJobMediatorDone(true);
                 }
             } catch (IllegalStateException e) {
                 LOGGER.debug("retry... multiple nodes try to take same job");
                 Thread.sleep(WAIT_MILLIS);
             }
         } catch (NoSuchElementException e) {
-            done.set(true);
+            taskMediator.setJobMediatorDone(true);
         }
     }
 

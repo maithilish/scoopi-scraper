@@ -23,7 +23,7 @@ public interface IJobStore {
 
     boolean markFinished(long id);
 
-    boolean resetTakenJobs(String memberId);
+    void resetCrashedJobs();
 
     int getJobCount();
 

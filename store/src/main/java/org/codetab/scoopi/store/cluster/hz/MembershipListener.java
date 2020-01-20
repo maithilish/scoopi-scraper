@@ -2,7 +2,6 @@ package org.codetab.scoopi.store.cluster.hz;
 
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.store.IJobStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +15,10 @@ public class MembershipListener
     static final Logger LOGGER =
             LoggerFactory.getLogger(MembershipListener.class);
 
-    private IJobStore jobStore;
+    private CrashCleaner crashCleaner;
 
-    public void setJobStore(final IJobStore jobStore) {
-        this.jobStore = jobStore;
+    public void setCrashCleaner(final CrashCleaner crashCleaner) {
+        this.crashCleaner = crashCleaner;
     }
 
     @Override
@@ -30,9 +29,10 @@ public class MembershipListener
 
     @Override
     public void memberRemoved(final MembershipEvent membershipEvent) {
-        String memberId = membershipEvent.getMember().getUuid();
-        LOGGER.info("Member {} left cluster, reset taken jobs", memberId);
-        jobStore.resetTakenJobs(memberId);
+        String crashedMemberId = membershipEvent.getMember().getUuid();
+        crashCleaner.addCrashedMember(crashedMemberId);
+        LOGGER.info("Member {} left cluster, schedule reset jobs",
+                crashedMemberId);
     }
 
     @Override

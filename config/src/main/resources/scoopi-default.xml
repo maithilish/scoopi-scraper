@@ -77,13 +77,11 @@
         <cluster>
             <enable>false</enable>
             <jobTakeLimit>4</jobTakeLimit>
-            <datasource>
-                <driver>org.apache.ignite.IgniteJdbcThinDriver
-                </driver>
-                <url>jdbc:ignite:thin://127.0.0.1:10800..10900
-                </url>
-                <sqlRetry>4</sqlRetry>
-            </datasource>
+            <tx>
+                <timeout>10</timeout>
+                <timeoutUnit>SECONDS</timeoutUnit>
+                <type>TWO_PHASE</type>
+            </tx>
         </cluster>
         <metrics>
             <server>

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.store.ICluster;
 
 /**
@@ -39,6 +40,16 @@ public class SoloCluster implements ICluster {
 
     @Override
     public Object getInstance() {
+        return Optional.empty();
+    }
+
+    @Override
+    public String getLeader() {
+        return "solo";
+    }
+
+    @Override
+    public Object getTxOptions(final Configs configs) {
         return Optional.empty();
     }
 

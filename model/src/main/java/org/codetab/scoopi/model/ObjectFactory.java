@@ -133,8 +133,7 @@ public class ObjectFactory {
         return new Query();
     }
 
-    public ClusterPayload createClusterPayload(final Payload payload,
-            final long jobId) {
-        return new ClusterPayload(payload, jobId);
+    public ClusterJob createClusterJob(final long jobId) {
+        return new ClusterJob(jobId);
     }
 }

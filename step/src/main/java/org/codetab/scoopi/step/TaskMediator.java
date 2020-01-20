@@ -2,6 +2,8 @@ package org.codetab.scoopi.step;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -10,7 +12,6 @@ import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.pool.TaskPoolService;
-import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,6 @@ public class TaskMediator {
     private TaskFactory taskFactory;
     @Inject
     private ErrorLogger errorLogger;
-    @Inject
-    private IJobStore jobStore;
 
     private TaskRunnerThread taskRunner = new TaskRunnerThread();
 
@@ -39,6 +38,7 @@ public class TaskMediator {
     private int reservations = 0;
     @GuardedBy("this")
     private boolean done = false;
+    private AtomicBoolean jobMediatorDone = new AtomicBoolean(false);
 
     public void start() {
         taskRunner.start();
@@ -83,7 +83,7 @@ public class TaskMediator {
     }
 
     public boolean isDone() {
-        return (done);
+        return done;
     }
 
     class TaskRunnerThread extends Thread {
@@ -92,7 +92,7 @@ public class TaskMediator {
             int reservationWaitCount = 0;
             while (true) {
                 synchronized (this) {
-                    if (jobStore.isDone() && poolService.isDone()
+                    if (jobMediatorDone.get() && poolService.isDone()
                             && reservations == 0) {
                         poolService.waitForFinish();
                         break;
@@ -122,5 +122,9 @@ public class TaskMediator {
     public boolean isTaskPoolFree(final Payload payload) {
         final String poolName = payload.getStepInfo().getStepName();
         return poolService.isPoolFree(poolName);
+    }
+
+    public void setJobMediatorDone(final boolean done) {
+        jobMediatorDone.set(done);
     }
 }

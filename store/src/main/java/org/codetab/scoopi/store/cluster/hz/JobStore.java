@@ -1,5 +1,6 @@
 package org.codetab.scoopi.store.cluster.hz;
 
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.codetab.scoopi.util.Util.spaceit;
 
@@ -8,8 +9,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,7 +16,7 @@ import javax.inject.Singleton;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.model.ClusterPayload;
+import org.codetab.scoopi.model.ClusterJob;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.ICluster;
@@ -26,12 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Member;
 import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.flakeidgen.FlakeIdGenerator;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
-import com.hazelcast.transaction.TransactionOptions.TransactionType;
 
 @Singleton
 public class JobStore implements IClusterJobStore {
@@ -44,19 +41,20 @@ public class JobStore implements IClusterJobStore {
     private ICluster cluster;
     @Inject
     private ObjectFactory objFactory;
+    @Inject
+    private CrashCleaner crashCleaner;
 
     private HazelcastInstance hz;
 
-    private Map<Long, ClusterPayload> jobMap;
+    private Map<Long, ClusterJob> jobsMap;
+    private Map<Long, ClusterJob> takenJobsMap;
     private Map<String, String> keyStoreMap;
 
     private String memberId;
     private int jobTakeLimit;
     private FlakeIdGenerator jobIdGenerator;
 
-    private TransactionOptions options = new TransactionOptions()
-            .setTransactionType(TransactionType.TWO_PHASE)
-            .setTimeout(3, TimeUnit.SECONDS);
+    private TransactionOptions txOptions;
 
     @Override
     public boolean open() {
@@ -67,9 +65,13 @@ public class JobStore implements IClusterJobStore {
                     .parseInt(configs.getConfig("scoopi.cluster.jobTakeLimit"));
             jobIdGenerator = hz.getFlakeIdGenerator("job_id_seq");
 
+            txOptions = (TransactionOptions) cluster.getTxOptions(configs);
+
             // create distributed collections
-            jobMap = hz.getMap("job");
-            keyStoreMap = hz.getMap("keyStore");
+            jobsMap = hz.getMap(DsName.JOBS_MAP.toString());
+            takenJobsMap = hz.getMap(DsName.TAKEN_JOBS_MAP.toString());
+            keyStoreMap = hz.getMap(DsName.KEYSTORE_MAP.toString());
+
             return true;
         } catch (NumberFormatException | ConfigNotFoundException e) {
             throw new CriticalException(e);
@@ -82,26 +84,42 @@ public class JobStore implements IClusterJobStore {
         return true;
     }
 
+    // FIXME - remove unwanted booleans in all methods
     @Override
     public boolean putJob(final Payload payload) throws InterruptedException {
         notNull(payload, "payload must not be null");
 
         long jobId = payload.getJobInfo().getId();
-        ClusterPayload cluserPayload =
-                objFactory.createClusterPayload(payload, jobId);
+        ClusterJob cluserJob = objFactory.createClusterJob(jobId);
 
-        if (Objects.isNull(jobMap.put(jobId, cluserPayload))) {
+        TransactionContext tx = hz.newTransactionContext(txOptions);
+
+        try {
+            tx.beginTransaction();
+            TransactionalMap<Long, ClusterJob> txJobsMap =
+                    tx.getMap(DsName.JOBS_MAP.toString());
+            TransactionalMap<Long, Payload> txPayloadsMap =
+                    tx.getMap(DsName.PAYLOADS_MAP.toString());
+
+            if (Objects.isNull(txJobsMap.put(jobId, cluserJob))) {
+                txPayloadsMap.put(jobId, payload);
+                LOGGER.debug("put payload {}", jobId);
+            } else {
+                throw new IllegalStateException(
+                        spaceit("duplicate job", String.valueOf(jobId)));
+            }
+            tx.commitTransaction();
             return true;
-        } else {
-            throw new IllegalStateException(
-                    spaceit("duplicate job", String.valueOf(jobId)));
+        } catch (Exception e) {
+            tx.rollbackTransaction();
+            throw e;
         }
     }
 
     @Override
     public Payload takeJob() throws InterruptedException {
-        Optional<ClusterPayload> opt =
-                jobMap.values().stream().filter(p -> !p.isTaken()).findFirst();
+        Optional<ClusterJob> opt =
+                jobsMap.values().stream().filter(p -> !p.isTaken()).findFirst();
         long jobId = -1;
         if (opt.isPresent()) {
             jobId = opt.get().getJobId();
@@ -109,23 +127,37 @@ public class JobStore implements IClusterJobStore {
             throw new NoSuchElementException("jobs queue is empty");
         }
 
-        TransactionContext tx = hz.newTransactionContext(options);
+        TransactionContext tx = hz.newTransactionContext(txOptions);
 
         try {
             tx.beginTransaction();
-            TransactionalMap<Long, ClusterPayload> txJobMap = tx.getMap("job");
+            TransactionalMap<Long, ClusterJob> txJobsMap =
+                    tx.getMap(DsName.JOBS_MAP.toString());
+            TransactionalMap<Long, ClusterJob> txTakenJobsMap =
+                    tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
+            TransactionalMap<Long, Payload> txPayloadsMap =
+                    tx.getMap(DsName.PAYLOADS_MAP.toString());
 
-            ClusterPayload cPayload = txJobMap.getForUpdate(jobId);
-            if (cPayload.isTaken()) {
-                throw new IllegalStateException(
-                        "job already taken by another node");
-            } else {
-                cPayload.setTaken(true);
-                cPayload.setMemberId(memberId);
-                txJobMap.set(jobId, cPayload);
+            if (txJobsMap.containsKey(jobId)) {
+                ClusterJob cJob = txJobsMap.remove(jobId);
+                if (isNull(cJob)) {
+                    throw new IllegalStateException(
+                            "job removed by another node");
+                }
+                cJob.setTaken(true);
+                cJob.setMemberId(memberId);
+                txTakenJobsMap.put(jobId, cJob);
+                Payload payload = txPayloadsMap.get(jobId);
+                if (isNull(payload)) {
+                    throw new NoSuchElementException(spaceit(
+                            "payload not found jobid", String.valueOf(jobId)));
+                }
                 tx.commitTransaction();
-                LOGGER.debug("job taken {}", cPayload.getJobId());
-                return cPayload.getPayload();
+                LOGGER.debug("job taken {}", cJob.getJobId());
+                return payload;
+            } else {
+                // FIXME refactor to specific exception
+                throw new IllegalStateException("job taken by another node");
             }
         } catch (Exception e) {
             tx.rollbackTransaction();
@@ -142,26 +174,35 @@ public class JobStore implements IClusterJobStore {
     public boolean putJobs(final List<Payload> payloads, final long jobId)
             throws InterruptedException {
 
-        TransactionContext tx = hz.newTransactionContext(options);
+        TransactionContext tx = hz.newTransactionContext(txOptions);
 
         try {
             tx.beginTransaction();
-            TransactionalMap<Long, ClusterPayload> txJobMap = tx.getMap("job");
+            TransactionalMap<Long, ClusterJob> txJobsMap =
+                    tx.getMap(DsName.JOBS_MAP.toString());
+            TransactionalMap<Long, ClusterJob> txTakenJobsMap =
+                    tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
+            TransactionalMap<Long, Payload> txPayloadsMap =
+                    tx.getMap(DsName.PAYLOADS_MAP.toString());
 
-            for (Payload payload : payloads) {
-                long jId = payload.getJobInfo().getId();
-                ClusterPayload cluserPayload =
-                        objFactory.createClusterPayload(payload, jId);
-                if (Objects.nonNull(txJobMap.put(jId, cluserPayload))) {
-                    throw new IllegalStateException(
-                            spaceit("rollback batch put jobs, duplicate job:",
-                                    String.valueOf(jId)));
-                }
-            }
-            // remove old payload
-            if (Objects.isNull(txJobMap.remove(jobId))) {
+            // remove old job and payload
+            if (Objects.nonNull(txTakenJobsMap.remove(jobId))) {
+                txPayloadsMap.remove(jobId);
+            } else {
                 throw new IllegalStateException(
                         "rollback batch put jobs, parent job already removed by another node");
+            }
+
+            for (Payload payload : payloads) {
+                long newJobId = payload.getJobInfo().getId();
+                ClusterJob cluserJob = objFactory.createClusterJob(newJobId);
+                if (Objects.isNull(txJobsMap.put(newJobId, cluserJob))) {
+                    txPayloadsMap.put(newJobId, payload);
+                } else {
+                    throw new IllegalStateException(
+                            spaceit("rollback batch put jobs, duplicate job",
+                                    String.valueOf(newJobId)));
+                }
             }
 
             tx.commitTransaction();
@@ -173,72 +214,24 @@ public class JobStore implements IClusterJobStore {
     }
 
     @Override
-    public boolean resetTakenJobs(final String removedMemberId) {
-        // only leader resets the jobs
-        if (!isLeader()) {
-            return false;
-        }
-
-        try {
-            List<Long> takenJobs = jobMap.values().stream().filter(
-                    p -> p.isTaken() && p.getMemberId().equals(removedMemberId))
-                    .map(ClusterPayload::getJobId).collect(Collectors.toList());
-            for (Long key : takenJobs) {
-                LOGGER.debug("reset taken job {}", key);
-                ClusterPayload cPayload = jobMap.get(key);
-                cPayload.setTaken(false);
-                cPayload.setMemberId(null);
-                jobMap.put(key, cPayload);
-            }
-            return true;
-        } catch (Exception e) {
-            throw e;
-        }
-        // TransactionContext tx = hz.newTransactionContext(options);
-        //
-        // try {
-        // tx.beginTransaction();
-        // TransactionalMap<Long, ClusterPayload> txJobMap = tx.getMap("job");
-        //
-        // List<Long> takenJobs = txJobMap.values().stream().filter(
-        // p -> p.isTaken() && p.getMemberId().equals(removedMemberId))
-        // .map(ClusterPayload::getJobId).collect(Collectors.toList());
-        //
-        // for (Long key : takenJobs) {
-        // ClusterPayload cPayload = txJobMap.getForUpdate(key);
-        // cPayload.setTaken(false);
-        // cPayload.setMemberId(null);
-        // txJobMap.set(key, cPayload);
-        // }
-        //
-        // tx.commitTransaction();
-        // return true;
-        // } catch (Exception e) {
-        // tx.rollbackTransaction();
-        // throw e;
-        // }
-    }
-
-    private boolean isLeader() {
-        Optional<Member> firstMember =
-                hz.getCluster().getMembers().stream().findFirst();
-        if (firstMember.isPresent()) {
-            return firstMember.get().getUuid().equals(memberId);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public boolean markFinished(final long jobId) {
 
-        TransactionContext tx = hz.newTransactionContext(options);
+        TransactionContext tx = hz.newTransactionContext(txOptions);
 
         try {
             tx.beginTransaction();
-            TransactionalMap<Long, ClusterPayload> txJobMap = tx.getMap("job");
 
-            if (Objects.isNull(txJobMap.remove(jobId))) {
+            TransactionalMap<Long, ClusterJob> txTakenJobsMap =
+                    tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
+            TransactionalMap<Long, Payload> txPayloadsMap =
+                    tx.getMap(DsName.PAYLOADS_MAP.toString());
+
+            try {
+                txPayloadsMap.remove(jobId);
+            } catch (Exception e) {
+                // ignore if no such job or any exception
+            }
+            if (Objects.isNull(txTakenJobsMap.remove(jobId))) {
                 throw new IllegalStateException(
                         spaceit("rollback mark finish, no such job:",
                                 String.valueOf(jobId)));
@@ -279,12 +272,12 @@ public class JobStore implements IClusterJobStore {
 
     @Override
     public int getJobCount() {
-        return jobMap.size();
+        return jobsMap.size();
     }
 
     @Override
     public boolean isDone() {
-        return jobMap.size() == 0;
+        return jobsMap.isEmpty() && takenJobsMap.isEmpty();
     }
 
     @Override
@@ -304,12 +297,13 @@ public class JobStore implements IClusterJobStore {
 
     @Override
     public int getJobTakenCount() {
-        return (int) jobMap.values().stream().filter(p -> p.isTaken()).count();
+        return (int) takenJobsMap.values().stream().filter(p -> p.isTaken())
+                .count();
     }
 
     @Override
     public int getJobTakenByMemberCount() {
-        return (int) jobMap.values().stream()
+        return (int) takenJobsMap.values().stream()
                 .filter(p -> p.isTaken() && p.getMemberId().equals(memberId))
                 .count();
     }
@@ -322,5 +316,10 @@ public class JobStore implements IClusterJobStore {
     @Override
     public long getJobIdSeq() {
         return jobIdGenerator.newId();
+    }
+
+    @Override
+    public void resetCrashedJobs() {
+        crashCleaner.resetCrashedJobs();
     }
 }

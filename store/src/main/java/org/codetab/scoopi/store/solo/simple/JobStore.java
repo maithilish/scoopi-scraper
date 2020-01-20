@@ -126,7 +126,7 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public boolean resetTakenJobs(final String memberId) {
-        return true;
+    public void resetCrashedJobs() {
     }
+
 }
