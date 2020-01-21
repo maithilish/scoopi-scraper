@@ -67,9 +67,6 @@ class ConfigService {
             throw new CriticalException("unable to create config service", e);
         }
 
-        addRunDate();
-        addRunDateTime();
-
         LOGGER.trace("{}", configsAsString(ConfigIndex.SYSTEM)); //$NON-NLS-1$
         LOGGER.debug("{}", configsAsString(ConfigIndex.PROVIDED)); //$NON-NLS-1$
         LOGGER.debug("{}", configsAsString(ConfigIndex.DEFAULTS)); //$NON-NLS-1$
@@ -151,6 +148,30 @@ class ConfigService {
         return mainClass;
     }
 
+    // init methods
+    public void addRunDate() {
+        String runDateStr = configuration.getString("scoopi.runDate"); //$NON-NLS-1$
+        if (runDateStr == null) {
+            Date runDate = DateUtils.truncate(new Date(), Calendar.SECOND);
+            String dateFormat =
+                    configuration.getString("scoopi.dateParsePattern"); //$NON-NLS-1$
+            runDateStr = DateFormatUtils.format(runDate, dateFormat);
+            configuration.addProperty("scoopi.runDate", runDateStr); //$NON-NLS-1$
+        }
+    }
+
+    public void addRunDateTime() {
+        String runDateTimeStr = configuration.getString("scoopi.runDateTime"); //$NON-NLS-1$
+        if (runDateTimeStr == null) {
+            Date runDateTime = DateUtils.truncate(new Date(), Calendar.SECOND);
+            String dateTimeFormat =
+                    configuration.getString("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
+            runDateTimeStr =
+                    DateFormatUtils.format(runDateTime, dateTimeFormat);
+            configuration.addProperty("scoopi.runDateTime", runDateTimeStr); //$NON-NLS-1$
+        }
+    }
+
     // private methods
 
     private Configuration getPropertiesConfigs(final String fileName)
@@ -180,29 +201,6 @@ class ConfigService {
                                         new DefaultListDelimiterHandler(';')));
 
         return builder.getConfiguration();
-    }
-
-    private void addRunDate() {
-        String runDateStr = configuration.getString("scoopi.runDate"); //$NON-NLS-1$
-        if (runDateStr == null) {
-            Date runDate = DateUtils.truncate(new Date(), Calendar.SECOND);
-            String dateFormat =
-                    configuration.getString("scoopi.dateParsePattern"); //$NON-NLS-1$
-            runDateStr = DateFormatUtils.format(runDate, dateFormat);
-            configuration.addProperty("scoopi.runDate", runDateStr); //$NON-NLS-1$
-        }
-    }
-
-    private void addRunDateTime() {
-        String runDateTimeStr = configuration.getString("scoopi.runDateTime"); //$NON-NLS-1$
-        if (runDateTimeStr == null) {
-            Date runDateTime = DateUtils.truncate(new Date(), Calendar.SECOND);
-            String dateTimeFormat =
-                    configuration.getString("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
-            runDateTimeStr =
-                    DateFormatUtils.format(runDateTime, dateTimeFormat);
-            configuration.addProperty("scoopi.runDateTime", runDateTimeStr); //$NON-NLS-1$
-        }
     }
 
     private String configsAsString(final ConfigIndex index) {

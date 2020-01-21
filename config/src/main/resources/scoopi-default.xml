@@ -76,13 +76,17 @@
         </persist>
         <cluster>
             <enable>false</enable>
-            <jobTakeLimit>4</jobTakeLimit>
             <tx>
                 <timeout>10</timeout>
                 <timeoutUnit>SECONDS</timeoutUnit>
                 <type>TWO_PHASE</type>
             </tx>
         </cluster>
+        <job>
+            <takeLimit>4</takeLimit>
+            <takeLimitWait>500</takeLimitWait>
+            <takeFailWait>1000</takeFailWait>
+        </job>
         <metrics>
             <server>
                 <enable>true</enable>

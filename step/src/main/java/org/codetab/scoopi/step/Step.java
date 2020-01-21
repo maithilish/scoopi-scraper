@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
@@ -77,7 +78,7 @@ public abstract class Step implements IStep {
                 LOGGER.debug(marker, "{} handover to step: {}", getLabel(),
                         nextStep.getStepName());
             }
-        } catch (DefNotFoundException | InterruptedException
+        } catch (DefNotFoundException | InterruptedException | JobStateException
                 | IllegalStateException e) {
             throw new StepRunException("unable to handover", e);
         }

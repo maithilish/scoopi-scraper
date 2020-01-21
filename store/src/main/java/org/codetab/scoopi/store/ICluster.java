@@ -6,9 +6,9 @@ import org.codetab.scoopi.config.Configs;
 
 public interface ICluster {
 
-    boolean start();
+    void start();
 
-    boolean shutdown();
+    void shutdown();
 
     Object getInstance(); // member instance
 

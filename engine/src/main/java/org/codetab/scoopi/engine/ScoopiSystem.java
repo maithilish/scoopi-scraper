@@ -109,8 +109,10 @@ public class ScoopiSystem {
     }
 
     public void initClusterListeners() {
-        crashCleaner.init();
-        membershipListener.setCrashCleaner(crashCleaner);
+        if (configs.isCluster()) {
+            crashCleaner.init();
+            membershipListener.setCrashCleaner(crashCleaner);
+        }
     }
 
     public boolean startErrorLogger() {

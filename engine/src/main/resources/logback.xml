@@ -1,5 +1,8 @@
 <configuration>
 
+    <!--  defaults to logs/, override with -Dscoopi.log.dir -->
+    <property name="LOG_DIR" value="${scoopi.log.dir:-logs}" />
+
     <appender name="console"
         class="ch.qos.logback.core.ConsoleAppender">
         <filter
@@ -14,7 +17,7 @@
 
     <appender name="errorlog"
         class="ch.qos.logback.core.FileAppender">
-        <file>logs/error.log</file>
+        <file>${LOG_DIR}/error.log</file>
         <append>false</append>
         <filter
             class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -28,7 +31,7 @@
 
     <appender name="debuglog"
         class="ch.qos.logback.core.FileAppender">
-        <file>logs/debug.log</file>
+        <file>${LOG_DIR}/debug.log</file>
         <append>false</append>
         <filter
             class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -42,7 +45,7 @@
 
     <appender name="tasklog"
         class="ch.qos.logback.core.FileAppender">
-        <file>logs/task.log</file>
+        <file>${LOG_DIR}/task.log</file>
         <append>false</append>
         <encoder>
             <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n
@@ -64,7 +67,7 @@
 
     <appender name="tracelog"
         class="ch.qos.logback.core.FileAppender">
-        <file>logs/trace.log</file>
+        <file>${LOG_DIR}/trace.log</file>
         <append>false</append>
         <encoder>
             <pattern>%-20(%logger{0}:%line) %-8([%level]) %msg%n

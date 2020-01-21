@@ -9,9 +9,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.ConfigNotFoundException;
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.PayloadFactory;
@@ -27,8 +26,6 @@ public class LocatorCreator extends BaseProcessor {
     private LocatorGroupFactory locatorGroupFactory;
     @Inject
     private PayloadFactory payloadFactory;
-    @Inject
-    private ErrorLogger errorLogger;
 
     private List<LocatorGroup> locatorGroups;
 
@@ -63,19 +60,17 @@ public class LocatorCreator extends BaseProcessor {
         final List<Payload> payloads = payloadFactory
                 .createSeedPayloads(locatorGroups, stepName, seederClzName);
         for (final Payload payload : payloads) {
-            try {
-                // reuse jobId for new payload
-                // payload.getJobInfo().setId(jobId);
-                // taskMediator.pushPayload(payload);
-                payload.getJobInfo().setId(jobMediator.getJobIdSequence());
-                jobMediator.pushPayload(payload);
-            } catch (final InterruptedException e) {
-                final String message =
-                        spaceit("handover link locators,", payload.toString());
-                errorLogger.log(marker, CAT.INTERNAL, message, e);
-            }
+            payload.getJobInfo().setId(jobMediator.getJobIdSequence());
         }
-        jobMediator.markJobFinished(jobId);
+
+        // mark this job as finished and push new task jobs for this document
+        try {
+            jobMediator.pushPayloads(payloads, jobId);
+        } catch (InterruptedException | JobStateException e) {
+            final String message =
+                    spaceit("handover link locators,", getPayload().toString());
+            throw new StepRunException(message, e);
+        }
         return true;
     }
 }

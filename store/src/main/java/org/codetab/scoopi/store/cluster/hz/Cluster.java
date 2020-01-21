@@ -35,7 +35,7 @@ public class Cluster implements ICluster {
     private HazelcastInstance hz;
 
     @Override
-    public boolean start() {
+    public void start() {
         LOGGER.info("start Hazelcast cluster");
 
         Config cfg = new XmlConfigBuilder(
@@ -50,13 +50,11 @@ public class Cluster implements ICluster {
         for (Member member : members) {
             LOGGER.info("member: {}", member.getUuid());
         }
-        return true;
     }
 
     @Override
-    public boolean shutdown() {
+    public void shutdown() {
         hz.shutdown();
-        return true;
     }
 
     @Override

@@ -29,13 +29,11 @@ public class SoloCluster implements ICluster {
 
     // ignore methods
     @Override
-    public boolean start() {
-        return true;
+    public void start() {
     }
 
     @Override
-    public boolean shutdown() {
-        return true;
+    public void shutdown() {
     }
 
     @Override

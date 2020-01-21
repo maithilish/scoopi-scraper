@@ -10,16 +10,16 @@ public interface IJobStore {
         NEW, INITIALIZE, READY
     }
 
-    boolean open();
+    void open();
 
-    boolean close();
+    void close();
 
     boolean putJob(Payload payload) throws InterruptedException;
 
-    Payload takeJob() throws InterruptedException;
-
     boolean putJobs(List<Payload> payloads, long jobId)
             throws InterruptedException;
+
+    Payload takeJob() throws InterruptedException;
 
     boolean markFinished(long id);
 

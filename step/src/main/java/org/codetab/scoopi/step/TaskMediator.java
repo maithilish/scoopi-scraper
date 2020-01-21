@@ -3,8 +3,8 @@ package org.codetab.scoopi.step;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -33,11 +33,8 @@ public class TaskMediator {
 
     private TaskRunnerThread taskRunner = new TaskRunnerThread();
 
-    // FIXME change it AtomicBoolean
-    @GuardedBy("this")
-    private int reservations = 0;
-    @GuardedBy("this")
-    private boolean done = false;
+    private AtomicInteger reservations = new AtomicInteger();
+    private AtomicBoolean done = new AtomicBoolean(false);
     private AtomicBoolean jobMediatorDone = new AtomicBoolean(false);
 
     public void start() {
@@ -47,9 +44,7 @@ public class TaskMediator {
     public void waitForFinish() {
         try {
             taskRunner.join();
-            synchronized (this) {
-                done = true;
-            }
+            done.set(true);
         } catch (final InterruptedException e) {
             final String message = "wait for finish interrupted";
             errorLogger.log(CAT.INTERNAL, message, e);
@@ -59,13 +54,11 @@ public class TaskMediator {
     public boolean pushPayload(final Payload payload)
             throws InterruptedException {
         notNull(payload, "payload must not be null");
-        synchronized (this) {
-            if (done) {
-                throw new IllegalStateException(
-                        "task mediator is closed, can't push payload");
-            }
-            ++reservations;
+        if (done.get()) {
+            throw new IllegalStateException(
+                    "task mediator is closed, can't push payload");
         }
+        reservations.getAndIncrement();
         payloadStore.putPayload(payload);
         return true;
     }
@@ -74,16 +67,16 @@ public class TaskMediator {
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException, InterruptedException {
         final Payload payload = payloadStore.takePayload();
-        synchronized (this) {
-            --reservations;
-        }
+
+        reservations.getAndDecrement();
+
         final Task task = taskFactory.createTask(payload);
         final String poolName = task.getStep().getStepName();
         poolService.submit(poolName, task);
     }
 
     public boolean isDone() {
-        return done;
+        return done.get();
     }
 
     class TaskRunnerThread extends Thread {
@@ -91,15 +84,15 @@ public class TaskMediator {
         public void run() {
             int reservationWaitCount = 0;
             while (true) {
-                synchronized (this) {
-                    if (jobMediatorDone.get() && poolService.isDone()
-                            && reservations == 0) {
-                        poolService.waitForFinish();
-                        break;
-                    }
+
+                if (jobMediatorDone.get() && poolService.isDone()
+                        && reservations.get() == 0) {
+                    poolService.waitForFinish();
+                    break;
                 }
+
                 try {
-                    if (reservations > 0) {
+                    if (reservations.get() > 0) {
                         if (reservationWaitCount > 0) {
                             LOGGER.debug("wait for task: {} ms",
                                     reservationWaitCount * SLEEP_MILLIS);

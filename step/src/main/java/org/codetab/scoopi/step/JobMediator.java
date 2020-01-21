@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.config.Configs;
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
@@ -22,8 +24,8 @@ public class JobMediator {
 
     static final Logger LOGGER = LoggerFactory.getLogger(JobMediator.class);
 
-    static final int WAIT_MILLIS = 1000;
-
+    @Inject
+    private Configs configs;
     @Inject
     private TaskMediator taskMediator;
     @Inject
@@ -35,6 +37,9 @@ public class JobMediator {
     private AtomicBoolean jobSeeder = new AtomicBoolean(false);
     private CountDownLatch seedDoneSignal;
 
+    private int takeFailWait; // job take fail, retry wait
+    private int takeLimitWait; // job take limit crossed, retry wait
+
     /**
      * cluster: init connection, create tables. For first node, change jobStore
      * state from NEW to INITIALIZE and set seedJobs to true; for others,
@@ -43,6 +48,10 @@ public class JobMediator {
      * solo: set state to READY.
      */
     public void init() {
+        takeFailWait = Integer
+                .parseInt(configs.getConfig("scoopi.job.takeFailWait", "1000"));
+        takeLimitWait = Integer
+                .parseInt(configs.getConfig("scoopi.job.takeLimitWait", "500"));
         jobStore.open();
         if (jobStore.changeStateToInitialize()) {
             jobSeeder.set(true);
@@ -65,25 +74,18 @@ public class JobMediator {
         }
     }
 
-    public boolean pushPayload(final Payload payload)
-            throws InterruptedException {
+    public void pushPayload(final Payload payload) throws InterruptedException {
         notNull(payload, "payload must not be null");
         if (jobStore.putJob(payload)) {
             taskMediator.setJobMediatorDone(false);
-            return true;
-        } else {
-            return false;
         }
     }
 
-    public boolean pushPayloads(final List<Payload> payloads, final long jobId)
+    public void pushPayloads(final List<Payload> payloads, final long jobId)
             throws InterruptedException {
         notNull(payloads, "payloads must not be null");
         if (jobStore.putJobs(payloads, jobId)) {
             taskMediator.setJobMediatorDone(false);
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -96,7 +98,7 @@ public class JobMediator {
                         .getJobTakeLimit()) {
                     LOGGER.debug("wait... jobs taken > q size: {}",
                             jobStore.getJobTakeLimit());
-                    Thread.sleep(WAIT_MILLIS);
+                    Thread.sleep(takeLimitWait);
                 }
                 Payload payload = jobStore.takeJob();
                 taskMediator.pushPayload(payload);
@@ -104,9 +106,11 @@ public class JobMediator {
                 if (jobStore.isDone()) {
                     taskMediator.setJobMediatorDone(true);
                 }
+            } catch (JobStateException e) {
+                LOGGER.debug("retry... {}", e);
+                Thread.sleep(takeFailWait);
             } catch (IllegalStateException e) {
-                LOGGER.debug("retry... multiple nodes try to take same job");
-                Thread.sleep(WAIT_MILLIS);
+                errorLogger.log(CAT.INTERNAL, "unable to initiate job", e);
             }
         } catch (NoSuchElementException e) {
             taskMediator.setJobMediatorDone(true);
@@ -155,11 +159,10 @@ public class JobMediator {
 
             LOGGER.debug("take jobs from cluster and initiate task");
             while (true) {
-                synchronized (this) {
-                    if (taskMediator.isDone()) {
-                        break;
-                    }
+                if (taskMediator.isDone()) {
+                    break;
                 }
+
                 try {
                     initiateJob();
                 } catch (ClassNotFoundException | InstantiationException

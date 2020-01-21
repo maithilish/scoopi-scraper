@@ -36,6 +36,9 @@ public class Configs {
     public void initConfigService(final String userConfigFile,
             final String defaultConfigFile) {
         configService.init(userConfigFile, defaultConfigFile);
+        configService.addRunDate();
+        configService.addRunDateTime();
+        LOGGER.info("log dir {}/", getConfig("scoopi.log.dir", "logs"));
     }
 
     // general property methods

@@ -14,9 +14,8 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.Payload;
@@ -70,8 +69,6 @@ public abstract class BaseLoader extends Step {
     private DocumentHelper documentHelper;
     @Inject
     private PayloadFactory payloadFactory;
-    @Inject
-    private ErrorLogger errorLogger;
 
     @Inject
     private JobMediator jobMediator;
@@ -312,11 +309,11 @@ public abstract class BaseLoader extends Step {
         // mark this job as finished and push new task jobs for this document
         try {
             jobMediator.pushPayloads(payloads, jobId);
-        } catch (final InterruptedException e) {
-            final String message = spaceit(
-                    "create all defined tasks for the document and push",
-                    getPayload().toString());
-            errorLogger.log(CAT.INTERNAL, message, e);
+        } catch (InterruptedException | JobStateException e) {
+            final String message =
+                    spaceit("create defined tasks for the document and push",
+                            getPayload().toString());
+            throw new StepRunException(message, e);
         }
         return true;
     }

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.log.ErrorLogger;
@@ -120,7 +121,9 @@ public final class LocatorSeeder extends BaseSeeder {
                                 taskMediator.pushPayload(payload);
                             }
                             meter.mark();
-                        } catch (final InterruptedException e) {
+                        } catch (final InterruptedException
+                                | JobStateException e) {
+                            // just log error for this payload and continue
                             final String message = spaceit("handover locator,",
                                     payload.toString());
                             errorLogger.log(CAT.INTERNAL, message, e);

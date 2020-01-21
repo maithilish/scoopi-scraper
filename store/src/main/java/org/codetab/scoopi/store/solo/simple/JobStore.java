@@ -26,8 +26,7 @@ public class JobStore implements ISoloJobStore {
     private State state = State.NEW;
 
     @Override
-    public boolean open() {
-        return true;
+    public void open() {
     }
 
     @Override
@@ -111,8 +110,7 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public boolean close() {
-        return true;
+    public void close() {
     }
 
     @Override
