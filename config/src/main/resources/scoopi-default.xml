@@ -18,11 +18,13 @@
             <replaceWith>-</replaceWith>
         </fact>
 
-        <seederClass>
+        <seeder>
+            <class>
             <![CDATA[
               org.codetab.scoopi.step.extract.LocatorSeeder
             ]]>
-        </seederClass>
+            </class>
+        </seeder>
         <poolsize>
             <start>4</start>
             <seeder>6</seeder>
@@ -86,7 +88,11 @@
             <takeLimit>4</takeLimit>
             <takeLimitWait>500</takeLimitWait>
             <takeFailWait>1000</takeFailWait>
+            <pushInterval>0</pushInterval>
         </job>
+        <task>
+            <getTaskRetryInterval>10</getTaskRetryInterval>
+        </task>
         <metrics>
             <server>
                 <enable>true</enable>

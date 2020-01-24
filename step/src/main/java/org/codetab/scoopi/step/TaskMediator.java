@@ -2,12 +2,13 @@ package org.codetab.scoopi.step;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
@@ -20,8 +21,9 @@ import org.slf4j.LoggerFactory;
 public class TaskMediator {
 
     static final Logger LOGGER = LoggerFactory.getLogger(TaskMediator.class);
-    private static final long SLEEP_MILLIS = 100;
 
+    @Inject
+    private Configs configs;
     @Inject
     private TaskPoolService poolService;
     @Inject
@@ -34,17 +36,22 @@ public class TaskMediator {
     private TaskRunnerThread taskRunner = new TaskRunnerThread();
 
     private AtomicInteger reservations = new AtomicInteger();
-    private AtomicBoolean done = new AtomicBoolean(false);
-    private AtomicBoolean jobMediatorDone = new AtomicBoolean(false);
+    private AtomicReference<TMState> state =
+            new AtomicReference<>(TMState.READY);
+
+    private int taskGetRetryInterval;
 
     public void start() {
+        taskGetRetryInterval = Integer.parseInt(
+                configs.getConfig("scoopi.task.getRetryInterval", "10"));
+        taskGetRetryInterval = 10;
         taskRunner.start();
     }
 
     public void waitForFinish() {
         try {
             taskRunner.join();
-            done.set(true);
+            state.set(TMState.TERMINATED);
         } catch (final InterruptedException e) {
             final String message = "wait for finish interrupted";
             errorLogger.log(CAT.INTERNAL, message, e);
@@ -54,54 +61,68 @@ public class TaskMediator {
     public boolean pushPayload(final Payload payload)
             throws InterruptedException {
         notNull(payload, "payload must not be null");
-        if (done.get()) {
+
+        TMState st = state.get();
+        if (st.equals(TMState.SHUTDOWN) || st.equals(TMState.TERMINATED)) {
             throw new IllegalStateException(
-                    "task mediator is closed, can't push payload");
+                    "task mediator is terminated, can't push payload");
         }
-        reservations.getAndIncrement();
+
         payloadStore.putPayload(payload);
+        reservations.getAndIncrement();
+        state.set(TMState.READY);
+
         return true;
     }
 
-    private void initiateTask()
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException, InterruptedException {
-        final Payload payload = payloadStore.takePayload();
+    public boolean isTaskPoolFree(final Payload payload) {
+        final String poolName = payload.getStepInfo().getStepName();
+        return poolService.isPoolFree(poolName);
+    }
 
-        reservations.getAndDecrement();
+    public void setState(final TMState tMState) {
+        this.state.set(tMState);
+    }
 
-        final Task task = taskFactory.createTask(payload);
-        final String poolName = task.getStep().getStepName();
-        poolService.submit(poolName, task);
+    public TMState getState() {
+        return state.get();
     }
 
     public boolean isDone() {
-        return done.get();
+        return state.get().equals(TMState.DONE);
+    }
+
+    public boolean isTerminated() {
+        return state.get().equals(TMState.TERMINATED);
     }
 
     class TaskRunnerThread extends Thread {
         @Override
         public void run() {
-            int reservationWaitCount = 0;
+            int resWaitCount = 1;
             while (true) {
-
-                if (jobMediatorDone.get() && poolService.isDone()
-                        && reservations.get() == 0) {
+                if (state.get().equals(TMState.SHUTDOWN)) {
                     poolService.waitForFinish();
                     break;
                 }
+                if (reservations.get() == 0 && poolService.isDone()) {
+                    state.set(TMState.DONE);
+                }
 
                 try {
+                    int retryWait =
+                            resWaitCount * resWaitCount * taskGetRetryInterval;
                     if (reservations.get() > 0) {
-                        if (reservationWaitCount > 0) {
-                            LOGGER.debug("wait for task: {} ms",
-                                    reservationWaitCount * SLEEP_MILLIS);
-                            reservationWaitCount = 0;
+                        if (resWaitCount > 0) {
+                            LOGGER.debug(
+                                    "waited for task {} times, total {} ms",
+                                    resWaitCount, retryWait);
+                            resWaitCount = 0;
                         }
                         initiateTask();
                     } else {
-                        Thread.sleep(SLEEP_MILLIS);
-                        reservationWaitCount++;
+                        resWaitCount++;
+                        Thread.sleep(retryWait);
                     }
                 } catch (ClassNotFoundException | InstantiationException
                         | IllegalAccessException | InterruptedException e) {
@@ -112,12 +133,16 @@ public class TaskMediator {
         }
     }
 
-    public boolean isTaskPoolFree(final Payload payload) {
-        final String poolName = payload.getStepInfo().getStepName();
-        return poolService.isPoolFree(poolName);
+    private void initiateTask()
+            throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException, InterruptedException {
+
+        final Payload payload = payloadStore.takePayload();
+        reservations.getAndDecrement();
+
+        final Task task = taskFactory.createTask(payload);
+        final String poolName = task.getStep().getStepName();
+        poolService.submit(poolName, task);
     }
 
-    public void setJobMediatorDone(final boolean done) {
-        jobMediatorDone.set(done);
-    }
 }

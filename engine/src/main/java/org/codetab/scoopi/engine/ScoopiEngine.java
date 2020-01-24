@@ -53,7 +53,6 @@ public class ScoopiEngine {
             taskMediator.start();
             jobMediator.start();
 
-            taskMediator.waitForFinish();
             jobMediator.waitForFinish();
             scoopiSystem.waitForFinish();
 

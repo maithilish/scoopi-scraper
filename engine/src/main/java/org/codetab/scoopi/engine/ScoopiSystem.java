@@ -32,6 +32,7 @@ import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.store.ICluster;
+import org.codetab.scoopi.store.IShutdown;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
 import org.codetab.scoopi.store.cluster.hz.MembershipListener;
 import org.slf4j.Logger;
@@ -61,6 +62,8 @@ public class ScoopiSystem {
     private Stats stats;
     @Inject
     private ICluster cluster;
+    @Inject
+    private IShutdown shutdown;
     @Inject
     private ErrorLogger errorLogger;
     @Inject
@@ -102,9 +105,7 @@ public class ScoopiSystem {
     }
 
     public boolean stopCluster() {
-        if (configs.isCluster()) {
-            cluster.shutdown();
-        }
+        shutdown.tryTerminate();
         return true;
     }
 
@@ -161,7 +162,7 @@ public class ScoopiSystem {
             final String stepName = "start"; //$NON-NLS-1$
             String seederClzName = null;
             try {
-                seederClzName = configs.getConfig("scoopi.seederClass"); //$NON-NLS-1$
+                seederClzName = configs.getConfig("scoopi.seeder.class"); //$NON-NLS-1$
             } catch (final ConfigNotFoundException e) {
                 final String message = "unable seed locator group";
                 throw new CriticalException(message, e);

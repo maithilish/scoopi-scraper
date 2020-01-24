@@ -16,6 +16,7 @@ import org.codetab.scoopi.metrics.IMetricsServer;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IPayloadStore;
+import org.codetab.scoopi.store.IShutdown;
 import org.codetab.scoopi.store.IStore;
 import org.codetab.scoopi.store.solo.simple.PayloadStore;
 
@@ -49,6 +50,9 @@ public class ClusterModule extends AbstractModule {
                 .in(Singleton.class);
         bind(ICluster.class)
                 .to(org.codetab.scoopi.store.cluster.hz.Cluster.class)
+                .in(Singleton.class);
+        bind(IShutdown.class)
+                .to(org.codetab.scoopi.store.cluster.hz.Shutdown.class)
                 .in(Singleton.class);
 
         // factory to create instances with constructor parameters

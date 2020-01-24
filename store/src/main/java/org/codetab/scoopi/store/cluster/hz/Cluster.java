@@ -42,6 +42,11 @@ public class Cluster implements ICluster {
                 Cluster.class.getResourceAsStream("/hazelcast.xml")).build();
         cfg.addListenerConfig(new ListenerConfig(membershipListener));
 
+        // configs is not yet initialized, get from system
+        String minClusterSize =
+                System.getProperty("scoopi.cluster.minSize", "1");
+        cfg.setProperty("hazelcast.initial.min.cluster.size", minClusterSize);
+
         hz = Hazelcast.newHazelcastInstance(cfg);
 
         Set<Member> members = hz.getCluster().getMembers();
@@ -54,7 +59,7 @@ public class Cluster implements ICluster {
 
     @Override
     public void shutdown() {
-        hz.shutdown();
+        hz.getCluster().shutdown();
     }
 
     @Override

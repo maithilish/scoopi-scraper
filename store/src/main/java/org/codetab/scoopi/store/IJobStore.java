@@ -35,7 +35,7 @@ public interface IJobStore {
 
     boolean changeStateToInitialize();
 
-    String getNodeId();
+    String getMemberId();
 
     int getJobTakenCount();
 

@@ -82,7 +82,7 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public String getNodeId() {
+    public String getMemberId() {
         return "solo";
     }
 

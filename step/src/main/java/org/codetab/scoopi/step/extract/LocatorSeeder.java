@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Locator;
@@ -40,18 +39,11 @@ public final class LocatorSeeder extends BaseSeeder {
     static final Logger LOGGER = LoggerFactory.getLogger(LocatorSeeder.class);
 
     /**
-     * delay between task submit.
-     */
-    private static final long SLEEP_MILLIS = 1000;
-
-    /**
      * list of locator don't name the next as locators as it hides field.
      * (checkstyle)
      */
 
     private LocatorGroup locatorGroup;
-    @Inject
-    private ThreadSleep threadSleep;
     @Inject
     private PayloadFactory payloadFactory;
     @Inject
@@ -142,7 +134,6 @@ public final class LocatorSeeder extends BaseSeeder {
                         "unable to get first task for locator group:", group);
                 errorLogger.log(CAT.ERROR, message);
             }
-            threadSleep.sleep(SLEEP_MILLIS);
         }
         if (locatorGroup.isByDef()) {
             jobMediator.countDownSeedDone();

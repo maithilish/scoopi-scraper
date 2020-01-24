@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,6 +17,7 @@ import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.IJobStore;
+import org.codetab.scoopi.store.IShutdown;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,8 @@ public class JobMediator {
     @Inject
     private IJobStore jobStore;
     @Inject
+    private IShutdown shutdown;
+    @Inject
     private ErrorLogger errorLogger;
 
     private JobRunnerThread jobRunner = new JobRunnerThread();
@@ -39,6 +43,7 @@ public class JobMediator {
 
     private int takeFailWait; // job take fail, retry wait
     private int takeLimitWait; // job take limit crossed, retry wait
+    private int jobPushInterval; // wait between jobs push to TM
 
     /**
      * cluster: init connection, create tables. For first node, change jobStore
@@ -52,6 +57,9 @@ public class JobMediator {
                 .parseInt(configs.getConfig("scoopi.job.takeFailWait", "1000"));
         takeLimitWait = Integer
                 .parseInt(configs.getConfig("scoopi.job.takeLimitWait", "500"));
+        jobPushInterval = Integer
+                .parseInt(configs.getConfig("scoopi.job.pushInterval", "0"));
+        shutdown.init();
         jobStore.open();
         if (jobStore.changeStateToInitialize()) {
             jobSeeder.set(true);
@@ -66,8 +74,11 @@ public class JobMediator {
 
     public void waitForFinish() {
         try {
+            taskMediator.waitForFinish();
             jobRunner.join();
             jobStore.close();
+            shutdown.setTerminate();
+            // shutdown.tryTerminate();
         } catch (final InterruptedException e) {
             final String message = "wait for finish interrupted";
             errorLogger.log(CAT.INTERNAL, message, e);
@@ -76,8 +87,9 @@ public class JobMediator {
 
     public void pushPayload(final Payload payload) throws InterruptedException {
         notNull(payload, "payload must not be null");
+        System.out.println(payload.toString());
         if (jobStore.putJob(payload)) {
-            taskMediator.setJobMediatorDone(false);
+            // taskMediator.setState(TaskMediator.State.READY);
         }
     }
 
@@ -85,35 +97,7 @@ public class JobMediator {
             throws InterruptedException {
         notNull(payloads, "payloads must not be null");
         if (jobStore.putJobs(payloads, jobId)) {
-            taskMediator.setJobMediatorDone(false);
-        }
-    }
-
-    private void initiateJob()
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException, InterruptedException {
-        try {
-            try {
-                while (jobStore.getJobTakenByMemberCount() > jobStore
-                        .getJobTakeLimit()) {
-                    LOGGER.debug("wait... jobs taken > q size: {}",
-                            jobStore.getJobTakeLimit());
-                    Thread.sleep(takeLimitWait);
-                }
-                Payload payload = jobStore.takeJob();
-                taskMediator.pushPayload(payload);
-                jobStore.resetCrashedJobs();
-                if (jobStore.isDone()) {
-                    taskMediator.setJobMediatorDone(true);
-                }
-            } catch (JobStateException e) {
-                LOGGER.debug("retry... {}", e);
-                Thread.sleep(takeFailWait);
-            } catch (IllegalStateException e) {
-                errorLogger.log(CAT.INTERNAL, "unable to initiate job", e);
-            }
-        } catch (NoSuchElementException e) {
-            taskMediator.setJobMediatorDone(true);
+            // taskMediator.setState(TaskMediator.State.READY);
         }
     }
 
@@ -159,7 +143,7 @@ public class JobMediator {
 
             LOGGER.debug("take jobs from cluster and initiate task");
             while (true) {
-                if (taskMediator.isDone()) {
+                if (taskMediator.isTerminated()) {
                     break;
                 }
 
@@ -173,4 +157,50 @@ public class JobMediator {
             }
         }
     }
+
+    private void initiateJob()
+            throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException, InterruptedException {
+
+        try {
+            int takeLimit = jobStore.getJobTakeLimit();
+            while (true) {
+                int takenCount = jobStore.getJobTakenByMemberCount();
+                if (takenCount <= takeLimit)
+                    break;
+                LOGGER.debug("wait... jobs taken {} limit: {}", takenCount,
+                        takeLimit);
+                Thread.sleep(takeLimitWait);
+            }
+
+            if (taskMediator.isDone()) {
+                shutdown.setDone();
+                shutdown.tryShutdown(shutdownFunction, taskMediator);
+            }
+
+            Payload payload = jobStore.takeJob();
+
+            // wait before push to TM
+            if (jobPushInterval > 0) {
+                Thread.sleep(jobPushInterval);
+            }
+            taskMediator.pushPayload(payload);
+            jobStore.resetCrashedJobs();
+
+        } catch (JobStateException | NoSuchElementException e) {
+            LOGGER.debug("retry... {}", e.getLocalizedMessage());
+            Thread.sleep(takeFailWait);
+        } catch (IllegalStateException e) {
+            errorLogger.log(CAT.INTERNAL, "unable to initiate job", e);
+        }
+    }
+
+    private Function<TaskMediator, Boolean> shutdownFunction = tm -> {
+        if (tm.getState().equals(TMState.DONE)) {
+            tm.setState(TMState.SHUTDOWN);
+            return true;
+        } else {
+            return false;
+        }
+    };
 }

@@ -286,7 +286,7 @@ public class JobStore implements IClusterJobStore {
     }
 
     @Override
-    public String getNodeId() {
+    public String getMemberId() {
         return memberId;
     }
 

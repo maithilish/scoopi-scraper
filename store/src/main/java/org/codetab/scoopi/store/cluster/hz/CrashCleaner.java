@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.HazelcastInstanceNotActiveException;
 import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
@@ -44,7 +45,10 @@ public class CrashCleaner {
     }
 
     public void addCrashedMember(final String crashedMemberId) {
-        crashMembersMap.putIfAbsent(crashedMemberId, false);
+        try {
+            crashMembersMap.putIfAbsent(crashedMemberId, false);
+        } catch (HazelcastInstanceNotActiveException e) {
+        }
     }
 
     public boolean resetCrashedJobs() {
