@@ -1,9 +1,10 @@
 package org.codetab.scoopi.step;
 
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.Validate.notNull;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,6 +15,7 @@ import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.pool.TaskPoolService;
 import org.codetab.scoopi.store.IPayloadStore;
+import org.codetab.scoopi.store.IShutdown;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,19 +34,20 @@ public class TaskMediator {
     private TaskFactory taskFactory;
     @Inject
     private ErrorLogger errorLogger;
+    @Inject
+    private IShutdown shutdown;
 
     private TaskRunnerThread taskRunner = new TaskRunnerThread();
 
-    private AtomicInteger reservations = new AtomicInteger();
+    // private AtomicInteger reservations = new AtomicInteger();
     private AtomicReference<TMState> state =
             new AtomicReference<>(TMState.READY);
 
-    private int taskGetRetryInterval;
+    private int taskPollRetryInterval;
 
     public void start() {
-        taskGetRetryInterval = Integer.parseInt(
-                configs.getConfig("scoopi.task.getRetryInterval", "10"));
-        taskGetRetryInterval = 10;
+        taskPollRetryInterval = Integer.parseInt(
+                configs.getConfig("scoopi.task.pollRetryInterval", "500"));
         taskRunner.start();
     }
 
@@ -52,6 +55,7 @@ public class TaskMediator {
         try {
             taskRunner.join();
             state.set(TMState.TERMINATED);
+            LOGGER.debug("task mediator terminated");
         } catch (final InterruptedException e) {
             final String message = "wait for finish interrupted";
             errorLogger.log(CAT.INTERNAL, message, e);
@@ -68,9 +72,9 @@ public class TaskMediator {
                     "task mediator is terminated, can't push payload");
         }
 
-        payloadStore.putPayload(payload);
-        reservations.getAndIncrement();
         state.set(TMState.READY);
+        payloadStore.putPayload(payload);
+        // reservations.getAndIncrement();
 
         return true;
     }
@@ -88,41 +92,37 @@ public class TaskMediator {
         return state.get();
     }
 
-    public boolean isDone() {
-        return state.get().equals(TMState.DONE);
-    }
-
-    public boolean isTerminated() {
-        return state.get().equals(TMState.TERMINATED);
+    public boolean isState(final TMState other) {
+        return state.get().equals(other);
     }
 
     class TaskRunnerThread extends Thread {
         @Override
         public void run() {
-            int resWaitCount = 1;
+            int retryCount = 1;
             while (true) {
                 if (state.get().equals(TMState.SHUTDOWN)) {
                     poolService.waitForFinish();
                     break;
                 }
-                if (reservations.get() == 0 && poolService.isDone()) {
+                if (payloadStore.getPayloadsCount() == 0
+                        && poolService.isDone()) {
                     state.set(TMState.DONE);
                 }
-
                 try {
-                    int retryWait =
-                            resWaitCount * resWaitCount * taskGetRetryInterval;
-                    if (reservations.get() > 0) {
-                        if (resWaitCount > 0) {
+                    int takeTimeout = 0;
+                    if (payloadStore.getPayloadsCount() == 0) {
+                        takeTimeout = taskPollRetryInterval;
+                    }
+                    if (initiateTask(takeTimeout)) {
+                        if (retryCount > 1) {
                             LOGGER.debug(
-                                    "waited for task {} times, total {} ms",
-                                    resWaitCount, retryWait);
-                            resWaitCount = 0;
+                                    "take task timeout {} ms, timed out {} times",
+                                    takeTimeout, retryCount);
+                            retryCount = 1;
                         }
-                        initiateTask();
                     } else {
-                        resWaitCount++;
-                        Thread.sleep(retryWait);
+                        retryCount++;
                     }
                 } catch (ClassNotFoundException | InstantiationException
                         | IllegalAccessException | InterruptedException e) {
@@ -133,16 +133,42 @@ public class TaskMediator {
         }
     }
 
-    private void initiateTask()
+    private boolean initiateTask(final int timeout)
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException, InterruptedException {
-
-        final Payload payload = payloadStore.takePayload();
-        reservations.getAndDecrement();
+        Payload payload = payloadStore.takePayload(timeout);
+        if (isNull(payload)) {
+            return false;
+        }
+        // reservations.getAndDecrement();
 
         final Task task = taskFactory.createTask(payload);
         final String poolName = task.getStep().getStepName();
         poolService.submit(poolName, task);
+        return true;
     }
+
+    public boolean tryShutdown() {
+        LOGGER.info("task mediator done, try shutdown");
+        shutdown.setDone();
+        if (shutdown.tryShutdown(shutdownFunction, this)) {
+            LOGGER.info("task mediator shutdown successful");
+            return true;
+        } else {
+            state.set(TMState.READY);
+            LOGGER.info(
+                    "task mediator shutdown failed, reset state back to ready");
+            return false;
+        }
+    }
+
+    private Function<TaskMediator, Boolean> shutdownFunction = tm -> {
+        if (tm.getState().equals(TMState.DONE)) {
+            tm.setState(TMState.SHUTDOWN);
+            return true;
+        } else {
+            return false;
+        }
+    };
 
 }

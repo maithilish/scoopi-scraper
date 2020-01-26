@@ -1,13 +1,11 @@
 package org.codetab.scoopi.store.cluster.hz;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
@@ -18,15 +16,13 @@ import com.hazelcast.cluster.ClusterState;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.HazelcastInstanceNotActiveException;
-import com.hazelcast.transaction.TransactionOptions;
+import com.hazelcast.core.Member;
 
 @Singleton
 public class Shutdown implements IShutdown {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(CrashCleaner.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(Shutdown.class);
 
-    @Inject
-    private Configs configs;
     @Inject
     private ICluster cluster;
     @Inject
@@ -35,22 +31,17 @@ public class Shutdown implements IShutdown {
     private Map<String, Boolean> doneMap;
     private Map<String, Boolean> terminateMap;
 
-    private TransactionOptions txOptions;
-
     private HazelcastInstance hz;
 
-    AtomicInteger doneCount = new AtomicInteger();
-    AtomicInteger tryCount = new AtomicInteger();
-    AtomicInteger tryDoneCount = new AtomicInteger();
-    AtomicInteger shutdownCount = new AtomicInteger();
-
     private String memberId;
+
+    private Cluster clst;
 
     @Override
     public void init() {
         hz = (HazelcastInstance) cluster.getInstance();
+        clst = hz.getCluster();
         memberId = cluster.getMemberId();
-        txOptions = (TransactionOptions) cluster.getTxOptions(configs);
         doneMap = hz.getMap(DsName.MEMBER_DONE_MAP.toString());
         terminateMap = hz.getMap(DsName.MEMBER_TERMINATE_MAP.toString());
         doneMap.put(memberId, false);
@@ -60,7 +51,6 @@ public class Shutdown implements IShutdown {
     @Override
     public void setDone() {
         doneMap.put(memberId, true);
-        doneCount.getAndIncrement();
     }
 
     @Override
@@ -69,34 +59,49 @@ public class Shutdown implements IShutdown {
     }
 
     @Override
-    public <T, R> void tryShutdown(final Function<T, R> func, final T t) {
-        if (doneMap.values().stream().anyMatch(v -> v.equals(false))) {
-            tryCount.getAndIncrement();
-            return;
+    public <T> boolean tryShutdown(final Function<T, Boolean> func, final T t) {
+        try {
+            if (clst.getMembers().stream().map(Member::getUuid)
+                    .map(uuid -> doneMap.get(uuid))
+                    .anyMatch(v -> v.equals(false))) {
+                System.out.println("tryShutdown not all done");
+                return false;
+            }
+        } catch (NullPointerException e) {
+            return false;
         }
-        tryDoneCount.getAndIncrement();
-        System.out.printf("%d %d %d %d\n", doneCount.get(), tryCount.get(),
-                tryDoneCount.get(), shutdownCount.get());
+        System.out.println("tryShutdown all done");
         if (jobStore.isDone()) {
-            func.apply(t);
-            shutdownCount.getAndIncrement();
-            System.out.printf("%d %d %d %d\n", doneCount.get(), tryCount.get(),
-                    tryDoneCount.get(), shutdownCount.get());
+            return func.apply(t);
+        } else {
+            System.out.println("tryShutdown jobStore not done");
+            return false;
         }
     }
 
     @Override
     public void tryTerminate() {
         try {
-            if (terminateMap.values().stream().anyMatch(v -> v.equals(false))) {
+            System.out.println("try cluster terminate");
+            LOGGER.info("try cluster shutdown");
+            // get terminate status of active members
+            if (clst.getMembers().stream().map(Member::getUuid)
+                    .map(uuid -> terminateMap.get(uuid))
+                    .anyMatch(v -> v.equals(false))) {
+                LOGGER.info(
+                        "cluster shutdown failed, some of the node are active");
                 return;
             }
-            HazelcastInstance hz = (HazelcastInstance) cluster.getInstance();
-            Cluster clst = hz.getCluster();
-
+            LOGGER.info("all scoopi instances are finished, shutdown cluster");
             if (clst.getClusterState().equals(ClusterState.ACTIVE)) {
+                LOGGER.info("shutdown cluster initiated");
                 clst.shutdown();
+            } else {
+                LOGGER.info(
+                        "shutdown cluster already initiated by another node");
             }
+            LOGGER.info("cluster shutdown completed");
+
         } catch (HazelcastInstanceNotActiveException e) {
 
         }

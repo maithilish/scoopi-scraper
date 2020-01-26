@@ -91,7 +91,7 @@
             <pushInterval>0</pushInterval>
         </job>
         <task>
-            <getTaskRetryInterval>10</getTaskRetryInterval>
+            <pollRetryInterval>500</pollRetryInterval>
         </task>
         <metrics>
             <server>

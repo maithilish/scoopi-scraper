@@ -1,7 +1,6 @@
 package org.codetab.scoopi.store.solo.simple;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import javax.inject.Inject;
@@ -23,11 +22,6 @@ public class Shutdown implements IShutdown {
 
     private AtomicBoolean done = new AtomicBoolean(false);
 
-    AtomicInteger doneCount = new AtomicInteger();
-    AtomicInteger tryCount = new AtomicInteger();
-    AtomicInteger tryDoneCount = new AtomicInteger();
-    AtomicInteger shutdownCount = new AtomicInteger();
-
     @Override
     public void init() {
     }
@@ -35,22 +29,19 @@ public class Shutdown implements IShutdown {
     @Override
     public void setDone() {
         done.set(true);
-        doneCount.getAndIncrement();
     }
 
     @Override
-    public <T, R> void tryShutdown(final Function<T, R> func, final T t) {
-        tryCount.getAndIncrement();
+    public <T> boolean tryShutdown(final Function<T, Boolean> func, final T t) {
         if (!done.get()) {
-            return;
+            return false;
         }
-        tryDoneCount.getAndIncrement();
+        System.out.println("tryShutdown all done");
         if (jobStore.isDone()) {
-
-            func.apply(t);
-            shutdownCount.getAndIncrement();
-            System.out.printf("%d %d %d %d\n", doneCount.get(), tryCount.get(),
-                    tryDoneCount.get(), shutdownCount.get());
+            return func.apply(t);
+        } else {
+            System.out.println("tryShutdown jobStore not done");
+            return false;
         }
     }
 
@@ -60,5 +51,6 @@ public class Shutdown implements IShutdown {
 
     @Override
     public void tryTerminate() {
+        System.out.println("try terminate");
     }
 }

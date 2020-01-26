@@ -6,7 +6,7 @@ public interface IPayloadStore {
 
     void putPayload(Payload payload) throws InterruptedException;
 
-    Payload takePayload() throws InterruptedException;
+    Payload takePayload(int timeout) throws InterruptedException;
 
     int getPayloadsCount();
 

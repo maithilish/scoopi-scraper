@@ -65,6 +65,8 @@ public class CrashCleaner {
                     p -> p.isTaken() && p.getMemberId().equals(crashedMemberId))
                     .map(ClusterJob::getJobId).collect(Collectors.toList());
             if (takenJobs.size() > 0) {
+                LOGGER.info("reset taken jobs {} by {}", takenJobs.size(),
+                        crashedMemberId);
                 TransactionContext tx = hz.newTransactionContext(txOptions);
                 try {
                     tx.beginTransaction();

@@ -8,10 +8,9 @@ public interface IShutdown {
 
     void setDone();
 
-    <T, R> void tryShutdown(Function<T, R> func, T t);
+    <T> boolean tryShutdown(Function<T, Boolean> func, T t);
 
     void setTerminate();
 
     void tryTerminate();
-
 }

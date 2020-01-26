@@ -69,7 +69,7 @@ public class TaskRunnerTest {
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(true);
 
-        given(payloadStore.takePayload()).willReturn(payload);
+        given(payloadStore.takePayload(0)).willReturn(payload);
         given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);
         given(step.getStepName()).willReturn(poolName);
@@ -92,7 +92,7 @@ public class TaskRunnerTest {
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(false).willReturn(true);
 
-        given(payloadStore.takePayload()).willReturn(payload);
+        given(payloadStore.takePayload(0)).willReturn(payload);
         given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);
         given(step.getStepName()).willReturn(poolName);
@@ -129,7 +129,7 @@ public class TaskRunnerTest {
 
         Payload payload = Mockito.mock(Payload.class);
 
-        given(payloadStore.takePayload()).willReturn(payload);
+        given(payloadStore.takePayload(0)).willReturn(payload);
         given(taskFactory.createTask(payload))
                 .willThrow(ClassNotFoundException.class)
                 .willThrow(InstantiationException.class)
@@ -167,7 +167,7 @@ public class TaskRunnerTest {
         FieldUtils.writeDeclaredField(taskMediator, "reservations", 1, true);
         given(poolService.isDone()).willReturn(false).willReturn(true);
 
-        given(payloadStore.takePayload()).willThrow(InterruptedException.class)
+        given(payloadStore.takePayload(0)).willThrow(InterruptedException.class)
                 .willReturn(payload);
         given(taskFactory.createTask(payload)).willReturn(task);
         given(task.getStep()).willReturn(step);

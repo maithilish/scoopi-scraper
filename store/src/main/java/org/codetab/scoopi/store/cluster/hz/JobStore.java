@@ -246,16 +246,16 @@ public class JobStore implements IClusterJobStore {
         try {
             tx.beginTransaction();
             TransactionalMap<String, String> txKeyStoreMap =
-                    tx.getMap("keyStore");
+                    tx.getMap(DsName.KEYSTORE_MAP.toString());
             boolean stateChange = false;
             if (txKeyStoreMap.containsKey(key)) {
-                if (txKeyStoreMap.get(key).equals(State.NEW.toString())) {
-                    txKeyStoreMap.put(key, State.INITIALIZE.toString());
+                stateChange = txKeyStoreMap.replace(key, State.NEW.toString(),
+                        State.INITIALIZE.toString());
+            } else {
+                if (isNull(
+                        txKeyStoreMap.put(key, State.INITIALIZE.toString()))) {
                     stateChange = true;
                 }
-            } else {
-                txKeyStoreMap.put(key, State.INITIALIZE.toString());
-                stateChange = true;
             }
             tx.commitTransaction();
             return stateChange;

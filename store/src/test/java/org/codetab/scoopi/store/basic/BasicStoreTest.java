@@ -32,7 +32,7 @@ public class BasicStoreTest {
 
     @Test
     public void testTakePayload() throws InterruptedException {
-        store.takePayload();
+        store.takePayload(0);
 
         verify(payloads).take();
         verifyNoMoreInteractions(payloads);
