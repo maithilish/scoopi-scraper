@@ -1,10 +1,6 @@
 package org.codetab.scoopi.store.cluster.hz;
 
-import static java.util.Objects.nonNull;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Stack;
 
 import javax.inject.Singleton;
 
@@ -21,47 +17,28 @@ public class MembershipListener
     static final Logger LOGGER =
             LoggerFactory.getLogger(MembershipListener.class);
 
-    private CrashCleaner crashCleaner;
+    private Stack<String> crashedMembers = new Stack<>();
 
-    private Set<String> crashedMembers =
-            Collections.synchronizedSet(new HashSet<>());
-
-    public void setCrashCleaner(final CrashCleaner crashCleaner) {
-        this.crashCleaner = crashCleaner;
-        replayLeftoutCrashes();
+    public Stack<String> getCrashedMembers() {
+        return crashedMembers;
     }
 
     @Override
     public void memberAdded(final MembershipEvent membershipEvent) {
         String addedMemberId = membershipEvent.getMember().getUuid();
-        LOGGER.info("Member joined cluster {}", addedMemberId);
-        replayLeftoutCrashes();
+        LOGGER.info("member joined cluster {}", addedMemberId);
     }
 
     @Override
     public void memberRemoved(final MembershipEvent membershipEvent) {
         String crashedMemberId = membershipEvent.getMember().getUuid();
-        if (nonNull(crashCleaner)) {
-            crashCleaner.addCrashedMember(crashedMemberId);
-            replayLeftoutCrashes();
-        } else {
-            crashedMembers.add(crashedMemberId);
-        }
-        // shutdown.removeMember(crashedMemberId);
-        LOGGER.info("Member {} left cluster, schedule reset jobs",
+        LOGGER.info("member {} left cluster, schedule reset taken jobs",
                 crashedMemberId);
+        crashedMembers.push(crashedMemberId);
     }
 
     @Override
     public void memberAttributeChanged(
             final MemberAttributeEvent memberAttributeEvent) {
-    }
-
-    // replay any left out crashed members
-    private void replayLeftoutCrashes() {
-        for (String memberId : crashedMembers) {
-            crashCleaner.addCrashedMember(memberId);
-            crashedMembers.remove(memberId);
-        }
     }
 }

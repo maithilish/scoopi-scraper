@@ -34,7 +34,6 @@ import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IShutdown;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
-import org.codetab.scoopi.store.cluster.hz.MembershipListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +49,6 @@ public class ScoopiSystem {
     private TaskMediator taskMediator;
     @Inject
     private JobMediator jobMediator;
-    @Inject
-    private MembershipListener membershipListener;
     @Inject
     private CrashCleaner crashCleaner;
     @Inject
@@ -112,7 +109,6 @@ public class ScoopiSystem {
     public void initClusterListeners() {
         if (configs.isCluster()) {
             crashCleaner.init();
-            membershipListener.setCrashCleaner(crashCleaner);
         }
     }
 

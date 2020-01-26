@@ -37,12 +37,9 @@ public class TaskMediator {
     @Inject
     private IShutdown shutdown;
 
-    private TaskRunnerThread taskRunner = new TaskRunnerThread();
-
-    // private AtomicInteger reservations = new AtomicInteger();
     private AtomicReference<TMState> state =
             new AtomicReference<>(TMState.READY);
-
+    private TaskRunnerThread taskRunner = new TaskRunnerThread();
     private int taskPollRetryInterval;
 
     public void start() {
@@ -55,7 +52,7 @@ public class TaskMediator {
         try {
             taskRunner.join();
             state.set(TMState.TERMINATED);
-            LOGGER.debug("task mediator terminated");
+            LOGGER.info("task mediator state change {}", state);
         } catch (final InterruptedException e) {
             final String message = "wait for finish interrupted";
             errorLogger.log(CAT.INTERNAL, message, e);
@@ -66,16 +63,14 @@ public class TaskMediator {
             throws InterruptedException {
         notNull(payload, "payload must not be null");
 
-        TMState st = state.get();
-        if (st.equals(TMState.SHUTDOWN) || st.equals(TMState.TERMINATED)) {
+        if (state.get().equals(TMState.SHUTDOWN)
+                || state.get().equals(TMState.TERMINATED)) {
             throw new IllegalStateException(
                     "task mediator is terminated, can't push payload");
         }
 
         state.set(TMState.READY);
         payloadStore.putPayload(payload);
-        // reservations.getAndIncrement();
-
         return true;
     }
 
@@ -140,7 +135,6 @@ public class TaskMediator {
         if (isNull(payload)) {
             return false;
         }
-        // reservations.getAndDecrement();
 
         final Task task = taskFactory.createTask(payload);
         final String poolName = task.getStep().getStepName();

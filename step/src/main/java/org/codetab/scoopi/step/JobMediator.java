@@ -74,14 +74,9 @@ public class JobMediator {
     public void waitForFinish() {
         try {
             taskMediator.waitForFinish();
-            System.out.println("tm wait for finish over");
             jobRunner.join();
-            System.out.println("job runner joined");
             jobStore.close();
-            System.out.println("job store closed");
             shutdown.setTerminate();
-            System.out.println("shutdown terminate set");
-            // shutdown.tryTerminate();
         } catch (final InterruptedException e) {
             final String message = "wait for finish interrupted";
             errorLogger.log(CAT.INTERNAL, message, e);
@@ -90,17 +85,13 @@ public class JobMediator {
 
     public void pushPayload(final Payload payload) throws InterruptedException {
         notNull(payload, "payload must not be null");
-        if (jobStore.putJob(payload)) {
-            // taskMediator.setState(TaskMediator.State.READY);
-        }
+        jobStore.putJob(payload);
     }
 
     public void pushPayloads(final List<Payload> payloads, final long jobId)
             throws InterruptedException {
         notNull(payloads, "payloads must not be null");
-        if (jobStore.putJobs(payloads, jobId)) {
-            // taskMediator.setState(TaskMediator.State.READY);
-        }
+        jobStore.putJobs(payloads, jobId);
     }
 
     public void setSeedDoneSignal(final int size) {
@@ -183,6 +174,8 @@ public class JobMediator {
 
             if (taskMediator.isState(TMState.DONE)
                     && taskMediator.tryShutdown()) {
+                LOGGER.info("task mediator state change {}",
+                        taskMediator.getState());
                 return false;
             }
 
@@ -200,9 +193,9 @@ public class JobMediator {
             if (e instanceof IllegalStateException) {
                 errorLogger.log(CAT.INTERNAL, "unable to initiate job", e);
             }
+            LOGGER.debug("task mediator state {}", taskMediator.getState());
             LOGGER.debug("retry initiate job after {} ms, {}", takeFailWait,
                     e.getLocalizedMessage());
-            LOGGER.info("TM state {}", taskMediator.getState());
             Thread.sleep(takeFailWait);
             return false;
         }

@@ -1,9 +1,10 @@
 package org.codetab.scoopi.store.cluster.hz;
 
-import static java.util.stream.Collectors.toList;
-
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -16,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.HazelcastInstanceNotActiveException;
 import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
@@ -30,8 +30,9 @@ public class CrashCleaner {
     private Configs configs;
     @Inject
     private ICluster cluster;
+    @Inject
+    private MembershipListener membershipListener;
 
-    private Map<String, Boolean> crashMembersMap;
     private Map<Long, ClusterJob> takenJobsMap;
     private TransactionOptions txOptions;
 
@@ -40,30 +41,28 @@ public class CrashCleaner {
     public void init() {
         hz = (HazelcastInstance) cluster.getInstance();
         txOptions = (TransactionOptions) cluster.getTxOptions(configs);
-        crashMembersMap = hz.getMap(DsName.CRASHED_MEMBERS_MAP.toString());
         takenJobsMap = hz.getMap(DsName.TAKEN_JOBS_MAP.toString());
     }
 
-    public void addCrashedMember(final String crashedMemberId) {
-        try {
-            crashMembersMap.putIfAbsent(crashedMemberId, false);
-        } catch (HazelcastInstanceNotActiveException e) {
-        }
-    }
-
     public boolean resetCrashedJobs() {
+        Stack<String> crashedMembers = membershipListener.getCrashedMembers();
+        if (crashedMembers.isEmpty()) {
+            return false;
+        }
         if (!cluster.getLeader().equals(cluster.getMemberId())) {
             return false;
         }
 
-        List<String> crashMembers = crashMembersMap.entrySet().stream()
-                .filter(e -> e.getValue().equals(false)).map(e -> e.getKey())
-                .collect(toList());
+        Set<String> failedItems = new HashSet<>();
 
-        for (String crashedMemberId : crashMembers) {
+        while (!crashedMembers.isEmpty()) {
+
+            String crashedMemberId = crashedMembers.pop();
+
             List<Long> takenJobs = takenJobsMap.values().stream().filter(
                     p -> p.isTaken() && p.getMemberId().equals(crashedMemberId))
                     .map(ClusterJob::getJobId).collect(Collectors.toList());
+
             if (takenJobs.size() > 0) {
                 LOGGER.info("reset taken jobs {} by {}", takenJobs.size(),
                         crashedMemberId);
@@ -74,8 +73,6 @@ public class CrashCleaner {
                             tx.getMap(DsName.JOBS_MAP.toString());
                     TransactionalMap<Long, ClusterJob> txTakenJobsMap =
                             tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
-                    TransactionalMap<String, Boolean> txCrashMemberMap =
-                            tx.getMap(DsName.CRASHED_MEMBERS_MAP.toString());
 
                     for (Long jobId : takenJobs) {
                         LOGGER.debug("reset taken job {}", jobId);
@@ -84,14 +81,17 @@ public class CrashCleaner {
                         cJob.setMemberId(null);
                         txJobsMap.put(jobId, cJob);
                     }
-                    txCrashMemberMap.set(crashedMemberId, true);
+
                     tx.commitTransaction();
                 } catch (Exception e) {
+                    failedItems.add(crashedMemberId);
                     tx.rollbackTransaction();
                     throw e;
                 }
             }
         }
+        // add back failed members
+        crashedMembers.addAll(failedItems);
         return true;
     }
 }

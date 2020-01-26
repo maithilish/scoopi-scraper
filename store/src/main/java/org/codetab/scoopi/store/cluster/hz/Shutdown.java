@@ -64,17 +64,15 @@ public class Shutdown implements IShutdown {
             if (clst.getMembers().stream().map(Member::getUuid)
                     .map(uuid -> doneMap.get(uuid))
                     .anyMatch(v -> v.equals(false))) {
-                System.out.println("tryShutdown not all done");
                 return false;
             }
         } catch (NullPointerException e) {
             return false;
         }
-        System.out.println("tryShutdown all done");
+
         if (jobStore.isDone()) {
             return func.apply(t);
         } else {
-            System.out.println("tryShutdown jobStore not done");
             return false;
         }
     }
@@ -82,26 +80,24 @@ public class Shutdown implements IShutdown {
     @Override
     public void tryTerminate() {
         try {
-            System.out.println("try cluster terminate");
             LOGGER.info("try cluster shutdown");
             // get terminate status of active members
             if (clst.getMembers().stream().map(Member::getUuid)
                     .map(uuid -> terminateMap.get(uuid))
                     .anyMatch(v -> v.equals(false))) {
-                LOGGER.info(
-                        "cluster shutdown failed, some of the node are active");
+                LOGGER.info("failed, cluster has some active nodes");
                 return;
             }
-            LOGGER.info("all scoopi instances are finished, shutdown cluster");
+
+            LOGGER.info("all scoopi instances are completed, go for shutdown");
             if (clst.getClusterState().equals(ClusterState.ACTIVE)) {
-                LOGGER.info("shutdown cluster initiated");
+                LOGGER.info("cluster shutdown initiated");
                 clst.shutdown();
             } else {
-                LOGGER.info(
-                        "shutdown cluster already initiated by another node");
+                LOGGER.info("cluster shutdown already initiated");
             }
-            LOGGER.info("cluster shutdown completed");
 
+            LOGGER.info("cluster shutdown completed");
         } catch (HazelcastInstanceNotActiveException e) {
 
         }
