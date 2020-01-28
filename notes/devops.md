@@ -372,19 +372,6 @@ to run scoopi.bat, get into window command prompt and run bat file
      wine cmd
      C:\scoopi-0.9.0-beta>scoopi.bat
 
-
-## Docker local build
-
-for io.fabric8:docker-maven-plugin prefix is docker
-
-list goals 
-
-     mvn docker:help
-     
-build image and add image to local image repository
-
-     mvn docker:build
-         
 ## Github
 
 clone and create new project in workspace
@@ -403,6 +390,10 @@ travis maven and build steps
  - https://docs.travis-ci.com/user/languages/java/#Projects-Using-Maven
  - https://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Build-Step
      
+## Docker local build
+
+	mvn clean verify -P basic,ng,release,docker
+
 ## Release
 
 merge branch if any and change version in all modules
@@ -418,7 +409,7 @@ commit and add tag
 	
 build release 
 
-	mvn clean verify -P basic,release
+	mvn clean verify -P basic,ng,release,docker
 
 release profile creates release zip and installs docker image in local repository.
 	

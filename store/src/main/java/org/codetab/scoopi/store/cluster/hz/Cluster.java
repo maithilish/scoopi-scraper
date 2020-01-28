@@ -1,5 +1,7 @@
 package org.codetab.scoopi.store.cluster.hz;
 
+import static java.util.Objects.isNull;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -36,25 +38,35 @@ public class Cluster implements ICluster {
 
     @Override
     public void start() {
-        LOGGER.info("start Hazelcast cluster");
+        String hzConfigFile = getConfigFile();
+        try {
+            LOGGER.info("load hz config file {}", hzConfigFile);
+            Config cfg = new XmlConfigBuilder(
+                    Cluster.class.getResourceAsStream(hzConfigFile)).build();
+            cfg.addListenerConfig(new ListenerConfig(membershipListener));
+            addSystemProperties(cfg);
 
-        Config cfg = new XmlConfigBuilder(
-                Cluster.class.getResourceAsStream("/hazelcast.xml")).build();
-        cfg.addListenerConfig(new ListenerConfig(membershipListener));
+            LOGGER.info("start Hazelcast cluster");
+            hz = Hazelcast.newHazelcastInstance(cfg);
 
-        // configs is not yet initialized, get from system
-        String minClusterSize =
-                System.getProperty("scoopi.cluster.minSize", "1");
-        cfg.setProperty("hazelcast.initial.min.cluster.size", minClusterSize);
-
-        hz = Hazelcast.newHazelcastInstance(cfg);
-
-        Set<Member> members = hz.getCluster().getMembers();
-        LOGGER.info("joined Hazelcast cluster: group: {}, members: {}",
-                cfg.getGroupConfig().getName(), members.size());
-        for (Member member : members) {
-            LOGGER.info("member: {}", member.getUuid());
+            String group = cfg.getGroupConfig().getName();
+            logMemberInfo(group);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("hz config file {} not found", hzConfigFile);
+            throw new CriticalException("fail to start Hazelcast cluster");
         }
+    }
+
+    /**
+     * Get hazelcast config file name from system properties or return default
+     * @return
+     */
+    private String getConfigFile() {
+        String configFile = System.getProperty("hazelcast.config");
+        if (isNull(configFile)) {
+            configFile = "/hazelcast.xml";
+        }
+        return configFile;
     }
 
     @Override
@@ -102,6 +114,33 @@ public class Cluster implements ICluster {
                     .setTimeout(txTimeout, timeUnit);
         } catch (NumberFormatException | ConfigNotFoundException e) {
             throw new CriticalException(e);
+        }
+    }
+
+    /**
+     * Add additional hazelcast system properties specified with -D option in
+     * command line
+     * @param cfg
+     */
+    private void addSystemProperties(final Config cfg) {
+        System.getProperties().entrySet().stream()
+                .filter(e -> ((String) e.getKey()).startsWith("hazelcast"))
+                .forEach(e -> {
+                    cfg.setProperty((String) e.getKey(), (String) e.getValue());
+                    LOGGER.debug("set {} {}", e.getKey(), e.getValue());
+                });
+    }
+
+    private void logMemberInfo(final String group) {
+        Set<Member> members = hz.getCluster().getMembers();
+        LOGGER.info("joined Hazelcast cluster: group: {}, members: {}", group,
+                members.size());
+        for (Member member : members) {
+            if (member.localMember()) {
+                LOGGER.info("member: {} this", member.getUuid());
+            } else {
+                LOGGER.info("member: {}", member.getUuid());
+            }
         }
     }
 }

@@ -46,6 +46,7 @@
                             <include>scoopi.properties</include>
                             <include>jdoconfig.properties</include>
                             <include>logback.xml</include>
+                            <include>hazelcast.xml</include>
                             <include>log4j.properties</include>
                         </includes>
                     </fileSet>
