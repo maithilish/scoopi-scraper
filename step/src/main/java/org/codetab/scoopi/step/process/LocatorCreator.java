@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
+import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.PayloadFactory;
@@ -66,7 +67,8 @@ public class LocatorCreator extends BaseProcessor {
         // mark this job as finished and push new task jobs for this document
         try {
             jobMediator.pushPayloads(payloads, jobId);
-        } catch (InterruptedException | JobStateException e) {
+        } catch (InterruptedException | JobStateException
+                | TransactionException e) {
             final String message =
                     spaceit("handover link locators,", getPayload().toString());
             throw new StepRunException(message, e);

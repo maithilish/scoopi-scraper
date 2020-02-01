@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
+import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Locator;
@@ -113,8 +114,8 @@ public final class LocatorSeeder extends BaseSeeder {
                                 taskMediator.pushPayload(payload);
                             }
                             meter.mark();
-                        } catch (final InterruptedException
-                                | JobStateException e) {
+                        } catch (final InterruptedException | JobStateException
+                                | TransactionException e) {
                             // just log error for this payload and continue
                             final String message = spaceit("handover locator,",
                                     payload.toString());

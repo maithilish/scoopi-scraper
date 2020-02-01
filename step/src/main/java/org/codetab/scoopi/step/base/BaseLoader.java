@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
+import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.Payload;
@@ -309,7 +310,8 @@ public abstract class BaseLoader extends Step {
         // mark this job as finished and push new task jobs for this document
         try {
             jobMediator.pushPayloads(payloads, jobId);
-        } catch (InterruptedException | JobStateException e) {
+        } catch (InterruptedException | JobStateException
+                | TransactionException e) {
             final String message =
                     spaceit("create defined tasks for the document and push",
                             getPayload().toString());

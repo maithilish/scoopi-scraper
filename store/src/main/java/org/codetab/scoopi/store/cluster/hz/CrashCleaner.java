@@ -64,7 +64,7 @@ public class CrashCleaner {
                     .map(ClusterJob::getJobId).collect(Collectors.toList());
 
             if (takenJobs.size() > 0) {
-                LOGGER.info("reset taken jobs {} by {}", takenJobs.size(),
+                LOGGER.info("reset {} jobs taken by {}", takenJobs.size(),
                         crashedMemberId);
                 TransactionContext tx = hz.newTransactionContext(txOptions);
                 try {
@@ -86,7 +86,9 @@ public class CrashCleaner {
                 } catch (Exception e) {
                     failedItems.add(crashedMemberId);
                     tx.rollbackTransaction();
-                    throw e;
+                    LOGGER.warn("could not reset jobs taken by {}, {}",
+                            crashedMemberId, e.getLocalizedMessage());
+                    LOGGER.debug("{}", e);
                 }
             }
         }

@@ -11,6 +11,7 @@ import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
+import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -66,7 +67,8 @@ public abstract class Step implements IStep {
             final String taskName = getJobInfo().getTask();
 
             if (getStepInfo().getNextStepName().equalsIgnoreCase("end")) {
-                jobMediator.markJobFinished(getJobInfo().getId());
+                long jobId = getJobInfo().getId();
+                jobMediator.markJobFinished(jobId);
                 LOGGER.info(marker, "job: {} finished",
                         getJobInfo().getLabel());
             } else {
@@ -79,7 +81,7 @@ public abstract class Step implements IStep {
                         nextStep.getStepName());
             }
         } catch (DefNotFoundException | InterruptedException | JobStateException
-                | IllegalStateException e) {
+                | IllegalStateException | TransactionException e) {
             throw new StepRunException("unable to handover", e);
         }
         return true;

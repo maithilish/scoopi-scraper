@@ -17,6 +17,7 @@ import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.JobStateException;
+import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.ClusterJob;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
@@ -83,7 +84,8 @@ public class JobStore implements IClusterJobStore {
     }
 
     @Override
-    public boolean putJob(final Payload payload) throws InterruptedException {
+    public boolean putJob(final Payload payload)
+            throws InterruptedException, TransactionException {
         notNull(payload, "payload must not be null");
 
         long jobId = payload.getJobInfo().getId();
@@ -109,7 +111,9 @@ public class JobStore implements IClusterJobStore {
             return true;
         } catch (Exception e) {
             tx.rollbackTransaction();
-            throw e;
+            String message =
+                    spaceit("put job", payload.getJobInfo().getLabel());
+            throw new TransactionException(message, e);
         }
     }
 
@@ -117,10 +121,11 @@ public class JobStore implements IClusterJobStore {
      * Push payloads in batch and mark job id as finished. If job id is -1 then
      * it is not marked.
      * @throws InterruptedException
+     * @throws TransactionException
      */
     @Override
     public boolean putJobs(final List<Payload> payloads, final long jobId)
-            throws InterruptedException {
+            throws InterruptedException, TransactionException {
 
         TransactionContext tx = hz.newTransactionContext(txOptions);
 
@@ -155,14 +160,19 @@ public class JobStore implements IClusterJobStore {
 
             tx.commitTransaction();
             return true;
-        } catch (Exception e) {
+        } catch (JobStateException e) {
             tx.rollbackTransaction();
             throw e;
+        } catch (Exception e) {
+            tx.rollbackTransaction();
+            String message =
+                    spaceit("put jobs of job id", String.valueOf(jobId));
+            throw new TransactionException(message, e);
         }
     }
 
     @Override
-    public Payload takeJob() throws InterruptedException {
+    public Payload takeJob() throws InterruptedException, TransactionException {
         Optional<ClusterJob> opt =
                 jobsMap.values().stream().filter(p -> !p.isTaken()).findFirst();
         long jobId = -1;
@@ -204,12 +214,13 @@ public class JobStore implements IClusterJobStore {
             }
         } catch (Exception e) {
             tx.rollbackTransaction();
-            throw e;
+            String message = "take job";
+            throw new TransactionException(message, e);
         }
     }
 
     @Override
-    public boolean markFinished(final long jobId) {
+    public boolean markFinished(final long jobId) throws TransactionException {
 
         TransactionContext tx = hz.newTransactionContext(txOptions);
 
@@ -224,7 +235,7 @@ public class JobStore implements IClusterJobStore {
             try {
                 txPayloadsMap.remove(jobId);
             } catch (Exception e) {
-                // ignore if no such job or any exception
+                // ignore if no payload for the job or any other error
             }
             if (Objects.isNull(txTakenJobsMap.remove(jobId))) {
                 throw new JobStateException(
@@ -233,14 +244,49 @@ public class JobStore implements IClusterJobStore {
             }
             tx.commitTransaction();
             return true;
-        } catch (Exception e) {
+        } catch (JobStateException e) {
             tx.rollbackTransaction();
             throw e;
+        } catch (Exception e) {
+            tx.rollbackTransaction();
+            String message = spaceit("mark finish job", String.valueOf(jobId));
+            throw new TransactionException(message, e);
+        }
+    }
+
+    /**
+     * Methods such as markFinish or takeJobs which removes taken job from map
+     * may fail when a member crashes. Call this method when such method throws
+     * TransactionException to remove the taken job and add it back to jobs map.
+     */
+    @Override
+    public boolean resetTakenJob(final long jobId) throws TransactionException {
+
+        TransactionContext tx = hz.newTransactionContext(txOptions);
+        try {
+            tx.beginTransaction();
+            TransactionalMap<Long, ClusterJob> txJobsMap =
+                    tx.getMap(DsName.JOBS_MAP.toString());
+            TransactionalMap<Long, ClusterJob> txTakenJobsMap =
+                    tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
+
+            LOGGER.debug("reset taken job {}", jobId);
+            ClusterJob cJob = txTakenJobsMap.remove(jobId);
+            cJob.setTaken(false);
+            cJob.setMemberId(null);
+            txJobsMap.put(jobId, cJob);
+
+            tx.commitTransaction();
+            return true;
+        } catch (Exception e) {
+            tx.rollbackTransaction();
+            String message = spaceit("reset taken job", String.valueOf(jobId));
+            throw new TransactionException(message, e);
         }
     }
 
     @Override
-    public boolean changeStateToInitialize() {
+    public boolean changeStateToInitialize() throws TransactionException {
         String key = "data_grid_state";
         TransactionContext tx = hz.newTransactionContext();
         try {
@@ -261,7 +307,8 @@ public class JobStore implements IClusterJobStore {
             return stateChange;
         } catch (Exception e) {
             tx.rollbackTransaction();
-            throw e;
+            String message = "change data grid state to initialize";
+            throw new TransactionException(message, e);
         }
     }
 

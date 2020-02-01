@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.JobStateException;
+import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
@@ -60,10 +61,15 @@ public class JobMediator {
                 .parseInt(configs.getConfig("scoopi.job.pushInterval", "0"));
         shutdown.init();
         jobStore.open();
-        if (jobStore.changeStateToInitialize()) {
-            jobSeeder.set(true);
-        } else {
+        try {
+            if (jobStore.changeStateToInitialize()) {
+                jobSeeder.set(true);
+            } else {
+                jobSeeder.set(false);
+            }
+        } catch (TransactionException e) {
             jobSeeder.set(false);
+            LOGGER.warn("{}", e);
         }
     }
 
@@ -83,15 +89,22 @@ public class JobMediator {
         }
     }
 
-    public void pushPayload(final Payload payload) throws InterruptedException {
+    public void pushPayload(final Payload payload)
+            throws InterruptedException, TransactionException {
         notNull(payload, "payload must not be null");
         jobStore.putJob(payload);
     }
 
     public void pushPayloads(final List<Payload> payloads, final long jobId)
-            throws InterruptedException {
+            throws InterruptedException, TransactionException {
         notNull(payloads, "payloads must not be null");
-        jobStore.putJobs(payloads, jobId);
+        try {
+            jobStore.putJobs(payloads, jobId);
+        } catch (JobStateException e) {
+            LOGGER.debug("{}", e.getLocalizedMessage());
+        } catch (TransactionException e) {
+            jobStore.resetTakenJob(jobId);
+        }
     }
 
     public void setSeedDoneSignal(final int size) {
@@ -112,8 +125,14 @@ public class JobMediator {
         return jobStore.getJobIdSeq();
     }
 
-    public void markJobFinished(final long id) {
-        jobStore.markFinished(id);
+    public void markJobFinished(final long jobId) throws TransactionException {
+        try {
+            jobStore.markFinished(jobId);
+        } catch (JobStateException e) {
+            LOGGER.debug("{}", e.getLocalizedMessage());
+        } catch (TransactionException e) {
+            jobStore.resetTakenJob(jobId);
+        }
     }
 
     class JobRunnerThread extends Thread {
@@ -189,7 +208,7 @@ public class JobMediator {
             taskMediator.pushPayload(payload);
             return true;
         } catch (JobStateException | NoSuchElementException
-                | IllegalStateException e) {
+                | IllegalStateException | TransactionException e) {
             if (e instanceof IllegalStateException) {
                 errorLogger.log(CAT.INTERNAL, "unable to initiate job", e);
             }
@@ -200,5 +219,4 @@ public class JobMediator {
             return false;
         }
     }
-
 }

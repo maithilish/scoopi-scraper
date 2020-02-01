@@ -32,8 +32,7 @@ public class MembershipListener
     @Override
     public void memberRemoved(final MembershipEvent membershipEvent) {
         String crashedMemberId = membershipEvent.getMember().getUuid();
-        LOGGER.info("member {} left cluster, schedule reset taken jobs",
-                crashedMemberId);
+        LOGGER.info("member {} left cluster", crashedMemberId);
         crashedMembers.push(crashedMemberId);
     }
 

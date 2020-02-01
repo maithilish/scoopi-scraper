@@ -102,6 +102,7 @@ public class ScoopiSystem {
     }
 
     public boolean stopCluster() {
+        shutdown.setTerminate();
         shutdown.tryTerminate();
         return true;
     }

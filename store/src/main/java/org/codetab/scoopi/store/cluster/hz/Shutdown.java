@@ -6,13 +6,13 @@ import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hazelcast.cluster.ClusterState;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.HazelcastInstanceNotActiveException;
@@ -61,43 +61,36 @@ public class Shutdown implements IShutdown {
     @Override
     public <T> boolean tryShutdown(final Function<T, Boolean> func, final T t) {
         try {
-            if (clst.getMembers().stream().map(Member::getUuid)
-                    .map(uuid -> doneMap.get(uuid))
-                    .anyMatch(v -> v.equals(false))) {
+            if (clst.getMembers().stream().map(Member::getUuid).map(uuid -> {
+                return ObjectUtils.defaultIfNull(doneMap.get(uuid), false);
+            }).anyMatch(v -> v.equals(false))) {
+                LOGGER.debug("try shutdown, all not done, job store isDone {}",
+                        jobStore.isDone());
                 return false;
             }
         } catch (NullPointerException e) {
+            LOGGER.debug("try shutdown, {}", e);
             return false;
         }
 
         if (jobStore.isDone()) {
             return func.apply(t);
         } else {
+            LOGGER.debug("try shutdown, all done, job store isDone false");
             return false;
         }
     }
 
     @Override
     public void tryTerminate() {
+        /**
+         * shutdown initiated at cluster level fails sometimes, so reverted back
+         * to node shutdown.
+         */
         try {
-            LOGGER.info("try cluster shutdown");
-            // get terminate status of active members
-            if (clst.getMembers().stream().map(Member::getUuid)
-                    .map(uuid -> terminateMap.get(uuid))
-                    .anyMatch(v -> v.equals(false))) {
-                LOGGER.info("failed, cluster has some active nodes");
-                return;
-            }
-
-            LOGGER.info("all scoopi instances are completed, go for shutdown");
-            if (clst.getClusterState().equals(ClusterState.ACTIVE)) {
-                LOGGER.info("cluster shutdown initiated");
-                clst.shutdown();
-            } else {
-                LOGGER.info("cluster shutdown already initiated");
-            }
-
-            LOGGER.info("cluster shutdown completed");
+            LOGGER.info("try shutdown node");
+            hz.shutdown();
+            LOGGER.info("node shutdown completed");
         } catch (HazelcastInstanceNotActiveException e) {
 
         }

@@ -2,6 +2,7 @@ package org.codetab.scoopi.store;
 
 import java.util.List;
 
+import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.Payload;
 
 public interface IJobStore {
@@ -14,14 +15,17 @@ public interface IJobStore {
 
     void close();
 
-    boolean putJob(Payload payload) throws InterruptedException;
+    boolean putJob(Payload payload)
+            throws InterruptedException, TransactionException;
 
     boolean putJobs(List<Payload> payloads, long jobId)
-            throws InterruptedException;
+            throws InterruptedException, TransactionException;
 
-    Payload takeJob() throws InterruptedException;
+    Payload takeJob() throws InterruptedException, TransactionException;
 
-    boolean markFinished(long id);
+    boolean markFinished(long id) throws TransactionException;
+
+    boolean resetTakenJob(long jobId) throws TransactionException;
 
     void resetCrashedJobs();
 
@@ -33,7 +37,7 @@ public interface IJobStore {
 
     void setState(State state);
 
-    boolean changeStateToInitialize();
+    boolean changeStateToInitialize() throws TransactionException;
 
     String getMemberId();
 
@@ -44,4 +48,5 @@ public interface IJobStore {
     int getJobTakeLimit();
 
     long getJobIdSeq();
+
 }

@@ -159,3 +159,4 @@ unzip
 webapp
 tx
 dashboard
+configurize
