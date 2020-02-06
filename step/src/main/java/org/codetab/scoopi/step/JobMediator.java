@@ -5,7 +5,6 @@ import static org.apache.commons.lang3.Validate.notNull;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,6 +15,7 @@ import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Payload;
+import org.codetab.scoopi.step.extract.JobSeeder;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
 import org.slf4j.Logger;
@@ -36,9 +36,10 @@ public class JobMediator {
     private IShutdown shutdown;
     @Inject
     private ErrorLogger errorLogger;
+    @Inject
+    private JobSeeder jobSeeder;
 
     private JobRunnerThread jobRunner = new JobRunnerThread();
-    private AtomicBoolean jobSeeder = new AtomicBoolean(false);
     private CountDownLatch seedDoneSignal;
 
     private int takeFailWait; // job take fail, retry wait
@@ -61,16 +62,6 @@ public class JobMediator {
                 .parseInt(configs.getConfig("scoopi.job.pushInterval", "0"));
         shutdown.init();
         jobStore.open();
-        try {
-            if (jobStore.changeStateToInitialize()) {
-                jobSeeder.set(true);
-            } else {
-                jobSeeder.set(false);
-            }
-        } catch (TransactionException e) {
-            jobSeeder.set(false);
-            LOGGER.warn("{}", e);
-        }
     }
 
     public void start() {
@@ -117,10 +108,6 @@ public class JobMediator {
         LOGGER.debug("job seed latch countdown");
     }
 
-    public boolean isJobSeeder() {
-        return jobSeeder.get();
-    }
-
     public long getJobIdSequence() {
         return jobStore.getJobIdSeq();
     }
@@ -149,7 +136,7 @@ public class JobMediator {
             } catch (final InterruptedException e) {
                 errorLogger.log(CAT.ERROR, "unable finish seeding", e);
             }
-            if (jobSeeder.get()) {
+            if (jobSeeder.isSeeder()) {
                 jobStore.setState(IJobStore.State.READY);
             }
 

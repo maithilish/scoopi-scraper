@@ -1,5 +1,7 @@
 package org.codetab.scoopi.store.cluster.hz;
 
+import static java.util.Objects.nonNull;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import javax.inject.Singleton;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.model.ClusterJob;
 import org.codetab.scoopi.store.ICluster;
+import org.codetab.scoopi.store.IJobStore.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,5 +98,49 @@ public class CrashCleaner {
         // add back failed members
         crashedMembers.addAll(failedItems);
         return true;
+    }
+
+    public void resetSeedState() {
+        Stack<String> crashedMembers = membershipListener.getCrashedMembers();
+        if (crashedMembers.isEmpty()) {
+            return;
+        }
+
+        TransactionContext tx = hz.newTransactionContext(txOptions);
+        try {
+            tx.beginTransaction();
+            TransactionalMap<String, String> txKeyStoreMap =
+                    tx.getMap(DsName.KEYSTORE_MAP.toString());
+
+            if (txKeyStoreMap.getForUpdate(DsName.DATA_GRID_STATE.toString())
+                    .equalsIgnoreCase(State.INITIALIZE.toString())) {
+                String seederMemberId =
+                        txKeyStoreMap.getForUpdate(DsName.SEEDER_ID.toString());
+                if (nonNull(seederMemberId)
+                        && crashedMembers.contains(seederMemberId)) {
+                    LOGGER.info(
+                            "job seeder is crashed, reset job store state to NEW");
+                    txKeyStoreMap.set(DsName.DATA_GRID_STATE.toString(),
+                            State.NEW.toString());
+                    if (!txKeyStoreMap.remove(DsName.SEEDER_ID.toString(),
+                            seederMemberId)) {
+                        throw new IllegalStateException(
+                                "another node has already reset the seed state");
+                    }
+                }
+            }
+            tx.commitTransaction();
+        } catch (Exception e) {
+            tx.rollbackTransaction();
+            LOGGER.warn("could not reset seed state, {}",
+                    e.getLocalizedMessage());
+            LOGGER.debug("{}", e);
+        }
+
+    }
+
+    public void clearDanglingJobs() {
+        Map<Long, ClusterJob> jobsMap = hz.getMap(DsName.JOBS_MAP.toString());
+        jobsMap.clear();
     }
 }

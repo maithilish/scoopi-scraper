@@ -7,6 +7,7 @@ import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.step.extract.JobSeeder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,8 @@ public class ScoopiEngine {
     private JobMediator jobMediator;
     @Inject
     private ErrorLogger errorLogger;
+    @Inject
+    private JobSeeder jobSeeder;
 
     /*
      * single thread env throws CriticalException and terminates the app and
@@ -43,7 +46,11 @@ public class ScoopiEngine {
             scoopiSystem.initCluster();
             jobMediator.init();
             scoopiSystem.initClusterListeners();
-            scoopiSystem.seedLocatorGroups();
+
+            if (jobSeeder.acquirePermitToSeed()) {
+                jobSeeder.clearDanglingJobs();
+                jobSeeder.seedLocatorGroups();
+            }
             LOGGER.info("scoopi initialized");
 
             scoopiSystem.waitForInput();

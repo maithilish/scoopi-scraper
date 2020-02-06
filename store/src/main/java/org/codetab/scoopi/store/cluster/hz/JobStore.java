@@ -287,21 +287,24 @@ public class JobStore implements IClusterJobStore {
 
     @Override
     public boolean changeStateToInitialize() throws TransactionException {
-        String key = "data_grid_state";
+        String dataGridStateKey = DsName.DATA_GRID_STATE.toString();
         TransactionContext tx = hz.newTransactionContext();
         try {
             tx.beginTransaction();
             TransactionalMap<String, String> txKeyStoreMap =
                     tx.getMap(DsName.KEYSTORE_MAP.toString());
             boolean stateChange = false;
-            if (txKeyStoreMap.containsKey(key)) {
-                stateChange = txKeyStoreMap.replace(key, State.NEW.toString(),
+            if (txKeyStoreMap.containsKey(dataGridStateKey)) {
+                stateChange = txKeyStoreMap.replace(dataGridStateKey, State.NEW.toString(),
                         State.INITIALIZE.toString());
             } else {
                 if (isNull(
-                        txKeyStoreMap.put(key, State.INITIALIZE.toString()))) {
+                        txKeyStoreMap.put(dataGridStateKey, State.INITIALIZE.toString()))) {
                     stateChange = true;
                 }
+            }
+            if (stateChange) {
+                txKeyStoreMap.put(DsName.SEEDER_ID.toString(), memberId);
             }
             tx.commitTransaction();
             return stateChange;
@@ -324,12 +327,13 @@ public class JobStore implements IClusterJobStore {
 
     @Override
     public State getState() {
-        return State.valueOf(keyStoreMap.get("data_grid_state"));
+        return State
+                .valueOf(keyStoreMap.get(DsName.DATA_GRID_STATE.toString()));
     }
 
     @Override
     public void setState(final State state) {
-        keyStoreMap.put("data_grid_state", state.toString());
+        keyStoreMap.put(DsName.DATA_GRID_STATE.toString(), state.toString());
     }
 
     @Override

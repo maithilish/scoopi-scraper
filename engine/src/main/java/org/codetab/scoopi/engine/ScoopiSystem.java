@@ -1,36 +1,27 @@
 package org.codetab.scoopi.engine;
 
 import static org.codetab.scoopi.util.Util.LINE;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.metrics.IMetricsServer;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.SystemStat;
 import org.codetab.scoopi.metrics.serialize.Serializer;
-import org.codetab.scoopi.model.LocatorGroup;
-import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.plugin.appender.AppenderMediator;
 import org.codetab.scoopi.plugin.pool.AppenderPoolService;
 import org.codetab.scoopi.stat.ShutdownHook;
 import org.codetab.scoopi.stat.Stats;
-import org.codetab.scoopi.step.JobMediator;
-import org.codetab.scoopi.step.PayloadFactory;
-import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IShutdown;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
@@ -43,12 +34,6 @@ public class ScoopiSystem {
 
     @Inject
     private Configs configs;
-    @Inject
-    private ILocatorDef locatorDef;
-    @Inject
-    private TaskMediator taskMediator;
-    @Inject
-    private JobMediator jobMediator;
     @Inject
     private CrashCleaner crashCleaner;
     @Inject
@@ -63,8 +48,6 @@ public class ScoopiSystem {
     private IShutdown shutdown;
     @Inject
     private ErrorLogger errorLogger;
-    @Inject
-    private PayloadFactory payloadFactory;
     @Inject
     private AppenderPoolService appenderPoolService;
     @Inject
@@ -151,42 +134,6 @@ public class ScoopiSystem {
             metricsServer.stop();
         }
         return true;
-    }
-
-    public boolean seedLocatorGroups() {
-        if (jobMediator.isJobSeeder()) {
-            LOGGER.info("seed defined locator groups");
-            final String stepName = "start"; //$NON-NLS-1$
-            String seederClzName = null;
-            try {
-                seederClzName = configs.getConfig("scoopi.seeder.class"); //$NON-NLS-1$
-            } catch (final ConfigNotFoundException e) {
-                final String message = "unable seed locator group";
-                throw new CriticalException(message, e);
-            }
-
-            final List<LocatorGroup> locatorGroups =
-                    locatorDef.getLocatorGroups();
-            jobMediator.setSeedDoneSignal(locatorGroups.size()); // CountDownLatch
-
-            final List<Payload> payloads = payloadFactory
-                    .createSeedPayloads(locatorGroups, stepName, seederClzName);
-            for (final Payload payload : payloads) {
-                try {
-                    taskMediator.pushPayload(payload);
-                } catch (final InterruptedException e) {
-                    final String group = payload.getJobInfo().getGroup();
-                    final String message =
-                            spaceit("seed locator group: ", group);
-                    errorLogger.log(CAT.INTERNAL, message, e);
-                }
-            }
-            return true;
-        } else {
-            LOGGER.info("not init node, no seeding");
-            jobMediator.setSeedDoneSignal(0);
-            return false;
-        }
     }
 
     public void waitForFinish() {

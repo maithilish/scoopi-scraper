@@ -13,6 +13,7 @@ import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.step.extract.JobSeeder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -30,6 +31,8 @@ public class ScoopiEngineTest {
     private TaskMediator taskMediator;
     @Mock
     private JobMediator jobMediator;
+    @Mock
+    private JobSeeder jobSeeder;
 
     @InjectMocks
     private ScoopiEngine scoopiEngine;
@@ -46,12 +49,13 @@ public class ScoopiEngineTest {
         scoopiEngine.start();
 
         // then
-        InOrder inOrder = inOrder(scoopiSystem, taskMediator, jobMediator);
+        InOrder inOrder =
+                inOrder(scoopiSystem, taskMediator, jobMediator, jobSeeder);
         inOrder.verify(scoopiSystem).startStats();
         inOrder.verify(scoopiSystem).startErrorLogger();
         inOrder.verify(scoopiSystem).addShutdownHook();
         inOrder.verify(scoopiSystem).startMetrics();
-        inOrder.verify(scoopiSystem).seedLocatorGroups();
+        inOrder.verify(jobSeeder).seedLocatorGroups();
         inOrder.verify(scoopiSystem).waitForInput();
 
         inOrder.verify(taskMediator).start();
@@ -63,7 +67,8 @@ public class ScoopiEngineTest {
 
         inOrder.verify(scoopiSystem).stopMetrics();
         inOrder.verify(scoopiSystem).stopStats();
-        verifyNoMoreInteractions(scoopiSystem, taskMediator, jobMediator);
+        verifyNoMoreInteractions(scoopiSystem, taskMediator, jobMediator,
+                jobSeeder);
     }
 
     @Test
