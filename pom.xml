@@ -31,7 +31,7 @@
         <java-release>8</java-release>
 
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
-        <commons-configuration2.version>2.6</commons-configuration2.version>
+        <commons-configuration2.version>2.7</commons-configuration2.version>
         <commons-csv.version>1.7</commons-csv.version>
         <commons-dbcp2.version>2.7.0</commons-dbcp2.version>
         <commons-lang3.version>3.9</commons-lang3.version>
