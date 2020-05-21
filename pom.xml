@@ -46,7 +46,7 @@
         <java-inject.version>1</java-inject.version>
         <guice.version>4.2.2</guice.version>
         <hsqldb.version>2.4.1</hsqldb.version>
-        <htmlunit.version>2.36.0</htmlunit.version>
+        <htmlunit.version>2.37.0</htmlunit.version>
         <jackson.version>2.10.1</jackson.version>
         <jaxb-xjc.version>2.3.0.1</jaxb-xjc.version>
         <jcip-annotations.version>1.0</jcip-annotations.version>
