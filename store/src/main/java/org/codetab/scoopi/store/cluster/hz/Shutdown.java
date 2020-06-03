@@ -55,7 +55,12 @@ public class Shutdown implements IShutdown {
 
     @Override
     public void setTerminate() {
-        terminateMap.put(memberId, true);
+        // FIXME - null or hz not active exception
+        try {
+            terminateMap.put(memberId, true);
+        } catch (HazelcastInstanceNotActiveException e) {
+            LOGGER.warn("set terminate {}", e.getLocalizedMessage());
+        }
     }
 
     @Override

@@ -49,4 +49,8 @@ public interface IJobStore {
 
     long getJobIdSeq();
 
+    void setRunDateTime(String value);
+
+    String getRunDateTime();
+
 }

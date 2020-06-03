@@ -9,6 +9,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.model.PrintPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,14 +45,14 @@ public final class ListAppender extends Appender {
     public void run() {
         int count = 0;
         for (;;) {
-            Object item = null;
+            PrintPayload printPayload = null;
             try {
-                item = getQueue().take();
+                printPayload = getQueue().take();
                 count++;
-                if (item == Marker.EOF) {
+                if (printPayload.getData() == Marker.END_OF_STREAM) {
                     break;
                 }
-                list.add(item);
+                list.add(printPayload.getData());
             } catch (InterruptedException e) {
                 String message = spaceit("appender:", getName());
                 errorLogger.log(CAT.INTERNAL, message, e);
@@ -62,16 +63,17 @@ public final class ListAppender extends Appender {
 
     /**
      * Append object to appender queue.
-     * @param object
+     * @param printPayload
      *            object to append, not null
      * @throws InterruptedException
      *             if interrupted while queue put operation
      */
     @Override
-    public void append(final Object object) throws InterruptedException {
-        notNull(object, "object must not be null");
+    public void append(final PrintPayload printPayload)
+            throws InterruptedException {
+        notNull(printPayload, "object must not be null");
         if (isInitialized()) {
-            getQueue().put(object);
+            getQueue().put(printPayload);
         }
     }
 

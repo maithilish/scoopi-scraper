@@ -54,6 +54,8 @@ public class JobSeeder {
         try {
             if (jobStore.changeStateToInitialize()) {
                 seedPermit.set(true);
+                // global time
+                jobStore.setRunDateTime(configs.getRunDateTimeString());
                 LOGGER.info("acquired lock to seed jobs");
                 return true;
             } else {
@@ -65,8 +67,11 @@ public class JobSeeder {
 
         LOGGER.info("wait for jobs seed to finish...");
         while (true) {
+            // FIXME - enum is null, change sleep to wait-notify
             if (jobStore.getState().equals(State.READY)) {
                 seedPermit.set(false);
+                // global time
+                configs.setRunDateTimeString(jobStore.getRunDateTime());
                 LOGGER.info("jobs seed finished");
                 jobMediator.setSeedDoneSignal(0);
                 break;
@@ -129,6 +134,8 @@ public class JobSeeder {
     }
 
     public void clearDanglingJobs() {
-        crashCleaner.clearDanglingJobs();
+        if (configs.isCluster()) {
+            crashCleaner.clearDanglingJobs();
+        }
     }
 }

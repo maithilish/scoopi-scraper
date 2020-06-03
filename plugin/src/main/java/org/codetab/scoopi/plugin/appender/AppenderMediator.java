@@ -14,7 +14,9 @@ import javax.inject.Singleton;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Plugin;
+import org.codetab.scoopi.model.PrintPayload;
 import org.codetab.scoopi.plugin.appender.Appender.Marker;
 import org.codetab.scoopi.plugin.pool.AppenderPoolService;
 
@@ -25,6 +27,8 @@ public class AppenderMediator {
     protected AppenderFactory appenderFactory;
     @Inject
     private AppenderPoolService appenderPoolService;
+    @Inject
+    private ObjectFactory objectFactory;
     @Inject
     protected ErrorLogger errorLogger;
 
@@ -61,7 +65,9 @@ public class AppenderMediator {
         Appender appender = appenders.get(appenderName);
         if (nonNull(appender)) {
             try {
-                appender.append(Marker.EOF);
+                PrintPayload eosPayload = objectFactory.createPrintPayload(null,
+                        Marker.END_OF_STREAM);
+                appender.append(eosPayload);
             } catch (InterruptedException e) {
                 String message = spaceit("close appender:", appenderName);
                 errorLogger.log(CAT.INTERNAL, message, e);

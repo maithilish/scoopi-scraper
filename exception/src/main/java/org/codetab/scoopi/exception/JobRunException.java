@@ -2,11 +2,11 @@ package org.codetab.scoopi.exception;
 
 /**
  * <p>
- * Exception thrown when job state is inconsistent.
+ * Exception thrown when job run fails, so that job can scheduled for rerun.
  * <p>
  * RuntimeException : unrecoverable
  */
-public class JobStateException extends RuntimeException {
+public class JobRunException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,7 +26,7 @@ public class JobStateException extends RuntimeException {
      * @param message
      *            exception message
      */
-    public JobStateException(final String message) {
+    public JobRunException(final String message) {
         super(message);
         this.message = message;
         this.cause = null;
@@ -40,7 +40,7 @@ public class JobStateException extends RuntimeException {
      * @param cause
      *            exception cause
      */
-    public JobStateException(final String message, final Throwable cause) {
+    public JobRunException(final String message, final Throwable cause) {
         super(message, cause);
         this.message = message;
         this.cause = cause;
@@ -52,7 +52,7 @@ public class JobStateException extends RuntimeException {
      * @param cause
      *            exception cause
      */
-    public JobStateException(final Throwable cause) {
+    public JobRunException(final Throwable cause) {
         super(cause);
         this.message = null;
         this.cause = cause;

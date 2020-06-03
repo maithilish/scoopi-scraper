@@ -88,7 +88,7 @@ mvn clean integration-test -Dtest=zzz.java -DfailIfNoTests=false
 
 For Scoopi development, eclipse requires some setup.
 
-**! ! !  install eclipse-cs and ecl-emma
+**! ! !  install eclipse-cs (checkstyle) and ecl-emma
 import preferences only after cs and emma are installed**
 
 ### Install Java JavaDoc and source
