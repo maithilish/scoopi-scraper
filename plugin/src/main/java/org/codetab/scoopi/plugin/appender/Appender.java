@@ -16,6 +16,7 @@ import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Plugin;
+import org.codetab.scoopi.model.PrintPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public abstract class Appender implements Runnable {
         /**
          * End of input.
          */
-        EOF
+        END_OF_STREAM
     }
 
     private static final Logger LOGGER =
@@ -53,7 +54,7 @@ public abstract class Appender implements Runnable {
     /**
      * Queue to hold objects pushed to appenders.
      */
-    private BlockingQueue<Object> queue;
+    private BlockingQueue<PrintPayload> queue;
     private String name;
     private boolean initialized = false;
     private Plugin plugin;
@@ -66,7 +67,8 @@ public abstract class Appender implements Runnable {
      * @throws InterruptedException
      *             on interruption.
      */
-    public abstract void append(Object object) throws InterruptedException;
+    public abstract void append(PrintPayload printPayload)
+            throws InterruptedException;
 
     public abstract void init();
 
@@ -110,7 +112,7 @@ public abstract class Appender implements Runnable {
         }
     }
 
-    public BlockingQueue<Object> getQueue() {
+    public BlockingQueue<PrintPayload> getQueue() {
         return queue;
     }
 

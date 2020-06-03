@@ -122,6 +122,10 @@ public class JobMediator {
         }
     }
 
+    public void resetTakenJob(final long jobId) throws TransactionException {
+        jobStore.resetTakenJob(jobId);
+    }
+
     class JobRunnerThread extends Thread {
 
         @Override

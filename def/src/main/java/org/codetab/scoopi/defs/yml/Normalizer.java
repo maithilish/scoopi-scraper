@@ -161,12 +161,6 @@ public class Normalizer {
             JsonNode extSteps = normalizers.expandSteps(topStepsMap, steps);
             ((ObjectNode) topStepsDef).set(stepsName, extSteps);
         }
-
-        // topStepsMap = stepDefs.getTopStepsMap(topStepsDef);
-        // for (String stepsName : topStepsMap.keySet()) {
-        // System.out.println(stepsName + " >> ");
-        // System.out.println(yamls.pretty(topStepsMap.get(stepsName)));
-        // }
     }
 
 }

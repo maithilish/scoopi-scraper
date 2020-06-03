@@ -36,6 +36,11 @@ public class ObjectFactory {
         return new Payload(jobInfo, stepInfo, data);
     }
 
+    public PrintPayload createPrintPayload(final JobInfo jobInfo,
+            final Object data) {
+        return new PrintPayload(jobInfo, data);
+    }
+
     public LocatorGroup createLocatorGroup(final String group) {
         final LocatorGroup lg = new LocatorGroup();
         lg.setGroup(group);

@@ -2,6 +2,7 @@ package org.codetab.scoopi.step;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.exception.JobRunException;
 import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.log.ErrorLogger;
@@ -24,6 +25,8 @@ public class Task implements Runnable {
     private MetricsHelper metricsHelper;
     @Inject
     private TaskInfo taskInfo;
+    @Inject
+    private JobMediator jobMediator;
 
     private IStep step;
 
@@ -59,7 +62,14 @@ public class Task implements Runnable {
             LOGGER.trace(marker, "finish {}", stepLabel);
 
             taskTimer.stop();
-
+        } catch (JobRunException e) {
+            try {
+                long jobId = step.getJobInfo().getId();
+                jobMediator.resetTakenJob(jobId);
+            } catch (Exception e1) {
+                String message = step.getLabeled(e.getMessage());
+                errorLogger.log(marker, CAT.INTERNAL, message, e1);
+            }
         } catch (StepRunException | StepPersistenceException e) {
             String message = step.getLabeled(e.getMessage());
             errorLogger.log(marker, CAT.ERROR, message, e);

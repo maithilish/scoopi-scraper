@@ -26,6 +26,8 @@ public class JobStore implements ISoloJobStore {
 
     private State state = State.NEW;
 
+    private String runDateTime;
+
     @Override
     public void open() {
     }
@@ -133,4 +135,13 @@ public class JobStore implements ISoloJobStore {
         return true;
     }
 
+    @Override
+    public void setRunDateTime(final String value) {
+        this.runDateTime = value;
+    }
+
+    @Override
+    public String getRunDateTime() {
+        return runDateTime;
+    }
 }

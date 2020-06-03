@@ -1,18 +1,23 @@
 package org.codetab.scoopi.plugin.appender;
 
+import static java.util.Objects.nonNull;
 import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Random;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.http.client.utils.DateUtils;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.helper.IOHelper;
 import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.model.PrintPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +40,12 @@ public final class FileAppender extends Appender {
     @Inject
     private Configs configs;
 
-    private PrintWriter writer;
+    private String fileDir;
+    private String fileBaseName;
+    private String fileExtension;
 
-    /**
-     * <p>
-     * private constructor.
-     */
+    private String dirTimestamp;
+
     @Inject
     private FileAppender() {
     }
@@ -48,19 +53,15 @@ public final class FileAppender extends Appender {
     @Override
     public void init() {
         try {
-            String path = getPluginField("file");
-            if (configs.isCluster()) {
-                final String fileName = FilenameUtils.getName(path);
-                final String dir = FilenameUtils.getFullPath(path);
-                path = dir + "/"
-                        + configs.getProperty("scoopi.cluster.memberId") + "-"
-                        + fileName;
-            }
-            writer = ioHelper.getPrintWriter(path);
+            String filePath = getPluginField("file");
+            fileDir = FilenameUtils.getFullPath(filePath);
+            fileBaseName = FilenameUtils.getBaseName(filePath);
+            fileExtension = FilenameUtils.getExtension(filePath);
+            dirTimestamp = DateUtils.formatDate(configs.getRunDateTime(),
+                    configs.getConfig("outputDirTimestampPattern",
+                            "ddMMMyyyy-HHmmss"));
             setInitialized(true);
-            LOGGER.info("created {}, name: {}, file: {}",
-                    this.getClass().getSimpleName(), getName(), path);
-        } catch (IOException | DefNotFoundException e) {
+        } catch (DefNotFoundException e) {
             final String message =
                     spaceit("unable to create appender:", getName());
             errorLogger.log(CAT.ERROR, message, e);
@@ -74,41 +75,74 @@ public final class FileAppender extends Appender {
     @Override
     public void run() {
         int count = 0;
+        int jobCount = 0;
+        Random random = new Random();
+
         for (;;) {
-            Object item = null;
+            PrintPayload printPayload = null;
             try {
-                item = getQueue().take();
-                count++;
-                if (item == Marker.EOF) {
-                    writer.flush();
+                printPayload = getQueue().take();
+                if (printPayload.getData() == Marker.END_OF_STREAM) {
                     break;
                 }
-                final String data = item.toString();
-                writer.println(data);
-                // FIXME - flush happens for each line,
-                // explore per job file and merge
-                writer.flush();
             } catch (final InterruptedException e) {
                 final String message = spaceit("appender:", getName());
                 errorLogger.log(CAT.INTERNAL, message, e);
             }
+            if (nonNull(printPayload)) {
+                String jobFilePath = getJobFilePath(printPayload);
+                try (PrintWriter writer =
+                        ioHelper.getPrintWriter(jobFilePath)) {
+
+                    // int r = (jobCount++) % (random.nextInt(10) + 2);
+                    // if (r == 0) {
+                    // throw new IOException("force error");
+                    // }
+
+                    Object data = printPayload.getData();
+                    if (data instanceof List) {
+                        List<? extends Object> list = (List<?>) data;
+                        for (Object o : list) {
+                            writer.println(o.toString());
+                            count++;
+                        }
+                    } else {
+                        writer.println(data);
+                        count++;
+                    }
+                    printPayload.setProcessed(true);
+                } catch (IOException e) {
+                    printPayload.setProcessed(false);
+                    final String message = spaceit("appender:", getName(),
+                            " file path:", jobFilePath);
+                    errorLogger.log(CAT.ERROR, message, e);
+                }
+                printPayload.finished();
+            }
         }
-        writer.close();
-        LOGGER.info("appender: {}, {} item appended", getName(), count - 1);
+        LOGGER.info("appender: {}, {} item appended", getName(), count);
+    }
+
+    private String getJobFilePath(final PrintPayload printPayload) {
+        return FilenameUtils.separatorsToSystem(
+                String.join("", fileDir, "/", dirTimestamp, "/", fileBaseName,
+                        "-", String.valueOf(printPayload.getJobInfo().getId()),
+                        ".", fileExtension));
     }
 
     /**
      * Append object to appender queue.
-     * @param object
+     * @param printPayload
      *            object to append, not null
      * @throws InterruptedException
      *             if interrupted while queue put operation
      */
     @Override
-    public void append(final Object object) throws InterruptedException {
-        Validate.notNull(object, "object must not be null");
+    public void append(final PrintPayload printPayload)
+            throws InterruptedException {
+        Validate.notNull(printPayload, "printPayload must not be null");
         if (isInitialized()) {
-            getQueue().put(object);
+            getQueue().put(printPayload);
         }
     }
 }

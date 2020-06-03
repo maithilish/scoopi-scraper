@@ -134,6 +134,29 @@ public class Configs {
         return runDateTime;
     }
 
+    public String getRunDateTimeString() {
+        final String key = "scoopi.runDateTime";
+        try {
+            return configService.getConfig(key);
+        } catch (ConfigNotFoundException e) {
+            throw new CriticalException("unable to get runDateTime", e);
+        }
+    }
+
+    public void setRunDateTimeString(final String value) {
+        final String key = "scoopi.runDateTime";
+        configService.setProperty(key, value);
+        try {
+            final String dateTimeStr = getConfig(key); // $NON-NLS-1$
+            final String patterns = getConfig("scoopi.dateTimeParsePattern"); //$NON-NLS-1$
+            Date runDateTime =
+                    DateUtils.parseDate(dateTimeStr, new String[] {patterns});
+            configService.setProperty("scoopi.parsed.runDateTime", runDateTime);
+        } catch (ParseException | ConfigNotFoundException e) {
+            throw new CriticalException("unable to parse runDateTime", e);
+        }
+    }
+
     public Date getHighDate() {
         final String key = "scoopi.parsed.runHighDate";
         Date highDate = (Date) configService.getProperty(key);
@@ -280,5 +303,4 @@ public class Configs {
         }
         return enabled;
     }
-
 }

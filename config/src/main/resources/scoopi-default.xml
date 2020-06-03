@@ -61,6 +61,11 @@
                  dd-MM-yyyy HH:mm:ss.SSS ; dd/MM/yyyy HH:mm:ss.SSS
             ]]>
         </dateTimeParsePattern>
+        <outputDirTimestampPattern>
+            <![CDATA[
+                 ddMMMyyyy-HHmmss
+            ]]>
+        </outputDirTimestampPattern>
         <wait>false</wait>
         <fork>
             <locator>0</locator>

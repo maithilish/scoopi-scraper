@@ -126,6 +126,7 @@ public class ScoopiSystem {
     }
 
     public boolean stopMetrics() {
+        // FIXME is null
         metricsSerializer.stop();
         if (configs.isMetricsServerEnabled()) {
             int period = Integer.parseInt(
@@ -160,5 +161,4 @@ public class ScoopiSystem {
             }
         }
     }
-
 }

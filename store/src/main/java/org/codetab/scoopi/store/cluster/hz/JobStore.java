@@ -279,6 +279,9 @@ public class JobStore implements IClusterJobStore {
             tx.commitTransaction();
             return true;
         } catch (Exception e) {
+            // FIXME this method is called when an node crashes and tx ex
+            // is thrown, but if this also throws tx ex, then reset and also
+            // termination fails
             tx.rollbackTransaction();
             String message = spaceit("reset taken job", String.valueOf(jobId));
             throw new TransactionException(message, e);
@@ -295,11 +298,11 @@ public class JobStore implements IClusterJobStore {
                     tx.getMap(DsName.KEYSTORE_MAP.toString());
             boolean stateChange = false;
             if (txKeyStoreMap.containsKey(dataGridStateKey)) {
-                stateChange = txKeyStoreMap.replace(dataGridStateKey, State.NEW.toString(),
-                        State.INITIALIZE.toString());
+                stateChange = txKeyStoreMap.replace(dataGridStateKey,
+                        State.NEW.toString(), State.INITIALIZE.toString());
             } else {
-                if (isNull(
-                        txKeyStoreMap.put(dataGridStateKey, State.INITIALIZE.toString()))) {
+                if (isNull(txKeyStoreMap.put(dataGridStateKey,
+                        State.INITIALIZE.toString()))) {
                     stateChange = true;
                 }
             }
@@ -339,6 +342,16 @@ public class JobStore implements IClusterJobStore {
     @Override
     public String getMemberId() {
         return memberId;
+    }
+
+    @Override
+    public void setRunDateTime(final String value) {
+        keyStoreMap.put("runDateTime", value);
+    }
+
+    @Override
+    public String getRunDateTime() {
+        return keyStoreMap.get("runDateTime");
     }
 
     @Override

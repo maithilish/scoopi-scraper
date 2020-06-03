@@ -79,7 +79,13 @@ public class MetricsHelper {
     public Serializer startJsonSerializer(final String memberId,
             final Map<String, byte[]> metricsMap, final int period) {
         Consumer<byte[]> outputter = metricsJsonData -> {
-            metricsMap.put(memberId, metricsJsonData);
+            try {
+                metricsMap.put(memberId, metricsJsonData);
+            } catch (Exception e) {
+                LOGGER.error("unable to put metrics json to metrics map {}",
+                        e.getLocalizedMessage());
+                LOGGER.debug("{}", e);
+            }
         };
         Serializer serializer = Serializer.forRegistry(METRICS)
                 .consumer(outputter).convertRatesTo(TimeUnit.SECONDS)

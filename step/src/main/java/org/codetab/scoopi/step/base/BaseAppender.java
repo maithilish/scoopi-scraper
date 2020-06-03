@@ -13,6 +13,7 @@ import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Plugin;
+import org.codetab.scoopi.model.PrintPayload;
 import org.codetab.scoopi.plugin.appender.Appender;
 import org.codetab.scoopi.plugin.appender.Appenders;
 import org.codetab.scoopi.plugin.encoder.Encoders;
@@ -67,9 +68,9 @@ public abstract class BaseAppender extends Step {
         return true;
     }
 
-    protected void doAppend(final Appender appender, final Object obj)
-            throws InterruptedException {
-        appender.append(obj);
+    protected void doAppend(final Appender appender,
+            final PrintPayload printPayload) throws InterruptedException {
+        appender.append(printPayload);
     }
 
     protected Object encode(final List<IEncoder<?>> encodersList)

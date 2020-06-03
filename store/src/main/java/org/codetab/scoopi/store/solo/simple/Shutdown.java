@@ -36,11 +36,9 @@ public class Shutdown implements IShutdown {
         if (!done.get()) {
             return false;
         }
-        System.out.println("tryShutdown all done");
         if (jobStore.isDone()) {
             return func.apply(t);
         } else {
-            System.out.println("tryShutdown jobStore not done");
             return false;
         }
     }
@@ -51,6 +49,5 @@ public class Shutdown implements IShutdown {
 
     @Override
     public void tryTerminate() {
-        System.out.println("try terminate");
     }
 }
