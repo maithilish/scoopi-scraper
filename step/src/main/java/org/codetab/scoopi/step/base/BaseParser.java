@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.Validate.validState;
 import static org.codetab.scoopi.util.Util.LINE;
 import static org.codetab.scoopi.util.Util.spaceit;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -210,7 +211,11 @@ public abstract class BaseParser extends Step {
             persistData = Boolean.valueOf(taskDef.getFieldValue(taskGroup,
                     taskName, "persist", "data"));
         } catch (DefNotFoundException e) {
+        } catch (IOException e) {
+            LOGGER.error(marker, "{}, get live for {} {}, {}", taskGroup,
+                    taskName, e.getMessage());
         }
+
         Optional<Boolean> taskLevelPersistence =
                 Optional.ofNullable(persistData);
         return dataPersistence.persist(taskLevelPersistence);

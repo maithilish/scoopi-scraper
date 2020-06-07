@@ -2,6 +2,7 @@ package org.codetab.scoopi.model;
 
 import static java.util.Objects.isNull;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -9,7 +10,9 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class Query {
+public class Query implements Serializable {
+
+    private static final long serialVersionUID = -4493087625020217575L;
 
     private Map<String, String> queries;
 
@@ -35,6 +38,10 @@ public class Query {
             copy.setQuery(key, queries.get(key));
         }
         return copy;
+    }
+
+    public boolean isPresent() {
+        return !queries.isEmpty();
     }
 
     @Override

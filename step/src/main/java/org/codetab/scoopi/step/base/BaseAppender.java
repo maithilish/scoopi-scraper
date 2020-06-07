@@ -54,16 +54,15 @@ public abstract class BaseAppender extends Step {
         String stepsName = getPayload().getJobInfo().getSteps();
         String stepName = getStepName();
 
-        Optional<List<Plugin>> plugins = null;
         try {
-            plugins = pluginDef.getPlugins(taskGroup, taskName, stepName);
+            Optional<List<Plugin>> plugins =
+                    pluginDef.getPlugins(taskGroup, taskName, stepName);
+            if (plugins.isPresent()) {
+                appenders.createAppenders(plugins.get(), stepsName, stepName);
+                encoders.createEncoders(plugins.get(), stepsName, stepName);
+            }
         } catch (Exception e) {
             throw new StepRunException("unable to create appenders", e);
-        }
-
-        if (nonNull(plugins) && plugins.isPresent()) {
-            appenders.createAppenders(plugins.get(), stepsName, stepName);
-            encoders.createEncoders(plugins.get(), stepsName, stepName);
         }
         return true;
     }

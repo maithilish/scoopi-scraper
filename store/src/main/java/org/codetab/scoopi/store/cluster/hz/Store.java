@@ -22,4 +22,9 @@ public class Store implements IClusterStore {
     public Object get(final String key) {
         return cache.get(key);
     }
+
+    @Override
+    public boolean contains(final String key) {
+        return cache.containsKey(key);
+    }
 }

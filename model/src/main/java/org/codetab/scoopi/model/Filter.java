@@ -1,11 +1,15 @@
 package org.codetab.scoopi.model;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Filter {
+public class Filter implements Serializable {
+
+    private static final long serialVersionUID = -1447326943105728818L;
 
     private String type;
     private String pattern;

@@ -25,7 +25,7 @@ import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
-class Yamls {
+public class Yamls {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Yamls.class);
 
@@ -55,7 +55,7 @@ class Yamls {
 
     public JsonNode mergeNodes(final List<JsonNode> nodesList) {
         LOGGER.info("merge defs");
-        ObjectNode mergedNodes = (ObjectNode) mapper.createObjectNode();
+        ObjectNode mergedNodes = mapper.createObjectNode();
         for (JsonNode nodes : nodesList) {
             Iterator<String> fieldNames = nodes.fieldNames();
             while (fieldNames.hasNext()) {

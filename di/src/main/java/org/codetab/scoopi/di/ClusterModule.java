@@ -6,12 +6,19 @@ import java.lang.management.RuntimeMXBean;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.defs.ITaskDef;
+import org.codetab.scoopi.defs.yml.ItemDef;
+import org.codetab.scoopi.defs.yml.ItemDefData;
+import org.codetab.scoopi.defs.yml.LocatorDef;
+import org.codetab.scoopi.defs.yml.LocatorDefData;
+import org.codetab.scoopi.defs.yml.TaskDef;
+import org.codetab.scoopi.defs.yml.TaskDefData;
 import org.codetab.scoopi.metrics.IMetricsServer;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IJobStore;
@@ -55,6 +62,10 @@ public class ClusterModule extends AbstractModule {
                 .to(org.codetab.scoopi.store.cluster.hz.Shutdown.class)
                 .in(Singleton.class);
 
+        bind(ILocatorDef.class).to(LocatorDef.class).in(Singleton.class);
+        bind(IItemDef.class).to(ItemDef.class).in(Singleton.class);
+        bind(ITaskDef.class).to(TaskDef.class).in(Singleton.class);
+
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));
     }
@@ -73,32 +84,37 @@ public class ClusterModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ILocatorDef provideLocatorDef() {
-        return (ILocatorDef) store.get("locatorDef");
+    LocatorDefData provideLocatorDef() {
+        return (LocatorDefData) SerializationUtils
+                .deserialize((byte[]) store.get("locatorDef"));
     }
 
     @Provides
     @Singleton
-    ITaskDef provideTaskDef() {
-        return (ITaskDef) store.get("taskDef");
+    TaskDefData provideTaskDefData() {
+        return (TaskDefData) SerializationUtils
+                .deserialize((byte[]) store.get("taskDef"));
+    }
+
+    @Provides
+    @Singleton
+    ItemDefData provideItemDefData() {
+        return (ItemDefData) SerializationUtils
+                .deserialize((byte[]) store.get("itemDef"));
+    }
+
+    @Provides
+    @Singleton
+    IPluginDef providePluginDef() {
+        // return (IPluginDef) SerializationUtils
+        // .deserialize((byte[]) store.get("pluginDef"));
+        return (IPluginDef) store.get("pluginDef");
     }
 
     @Provides
     @Singleton
     IDataDefDef provideDataDefDef() {
         return (IDataDefDef) store.get("dataDefDef");
-    }
-
-    @Provides
-    @Singleton
-    IItemDef provideItemDef() {
-        return (IItemDef) store.get("itemDef");
-    }
-
-    @Provides
-    @Singleton
-    IPluginDef providePluginDef() {
-        return (IPluginDef) store.get("pluginDef");
     }
 
     @Provides

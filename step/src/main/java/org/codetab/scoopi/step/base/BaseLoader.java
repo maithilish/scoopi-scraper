@@ -175,6 +175,10 @@ public abstract class BaseLoader extends Step {
             live = taskDef.getLive(taskGroup);
         } catch (final DefNotFoundException e1) {
             live = "PT0S";
+        } catch (IOException e) {
+            LOGGER.error(marker, "{}, unable to get live, set to default PT0S",
+                    getLabel());
+            live = "PT0S";
         }
 
         /*

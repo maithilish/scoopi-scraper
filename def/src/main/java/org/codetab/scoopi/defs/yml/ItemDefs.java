@@ -187,13 +187,18 @@ class ItemDefs {
         Map<String, ItemAttribute> map = new HashMap<>();
 
         for (String key : itemNodeMap.keySet()) {
-            Optional<Query> query = queryMap.get(key);
+            /**
+             * ItemAttribute is Serializable and Optional are not allowed, so
+             * discard optional.
+             *
+             */
+            Query query = queryMap.get(key).orElse(null);
             Range<Integer> indexRange = indexRangeMap.get(key);
-            Optional<List<String>> breakAfter = breakAfterMap.get(key);
-            Optional<List<String>> prefix = prefixMap.get(key);
-            Optional<List<Filter>> filter = filterMap.get(key);
-            Optional<String> linkGroup = linkGroupMap.get(key);
-            Optional<List<String>> linkBreakOn = linkBreakOnMap.get(key);
+            List<String> breakAfter = breakAfterMap.get(key).orElse(null);
+            List<String> prefix = prefixMap.get(key).orElse(null);
+            List<Filter> filter = filterMap.get(key).orElse(null);
+            String linkGroup = linkGroupMap.get(key).orElse(null);
+            List<String> linkBreakOn = linkBreakOnMap.get(key).orElse(null);
             ItemAttribute itemAttribute = new ItemAttribute.Builder()
                     .setKey(key).setQuery(query).setIndexRange(indexRange)
                     .setBreakAfter(breakAfter).setPrefix(prefix)
