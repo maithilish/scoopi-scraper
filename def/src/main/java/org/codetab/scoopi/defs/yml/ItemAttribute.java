@@ -1,7 +1,7 @@
 package org.codetab.scoopi.defs.yml;
 
+import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,16 +9,18 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codetab.scoopi.model.Filter;
 import org.codetab.scoopi.model.Query;
 
-public class ItemAttribute {
+public class ItemAttribute implements Serializable {
+
+    private static final long serialVersionUID = 8028091758239615034L;
 
     private final String key; // [dataDefName-itemName]
-    private final Optional<Query> query;
+    private final Query query;
     private final Range<Integer> indexRange;
-    private final Optional<List<String>> prefix;
-    private final Optional<List<String>> breakAfter;
-    private final Optional<List<Filter>> filter;
-    private final Optional<String> linkGroup;
-    private final Optional<List<String>> linkBreakOn;
+    private final List<String> prefix;
+    private final List<String> breakAfter;
+    private final List<Filter> filter;
+    private final String linkGroup;
+    private final List<String> linkBreakOn;
 
     private ItemAttribute(final Builder builder) {
         this.key = builder.aKey;
@@ -35,7 +37,7 @@ public class ItemAttribute {
         return key;
     }
 
-    public Optional<Query> getQuery() {
+    public Query getQuery() {
         return query;
     }
 
@@ -43,23 +45,23 @@ public class ItemAttribute {
         return indexRange;
     }
 
-    public Optional<List<String>> getPrefix() {
+    public List<String> getPrefix() {
         return prefix;
     }
 
-    public Optional<List<String>> getBreakAfter() {
+    public List<String> getBreakAfter() {
         return breakAfter;
     }
 
-    public Optional<List<Filter>> getFilter() {
+    public List<Filter> getFilter() {
         return filter;
     }
 
-    public Optional<String> getLinkGroup() {
+    public String getLinkGroup() {
         return linkGroup;
     }
 
-    public Optional<List<String>> getLinkBreakOn() {
+    public List<String> getLinkBreakOn() {
         return linkBreakOn;
     }
 
@@ -67,20 +69,20 @@ public class ItemAttribute {
 
         // fields are prefixed with a to avoid cs hides field message
         private String aKey;
-        private Optional<Query> aQuery;
+        private Query aQuery;
         private Range<Integer> aIndexRange;
-        private Optional<List<String>> aPrefix;
-        private Optional<List<String>> aBreakAfter;
-        private Optional<List<Filter>> aFilter;
-        private Optional<String> aLinkGroup;
-        private Optional<List<String>> aLinkBreakOn;
+        private List<String> aPrefix;
+        private List<String> aBreakAfter;
+        private List<Filter> aFilter;
+        private String aLinkGroup;
+        private List<String> aLinkBreakOn;
 
         public Builder setKey(final String key) {
             this.aKey = key;
             return this;
         }
 
-        public Builder setQuery(final Optional<Query> query) {
+        public Builder setQuery(final Query query) {
             this.aQuery = query;
             return this;
         }
@@ -90,28 +92,27 @@ public class ItemAttribute {
             return this;
         }
 
-        public Builder setPrefix(final Optional<List<String>> prefix) {
+        public Builder setPrefix(final List<String> prefix) {
             this.aPrefix = prefix;
             return this;
         }
 
-        public Builder setBreakAfter(final Optional<List<String>> breakAfter) {
+        public Builder setBreakAfter(final List<String> breakAfter) {
             this.aBreakAfter = breakAfter;
             return this;
         }
 
-        public Builder setFilter(final Optional<List<Filter>> filter) {
+        public Builder setFilter(final List<Filter> filter) {
             this.aFilter = filter;
             return this;
         }
 
-        public Builder setLinkGroup(final Optional<String> linkGroup) {
+        public Builder setLinkGroup(final String linkGroup) {
             this.aLinkGroup = linkGroup;
             return this;
         }
 
-        public Builder setLinkBreakOn(
-                final Optional<List<String>> linkBreakOn) {
+        public Builder setLinkBreakOn(final List<String> linkBreakOn) {
             this.aLinkBreakOn = linkBreakOn;
             return this;
         }

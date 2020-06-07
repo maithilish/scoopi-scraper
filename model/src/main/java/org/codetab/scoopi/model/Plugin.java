@@ -2,10 +2,14 @@ package org.codetab.scoopi.model;
 
 import static org.codetab.scoopi.util.Util.dashit;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class Plugin {
+public class Plugin implements Serializable {
+
+    private static final long serialVersionUID = 2968170159654889364L;
 
     private final String name;
     private final String className;

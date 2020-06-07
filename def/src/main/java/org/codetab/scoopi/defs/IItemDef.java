@@ -4,14 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Range;
-import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Filter;
 import org.codetab.scoopi.model.Query;
 
 public interface IItemDef {
-
-    void init(Object dataDefs) throws DefNotFoundException;
 
     Data getDataTemplate(String dataDef);
 

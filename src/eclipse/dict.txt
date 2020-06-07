@@ -160,3 +160,6 @@ webapp
 tx
 dashboard
 configurize
+deserialized
+deserialization
+serializable

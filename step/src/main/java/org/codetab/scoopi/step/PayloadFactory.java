@@ -2,6 +2,7 @@ package org.codetab.scoopi.step;
 
 import static org.codetab.scoopi.util.Util.spaceit;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class PayloadFactory {
                             .createPayload(jobInfo, nextStep, payloadData);
                     payloads.add(nextStepPayload);
                 }
-            } catch (final DefNotFoundException e) {
+            } catch (final DefNotFoundException | IOException e) {
                 final String message = spaceit(
                         "unable to create payload for taskGroup:taskName ",
                         taskGroup + ":" + taskName);
