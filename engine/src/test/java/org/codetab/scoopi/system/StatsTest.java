@@ -9,8 +9,8 @@ import java.util.LongSummaryStatistics;
 import java.util.Timer;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.codetab.scoopi.bootstrap.Bootstrap;
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log;
 import org.codetab.scoopi.metrics.SystemStat;
@@ -52,11 +52,12 @@ public class StatsTest {
 
     @Test
     public void testSingleton() {
-        DInjector dInjector =
-                new DInjector(new InitModule()).instance(DInjector.class);
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.boot();
+        DInjector di = bootstrap.getdInjector();
 
-        Stats instanceA = dInjector.instance(Stats.class);
-        Stats instanceB = dInjector.instance(Stats.class);
+        Stats instanceA = di.instance(Stats.class);
+        Stats instanceB = di.instance(Stats.class);
 
         assertThat(instanceA).isNotNull();
         assertThat(instanceA).isSameAs(instanceB);

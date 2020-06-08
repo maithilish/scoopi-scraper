@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.junit.Before;
@@ -21,7 +20,7 @@ import org.mockito.MockitoAnnotations;
 public class ConfigsTest {
 
     @Mock
-    private ConfigService configService;
+    private ConfigProperties configProperties;
 
     @InjectMocks
     private Configs configs;
@@ -35,23 +34,17 @@ public class ConfigsTest {
     }
 
     @Test
-    public void testInitConfigService() {
-        configs.initConfigService("x", "y");
-        verify(configService).init("x", "y");
-    }
-
-    @Test
     public void testGetConfig() throws ConfigNotFoundException {
-        given(configService.getConfig("xyz")).willReturn("xxx");
+        given(configProperties.getProperty("xyz")).willReturn("xxx");
 
         configs.getConfig("xyz");
 
-        verify(configService).getConfig("xyz");
+        verify(configProperties).getProperty("xyz");
     }
 
     @Test
     public void testGetConfigNull() throws ConfigNotFoundException {
-        given(configService.getConfig(null))
+        given(configProperties.getProperty(null))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(ConfigNotFoundException.class);
@@ -61,16 +54,16 @@ public class ConfigsTest {
     @Test
     public void testGetConfigArray() throws ConfigNotFoundException {
         String[] array = {"x", "y"};
-        given(configService.getConfigArray("xyz")).willReturn(array);
+        given(configProperties.getStringArray("xyz")).willReturn(array);
 
         configs.getConfigArray("xyz");
 
-        verify(configService).getConfigArray("xyz");
+        verify(configProperties).getStringArray("xyz");
     }
 
     @Test
     public void testGetConfigArrayNull() throws ConfigNotFoundException {
-        given(configService.getConfigArray("xyz"))
+        given(configProperties.getStringArray("xyz"))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(ConfigNotFoundException.class);
@@ -80,7 +73,7 @@ public class ConfigsTest {
     @Test
     public void testIsTrue() {
         String key = "xyz";
-        given(configService.getBoolean(key, false)).willReturn(true, false);
+        given(configProperties.getBoolean(key, false)).willReturn(true, false);
 
         boolean actual = configs.isTrue(key);
         assertThat(actual).isTrue();
@@ -92,7 +85,7 @@ public class ConfigsTest {
     @Test
     public void testGetBoolean() {
         String key = "xyz";
-        given(configService.getBoolean(key, true)).willReturn(true, false);
+        given(configProperties.getBoolean(key, true)).willReturn(true, false);
 
         boolean actual = configs.getBoolean(key);
         assertThat(actual).isTrue();
@@ -105,7 +98,7 @@ public class ConfigsTest {
     public void testGetProperty() {
         String key = "xyz";
         String expected = "test";
-        given(configService.getProperty(key)).willReturn(expected);
+        given(configProperties.get(key)).willReturn(expected);
 
         Object actual = configs.getProperty(key);
         assertThat(actual).isEqualTo(expected);
@@ -117,202 +110,102 @@ public class ConfigsTest {
         String value = "test";
         configs.setProperty(key, value);
 
-        verify(configService).setProperty(key, value);
+        verify(configProperties).put(key, value);
     }
 
     @Test
-    public void testGetRunDateParsedRunDate()
+    public void testGetRunDate()
             throws ConfigNotFoundException, ParseException {
-        String runDate = "10-12-2019";
-        String patterns = "dd-MM-yyyy";
-        Date expected = DateUtils.parseDate(runDate, patterns);
-        given(configService.getProperty("scoopi.parsed.runDate"))
-                .willReturn(expected);
+        Date date = new Date();
+        given(configProperties.get("scoopi.runDate")).willReturn(date);
 
         Date actual = configs.getRunDate();
 
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(date);
     }
 
     @Test
-    public void testGetRunDateNullParsedRunDate()
+    public void testGetRunDateException()
             throws ConfigNotFoundException, ParseException {
-        String runDate = "10-12-2019";
-        String patterns = "dd-MM-yyyy";
-        Date expected = DateUtils.parseDate(runDate, patterns);
-
-        given(configService.getProperty("scoopi.parsed.runDate"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.runDate")).willReturn(runDate);
-        given(configService.getConfig("scoopi.dateParsePattern"))
-                .willReturn(patterns);
-
-        Date actual = configs.getRunDate();
-
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testGetRunDateParseException()
-            throws ConfigNotFoundException, ParseException {
-        String runDate = "10-12-2019";
-        String patterns = "dd/MM/yyyy";
-
-        given(configService.getProperty("scoopi.parsed.runDate"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.runDate")).willReturn(runDate);
-        given(configService.getConfig("scoopi.dateParsePattern"))
-                .willReturn(patterns);
+        given(configProperties.get("scoopi.runDate")).willReturn(null);
 
         testRule.expect(CriticalException.class);
         configs.getRunDate();
     }
 
     @Test
-    public void testGetRunDateConfigNotFoundException()
+    public void testGetRunDateString()
             throws ConfigNotFoundException, ParseException {
-        given(configService.getProperty("scoopi.parsed.runDate"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.runDate"))
+        String dateString = new Date().toString();
+        given(configProperties.getProperty("scoopi.runDateString"))
+                .willReturn(dateString);
+
+        String actual = configs.getRunDateString();
+
+        assertThat(actual).isEqualTo(dateString);
+    }
+
+    @Test
+    public void testGetRunDateStringException()
+            throws ConfigNotFoundException, ParseException {
+        given(configProperties.getProperty("scoopi.runDateString"))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(CriticalException.class);
-        configs.getRunDate();
+        configs.getRunDateString();
     }
 
     @Test
-    public void testGetRunDateTimeParsedRunDate()
+    public void testGetRunDateTime()
             throws ConfigNotFoundException, ParseException {
-        String runDateTime = "10-12-2019 20:59:59.000";
-        String patterns = "dd-MM-yyyy HH:mm:ss.SSS";
-        Date expected = DateUtils.parseDate(runDateTime, patterns);
-        given(configService.getProperty("scoopi.parsed.runDateTime"))
-                .willReturn(expected);
+        Date date = new Date();
+        given(configProperties.get("scoopi.runDateTime")).willReturn(date);
 
         Date actual = configs.getRunDateTime();
 
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(date);
     }
 
     @Test
-    public void testGetRunDateTimeNullParsedRunDate()
+    public void testGetRunDateTimeException()
             throws ConfigNotFoundException, ParseException {
-        String runDateTime = "10-12-2019 20:59:59.000";
-        String patterns = "dd-MM-yyyy HH:mm:ss.SSS";
-        Date expected = DateUtils.parseDate(runDateTime, patterns);
-
-        given(configService.getProperty("scoopi.parsed.runDateTime"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.runDateTime"))
-                .willReturn(runDateTime);
-        given(configService.getConfig("scoopi.dateTimeParsePattern"))
-                .willReturn(patterns);
-
-        Date actual = configs.getRunDateTime();
-
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testGetRunDateTimeParseException()
-            throws ConfigNotFoundException, ParseException {
-        String runDateTime = "10-12-2019 20:59:59.000";
-        String patterns = "dd/MM/yyyy HH:mm:ss.SSS";
-
-        given(configService.getProperty("scoopi.parsed.runDateTime"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.runDateTime"))
-                .willReturn(runDateTime);
-        given(configService.getConfig("scoopi.dateTimeParsePattern"))
-                .willReturn(patterns);
+        given(configProperties.get("scoopi.runDateTime")).willReturn(null);
 
         testRule.expect(CriticalException.class);
         configs.getRunDateTime();
     }
 
     @Test
-    public void testGetRunDateTimeConfigNotFoundException()
+    public void testGetRunDateTimeString()
             throws ConfigNotFoundException, ParseException {
-        given(configService.getProperty("scoopi.parsed.runDateTime"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.runDateTime"))
+        String dateString = new Date().toString();
+        given(configProperties.getProperty("scoopi.runDateTimeString"))
+                .willReturn(dateString);
+
+        String actual = configs.getRunDateTimeString();
+
+        assertThat(actual).isEqualTo(dateString);
+    }
+
+    @Test
+    public void testGetRunDateTimeStringException()
+            throws ConfigNotFoundException, ParseException {
+        given(configProperties.getProperty("scoopi.runDateTimeString"))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(CriticalException.class);
-        configs.getRunDateTime();
+        configs.getRunDateTimeString();
     }
 
     @Test
-    public void testGetHighDateParsedRunDate()
-            throws ConfigNotFoundException, ParseException {
-        String runDateTime = "10-12-2019 20:59:59.000";
-        String patterns = "dd-MM-yyyy HH:mm:ss.SSS";
-        Date expected = DateUtils.parseDate(runDateTime, patterns);
-        given(configService.getProperty("scoopi.parsed.runHighDate"))
-                .willReturn(expected);
-
-        Date actual = configs.getHighDate();
-
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testGetHighDateNullParsedRunDate()
-            throws ConfigNotFoundException, ParseException {
-        String runDateTime = "10-12-2019 20:59:59.000";
-        String patterns = "dd-MM-yyyy HH:mm:ss.SSS";
-        Date expected = DateUtils.parseDate(runDateTime, patterns);
-
-        given(configService.getProperty("scoopi.parsed.runHighDate"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.highDate"))
-                .willReturn(runDateTime);
-        given(configService.getConfig("scoopi.dateTimeParsePattern"))
-                .willReturn(patterns);
-
-        Date actual = configs.getHighDate();
-
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void testGetHighDateParseException()
-            throws ConfigNotFoundException, ParseException {
-        String runDateTime = "10-12-2019 20:59:59.000";
-        String patterns = "dd/MM/yyyy HH:mm:ss.SSS";
-
-        given(configService.getProperty("scoopi.parsed.runHighDate"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.highDate"))
-                .willReturn(runDateTime);
-        given(configService.getConfig("scoopi.dateTimeParsePattern"))
-                .willReturn(patterns);
-
-        testRule.expect(CriticalException.class);
-        configs.getHighDate();
-    }
-
-    @Test
-    public void testGetHighDateConfigNotFoundException()
-            throws ConfigNotFoundException, ParseException {
-        given(configService.getProperty("scoopi.parsed.runHighDate"))
-                .willReturn(null);
-        given(configService.getConfig("scoopi.highDate"))
-                .willThrow(ConfigNotFoundException.class);
-
-        testRule.expect(CriticalException.class);
-        configs.getHighDate();
-    }
-
-    @Test
-    public void testIsTestMode() {
+    public void testIsTestMode() throws ConfigNotFoundException {
         String eclipseTestRunner =
                 "org.eclipse.jdt.internal.junit.runner.RemoteTestRunner"; //$NON-NLS-1$
         String mavenTestRunner =
                 "org.apache.maven.surefire.booter.ForkedBooter"; //$NON-NLS-1$
 
-        given(configService.getRunnerClass()).willReturn("xyz",
-                eclipseTestRunner, mavenTestRunner);
+        given(configProperties.getProperty("scoopi.runnerClass"))
+                .willReturn("xyz", eclipseTestRunner, mavenTestRunner);
         assertThat(configs.isTestMode()).isFalse();
         assertThat(configs.isTestMode()).isTrue();
         assertThat(configs.isTestMode()).isTrue();
@@ -320,38 +213,43 @@ public class ConfigsTest {
 
     @Test
     public void testIsDevMode() {
-        given(configService.getString("scoopi.mode")).willReturn("dev", "test");
+        given(configProperties.getProperty("scoopi.mode", "")).willReturn("dev",
+                "test");
         assertThat(configs.isDevMode()).isTrue();
         assertThat(configs.isDevMode()).isFalse();
     }
 
     @Test
-    public void testGetStage() {
-        given(configService.getRunnerClass()).willReturn("xyz");
-        given(configService.getString("scoopi.mode")).willReturn("test");
+    public void testGetStage() throws ConfigNotFoundException {
+        given(configProperties.getProperty("scoopi.runnerClass"))
+                .willReturn("xyz");
+        given(configProperties.getProperty("scoopi.runnerClass"))
+                .willReturn("test");
         assertThat(configs.getStage()).isEqualTo("stage: production");
 
         String eclipseTestRunner =
                 "org.eclipse.jdt.internal.junit.runner.RemoteTestRunner"; //$NON-NLS-1$
-        given(configService.getRunnerClass()).willReturn(eclipseTestRunner);
-        given(configService.getString("scoopi.mode")).willReturn("test");
+        given(configProperties.getProperty("scoopi.runnerClass"))
+                .willReturn(eclipseTestRunner);
         assertThat(configs.getStage()).isEqualTo("stage: test");
 
-        given(configService.getRunnerClass()).willReturn("xyz");
-        given(configService.getString("scoopi.mode")).willReturn("dev");
+        given(configProperties.getProperty("scoopi.runnerClass"))
+                .willReturn("xyz");
+        given(configProperties.getProperty("scoopi.mode", ""))
+                .willReturn("dev");
         assertThat(configs.getStage()).isEqualTo("stage: dev");
     }
 
     @Test
     public void testIsPersist() {
-        given(configService.getBoolean("xyz", true)).willReturn(true, false);
+        given(configProperties.getBoolean("xyz", true)).willReturn(true, false);
         assertThat(configs.isPersist("xyz")).isTrue();
         assertThat(configs.isPersist("xyz")).isFalse();
     }
 
     @Test
     public void testUseDataStore() {
-        given(configService.getBoolean("scoopi.useDatastore", true))
+        given(configProperties.getBoolean("scoopi.useDatastore", true))
                 .willReturn(true, false);
         assertThat(configs.useDataStore()).isTrue();
         assertThat(configs.useDataStore()).isFalse();

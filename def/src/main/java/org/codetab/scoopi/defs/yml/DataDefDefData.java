@@ -1,12 +1,12 @@
 package org.codetab.scoopi.defs.yml;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.codetab.scoopi.defs.IDefData;
 import org.codetab.scoopi.model.DataDef;
 
-public class DataDefDefData implements Serializable {
+public class DataDefDefData implements IDefData {
 
     private static final long serialVersionUID = 2668306606378181174L;
 

@@ -1,14 +1,14 @@
 package org.codetab.scoopi.defs.yml;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.codetab.scoopi.defs.IDefData;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Query;
 
-public class ItemDefData implements Serializable {
+public class ItemDefData implements IDefData {
 
     private static final long serialVersionUID = 6497738060823923870L;
 

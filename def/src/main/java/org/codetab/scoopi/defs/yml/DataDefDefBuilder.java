@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.Validate;
-import org.codetab.scoopi.defs.IDataDefDefBuilder;
+import org.codetab.scoopi.defs.IDefBuilder;
+import org.codetab.scoopi.defs.IDefData;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 
@@ -18,29 +18,19 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author m
  *
  */
-public class DataDefDefBuilder implements IDataDefDefBuilder {
+public class DataDefDefBuilder implements IDefBuilder {
 
     @Inject
     private DataDefDefs dataDefDefs;
-    @Inject
+
     private DataDefDefData dataDefDefData;
 
     @Override
-    public byte[] serialize(final DataDefDefData data) {
-        return SerializationUtils.serialize(data);
-    }
-
-    @Override
-    public DataDefDefData deserialize(final byte[] data) {
-        return SerializationUtils.deserialize(data);
-    }
-
-    @Override
-    public DataDefDefData buildData(final Object defs)
-            throws DefNotFoundException {
+    public IDefData buildData(final Object defs) throws DefNotFoundException {
         Validate.validState(defs instanceof JsonNode,
                 "dataDefDefsNode is not JsonNode");
         try {
+            dataDefDefData = new DataDefDefData();
             JsonNode node = (JsonNode) defs;
             dataDefDefData.setDefinedDataDefs(dataDefDefs.createDataDefs(node));
             dataDefDefs.setDefs(dataDefDefData.getDefinedDataDefs());

@@ -10,7 +10,6 @@ import java.util.HashSet;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -37,11 +36,11 @@ public class DocumentDaoIT {
     @BeforeClass
     public static void setUpBeforeClass()
             throws IOException, IllegalAccessException, URISyntaxException {
-        di = new DInjector(new InitModule());
+        // di = new DInjector(new InitModule());
 
         configs = di.instance(Configs.class);
-        configs.initConfigService("scoopi-test.properties",
-                "scoopi-default.xml");
+        // configs.initConfigService("scoopi-test.properties",
+        // "scoopi-default.xml");
         configs.setProperty("scoopi.useDatastore", "true");
 
         daoUtil = new JdoDaoUtilFactory(di).getUtilDao();

@@ -1,11 +1,11 @@
 package org.codetab.scoopi.defs.yml;
 
-import java.io.Serializable;
 import java.util.List;
 
+import org.codetab.scoopi.defs.IDefData;
 import org.codetab.scoopi.model.LocatorGroup;
 
-public class LocatorDefData implements Serializable {
+public class LocatorDefData implements IDefData {
 
     private static final long serialVersionUID = -2725080632696512078L;
 

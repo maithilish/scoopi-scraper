@@ -70,8 +70,6 @@ public class JobSeeder {
             // FIXME - enum is null, change sleep to wait-notify
             if (jobStore.getState().equals(State.READY)) {
                 seedPermit.set(false);
-                // global time
-                configs.setRunDateTimeString(jobStore.getRunDateTime());
                 LOGGER.info("jobs seed finished");
                 jobMediator.setSeedDoneSignal(0);
                 break;

@@ -8,6 +8,10 @@ package org.codetab.scoopi.store;
  */
 public interface IStore {
 
+    void open();
+
+    void close();
+
     boolean put(String key, Object value);
 
     Object get(String key);
