@@ -3,8 +3,8 @@ package org.codetab.scoopi.system;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.inOrder;
 
+import org.codetab.scoopi.bootstrap.Bootstrap;
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.stat.ShutdownHook;
 import org.codetab.scoopi.stat.Stats;
 import org.codetab.scoopi.step.webdriver.WebDriverPool;
@@ -54,9 +54,11 @@ public class ShutdownHookTest {
 
     @Test
     public void testShutdownHookSingleton() {
-        DInjector dInjector = new DInjector(new InitModule());
-        assertThat(dInjector.instance(ShutdownHook.class))
-                .isSameAs(dInjector.instance(ShutdownHook.class));
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.boot();
+        DInjector di = bootstrap.getdInjector();
+        assertThat(di.instance(ShutdownHook.class))
+                .isSameAs(di.instance(ShutdownHook.class));
     }
 
 }

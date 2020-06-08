@@ -1,12 +1,12 @@
 package org.codetab.scoopi.defs.yml;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.codetab.scoopi.defs.IDefData;
 import org.codetab.scoopi.model.StepInfo;
 
-public class TaskDefData implements Serializable {
+public class TaskDefData implements IDefData {
 
     private static final long serialVersionUID = -65043580910323065L;
 

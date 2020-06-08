@@ -6,14 +6,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-public class ProvidedPropertiesTest {
+public class PropertyFilesTest {
 
     @Test
     public void testGetPropertyFileName() throws IOException {
         String propFile = "scoopi.properties";
         String devPropFile = "scoopi-dev.properties";
 
-        ProvidedProperties pp = new ProvidedProperties();
+        PropertyFiles pp = new PropertyFiles();
 
         System.setProperty("scoopi.propertyFile", propFile);
         String actual = pp.getFileName();

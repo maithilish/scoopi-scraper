@@ -5,9 +5,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.Validate;
-import org.codetab.scoopi.defs.IPluginDefBuilder;
+import org.codetab.scoopi.defs.IDefBuilder;
+import org.codetab.scoopi.defs.IDefData;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Plugin;
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author m
  *
  */
-public class PluginDefBuilder implements IPluginDefBuilder {
+public class PluginDefBuilder implements IDefBuilder {
 
     @Inject
     private PluginDefs pluginDefs;
@@ -28,26 +28,17 @@ public class PluginDefBuilder implements IPluginDefBuilder {
     private TaskDefs taskDefs;
     @Inject
     private StepDefs stepDefs;
-    @Inject
+
     private PluginDefData pluginDefData;
 
     @Override
-    public byte[] serialize(final PluginDefData data) {
-        return SerializationUtils.serialize(data);
-    }
-
-    @Override
-    public PluginDefData deserialize(final byte[] data) {
-        return SerializationUtils.deserialize(data);
-    }
-
-    @Override
-    public PluginDefData buildData(final Object defs)
+    public IDefData buildData(final Object defs)
             throws DefNotFoundException, InvalidDefException {
         Validate.validState(defs instanceof JsonNode,
                 "taskDefsNode is not JsonNode");
         JsonNode node = (JsonNode) defs;
 
+        pluginDefData = new PluginDefData();
         Map<String, JsonNode> allTasks = taskDefs.getAllTasks(node);
         Map<String, JsonNode> stepsMap = stepDefs.getStepNodeMap(allTasks);
         Map<String, List<Plugin>> pluginMap = pluginDefs.getPluginMap(stepsMap);

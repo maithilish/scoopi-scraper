@@ -23,7 +23,6 @@ import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.dao.jdo.JdoDaoUtilFactory;
 import org.codetab.scoopi.dao.jdo.LocatorDao;
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.engine.ScoopiEngine;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.Locator;
@@ -71,12 +70,8 @@ public class ITestBase {
     }
 
     private void setup() {
-        DInjector initInjector =
-                new DInjector(new InitModule()).instance(DInjector.class);
-        Bootstrap bootstrap = initInjector.instance(Bootstrap.class);
-        bootstrap.init();
-        bootstrap.start();
-
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.boot();
         di = bootstrap.getdInjector();
 
         schemaClasses = new HashSet<>();

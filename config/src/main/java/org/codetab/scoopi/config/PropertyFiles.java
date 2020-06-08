@@ -7,7 +7,7 @@ package org.codetab.scoopi.config;
  *
  *
  */
-public class ProvidedProperties {
+public class PropertyFiles {
 
     public String getFileName() {
         String fileName = null;

@@ -21,7 +21,7 @@ public class DataDefDef implements IDataDefDef {
     @Inject
     private DataDefDefData data;
 
-    // FIXME - remove this after persistence fix
+    // FIXME - persistence fix, remove this after
     @Override
     public void updateDataDefs(final List<DataDef> dataDefs) {
         try {

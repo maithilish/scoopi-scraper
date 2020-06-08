@@ -14,7 +14,6 @@ import javax.jdo.JDODataStoreException;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.dao.IDaoUtil;
 import org.codetab.scoopi.di.DInjector;
-import org.codetab.scoopi.di.InitModule;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Item;
@@ -40,15 +39,18 @@ public class DataDaoIT {
     @Rule
     public ExpectedException testRule = ExpectedException.none();
 
+    // FIXME - persistence fix, remove all the JDO tests
+    // tests are not rectified as they will be removed
+
     // don't move this to base class, tests fail in cli
     @BeforeClass
     public static void setUpBeforeClass()
             throws IOException, IllegalAccessException, URISyntaxException {
-        di = new DInjector(new InitModule());
+        // di = new DInjector(new InitModule());
 
         configs = di.instance(Configs.class);
-        configs.initConfigService("scoopi-test.properties",
-                "scoopi-default.xml");
+        // configs.initConfigService("scoopi-test.properties",
+        // "scoopi-default.xml");
         configs.setProperty("scoopi.useDatastore", "true");
 
         daoUtil = new JdoDaoUtilFactory(di).getUtilDao();

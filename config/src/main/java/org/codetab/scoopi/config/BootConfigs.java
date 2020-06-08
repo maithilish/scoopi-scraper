@@ -14,15 +14,15 @@ import java.util.Properties;
  * @author m
  *
  */
-public class BootstrapConfigs {
+public class BootConfigs {
 
     private Properties userDefinedProperties;
     private Properties systemProperties;
 
-    public BootstrapConfigs() {
+    public BootConfigs() {
         final String userDefinedPropertiesFile =
-                new ProvidedProperties().getFileName();
-        try (InputStream input = BootstrapConfigs.class.getClassLoader()
+                new PropertyFiles().getFileName();
+        try (InputStream input = BootConfigs.class.getClassLoader()
                 .getResourceAsStream(userDefinedPropertiesFile)) {
             userDefinedProperties = new Properties();
             userDefinedProperties.load(input);
