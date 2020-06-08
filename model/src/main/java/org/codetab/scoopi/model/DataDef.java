@@ -13,7 +13,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class DataDef implements Serializable {
 
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8992597470530894703L;
+
     private Long id;
     private String name;
     private Date fromDate;
@@ -41,7 +42,7 @@ public class DataDef implements Serializable {
      *            allowed object is {@link Long }
      *
      */
-    public void setId(Long value) {
+    public void setId(final Long value) {
         this.id = value;
     }
 
@@ -62,7 +63,7 @@ public class DataDef implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -83,7 +84,7 @@ public class DataDef implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setFromDate(Date value) {
+    public void setFromDate(final Date value) {
         this.fromDate = value;
     }
 
@@ -104,7 +105,7 @@ public class DataDef implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setToDate(Date value) {
+    public void setToDate(final Date value) {
         this.toDate = value;
     }
 
@@ -112,7 +113,7 @@ public class DataDef implements Serializable {
         return defJson;
     }
 
-    public void setDefJson(String defJson) {
+    public void setDefJson(final String defJson) {
         this.defJson = defJson;
     }
 
@@ -120,7 +121,7 @@ public class DataDef implements Serializable {
         return def;
     }
 
-    public void setDef(Object def) {
+    public void setDef(final Object def) {
         this.def = def;
     }
 

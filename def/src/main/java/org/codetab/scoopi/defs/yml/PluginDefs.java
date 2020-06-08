@@ -30,10 +30,10 @@ class PluginDefs {
     @Inject
     private ObjectFactory objectFactory;
 
-    public Map<String, Optional<List<Plugin>>> getPluginMap(
+    public Map<String, List<Plugin>> getPluginMap(
             final Map<String, JsonNode> stepsMap) throws InvalidDefException {
 
-        Map<String, Optional<List<Plugin>>> map = new HashMap<>();
+        Map<String, List<Plugin>> map = new HashMap<>();
 
         for (String key : stepsMap.keySet()) {
             List<JsonNode> jPlugins = stepsMap.get(key).findValues("plugin");
@@ -59,9 +59,9 @@ class PluginDefs {
                 pluginList.add(plugin);
             }
             if (pluginList.size() > 0) {
-                map.put(key, Optional.ofNullable(pluginList));
+                map.put(key, pluginList);
             } else {
-                map.put(key, Optional.empty());
+                map.put(key, null);
             }
         }
         return map;

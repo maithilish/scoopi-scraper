@@ -1,24 +1,21 @@
 package org.codetab.scoopi.defs.yml;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.codetab.scoopi.util.Util.dashit;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Plugin;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 @Singleton
 public class PluginDef implements IPluginDef {
@@ -26,42 +23,23 @@ public class PluginDef implements IPluginDef {
     @Inject
     private PluginDefs pluginDefs;
     @Inject
-    private TaskDefs taskDefs;
-    @Inject
-    private StepDefs stepDefs;
-
-    private JsonNode defs;
-    private Map<String, Optional<List<Plugin>>> pluginMap;
-    private Map<String, JsonNode> stepsMap;
-
-    @Override
-    public void init(final Object taskDefNodes)
-            throws DefNotFoundException, InvalidDefException {
-        Validate.validState(taskDefNodes instanceof JsonNode,
-                "taskDefNodes is not JsonNode");
-
-        this.defs = (JsonNode) taskDefNodes;
-        Map<String, JsonNode> allTasks = taskDefs.getAllTasks(defs);
-        stepsMap = stepDefs.getStepNodeMap(allTasks);
-        pluginMap = pluginDefs.getPluginMap(stepsMap);
-
-    }
+    private PluginDefData data;
 
     @Override
     public Optional<List<Plugin>> getPlugins(final String taskGroup,
             final String taskName, final String stepName)
             throws DefNotFoundException, InvalidDefException {
         String key = dashit(taskGroup, taskName, stepName);
-        Optional<List<Plugin>> plugins = pluginMap.get(key);
-        List<Plugin> copy = null;
-        if (plugins.isPresent()) {
+        List<Plugin> plugins = data.getPluginMap().get(key);
+        if (nonNull(plugins)) {
             List<Plugin> list = new ArrayList<>();
-            for (Plugin plugin : plugins.get()) {
+            for (Plugin plugin : plugins) {
                 list.add(pluginDefs.copy(plugin));
             }
-            copy = Collections.unmodifiableList(list);
+            return Optional.ofNullable(Collections.unmodifiableList(list));
+        } else {
+            return Optional.empty();
         }
-        return Optional.ofNullable(copy);
     }
 
     @Override
