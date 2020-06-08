@@ -7,8 +7,6 @@ import org.codetab.scoopi.model.DataDef;
 
 public interface IDataDefDef {
 
-    void init(Object dataDefDefs);
-
     Long getDataDefId(String name) throws DataDefNotFoundException;
 
     List<DataDef> getDefinedDataDefs();

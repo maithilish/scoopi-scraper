@@ -13,10 +13,14 @@ import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.defs.ITaskDef;
+import org.codetab.scoopi.defs.yml.DataDefDef;
+import org.codetab.scoopi.defs.yml.DataDefDefData;
 import org.codetab.scoopi.defs.yml.ItemDef;
 import org.codetab.scoopi.defs.yml.ItemDefData;
 import org.codetab.scoopi.defs.yml.LocatorDef;
 import org.codetab.scoopi.defs.yml.LocatorDefData;
+import org.codetab.scoopi.defs.yml.PluginDef;
+import org.codetab.scoopi.defs.yml.PluginDefData;
 import org.codetab.scoopi.defs.yml.TaskDef;
 import org.codetab.scoopi.defs.yml.TaskDefData;
 import org.codetab.scoopi.metrics.IMetricsServer;
@@ -65,6 +69,8 @@ public class ClusterModule extends AbstractModule {
         bind(ILocatorDef.class).to(LocatorDef.class).in(Singleton.class);
         bind(IItemDef.class).to(ItemDef.class).in(Singleton.class);
         bind(ITaskDef.class).to(TaskDef.class).in(Singleton.class);
+        bind(IPluginDef.class).to(PluginDef.class).in(Singleton.class);
+        bind(IDataDefDef.class).to(DataDefDef.class).in(Singleton.class);
 
         // factory to create instances with constructor parameters
         install(new FactoryModuleBuilder().build(BasicFactory.class));
@@ -105,16 +111,16 @@ public class ClusterModule extends AbstractModule {
 
     @Provides
     @Singleton
-    IPluginDef providePluginDef() {
-        // return (IPluginDef) SerializationUtils
-        // .deserialize((byte[]) store.get("pluginDef"));
-        return (IPluginDef) store.get("pluginDef");
+    PluginDefData providePluginDefData() {
+        return (PluginDefData) SerializationUtils
+                .deserialize((byte[]) store.get("pluginDef"));
     }
 
     @Provides
     @Singleton
-    IDataDefDef provideDataDefDef() {
-        return (IDataDefDef) store.get("dataDefDef");
+    DataDefDefData provideDataDefDefData() {
+        return (DataDefDefData) SerializationUtils
+                .deserialize((byte[]) store.get("dataDefDef"));
     }
 
     @Provides

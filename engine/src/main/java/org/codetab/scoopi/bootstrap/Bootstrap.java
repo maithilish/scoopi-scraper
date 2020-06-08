@@ -61,8 +61,6 @@ public class Bootstrap {
 
             configBootstrap.bootstrap(store);
             defBootstrap.bootstrap(store);
-            defBootstrap.updateDataDefs(store);
-
         } catch (CriticalException e) {
             String message = "terminate scoopi";
             errorLogger.log(CAT.FATAL, message, e);

@@ -9,8 +9,6 @@ import org.codetab.scoopi.model.Plugin;
 
 public interface IPluginDef {
 
-    void init(Object taskDefs) throws DefNotFoundException, InvalidDefException;
-
     Optional<List<Plugin>> getPlugins(String taskGroup, String taskName,
             String stepName) throws DefNotFoundException, InvalidDefException;
 

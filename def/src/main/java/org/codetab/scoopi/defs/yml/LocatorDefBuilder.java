@@ -10,8 +10,8 @@ import org.codetab.scoopi.exception.DefNotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Build TaskDefData from JsonNode. TaskDefData is serialized and stored in
- * IStore by DefBootstrap.
+ * Build LocatorDefData from JsonNode. LocatorDefData is serialized and stored
+ * in IStore by DefBootstrap.
  * @author m
  *
  */
