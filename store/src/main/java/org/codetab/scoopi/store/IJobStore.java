@@ -37,8 +37,6 @@ public interface IJobStore {
 
     void setState(State state);
 
-    boolean changeStateToInitialize() throws TransactionException;
-
     String getMemberId();
 
     int getJobTakenCount();

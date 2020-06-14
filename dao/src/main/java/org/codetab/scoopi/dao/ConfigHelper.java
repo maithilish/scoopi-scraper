@@ -71,7 +71,7 @@ public class ConfigHelper {
      * @return value of key and if not found then true
      */
     public boolean useDataStore() {
-        return configs.getBoolean("scoopi.useDatastore");
+        return configs.getBoolean("scoopi.useDatastore", true);
     }
 
 }

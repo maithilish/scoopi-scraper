@@ -1,11 +1,7 @@
 package org.codetab.scoopi.store.cluster.hz;
 
-import static java.util.Objects.nonNull;
-
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -15,7 +11,6 @@ import javax.inject.Singleton;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.model.ClusterJob;
 import org.codetab.scoopi.store.ICluster;
-import org.codetab.scoopi.store.IJobStore.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,23 +45,27 @@ public class CrashCleaner {
     public boolean resetCrashedJobs() {
         Stack<String> crashedMembers = membershipListener.getCrashedMembers();
         if (crashedMembers.isEmpty()) {
+            LOGGER.debug("no crashed members");
             return false;
         }
-        if (!cluster.getLeader().equals(cluster.getMemberId())) {
+        String leader = cluster.getLeader();
+        if (!leader.equals(cluster.getMemberId())) {
+            LOGGER.debug("not leader, don't reset crashed jobs. leader is {}",
+                    leader);
             return false;
         }
-
-        Set<String> failedItems = new HashSet<>();
 
         while (!crashedMembers.isEmpty()) {
-
-            String crashedMemberId = crashedMembers.pop();
+            String crashedMemberId = crashedMembers.peek();
 
             List<Long> takenJobs = takenJobsMap.values().stream().filter(
                     p -> p.isTaken() && p.getMemberId().equals(crashedMemberId))
                     .map(ClusterJob::getJobId).collect(Collectors.toList());
 
-            if (takenJobs.size() > 0) {
+            if (takenJobs.isEmpty()) {
+                // no taken job by crashed node, remove it
+                crashedMembers.pop();
+            } else {
                 LOGGER.info("reset {} jobs taken by {}", takenJobs.size(),
                         crashedMemberId);
                 TransactionContext tx = hz.newTransactionContext(txOptions);
@@ -84,10 +83,10 @@ public class CrashCleaner {
                         cJob.setMemberId(null);
                         txJobsMap.put(jobId, cJob);
                     }
-
                     tx.commitTransaction();
+                    // done, remove the crashed node
+                    crashedMembers.pop();
                 } catch (Exception e) {
-                    failedItems.add(crashedMemberId);
                     tx.rollbackTransaction();
                     LOGGER.warn("could not reset jobs taken by {}, {}",
                             crashedMemberId, e.getLocalizedMessage());
@@ -95,52 +94,52 @@ public class CrashCleaner {
                 }
             }
         }
-        // add back failed members
-        crashedMembers.addAll(failedItems);
         return true;
-    }
-
-    public void resetSeedState() {
-        Stack<String> crashedMembers = membershipListener.getCrashedMembers();
-        if (crashedMembers.isEmpty()) {
-            return;
-        }
-
-        TransactionContext tx = hz.newTransactionContext(txOptions);
-        try {
-            tx.beginTransaction();
-            TransactionalMap<String, String> txKeyStoreMap =
-                    tx.getMap(DsName.KEYSTORE_MAP.toString());
-
-            if (txKeyStoreMap.getForUpdate(DsName.DATA_GRID_STATE.toString())
-                    .equalsIgnoreCase(State.INITIALIZE.toString())) {
-                String seederMemberId =
-                        txKeyStoreMap.getForUpdate(DsName.SEEDER_ID.toString());
-                if (nonNull(seederMemberId)
-                        && crashedMembers.contains(seederMemberId)) {
-                    LOGGER.info(
-                            "job seeder is crashed, reset job store state to NEW");
-                    txKeyStoreMap.set(DsName.DATA_GRID_STATE.toString(),
-                            State.NEW.toString());
-                    if (!txKeyStoreMap.remove(DsName.SEEDER_ID.toString(),
-                            seederMemberId)) {
-                        throw new IllegalStateException(
-                                "another node has already reset the seed state");
-                    }
-                }
-            }
-            tx.commitTransaction();
-        } catch (Exception e) {
-            tx.rollbackTransaction();
-            LOGGER.warn("could not reset seed state, {}",
-                    e.getLocalizedMessage());
-            LOGGER.debug("{}", e);
-        }
-
     }
 
     public void clearDanglingJobs() {
         Map<Long, ClusterJob> jobsMap = hz.getMap(DsName.JOBS_MAP.toString());
         jobsMap.clear();
     }
+
+    // FIXME - bootfix, remove this
+    // public void resetSeedState() {
+    // Stack<String> crashedMembers = membershipListener.getCrashedMembers();
+    // if (crashedMembers.isEmpty()) {
+    // return;
+    // }
+    //
+    // TransactionContext tx = hz.newTransactionContext(txOptions);
+    // try {
+    // tx.beginTransaction();
+    // TransactionalMap<String, String> txKeyStoreMap =
+    // tx.getMap(DsName.KEYSTORE_MAP.toString());
+    //
+    // if (txKeyStoreMap.getForUpdate(DsName.DATA_GRID_STATE.toString())
+    // .equalsIgnoreCase(State.INITIALIZE.toString())) {
+    // String seederMemberId =
+    // txKeyStoreMap.getForUpdate(DsName.SEEDER_ID.toString());
+    // if (nonNull(seederMemberId)
+    // && crashedMembers.contains(seederMemberId)) {
+    // LOGGER.info(
+    // "job seeder is crashed, reset job store state to NEW");
+    // txKeyStoreMap.set(DsName.DATA_GRID_STATE.toString(),
+    // State.NEW.toString());
+    // if (!txKeyStoreMap.remove(DsName.SEEDER_ID.toString(),
+    // seederMemberId)) {
+    // throw new IllegalStateException(
+    // "another node has already reset the seed state");
+    // }
+    // }
+    // }
+    // tx.commitTransaction();
+    // } catch (Exception e) {
+    // tx.rollbackTransaction();
+    // LOGGER.warn("could not reset seed state, {}",
+    // e.getLocalizedMessage());
+    // LOGGER.debug("{}", e);
+    // }
+    //
+    // }
+
 }

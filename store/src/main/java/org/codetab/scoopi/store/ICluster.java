@@ -19,4 +19,6 @@ public interface ICluster {
     Map<String, byte[]> getMetricsHolder();
 
     Object getTxOptions(Configs configs);
+
+    int getSize();
 }

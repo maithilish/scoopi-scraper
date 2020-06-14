@@ -84,9 +84,11 @@ public final class LocatorSeeder extends BaseSeeder {
 
         final Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
 
-        LOGGER.debug("push locators to taskpool");
         final String group = locatorGroup.getGroup();
-
+        LOGGER.debug("push {} locators from locatorGroup {}",
+                locatorGroup.getLocators().size(), group);
+        LOGGER.debug("is locator group defined by defs : {}",
+                locatorGroup.isByDef());
         for (final Locator locator : locatorGroup.getLocators()) {
             // create and push first task payload for each locator
             // so that loader fetch only one document for each locator
@@ -104,6 +106,9 @@ public final class LocatorSeeder extends BaseSeeder {
                                 // if seed, push to JM (local or cluster)
                                 payload.getJobInfo()
                                         .setId(jobMediator.getJobIdSequence());
+                                LOGGER.debug(
+                                        "locator defined by def, push jobId {} to jobMediator",
+                                        payload.getJobInfo().getId());
                                 jobMediator.pushPayload(payload);
                             } else {
                                 // if from parse link, push to TM (local). JobId
@@ -111,6 +116,9 @@ public final class LocatorSeeder extends BaseSeeder {
                                 final long linkJobId =
                                         getPayload().getJobInfo().getId();
                                 payload.getJobInfo().setId(linkJobId);
+                                LOGGER.debug(
+                                        "link locator, push jobId {} to taskMediator",
+                                        payload.getJobInfo().getId());
                                 taskMediator.pushPayload(payload);
                             }
                             meter.mark();

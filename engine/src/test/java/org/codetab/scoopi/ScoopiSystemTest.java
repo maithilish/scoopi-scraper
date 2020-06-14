@@ -11,7 +11,7 @@ import java.io.IOException;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.defs.yml.Def;
-import org.codetab.scoopi.engine.ScoopiSystem;
+import org.codetab.scoopi.engine.SystemModule;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.log.ErrorLogger;
@@ -64,7 +64,7 @@ public class ScoopiSystemTest {
     private PayloadFactory payloadFactory;
 
     @InjectMocks
-    private ScoopiSystem sSystem;
+    private SystemModule sSystem;
 
     @Rule
     public ExpectedException testRule = ExpectedException.none();

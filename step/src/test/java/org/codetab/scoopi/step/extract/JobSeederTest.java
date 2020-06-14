@@ -1,6 +1,5 @@
 package org.codetab.scoopi.step.extract;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -87,9 +86,7 @@ public class JobSeederTest {
         given(payloadFactory.createSeedPayloads(lGroups, stepName,
                 seederClzName)).willReturn(payloads);
 
-        final boolean result = jobSeeder.seedLocatorGroups();
-
-        assertThat(result).isTrue();
+        jobSeeder.seedLocatorGroups();
 
         final InOrder inOrder = inOrder(taskMediator);
 
@@ -123,9 +120,7 @@ public class JobSeederTest {
         given(taskMediator.pushPayload(payload1))
                 .willThrow(InterruptedException.class);
 
-        final boolean result = jobSeeder.seedLocatorGroups();
-
-        assertThat(result).isTrue();
+        jobSeeder.seedLocatorGroups();
 
         final InOrder inOrder = inOrder(taskMediator, errorLogger);
 

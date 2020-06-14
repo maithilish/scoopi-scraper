@@ -12,7 +12,6 @@ import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.LocatorGroup;
@@ -20,8 +19,6 @@ import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
-import org.codetab.scoopi.store.IJobStore;
-import org.codetab.scoopi.store.IJobStore.State;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,96 +41,61 @@ public class JobSeeder {
     @Inject
     private ErrorLogger errorLogger;
     @Inject
-    private IJobStore jobStore;
-    @Inject
     private CrashCleaner crashCleaner;
 
-    private AtomicBoolean seedPermit = new AtomicBoolean(false);
+    private AtomicBoolean seeder = new AtomicBoolean(false);
 
-    public boolean acquirePermitToSeed() {
+    public void seedLocatorGroups() {
+        seeder.set(true);
+        LOGGER.info("seed defined locator groups");
+        final String stepName = "start"; //$NON-NLS-1$
+        String seederClzName = null;
         try {
-            if (jobStore.changeStateToInitialize()) {
-                seedPermit.set(true);
-                // global time
-                jobStore.setRunDateTime(configs.getRunDateTimeString());
-                LOGGER.info("acquired lock to seed jobs");
-                return true;
-            } else {
-                seedPermit.set(false);
-            }
-        } catch (TransactionException e) {
-            seedPermit.set(false);
+            seederClzName = configs.getConfig("scoopi.seeder.class"); //$NON-NLS-1$
+        } catch (final ConfigNotFoundException e) {
+            final String message = "unable seed locator group";
+            throw new CriticalException(message, e);
         }
 
-        LOGGER.info("wait for jobs seed to finish...");
-        while (true) {
-            // FIXME - enum is null, change sleep to wait-notify
-            if (jobStore.getState().equals(State.READY)) {
-                seedPermit.set(false);
-                LOGGER.info("jobs seed finished");
-                jobMediator.setSeedDoneSignal(0);
-                break;
-            }
-            crashCleaner.resetSeedState();
+        final List<LocatorGroup> locatorGroups = locatorDef.getLocatorGroups();
+        jobMediator.setSeedDoneSignal(locatorGroups.size()); // CountDownLatch
+
+        final List<Payload> payloads = payloadFactory
+                .createSeedPayloads(locatorGroups, stepName, seederClzName);
+        for (final Payload payload : payloads) {
             try {
-                if (jobStore.changeStateToInitialize()) {
-                    seedPermit.set(true);
-                    LOGGER.info("acquired lock to seed jobs");
-                    break;
-                }
-            } catch (TransactionException e) {
-            }
-            try {
-                LOGGER.debug("jobStore state {}, wait for Ready",
-                        jobStore.getState());
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
+                taskMediator.pushPayload(payload);
+            } catch (final InterruptedException e) {
+                final String group = payload.getJobInfo().getGroup();
+                final String message = spaceit("seed locator group: ", group);
+                errorLogger.log(CAT.INTERNAL, message, e);
             }
         }
-        return seedPermit.get();
-    }
-
-    public boolean seedLocatorGroups() {
-        if (seedPermit.get()) {
-            LOGGER.info("seed defined locator groups");
-            final String stepName = "start"; //$NON-NLS-1$
-            String seederClzName = null;
-            try {
-                seederClzName = configs.getConfig("scoopi.seeder.class"); //$NON-NLS-1$
-            } catch (final ConfigNotFoundException e) {
-                final String message = "unable seed locator group";
-                throw new CriticalException(message, e);
-            }
-
-            final List<LocatorGroup> locatorGroups =
-                    locatorDef.getLocatorGroups();
-            jobMediator.setSeedDoneSignal(locatorGroups.size()); // CountDownLatch
-
-            final List<Payload> payloads = payloadFactory
-                    .createSeedPayloads(locatorGroups, stepName, seederClzName);
-            for (final Payload payload : payloads) {
-                try {
-                    taskMediator.pushPayload(payload);
-                } catch (final InterruptedException e) {
-                    final String group = payload.getJobInfo().getGroup();
-                    final String message =
-                            spaceit("seed locator group: ", group);
-                    errorLogger.log(CAT.INTERNAL, message, e);
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isSeeder() {
-        return seedPermit.get();
     }
 
     public void clearDanglingJobs() {
         if (configs.isCluster()) {
             crashCleaner.clearDanglingJobs();
         }
+    }
+
+    /**
+     * Except seeder node, all others set seedDoneSignal (CountDownLatch) to
+     * zero as they are all blocked by Barricade till seed is completed.
+     */
+    public void setSeedDoneSignal() {
+        jobMediator.setSeedDoneSignal(0);
+    }
+
+    public void awaitForSeedDone() {
+        try {
+            jobMediator.awaitForSeedDone();
+        } catch (InterruptedException e) {
+            throw new CriticalException("await for seed done", e);
+        }
+    }
+
+    public boolean isSeeder() {
+        return seeder.get();
     }
 }

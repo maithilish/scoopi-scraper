@@ -1,5 +1,7 @@
 package org.codetab.scoopi.config;
 
+import static java.util.Objects.isNull;
+
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
@@ -30,6 +32,17 @@ public class BootConfigs {
             userDefinedProperties = new Properties();
         }
         systemProperties = System.getProperties();
+    }
+
+    public String getConfig(final String key, final String defaultValue) {
+        String value = systemProperties.getProperty(key);
+        if (isNull(value)) {
+            value = userDefinedProperties.getProperty(key);
+        }
+        if (isNull(value)) {
+            value = defaultValue;
+        }
+        return value;
     }
 
     /**

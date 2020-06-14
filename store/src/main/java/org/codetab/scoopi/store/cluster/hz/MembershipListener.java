@@ -1,5 +1,6 @@
 package org.codetab.scoopi.store.cluster.hz;
 
+import java.util.Arrays;
 import java.util.Stack;
 
 import javax.inject.Singleton;
@@ -34,6 +35,8 @@ public class MembershipListener
         String crashedMemberId = membershipEvent.getMember().getUuid();
         LOGGER.info("member {} left cluster", crashedMemberId);
         crashedMembers.push(crashedMemberId);
+        LOGGER.debug("crashed members {}",
+                Arrays.toString(crashedMembers.toArray()));
     }
 
     @Override

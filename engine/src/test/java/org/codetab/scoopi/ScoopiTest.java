@@ -27,6 +27,8 @@ public class ScoopiTest {
 
         scoopi.start();
 
-        verify(engine).start();
+        verify(engine).initSystem();
+        verify(engine).runJobs();
+        verify(engine).shutdown();
     }
 }

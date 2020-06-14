@@ -35,16 +35,16 @@ public class ConfigsTest {
 
     @Test
     public void testGetConfig() throws ConfigNotFoundException {
-        given(configProperties.getProperty("xyz")).willReturn("xxx");
+        given(configProperties.getConfig("xyz")).willReturn("xxx");
 
         configs.getConfig("xyz");
 
-        verify(configProperties).getProperty("xyz");
+        verify(configProperties).getConfig("xyz");
     }
 
     @Test
     public void testGetConfigNull() throws ConfigNotFoundException {
-        given(configProperties.getProperty(null))
+        given(configProperties.getConfig(null))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(ConfigNotFoundException.class);
@@ -71,26 +71,14 @@ public class ConfigsTest {
     }
 
     @Test
-    public void testIsTrue() {
-        String key = "xyz";
-        given(configProperties.getBoolean(key, false)).willReturn(true, false);
-
-        boolean actual = configs.isTrue(key);
-        assertThat(actual).isTrue();
-
-        actual = configs.isTrue(key);
-        assertThat(actual).isFalse();
-    }
-
-    @Test
     public void testGetBoolean() {
         String key = "xyz";
         given(configProperties.getBoolean(key, true)).willReturn(true, false);
 
-        boolean actual = configs.getBoolean(key);
+        boolean actual = configs.getBoolean(key, false);
         assertThat(actual).isTrue();
 
-        actual = configs.getBoolean(key);
+        actual = configs.getBoolean(key, true);
         assertThat(actual).isFalse();
     }
 
@@ -137,7 +125,7 @@ public class ConfigsTest {
     public void testGetRunDateString()
             throws ConfigNotFoundException, ParseException {
         String dateString = new Date().toString();
-        given(configProperties.getProperty("scoopi.runDateString"))
+        given(configProperties.getConfig("scoopi.runDateString"))
                 .willReturn(dateString);
 
         String actual = configs.getRunDateString();
@@ -148,7 +136,7 @@ public class ConfigsTest {
     @Test
     public void testGetRunDateStringException()
             throws ConfigNotFoundException, ParseException {
-        given(configProperties.getProperty("scoopi.runDateString"))
+        given(configProperties.getConfig("scoopi.runDateString"))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(CriticalException.class);
@@ -179,7 +167,7 @@ public class ConfigsTest {
     public void testGetRunDateTimeString()
             throws ConfigNotFoundException, ParseException {
         String dateString = new Date().toString();
-        given(configProperties.getProperty("scoopi.runDateTimeString"))
+        given(configProperties.getConfig("scoopi.runDateTimeString"))
                 .willReturn(dateString);
 
         String actual = configs.getRunDateTimeString();
@@ -190,7 +178,7 @@ public class ConfigsTest {
     @Test
     public void testGetRunDateTimeStringException()
             throws ConfigNotFoundException, ParseException {
-        given(configProperties.getProperty("scoopi.runDateTimeString"))
+        given(configProperties.getConfig("scoopi.runDateTimeString"))
                 .willThrow(ConfigNotFoundException.class);
 
         testRule.expect(CriticalException.class);
@@ -204,7 +192,7 @@ public class ConfigsTest {
         String mavenTestRunner =
                 "org.apache.maven.surefire.booter.ForkedBooter"; //$NON-NLS-1$
 
-        given(configProperties.getProperty("scoopi.runnerClass"))
+        given(configProperties.getConfig("scoopi.runnerClass"))
                 .willReturn("xyz", eclipseTestRunner, mavenTestRunner);
         assertThat(configs.isTestMode()).isFalse();
         assertThat(configs.isTestMode()).isTrue();
@@ -212,8 +200,8 @@ public class ConfigsTest {
     }
 
     @Test
-    public void testIsDevMode() {
-        given(configProperties.getProperty("scoopi.mode", "")).willReturn("dev",
+    public void testIsDevMode() throws ConfigNotFoundException {
+        given(configProperties.getConfig("scoopi.mode")).willReturn("dev",
                 "test");
         assertThat(configs.isDevMode()).isTrue();
         assertThat(configs.isDevMode()).isFalse();
@@ -221,22 +209,21 @@ public class ConfigsTest {
 
     @Test
     public void testGetStage() throws ConfigNotFoundException {
-        given(configProperties.getProperty("scoopi.runnerClass"))
+        given(configProperties.getConfig("scoopi.runnerClass"))
                 .willReturn("xyz");
-        given(configProperties.getProperty("scoopi.runnerClass"))
+        given(configProperties.getConfig("scoopi.runnerClass"))
                 .willReturn("test");
         assertThat(configs.getStage()).isEqualTo("stage: production");
 
         String eclipseTestRunner =
                 "org.eclipse.jdt.internal.junit.runner.RemoteTestRunner"; //$NON-NLS-1$
-        given(configProperties.getProperty("scoopi.runnerClass"))
+        given(configProperties.getConfig("scoopi.runnerClass"))
                 .willReturn(eclipseTestRunner);
         assertThat(configs.getStage()).isEqualTo("stage: test");
 
-        given(configProperties.getProperty("scoopi.runnerClass"))
+        given(configProperties.getConfig("scoopi.runnerClass"))
                 .willReturn("xyz");
-        given(configProperties.getProperty("scoopi.mode", ""))
-                .willReturn("dev");
+        given(configProperties.getConfig("scoopi.mode")).willReturn("dev");
         assertThat(configs.getStage()).isEqualTo("stage: dev");
     }
 

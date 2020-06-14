@@ -6,7 +6,6 @@ import static org.codetab.scoopi.util.Util.spaceit;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -75,8 +74,8 @@ public final class FileAppender extends Appender {
     @Override
     public void run() {
         int count = 0;
-        int jobCount = 0;
-        Random random = new Random();
+        // int jobCount = 0;
+        // Random random = new Random();
 
         for (;;) {
             PrintPayload printPayload = null;

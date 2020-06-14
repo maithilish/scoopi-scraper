@@ -278,11 +278,16 @@ For Run As - Java Application, the arguments:
 ## Node.js and Angular
 
 On new machine install nodejs and angular cli
+    
+    sudo apt install nodejs
+    sudo apt install npm
+    sudo npm install -g @angular/cli
 
-    curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
-    yum install nodejs
+last build with nodjs - v10.19.0, npm - 6.14.4 and angular cli 9.1.8
 
-    npm install -g @angular/cli
+ng version command run in dir metric/src/main/web/scoopiw shows following message 
+	Your global Angular CLI version (9.1.8) is greater than your local
+	version (6.0.8). The local Angular CLI version is used.
 
 ### Scoopi dashboard
 

@@ -2,6 +2,7 @@ package org.codetab.scoopi.di;
 
 import javax.inject.Singleton;
 
+import org.codetab.scoopi.store.IBarricade;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
@@ -25,6 +26,9 @@ public class ClusterModule extends BaseModule {
         bind(IShutdown.class)
                 .to(org.codetab.scoopi.store.cluster.hz.Shutdown.class)
                 .in(Singleton.class);
+
+        bind(IBarricade.class)
+                .to(org.codetab.scoopi.store.cluster.hz.Barricade.class);
     }
 
 }
