@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import javax.script.ScriptException;
 
 import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
@@ -52,12 +51,9 @@ public class ValueProcessor {
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException, InvalidDefException {
 
-        boolean replaceBlank = configs.isTrue("scoopi.fact.replaceBlank");
-        String replaceWith = "-";
-        try {
-            replaceWith = configs.getConfig("scoopi.fact.replaceWith");
-        } catch (ConfigNotFoundException e) {
-        }
+        boolean replaceBlank =
+                configs.getBoolean("scoopi.fact.replaceBlank", true);
+        String replaceWith = configs.getConfig("scoopi.fact.replaceWith", "-");
 
         // as index of AxisName.FACT is zero, process in reverse so that
         // all other axis are processed before the fact

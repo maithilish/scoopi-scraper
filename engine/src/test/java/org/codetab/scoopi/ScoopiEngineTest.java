@@ -7,7 +7,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.codetab.scoopi.engine.ScoopiEngine;
-import org.codetab.scoopi.engine.ScoopiSystem;
+import org.codetab.scoopi.engine.SystemModule;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
@@ -24,7 +24,7 @@ import org.mockito.MockitoAnnotations;
 public class ScoopiEngineTest {
 
     @Mock
-    private ScoopiSystem scoopiSystem;
+    private SystemModule systemModule;
     @Mock
     private ErrorLogger errorLogger;
     @Mock
@@ -46,28 +46,28 @@ public class ScoopiEngineTest {
     public void testStart() {
 
         // when
-        scoopiEngine.start();
+        scoopiEngine.initSystem();
 
         // then
         InOrder inOrder =
-                inOrder(scoopiSystem, taskMediator, jobMediator, jobSeeder);
-        inOrder.verify(scoopiSystem).startStats();
-        inOrder.verify(scoopiSystem).startErrorLogger();
-        inOrder.verify(scoopiSystem).addShutdownHook();
-        inOrder.verify(scoopiSystem).startMetrics();
+                inOrder(systemModule, taskMediator, jobMediator, jobSeeder);
+        inOrder.verify(systemModule).startStats();
+        inOrder.verify(systemModule).startErrorLogger();
+        inOrder.verify(systemModule).addShutdownHook();
+        inOrder.verify(systemModule).startMetrics();
         inOrder.verify(jobSeeder).seedLocatorGroups();
-        inOrder.verify(scoopiSystem).waitForInput();
+        inOrder.verify(systemModule).waitForInput();
 
         inOrder.verify(taskMediator).start();
         inOrder.verify(jobMediator).start();
         inOrder.verify(taskMediator).waitForFinish();
         inOrder.verify(jobMediator).waitForFinish();
-        inOrder.verify(scoopiSystem).waitForFinish();
-        inOrder.verify(scoopiSystem).waitForInput();
+        inOrder.verify(systemModule).waitForFinish();
+        inOrder.verify(systemModule).waitForInput();
 
-        inOrder.verify(scoopiSystem).stopMetrics();
-        inOrder.verify(scoopiSystem).stopStats();
-        verifyNoMoreInteractions(scoopiSystem, taskMediator, jobMediator,
+        inOrder.verify(systemModule).stopMetrics();
+        inOrder.verify(systemModule).stopStats();
+        verifyNoMoreInteractions(systemModule, taskMediator, jobMediator,
                 jobSeeder);
     }
 
@@ -75,17 +75,17 @@ public class ScoopiEngineTest {
     public void testStartShouldCatchException() {
         CriticalException ex = new CriticalException("fatal");
         // given
-        given(scoopiSystem.startStats()).willThrow(ex);
+        given(systemModule.startStats()).willThrow(ex);
 
-        scoopiEngine.start();
+        scoopiEngine.initSystem();
 
         // then
-        InOrder inOrder = inOrder(scoopiSystem, errorLogger);
-        inOrder.verify(scoopiSystem).startStats();
+        InOrder inOrder = inOrder(systemModule, errorLogger);
+        inOrder.verify(systemModule).startStats();
         inOrder.verify(errorLogger).log(eq(CAT.FATAL), any(String.class),
                 eq(ex));
-        inOrder.verify(scoopiSystem).stopMetrics();
-        inOrder.verify(scoopiSystem).stopStats();
-        verifyNoMoreInteractions(scoopiSystem, errorLogger);
+        inOrder.verify(systemModule).stopMetrics();
+        inOrder.verify(systemModule).stopStats();
+        verifyNoMoreInteractions(systemModule, errorLogger);
     }
 }

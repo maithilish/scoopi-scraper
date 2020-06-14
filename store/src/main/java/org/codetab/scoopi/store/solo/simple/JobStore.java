@@ -75,16 +75,6 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public boolean changeStateToInitialize() {
-        if (state.equals(State.NEW)) {
-            state = State.INITIALIZE;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public String getMemberId() {
         return "solo";
     }

@@ -51,4 +51,9 @@ public class SoloCluster implements ICluster {
         return Optional.empty();
     }
 
+    @Override
+    public int getSize() {
+        return 1;
+    }
+
 }

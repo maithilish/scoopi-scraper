@@ -108,6 +108,10 @@ public class JobMediator {
         LOGGER.debug("job seed latch countdown");
     }
 
+    public void awaitForSeedDone() throws InterruptedException {
+        seedDoneSignal.await();
+    }
+
     public long getJobIdSequence() {
         return jobStore.getJobIdSeq();
     }
@@ -171,8 +175,9 @@ public class JobMediator {
             int takeLimit = jobStore.getJobTakeLimit();
             while (true) {
                 int takenCount = jobStore.getJobTakenByMemberCount();
-                if (takenCount <= takeLimit)
+                if (takenCount <= takeLimit) {
                     break;
+                }
                 LOGGER.debug("wait... jobs taken {} limit: {}", takenCount,
                         takeLimit);
                 Thread.sleep(takeLimitWait);

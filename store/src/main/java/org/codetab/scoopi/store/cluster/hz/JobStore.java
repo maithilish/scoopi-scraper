@@ -83,6 +83,7 @@ public class JobStore implements IClusterJobStore {
         // ScoopiEngine stops cluster
     }
 
+    // FIXME - bootfix, document the logic
     @Override
     public boolean putJob(final Payload payload)
             throws InterruptedException, TransactionException {
@@ -284,36 +285,6 @@ public class JobStore implements IClusterJobStore {
             // termination fails
             tx.rollbackTransaction();
             String message = spaceit("reset taken job", String.valueOf(jobId));
-            throw new TransactionException(message, e);
-        }
-    }
-
-    @Override
-    public boolean changeStateToInitialize() throws TransactionException {
-        String dataGridStateKey = DsName.DATA_GRID_STATE.toString();
-        TransactionContext tx = hz.newTransactionContext();
-        try {
-            tx.beginTransaction();
-            TransactionalMap<String, String> txKeyStoreMap =
-                    tx.getMap(DsName.KEYSTORE_MAP.toString());
-            boolean stateChange = false;
-            if (txKeyStoreMap.containsKey(dataGridStateKey)) {
-                stateChange = txKeyStoreMap.replace(dataGridStateKey,
-                        State.NEW.toString(), State.INITIALIZE.toString());
-            } else {
-                if (isNull(txKeyStoreMap.put(dataGridStateKey,
-                        State.INITIALIZE.toString()))) {
-                    stateChange = true;
-                }
-            }
-            if (stateChange) {
-                txKeyStoreMap.put(DsName.SEEDER_ID.toString(), memberId);
-            }
-            tx.commitTransaction();
-            return stateChange;
-        } catch (Exception e) {
-            tx.rollbackTransaction();
-            String message = "change data grid state to initialize";
             throw new TransactionException(message, e);
         }
     }

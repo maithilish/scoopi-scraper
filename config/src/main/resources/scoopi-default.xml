@@ -84,10 +84,14 @@
         <cluster>
             <enable>false</enable>
             <tx>
-                <timeout>10</timeout>
+                <timeout>60</timeout>
                 <timeoutUnit>SECONDS</timeoutUnit>
                 <type>TWO_PHASE</type>
             </tx>
+            <shutdown>
+                <timeout>60</timeout>
+                <timeoutUnit>SECONDS</timeoutUnit>
+            </shutdown>
         </cluster>
         <job>
             <takeLimit>4</takeLimit>

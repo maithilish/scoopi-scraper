@@ -71,7 +71,9 @@ public class Cluster implements ICluster {
 
     @Override
     public void shutdown() {
-        hz.getCluster().shutdown();
+        // FIXME - bootfix, cluster shutdown vs node shutdown
+        // hz.getCluster().shutdown();
+        hz.shutdown();
     }
 
     @Override
@@ -142,5 +144,10 @@ public class Cluster implements ICluster {
                 LOGGER.info("member: {}", member.getUuid());
             }
         }
+    }
+
+    @Override
+    public int getSize() {
+        return hz.getCluster().getMembers().size();
     }
 }

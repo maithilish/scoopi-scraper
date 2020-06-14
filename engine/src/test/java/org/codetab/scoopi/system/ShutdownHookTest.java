@@ -55,7 +55,7 @@ public class ShutdownHookTest {
     @Test
     public void testShutdownHookSingleton() {
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap.boot();
+        bootstrap.bootDi();
         DInjector di = bootstrap.getdInjector();
         assertThat(di.instance(ShutdownHook.class))
                 .isSameAs(di.instance(ShutdownHook.class));

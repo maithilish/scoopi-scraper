@@ -23,7 +23,7 @@ public class DefReferenceIT {
         System.setProperty("scoopi.cluster.enable", "false");
 
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap.boot();
+        bootstrap.bootDi();
         DInjector di = bootstrap.getdInjector();
         ConfigsComposer configBooter = di.instance(ConfigsComposer.class);
         configBooter.compose();

@@ -4,6 +4,7 @@ import static org.codetab.scoopi.util.Util.LINE;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -22,15 +23,17 @@ import org.codetab.scoopi.plugin.appender.AppenderMediator;
 import org.codetab.scoopi.plugin.pool.AppenderPoolService;
 import org.codetab.scoopi.stat.ShutdownHook;
 import org.codetab.scoopi.stat.Stats;
+import org.codetab.scoopi.step.extract.JobSeeder;
+import org.codetab.scoopi.store.IBarricade;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IShutdown;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ScoopiSystem {
+public class SystemModule {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ScoopiSystem.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(SystemModule.class);
 
     @Inject
     private Configs configs;
@@ -52,6 +55,11 @@ public class ScoopiSystem {
     private AppenderPoolService appenderPoolService;
     @Inject
     private AppenderMediator appenderMediator;
+
+    @Inject
+    private JobSeeder jobSeeder;
+    @Inject
+    private IBarricade jobSeedBrricade;
 
     @Inject
     private ShutdownHook shutdownHook;
@@ -85,9 +93,29 @@ public class ScoopiSystem {
     }
 
     public boolean stopCluster() {
-        shutdown.setTerminate();
-        shutdown.tryTerminate();
-        return true;
+
+        final int timeoutDefault = 60;
+        int clusterShutdownTimeout = configs
+                .getInt("scoopi.cluster.shutdown.timeout", timeoutDefault);
+        TimeUnit timeUnit = TimeUnit.valueOf(configs
+                .getConfig("scoopi.cluster.shutdown.timeoutUnit", "SECONDS")
+                .toUpperCase());
+
+        // clusterShutdownTimeout = 2;
+        // timeUnit = TimeUnit.MILLISECONDS;
+
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            shutdown.setTerminate();
+            shutdown.tryTerminate();
+        });
+
+        try {
+            future.get(clusterShutdownTimeout, timeUnit);
+            return true;
+        } catch (Exception e) {
+            LOGGER.warn("failed to shutdown cluster {}", e.getMessage());
+            return false;
+        }
     }
 
     public void initClusterListeners() {
@@ -135,6 +163,27 @@ public class ScoopiSystem {
             metricsServer.stop();
         }
         return true;
+    }
+
+    public void seedJobs() {
+        jobSeedBrricade.setup("jobSeedBarricade");
+
+        // block all nodes except one
+        jobSeedBrricade.await();
+
+        if (jobSeedBrricade.isAllowed()) {
+            // seeder node
+            jobSeeder.clearDanglingJobs();
+            jobSeeder.seedLocatorGroups();
+            CompletableFuture.runAsync(() -> {
+                jobSeeder.awaitForSeedDone();
+                jobSeedBrricade.finish();
+            });
+        } else {
+            LOGGER.info("jobs are already seeded by another node");
+            // other nodes
+            jobSeeder.setSeedDoneSignal();
+        }
     }
 
     public void waitForFinish() {

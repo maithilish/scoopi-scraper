@@ -34,12 +34,12 @@ public class Configs {
      * @throws ConfigNotFoundException
      */
     public String getConfig(final String key) throws ConfigNotFoundException {
-        return configProperties.getProperty(key);
+        return configProperties.getConfig(key);
     }
 
     public String getConfig(final String key, final String defaultValue) {
         try {
-            return configProperties.getProperty(key);
+            return configProperties.getConfig(key);
         } catch (ConfigNotFoundException e) {
             return defaultValue;
         }
@@ -56,22 +56,13 @@ public class Configs {
         return configProperties.getStringArray(key);
     }
 
-    /**
-     * This method returns boolean for a key and if not found then false;
-     * @param configKey
-     * @return
-     */
-    public boolean isTrue(final String configKey) {
-        return configProperties.getBoolean(configKey, false);
+    public boolean getBoolean(final String configKey,
+            final boolean defaultValue) {
+        return configProperties.getBoolean(configKey, defaultValue);
     }
 
-    /**
-     * This method returns boolean for a key and if not found then true;
-     * @param configKey
-     * @return
-     */
-    public boolean getBoolean(final String configKey) {
-        return configProperties.getBoolean(configKey, true);
+    public int getInt(final String configKey, final int defaultValue) {
+        return configProperties.getInt(configKey, defaultValue);
     }
 
     public Object getProperty(final String configKey) {
@@ -94,7 +85,7 @@ public class Configs {
     public String getRunDateString() {
         final String key = "scoopi.runDateString";
         try {
-            return configProperties.getProperty(key);
+            return configProperties.getConfig(key);
         } catch (ConfigNotFoundException e) {
             throw new CriticalException("unable to get runDateString", e);
         }
@@ -112,7 +103,7 @@ public class Configs {
     public String getRunDateTimeString() {
         final String key = "scoopi.runDateTimeString";
         try {
-            return configProperties.getProperty(key);
+            return configProperties.getConfig(key);
         } catch (ConfigNotFoundException e) {
             throw new CriticalException("unable to get runDateTimeString", e);
         }
@@ -133,7 +124,7 @@ public class Configs {
                 "org.apache.maven.surefire.booter.ForkedBooter"; //$NON-NLS-1$
         try {
             String runnerClass =
-                    configProperties.getProperty("scoopi.runnerClass");
+                    configProperties.getConfig("scoopi.runnerClass");
             if (runnerClass.equals(mavenTestRunner)
                     || runnerClass.equals(eclipseTestRunner)) {
                 return true;
@@ -144,9 +135,12 @@ public class Configs {
     }
 
     public boolean isDevMode() {
-        return StringUtils.equalsIgnoreCase(
-                configProperties.getProperty("scoopi.mode", ""), //$NON-NLS-1$
-                "dev"); //$NON-NLS-1$
+        try {
+            String mode = configProperties.getConfig("scoopi.mode");
+            return StringUtils.equalsIgnoreCase(mode, "dev");
+        } catch (ConfigNotFoundException e) {
+            return false;
+        }
     }
 
     /**
@@ -198,20 +192,8 @@ public class Configs {
     }
 
     public int getTimeout() {
-        int timeout = TIMEOUT_MILLIS;
-        final String key = "scoopi.webClient.timeout";
-        try {
-            timeout = Integer.parseInt(configProperties.getProperty(key));
-        } catch (final ConfigNotFoundException e) {
-            final String message = spaceit("config not found:", key,
-                    ", defaults to: ", String.valueOf(timeout), "millis");
-            LOGGER.debug(marker, "{}, {}", e, message);
-        } catch (final NumberFormatException e) {
-            final String message = spaceit("config:", key, ", defaults to: ",
-                    String.valueOf(timeout), "millis");
-            LOGGER.error(marker, "{}, {}", e, message);
-        }
-        return timeout;
+        return configProperties.getInt("scoopi.webClient.timeout",
+                TIMEOUT_MILLIS);
     }
 
     /**
@@ -230,22 +212,19 @@ public class Configs {
                 "Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0"; //$NON-NLS-1$
         final String key = "scoopi.webClient.userAgent";
         try {
-            userAgent = configProperties.getProperty(key);
+            userAgent = configProperties.getConfig(key);
         } catch (final ConfigNotFoundException e) {
             final String message = spaceit("config not found:", key,
                     ", defaults to: ", userAgent);
-            LOGGER.debug(marker, "{}, {}", e, message);
+            LOGGER.warn(marker, "{}, {}", e, message);
         }
         return userAgent;
     }
 
     public boolean isMetricsServerEnabled() {
-        boolean enabled = false;
-        try {
-            enabled = Boolean.parseBoolean(configProperties
-                    .getProperty("scoopi.metrics.server.enable"));
-        } catch (final ConfigNotFoundException e1) {
-        }
+        boolean enabled = Boolean.parseBoolean(
+                System.getProperty("scoopi.metrics.server.enable", "false"));
+
         if (configProperties.getBoolean("scoopi.cluster.enable", false)) {
             // by default metrics server is disabled in cluster and enabled only
             // through system property

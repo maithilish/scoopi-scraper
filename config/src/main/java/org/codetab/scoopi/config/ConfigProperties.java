@@ -2,12 +2,19 @@ package org.codetab.scoopi.config;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigProperties {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ConfigProperties.class);
 
     private Properties properties;
 
@@ -23,7 +30,7 @@ public class ConfigProperties {
      * @return
      * @throws ConfigNotFoundException
      */
-    public String getProperty(final String key) throws ConfigNotFoundException {
+    public String getConfig(final String key) throws ConfigNotFoundException {
         String value = properties.getProperty(key);
         if (isNull(value)) {
             throw new ConfigNotFoundException(key);
@@ -51,21 +58,40 @@ public class ConfigProperties {
         throw new ConfigNotFoundException(key);
     }
 
-    /*
-     * wrapper methods - return null when key not found returns, doesn't throw
-     * exception
-     */
-
-    public String getProperty(final String key, final String defaultValue) {
-        return properties.getProperty(key);
+    public boolean getBoolean(final String configKey,
+            final boolean defaultValue) {
+        String value = properties.getProperty(configKey);
+        if (isNull(value)) {
+            return defaultValue;
+        } else {
+            if (StringUtils.equalsAnyIgnoreCase(value, "true", "false")) {
+                return Boolean.valueOf(value);
+            } else {
+                LOGGER.error(
+                        "config {}: {} is not boolean, using default value",
+                        configKey, value);
+                return defaultValue;
+            }
+        }
     }
 
-    public boolean getBoolean(final String key, final boolean defaultValue) {
-        Object value = properties.get(key);
-        if (nonNull(value)) {
-            return new Boolean((String) value);
-        } else {
+    public int getInt(final String configKey, final int defaultValue) {
+        String value = properties.getProperty(configKey);
+        if (isNull(value)) {
+            final String message = spaceit("config not found:", configKey,
+                    ", defaults to:", String.valueOf(defaultValue));
+            LOGGER.debug("{}", message);
             return defaultValue;
+        } else {
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                final String message =
+                        spaceit("parse error, config:", configKey,
+                                ", defaults to:", String.valueOf(defaultValue));
+                LOGGER.error("{}, {}", e, message);
+                return defaultValue;
+            }
         }
     }
 

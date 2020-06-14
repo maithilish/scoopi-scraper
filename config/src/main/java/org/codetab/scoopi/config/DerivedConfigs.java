@@ -1,5 +1,7 @@
 package org.codetab.scoopi.config;
 
+import static java.util.Objects.nonNull;
+
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,8 +13,17 @@ import org.codetab.scoopi.exception.CriticalException;
 
 public class DerivedConfigs {
 
-    public void addRunDates(final CompositeConfiguration configuration) {
+    public void addRunDates(final CompositeConfiguration configuration)
+            throws ParseException {
         Date date = new Date();
+        // override date with user provided date if any
+        String runDateTimeString =
+                configuration.getString("scoopi.runDateTimeString");
+        if (nonNull(runDateTimeString)) {
+            String[] dateTimeFormat = configuration
+                    .getString("scoopi.dateTimeParsePattern").split(" ; ");
+            date = DateUtils.parseDate(runDateTimeString, dateTimeFormat);
+        }
 
         // date instances
         Date runDateTime = DateUtils.truncate(date, Calendar.SECOND);
@@ -24,8 +35,7 @@ public class DerivedConfigs {
         // date and time string
         String dateTimeFormat = configuration
                 .getString("scoopi.dateTimeParsePattern").split(" ; ")[0]; //$NON-NLS-1$
-        String runDateTimeString =
-                DateFormatUtils.format(runDateTime, dateTimeFormat);
+        runDateTimeString = DateFormatUtils.format(runDateTime, dateTimeFormat);
         configuration.setProperty("scoopi.runDateTimeString", //$NON-NLS-1$
                 runDateTimeString);
 

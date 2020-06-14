@@ -3,37 +3,48 @@ package org.codetab.scoopi;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.bootstrap.Bootstrap;
-import org.codetab.scoopi.bootstrap.ConfigsComposer;
-import org.codetab.scoopi.bootstrap.DefsComposer;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.engine.ScoopiEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Scoopi {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(Scoopi.class);
 
     @Inject
     private ScoopiEngine scoopiEngine;
 
     public static void main(final String[] args) {
+        try {
+            // bootstrap solo or cluster DI
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.bootDi();
 
-        // bootstrap solo or cluster DI
-        Bootstrap bootstrap = new Bootstrap();
-        bootstrap.boot();
-        DInjector dInjector = bootstrap.getdInjector();
+            bootstrap.bootCluster();
+            bootstrap.waitForQuorum();
 
-        // FIXME - bootfix, only leader should boot config and def
-        /**
-         * Boot configs and defs. ConfigBooter has to boot before DefBooter
-         * creation, so can't be injected to Scoopi.
-         */
-        dInjector.instance(ConfigsComposer.class).compose();
-        dInjector.instance(DefsComposer.class).compose();
+            // setup config and defs
+            bootstrap.setup();
 
-        // start scoopi
-        Scoopi scoopi = dInjector.instance(Scoopi.class);
-        scoopi.start();
+            // start scoopi
+            DInjector dInjector = bootstrap.getdInjector();
+            Scoopi scoopi = dInjector.instance(Scoopi.class);
+            scoopi.start();
+        } catch (Exception e) {
+            LOGGER.error("Scoopi terminated, {}", e.getMessage());
+        }
     }
 
     public void start() {
-        scoopiEngine.start();
+        try {
+            scoopiEngine.initSystem();
+            scoopiEngine.runJobs();
+        } catch (Exception e) {
+            // ignore, handled in scoopiEngine
+        } finally {
+            scoopiEngine.shutdown();
+        }
     }
+
 }

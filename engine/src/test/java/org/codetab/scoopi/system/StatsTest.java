@@ -53,7 +53,7 @@ public class StatsTest {
     @Test
     public void testSingleton() {
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap.boot();
+        bootstrap.bootDi();
         DInjector di = bootstrap.getdInjector();
 
         Stats instanceA = di.instance(Stats.class);

@@ -1,6 +1,7 @@
 package org.codetab.scoopi.config;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -72,9 +73,14 @@ public class ConfigBuilder {
             throw new CriticalException("unable to create config service", e);
         }
 
-        derivedConfigs.addRunDates(configuration);
-        derivedConfigs.replaceHighDate(configuration);
-        derivedConfigs.addRunnerClass(configuration);
+        try {
+            derivedConfigs.addRunDates(configuration);
+            derivedConfigs.replaceHighDate(configuration);
+            derivedConfigs.addRunnerClass(configuration);
+        } catch (ParseException e) {
+            throw new CriticalException("unable to create config service", e);
+        }
+
     }
 
     public Properties getEffectiveProperties() {

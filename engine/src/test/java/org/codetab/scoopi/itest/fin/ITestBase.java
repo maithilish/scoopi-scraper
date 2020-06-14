@@ -64,14 +64,14 @@ public class ITestBase {
         FileUtils.deleteQuietly(new File(outputFile));
 
         ScoopiEngine scoopiEngine = di.instance(ScoopiEngine.class);
-        scoopiEngine.start();
+        scoopiEngine.initSystem();
 
         return IOUtils.readLines(new FileInputStream(outputFile), "UTF-8");
     }
 
     private void setup() {
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap.boot();
+        bootstrap.bootDi();
         di = bootstrap.getdInjector();
 
         schemaClasses = new HashSet<>();
