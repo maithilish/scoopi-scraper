@@ -17,12 +17,12 @@ import org.codetab.scoopi.store.ICluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hazelcast.cluster.Member;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.ListenerConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Member;
 import com.hazelcast.transaction.TransactionOptions;
 import com.hazelcast.transaction.TransactionOptions.TransactionType;
 
@@ -49,7 +49,7 @@ public class Cluster implements ICluster {
             LOGGER.info("start Hazelcast cluster");
             hz = Hazelcast.newHazelcastInstance(cfg);
 
-            String group = cfg.getGroupConfig().getName();
+            String group = cfg.getClusterName();
             logMemberInfo(group);
         } catch (IllegalArgumentException e) {
             LOGGER.error("hz config file {} not found", hzConfigFile);
@@ -83,7 +83,7 @@ public class Cluster implements ICluster {
 
     @Override
     public String getMemberId() {
-        return hz.getLocalEndpoint().getUuid();
+        return hz.getLocalEndpoint().getUuid().toString();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Cluster implements ICluster {
         Optional<Member> firstMember =
                 hz.getCluster().getMembers().stream().findFirst();
         if (firstMember.isPresent()) {
-            return firstMember.get().getUuid();
+            return firstMember.get().getUuid().toString();
         } else {
             throw new IllegalStateException("leader not found");
         }

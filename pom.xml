@@ -68,7 +68,7 @@
         <mariadb-client.version>2.2.5</mariadb-client.version>
         <mysql-connector.version>5.1.43</mysql-connector.version>
 
-        <hazelcast.version>3.12.5</hazelcast.version>
+        <hazelcast.version>4.0.1</hazelcast.version>
         
         <!-- plugin version -->
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
@@ -242,11 +242,6 @@
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
-                <version>${hazelcast.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hazelcast</groupId>
-                <artifactId>hazelcast-client</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
 

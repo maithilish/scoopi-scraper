@@ -8,12 +8,11 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hazelcast.core.MemberAttributeEvent;
-import com.hazelcast.core.MembershipEvent;
+import com.hazelcast.cluster.MembershipEvent;
 
 @Singleton
 public class MembershipListener
-        implements com.hazelcast.core.MembershipListener {
+        implements com.hazelcast.cluster.MembershipListener {
 
     static final Logger LOGGER =
             LoggerFactory.getLogger(MembershipListener.class);
@@ -26,21 +25,17 @@ public class MembershipListener
 
     @Override
     public void memberAdded(final MembershipEvent membershipEvent) {
-        String addedMemberId = membershipEvent.getMember().getUuid();
+        String addedMemberId = membershipEvent.getMember().getUuid().toString();
         LOGGER.info("member joined cluster {}", addedMemberId);
     }
 
     @Override
     public void memberRemoved(final MembershipEvent membershipEvent) {
-        String crashedMemberId = membershipEvent.getMember().getUuid();
+        String crashedMemberId =
+                membershipEvent.getMember().getUuid().toString();
         LOGGER.info("member {} left cluster", crashedMemberId);
         crashedMembers.push(crashedMemberId);
         LOGGER.debug("crashed members {}",
                 Arrays.toString(crashedMembers.toArray()));
-    }
-
-    @Override
-    public void memberAttributeChanged(
-            final MemberAttributeEvent memberAttributeEvent) {
     }
 }

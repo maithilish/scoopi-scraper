@@ -13,10 +13,9 @@ import org.codetab.scoopi.store.IShutdown;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hazelcast.core.Cluster;
+import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.HazelcastInstanceNotActiveException;
-import com.hazelcast.core.Member;
 
 @Singleton
 public class Shutdown implements IShutdown {
@@ -35,7 +34,7 @@ public class Shutdown implements IShutdown {
 
     private String memberId;
 
-    private Cluster clst;
+    private com.hazelcast.cluster.Cluster clst;
 
     @Override
     public void init() {
@@ -67,7 +66,8 @@ public class Shutdown implements IShutdown {
     public <T> boolean tryShutdown(final Function<T, Boolean> func, final T t) {
         try {
             if (clst.getMembers().stream().map(Member::getUuid).map(uuid -> {
-                return ObjectUtils.defaultIfNull(doneMap.get(uuid), false);
+                return ObjectUtils.defaultIfNull(doneMap.get(uuid.toString()),
+                        false);
             }).anyMatch(v -> v.equals(false))) {
                 LOGGER.debug("try shutdown, all not done, job store isDone {}",
                         jobStore.isDone());
