@@ -10,6 +10,4 @@ public interface IDataDefDef {
     Long getDataDefId(String name) throws DataDefNotFoundException;
 
     List<DataDef> getDefinedDataDefs();
-
-    void updateDataDefs(List<DataDef> updatedDataDefs);
 }

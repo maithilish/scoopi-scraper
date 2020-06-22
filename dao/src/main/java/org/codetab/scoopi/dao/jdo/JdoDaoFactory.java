@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.dao.IDaoFactory;
 import org.codetab.scoopi.dao.IDataDao;
-import org.codetab.scoopi.dao.IDataDefDao;
 import org.codetab.scoopi.dao.IDataSetDao;
 import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.dao.ILocatorDao;
@@ -57,15 +56,6 @@ public class JdoDaoFactory implements IDaoFactory {
     @Override
     public IDocumentDao getDocumentDao() {
         return new DocumentDao(pmf.getFactory());
-    }
-
-    /**
-     * Get DataDefDao for JDO.
-     * @return dataDefDao
-     */
-    @Override
-    public IDataDefDao getDataDefDao() {
-        return new DataDefDao(pmf.getFactory());
     }
 
     /**

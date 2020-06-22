@@ -101,45 +101,4 @@ public class CrashCleaner {
         Map<Long, ClusterJob> jobsMap = hz.getMap(DsName.JOBS_MAP.toString());
         jobsMap.clear();
     }
-
-    // FIXME - bootfix, remove this
-    // public void resetSeedState() {
-    // Stack<String> crashedMembers = membershipListener.getCrashedMembers();
-    // if (crashedMembers.isEmpty()) {
-    // return;
-    // }
-    //
-    // TransactionContext tx = hz.newTransactionContext(txOptions);
-    // try {
-    // tx.beginTransaction();
-    // TransactionalMap<String, String> txKeyStoreMap =
-    // tx.getMap(DsName.KEYSTORE_MAP.toString());
-    //
-    // if (txKeyStoreMap.getForUpdate(DsName.DATA_GRID_STATE.toString())
-    // .equalsIgnoreCase(State.INITIALIZE.toString())) {
-    // String seederMemberId =
-    // txKeyStoreMap.getForUpdate(DsName.SEEDER_ID.toString());
-    // if (nonNull(seederMemberId)
-    // && crashedMembers.contains(seederMemberId)) {
-    // LOGGER.info(
-    // "job seeder is crashed, reset job store state to NEW");
-    // txKeyStoreMap.set(DsName.DATA_GRID_STATE.toString(),
-    // State.NEW.toString());
-    // if (!txKeyStoreMap.remove(DsName.SEEDER_ID.toString(),
-    // seederMemberId)) {
-    // throw new IllegalStateException(
-    // "another node has already reset the seed state");
-    // }
-    // }
-    // }
-    // tx.commitTransaction();
-    // } catch (Exception e) {
-    // tx.rollbackTransaction();
-    // LOGGER.warn("could not reset seed state, {}",
-    // e.getLocalizedMessage());
-    // LOGGER.debug("{}", e);
-    // }
-    //
-    // }
-
 }
