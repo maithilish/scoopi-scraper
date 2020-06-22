@@ -113,13 +113,6 @@ public class Bootstrap {
             dInjector.instance(ConfigsComposer.class).compose();
             dInjector.instance(DefsComposer.class).compose();
             barricade.finish();
-            // FIXME - bootfix, remove this after testing
-            // Configs configs = dInjector.instance(Configs.class);
-            // if (configs.getBoolean("scoopi.test.boot.crash", false)) {
-            // LOGGER.info("setup config, defs - trigger cluster crash");
-            // cluster.shutdown();
-            // throw new CriticalException("trigger cluster crash");
-            // }
         } else {
             LOGGER.info("system already initialized");
         }

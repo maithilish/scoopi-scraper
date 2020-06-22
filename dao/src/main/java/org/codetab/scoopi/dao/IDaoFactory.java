@@ -30,13 +30,6 @@ public interface IDaoFactory {
     /**
      * <p>
      * Subclass should override this.
-     * @return dataDefDao
-     */
-    IDataDefDao getDataDefDao();
-
-    /**
-     * <p>
-     * Subclass should override this.
      * @return dataDao
      */
     IDataDao getDataDao();
