@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.codetab.scoopi.model.helper.Fingerprints;
 
 /**
  * Factory to create model objects.
@@ -53,6 +54,9 @@ public class ObjectFactory {
         locator.setName(name);
         locator.setGroup(group);
         locator.setUrl(url);
+        String fingerprint = Fingerprints.fingerprint(name.getBytes(),
+                group.getBytes(), url.getBytes());
+        locator.setFingerprint(new Fingerprint(fingerprint));
         return locator;
     }
 
@@ -64,6 +68,15 @@ public class ObjectFactory {
         document.setFromDate(DateUtils.truncate(fromDate, Calendar.SECOND));
         document.setToDate(DateUtils.truncate(toDate, Calendar.SECOND));
         return document;
+    }
+
+    public Metadata createMetadata(final Fingerprint locatorFp,
+            final Fingerprint locatorWithDataFp, final Date documentDate) {
+        Metadata metadata = new Metadata();
+        metadata.setLocator(locatorWithDataFp);
+        metadata.setDocumentDate(documentDate);
+        metadata.setFingerprint(locatorFp);
+        return metadata;
     }
 
     public Data createData(final String dataDef) {

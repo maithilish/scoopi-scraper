@@ -1,6 +1,5 @@
 package org.codetab.scoopi.step.base;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
 import static org.codetab.scoopi.util.Util.LINE;
@@ -9,20 +8,23 @@ import static org.codetab.scoopi.util.Util.spaceit;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.dao.DaoException;
+import org.codetab.scoopi.dao.ILocatorDao;
+import org.codetab.scoopi.dao.IMetadataDao;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.Document;
+import org.codetab.scoopi.model.Fingerprint;
 import org.codetab.scoopi.model.Locator;
+import org.codetab.scoopi.model.Metadata;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.DocumentHelper;
-import org.codetab.scoopi.persistence.DocumentPersistence;
-import org.codetab.scoopi.persistence.LocatorPersistence;
+import org.codetab.scoopi.model.helper.MetadataHelper;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.Step;
@@ -53,28 +55,26 @@ public abstract class BaseLoader extends Step {
      * active document.
      */
     private Document document;
-    /**
-     * persister.
-     */
+
     @Inject
-    private LocatorPersistence locatorPersistence;
-    /**
-     * persister.
-     */
+    private IMetadataDao metadataDao;
     @Inject
-    private DocumentPersistence documentPersistence;
-    /**
-     * helper.
-     */
+    private ILocatorDao locatorDao;
+    @Inject
+    private MetadataHelper metadataHelper;
     @Inject
     private DocumentHelper documentHelper;
     @Inject
     private PayloadFactory payloadFactory;
 
+    // FIXME - dbfix, remove daomig and persistmig if any
+
     @Inject
     private JobMediator jobMediator;
 
     private long jobId;
+
+    private boolean fetchDocument = true;
 
     /**
      * Creates log marker from locator name and group.
@@ -111,29 +111,72 @@ public abstract class BaseLoader extends Step {
     public boolean load() {
         validState(nonNull(locator), "locator is null");
 
-        Locator savedLocator = null;
-
-        // load locator from db
         if (persist()) {
-            savedLocator = locatorPersistence.loadLocator(locator.getName(),
-                    locator.getGroup());
-        }
+            String live = "PT0S"; // default
+            try {
+                String taskGroup = getJobInfo().getGroup();
+                live = taskDef.getLive(taskGroup);
+            } catch (final DefNotFoundException e1) {
+            } catch (IOException e) {
+                LOGGER.error(marker, "{}, unable to get live, defaults to PT0S",
+                        getLabel());
+            }
 
-        if (isNull(savedLocator)) {
-            // use the locator from payload passed to this step
-            final String message = getLabeled("use locator defined in defs");
-            LOGGER.debug(marker, "{}", message);
-            LOGGER.trace(marker, "defined locator:{}{}", LINE, locator);
-        } else {
-            // update existing locator with new fields and URL
-            savedLocator.setUrl(locator.getUrl());
+            String id = locator.getFingerprint().getValue();
+            Metadata metadata = null;
+            try {
+                metadata = metadataDao.get(id);
+            } catch (DaoException e) {
+            }
 
-            // switch locator to persisted locator (detached locator)
-            locator = savedLocator;
-            final String message = getLabeled("use locator loaded from store");
-            LOGGER.debug(marker, "{}", message);
-            LOGGER.trace(marker, "loaded locator:{}{}", LINE, locator);
+            try {
+                if (nonNull(metadata)) {
+                    Date toDate = metadataHelper.getToDate(
+                            metadata.getDocumentDate(), live, getJobInfo());
+                    if (metadataHelper.isDocumentLive(toDate)) {
+                        Locator savedLocator = locatorDao.get(id,
+                                metadata.getLocator().getValue());
+                        if (nonNull(savedLocator)) {
+                            locator = savedLocator;
+                            if (locator.getDocuments().size() > 0) {
+                                fetchDocument = false;
+                            }
+                        }
+                    }
+                }
+                /*
+                 * document stale, metadata not found, saved locator not found -
+                 * remove containing folder
+                 */
+                if (fetchDocument) {
+                    metadataDao.remove(id);
+                }
+            } catch (DaoException e) {
+                final String message = "load document";
+                throw new StepRunException(message, e);
+            }
         }
+        // // load locator from db
+        // if (persist()) {
+        // savedLocator = locatorPersistence.loadLocator(locator.getName(),
+        // locator.getGroup());
+        // }
+        //
+        // if (isNull(savedLocator)) {
+        // // use the locator from payload passed to this step
+        // final String message = getLabeled("use locator defined in defs");
+        // LOGGER.debug(marker, "{}", message);
+        // LOGGER.trace(marker, "defined locator:{}{}", LINE, locator);
+        // } else {
+        // // update existing locator with new fields and URL
+        // savedLocator.setUrl(locator.getUrl());
+        //
+        // // switch locator to persisted locator (detached locator)
+        // locator = savedLocator;
+        // final String message = getLabeled("use locator loaded from store");
+        // LOGGER.debug(marker, "{}", message);
+        // LOGGER.trace(marker, "loaded locator:{}{}", LINE, locator);
+        // }
         return true;
     }
 
@@ -169,38 +212,11 @@ public abstract class BaseLoader extends Step {
     public boolean process() {
         validState(nonNull(locator), "locator is null");
 
-        final String taskGroup = getJobInfo().getGroup();
-        String live;
-        try {
-            live = taskDef.getLive(taskGroup);
-        } catch (final DefNotFoundException e1) {
-            live = "PT0S";
-        } catch (IOException e) {
-            LOGGER.error(marker, "{}, unable to get live, set to default PT0S",
-                    getLabel());
-            live = "PT0S";
-        }
-
-        /*
-         * load the active document, get new todate for new live and reset
-         * document toDate to new toDate. If still active for new toDate then
-         * use the active document else reset toDate to runDateTime - 1 and set
-         * activeDocument to null so that new document is created
-         */
-        Document activeDoc = documentHelper.getActiveDocument(locator);
-        if (nonNull(activeDoc)) {
-            final Date newToDate = documentHelper
-                    .getToDate(activeDoc.getFromDate(), live, getJobInfo());
-            if (documentHelper.resetToDate(activeDoc, newToDate)) {
-                activeDoc = null;
-            }
-        }
-
         /**
          * if activeDocumentId is null create new document otherwise load the
          * active document.
          */
-        if (isNull(activeDoc)) {
+        if (fetchDocument) {
             // no active document, create new one
             byte[] documentObject = null;
             try {
@@ -211,34 +227,33 @@ public abstract class BaseLoader extends Step {
                 throw new StepRunException(message, e);
             }
 
-            // document metadata
-            final Date fromDate = configs.getRunDateTime();
-            final Date toDate =
-                    documentHelper.getToDate(fromDate, live, getJobInfo());
+            // FIXME - dbfix remove this
+            final Date fromDate = new Date();
+            final Date toDate = new Date();
 
             // create new document
-            activeDoc = documentHelper.createDocument(locator.getName(),
-                    locator.getUrl(), fromDate, toDate);
+            Document newDocument = documentHelper.createDocument(
+                    locator.getName(), locator.getUrl(), fromDate, toDate);
+            newDocument.setDocumentObject(documentObject);
 
             // compress and set documentObject
-            try {
-                documentHelper.setDocumentObject(activeDoc, documentObject);
-            } catch (final IOException e) {
-                final String message = "unable to compress document page";
-                throw new StepRunException(message, e);
-            }
+            // try {
+            // documentHelper.setDocumentObject(activeDoc, documentObject);
+            // } catch (final IOException e) {
+            // final String message = "unable to compress document page";
+            // throw new StepRunException(message, e);
+            // }
 
-            document = activeDoc;
-            locator.getDocuments().add(document);
-            setOutput(document);
+            document = newDocument;
+            locator.getDocuments().add(newDocument);
+            setOutput(newDocument);
+
             setConsistent(true);
             LOGGER.debug(marker, "{} create new document, toDate: {}",
                     getLabel(), document.getToDate());
             LOGGER.trace(marker, "create new document{}{}", LINE, document);
         } else {
-            // as activeDoc comes from datastore it indicates that
-            // datastore is active so load the activeDoc with doc object
-            document = documentPersistence.loadDocument(activeDoc.getId());
+            document = locator.getDocuments().get(0);
             setOutput(document);
             setConsistent(true);
             LOGGER.debug(marker, "{}, use stored document, toDate: {}",
@@ -264,27 +279,37 @@ public abstract class BaseLoader extends Step {
         validState(nonNull(document), "document is null");
 
         try {
-            final boolean persist = persist();
-            // store locator
-            if (persist && locatorPersistence.storeLocator(locator)) {
-                // if stored then reload locator and document
-                final Locator tLocator =
-                        locatorPersistence.loadLocator(locator.getId());
-                if (nonNull(tLocator)) {
-                    locator = tLocator;
-                }
-
-                final Document tDocument =
-                        documentPersistence.loadDocument(document.getId());
-                if (nonNull(tDocument)) {
-                    document = tDocument;
-                    setOutput(tDocument);
-                }
-                LOGGER.debug(marker, "locator and document stored, {}",
-                        getLabel());
-                LOGGER.trace(marker, "stored locator{}{}", LINE, locator);
+            if (persist() && fetchDocument) {
+                // if fetchDocument is true then folder is deleted in load()
+                // create fresh folder and save locator(with document) and
+                // metadata
+                Fingerprint locatorFp = locator.getFingerprint();
+                Fingerprint locatorWithDocFp =
+                        locatorDao.save(locatorFp.getValue(), locator);
+                Metadata metadata = metadataHelper.createMetadata(locatorFp,
+                        locatorWithDocFp, configs.getRunDateTime());
+                metadataDao.save(locatorFp.getValue(), metadata);
             }
-        } catch (final RuntimeException e) {
+            // store locator
+            // if (persist && locatorPersistence.storeLocator(locator)) {
+            // // if stored then reload locator and document
+            // final Locator tLocator =
+            // locatorPersistence.loadLocator(locator.getId());
+            // if (nonNull(tLocator)) {
+            // locator = tLocator;
+            // }
+            //
+            // final Document tDocument =
+            // documentPersistence.loadDocument(document.getId());
+            // if (nonNull(tDocument)) {
+            // document = tDocument;
+            // setOutput(tDocument);
+            // }
+            // LOGGER.debug(marker, "locator and document stored, {}",
+            // getLabel());
+            // LOGGER.trace(marker, "stored locator{}{}", LINE, locator);
+            // }
+        } catch (final DaoException e) {
             final String message = "unable to store locator and document";
             throw new StepRunException(message, e);
         }
@@ -325,11 +350,16 @@ public abstract class BaseLoader extends Step {
     }
 
     private boolean persist() {
-        final Optional<Boolean> locatorLevelPersistence =
-                Optional.ofNullable(true);
-        final boolean persist =
-                locatorPersistence.persist(locatorLevelPersistence);
-        return persist;
+        if (!configs.useDataStore()) {
+            // disabled at global level
+            return false;
+        }
+        if (!configs.isPersist("scoopi.persist.locator")) { //$NON-NLS-1$
+            // enabled at global but disabled at model level
+            return false;
+        }
+        // enabled at global and model level
+        return true;
     }
 
     /**

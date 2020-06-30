@@ -1,40 +1,14 @@
 package org.codetab.scoopi.dao;
 
+import org.codetab.scoopi.model.Fingerprint;
 import org.codetab.scoopi.model.Locator;
 
-/**
- * <p>
- * LocatorDao interface.
- * @author Maithilish
- *
- */
 public interface ILocatorDao {
 
-    /**
-     * <p>
-     * Store locator.
-     * @param locator
-     *            locator to store
-     */
-    void storeLocator(Locator locator);
+    Locator get(String dirName, String fileName) throws DaoException;
 
-    /**
-     * <p>
-     * Get locator by name and group.
-     * @param name
-     *            locator name
-     * @param group
-     *            locator group
-     * @return locator
-     */
-    Locator getLocator(String name, String group);
+    void delete(String dirName, String fileName) throws DaoException;
 
-    /**
-     * <p>
-     * Get locator by id.
-     * @param id
-     *            locator id
-     * @return locator
-     */
-    Locator getLocator(long id);
+    Fingerprint save(String dirName, Locator locator) throws DaoException;
+
 }
