@@ -47,6 +47,11 @@
         </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
+            <artifactId>daomig</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codetab.scoopi</groupId>
             <artifactId>plugin</artifactId>
             <version>${project.version}</version>
         </dependency>

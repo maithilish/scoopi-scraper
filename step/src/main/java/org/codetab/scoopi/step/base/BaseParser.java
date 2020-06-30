@@ -26,7 +26,7 @@ import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.helper.DataHelper;
-import org.codetab.scoopi.persistence.DataPersistence;
+import org.codetab.scoopi.persistencemig.DataPersistence;
 import org.codetab.scoopi.step.Step;
 import org.codetab.scoopi.step.parse.IValueParser;
 import org.codetab.scoopi.step.parse.Indexer;
@@ -212,7 +212,7 @@ public abstract class BaseParser extends Step {
                     taskName, "persist", "data"));
         } catch (DefNotFoundException e) {
         } catch (IOException e) {
-            LOGGER.error(marker, "{}, get live for {} {}, {}", taskGroup,
+            LOGGER.error(marker, "{}, get persist for {} {}, {}", taskGroup,
                     taskName, e.getMessage());
         }
 

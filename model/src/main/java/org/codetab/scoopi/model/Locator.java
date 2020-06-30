@@ -17,6 +17,7 @@ public class Locator implements Serializable {
     private String name;
     private String group;
     private String url;
+    private Fingerprint fingerprint;
     private List<Document> documents;
 
     Locator() {
@@ -39,7 +40,7 @@ public class Locator implements Serializable {
      *            allowed object is {@link Long }
      *
      */
-    public void setId(Long value) {
+    public void setId(final Long value) {
         this.id = value;
     }
 
@@ -54,7 +55,7 @@ public class Locator implements Serializable {
      *
      * <p>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getDocuments().add(newItem);
      * </pre>
@@ -90,7 +91,7 @@ public class Locator implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -111,7 +112,7 @@ public class Locator implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setGroup(String value) {
+    public void setGroup(final String value) {
         this.group = value;
     }
 
@@ -132,8 +133,16 @@ public class Locator implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setUrl(String value) {
+    public void setUrl(final String value) {
         this.url = value;
+    }
+
+    public Fingerprint getFingerprint() {
+        return fingerprint;
+    }
+
+    public void setFingerprint(final Fingerprint fingerprint) {
+        this.fingerprint = fingerprint;
     }
 
     public Locator copy() {

@@ -15,6 +15,7 @@ public class Document implements Serializable {
     private Long id;
     private Object documentObject;
     private String name;
+    // FIXME - dbfix, remove from and todate
     private Date fromDate;
     private Date toDate;
     private String url;
@@ -39,7 +40,7 @@ public class Document implements Serializable {
      *            allowed object is {@link Long }
      *
      */
-    public void setId(Long value) {
+    public void setId(final Long value) {
         this.id = value;
     }
 
@@ -60,7 +61,7 @@ public class Document implements Serializable {
      *            allowed object is {@link Object }
      *
      */
-    public void setDocumentObject(Object value) {
+    public void setDocumentObject(final Object value) {
         this.documentObject = value;
     }
 
@@ -81,7 +82,7 @@ public class Document implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -102,7 +103,7 @@ public class Document implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setFromDate(Date value) {
+    public void setFromDate(final Date value) {
         this.fromDate = value;
     }
 
@@ -123,7 +124,7 @@ public class Document implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setToDate(Date value) {
+    public void setToDate(final Date value) {
         this.toDate = value;
     }
 
@@ -144,7 +145,7 @@ public class Document implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setUrl(String value) {
+    public void setUrl(final String value) {
         this.url = value;
     }
 

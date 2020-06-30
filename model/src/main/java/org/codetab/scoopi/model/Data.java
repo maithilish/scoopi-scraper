@@ -86,6 +86,7 @@ public final class Data extends DataComponent implements Serializable {
         return list;
     }
 
+    @Override
     public DataIterator iterator() {
         return new DataIterator(items.iterator());
     }
@@ -118,6 +119,7 @@ public final class Data extends DataComponent implements Serializable {
      * Deep Copy
      * @return deep copy of Data
      */
+    @Override
     public Data copy() {
         Data copy = new Data();
         copy.id = id;
@@ -131,6 +133,7 @@ public final class Data extends DataComponent implements Serializable {
         return copy;
     }
 
+    // FIXME - dbfix, remove dn attr in all model class
     @Override
     public boolean equals(final Object obj) {
         String[] excludes =

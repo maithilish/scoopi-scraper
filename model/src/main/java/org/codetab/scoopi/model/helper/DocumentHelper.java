@@ -1,38 +1,16 @@
 package org.codetab.scoopi.model.helper;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.apache.commons.lang3.Validate.validState;
-import static org.codetab.scoopi.util.Util.spaceit;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.TemporalAmount;
 import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.zip.DataFormatException;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.Document;
-import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.codetab.scoopi.util.CompressionUtil;
-import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 
 /**
  * Helper routines to handle documents.
@@ -73,41 +51,41 @@ public class DocumentHelper {
      * @return active document id or null when no matching document is found or
      *         input is empty or null.
      */
-    public Long getActiveDocumentId(final List<Document> documents) {
-        validState(nonNull(configs), "configService is not set");
+    // public Long getActiveDocumentId(final List<Document> documents) {
+    // validState(nonNull(configs), "configService is not set");
+    //
+    // if (isNull(documents)) {
+    // return null;
+    // }
+    // Long activeDocumentId = null;
+    // for (Document doc : documents) {
+    // Date toDate = doc.getToDate();
+    // Date runDateTime = configs.getRunDateTime();
+    // // toDate > today
+    // if (toDate.compareTo(runDateTime) >= 0) {
+    // activeDocumentId = doc.getId();
+    // }
+    // }
+    // return activeDocumentId;
+    // }
 
-        if (isNull(documents)) {
-            return null;
-        }
-        Long activeDocumentId = null;
-        for (Document doc : documents) {
-            Date toDate = doc.getToDate();
-            Date runDateTime = configs.getRunDateTime();
-            // toDate > today
-            if (toDate.compareTo(runDateTime) >= 0) {
-                activeDocumentId = doc.getId();
-            }
-        }
-        return activeDocumentId;
-    }
-
-    public Document getActiveDocument(final Locator locator) {
-        validState(nonNull(configs), "configService is not set");
-
-        if (isNull(locator)) {
-            return null;
-        }
-        Document activeDocument = null;
-        Date runDateTime = configs.getRunDateTime();
-        for (Document document : locator.getDocuments()) {
-            // toDate > rundate
-            if (document.getToDate().compareTo(runDateTime) >= 0
-                    && locator.getUrl().equals(document.getUrl())) {
-                activeDocument = document;
-            }
-        }
-        return activeDocument;
-    }
+    // public Document getActiveDocument(final Locator locator) {
+    // validState(nonNull(configs), "configService is not set");
+    //
+    // if (isNull(locator)) {
+    // return null;
+    // }
+    // Document activeDocument = null;
+    // Date runDateTime = configs.getRunDateTime();
+    // for (Document document : locator.getDocuments()) {
+    // // toDate > rundate
+    // if (document.getToDate().compareTo(runDateTime) >= 0
+    // && locator.getUrl().equals(document.getUrl())) {
+    // activeDocument = document;
+    // }
+    // }
+    // return activeDocument;
+    // }
 
     /*
      * get todate for live and reset document toDate to new toDate. If still
@@ -115,20 +93,21 @@ public class DocumentHelper {
      * runDateTime - 1 and set activeDocument to null so that new document is
      * created
      */
-    public boolean resetToDate(final Document document, final Date newToDate) {
-        validState(nonNull(configs), "configService is not set");
-
-        document.setToDate(newToDate);
-        // expired for new toDate
-        if (newToDate.compareTo(configs.getRunDateTime()) < 0) {
-            Date runDateMinusOne =
-                    DateUtils.addSeconds(configs.getRunDateTime(), -1);
-            document.setToDate(runDateMinusOne);
-            return true;
-        } else {
-            return false;
-        }
-    }
+    // public boolean resetToDate(final Document document, final Date newToDate)
+    // {
+    // validState(nonNull(configs), "configService is not set");
+    //
+    // document.setToDate(newToDate);
+    // // expired for new toDate
+    // if (newToDate.compareTo(configs.getRunDateTime()) < 0) {
+    // Date runDateMinusOne =
+    // DateUtils.addSeconds(configs.getRunDateTime(), -1);
+    // document.setToDate(runDateMinusOne);
+    // return true;
+    // } else {
+    // return false;
+    // }
+    // }
 
     /**
      * get document from list
@@ -139,15 +118,16 @@ public class DocumentHelper {
      * @throws NoSuchElementException
      *             if no document of that id is found
      */
-    public Document getDocument(final Long id, final List<Document> documents) {
-        for (Document doc : documents) {
-            if (doc.getId() == id) {
-                return doc;
-            }
-        }
-        throw new NoSuchElementException(
-                spaceit("no document with id:", String.valueOf(id)));
-    }
+    // public Document getDocument(final Long id, final List<Document>
+    // documents) {
+    // for (Document doc : documents) {
+    // if (doc.getId() == id) {
+    // return doc;
+    // }
+    // }
+    // throw new NoSuchElementException(
+    // spaceit("no document with id:", String.valueOf(id)));
+    // }
 
     /**
      * <p>
@@ -168,54 +148,54 @@ public class DocumentHelper {
      * @throws org.codetab.scoopi.exception.FieldsParseException
      * @see java.time.Duration
      */
-    public Date getToDate(final Date fromDate, final String live,
-            final JobInfo jobInfo) {
-
-        notNull(fromDate, "fromDate must not be null");
-        notNull(live, "live must not be null");
-        notNull(jobInfo, "jobInfo must not be null");
-
-        validState(nonNull(configs), "configService is not set");
-
-        // convert fromDate to DateTime
-        ZonedDateTime fromDateTime = ZonedDateTime
-                .ofInstant(fromDate.toInstant(), ZoneId.systemDefault());
-        ZonedDateTime toDate = null;
-
-        String documentlive = live;
-        if (StringUtils.equals(documentlive, "0") //$NON-NLS-1$
-                || StringUtils.isBlank(documentlive)) {
-            documentlive = "PT0S"; // zero second //$NON-NLS-1$
-        }
-
-        // calculate toDate
-        try {
-            TemporalAmount ta = Util.parseTemporalAmount(documentlive);
-            toDate = fromDateTime.plus(ta);
-        } catch (DateTimeParseException e) {
-            // if live is not Duration string then parse it as Date
-            try {
-                String[] patterns =
-                        configs.getConfigArray("scoopi.dateParsePattern"); //$NON-NLS-1$
-                // multiple patterns so needs DateUtils
-                Date td = DateUtils.parseDateStrictly(documentlive, patterns);
-                toDate = ZonedDateTime.ofInstant(td.toInstant(),
-                        ZoneId.systemDefault());
-            } catch (ParseException | ConfigNotFoundException pe) {
-                LOGGER.warn("{} live is {} {}, defaults to 0 days",
-                        jobInfo.getLabel(), documentlive, e);
-                TemporalAmount ta = Util.parseTemporalAmount("PT0S"); //$NON-NLS-1$
-                toDate = fromDateTime.plus(ta);
-            }
-        }
-
-        if (LOGGER.isTraceEnabled()) {
-            Marker marker = jobInfo.getMarker();
-            LOGGER.trace(marker, "document.toDate. live: {} toDate:", //$NON-NLS-1$
-                    documentlive, toDate);
-        }
-        return Date.from(Instant.from(toDate));
-    }
+    // public Date getToDate(final Date fromDate, final String live,
+    // final JobInfo jobInfo) {
+    //
+    // notNull(fromDate, "fromDate must not be null");
+    // notNull(live, "live must not be null");
+    // notNull(jobInfo, "jobInfo must not be null");
+    //
+    // validState(nonNull(configs), "configService is not set");
+    //
+    // // convert fromDate to DateTime
+    // ZonedDateTime fromDateTime = ZonedDateTime
+    // .ofInstant(fromDate.toInstant(), ZoneId.systemDefault());
+    // ZonedDateTime toDate = null;
+    //
+    // String documentlive = live;
+    // if (StringUtils.equals(documentlive, "0") //$NON-NLS-1$
+    // || StringUtils.isBlank(documentlive)) {
+    // documentlive = "PT0S"; // zero second //$NON-NLS-1$
+    // }
+    //
+    // // calculate toDate
+    // try {
+    // TemporalAmount ta = Util.parseTemporalAmount(documentlive);
+    // toDate = fromDateTime.plus(ta);
+    // } catch (DateTimeParseException e) {
+    // // if live is not Duration string then parse it as Date
+    // try {
+    // String[] patterns =
+    // configs.getConfigArray("scoopi.dateParsePattern"); //$NON-NLS-1$
+    // // multiple patterns so needs DateUtils
+    // Date td = DateUtils.parseDateStrictly(documentlive, patterns);
+    // toDate = ZonedDateTime.ofInstant(td.toInstant(),
+    // ZoneId.systemDefault());
+    // } catch (ParseException | ConfigNotFoundException pe) {
+    // LOGGER.warn("{} live is {} {}, defaults to 0 days",
+    // jobInfo.getLabel(), documentlive, e);
+    // TemporalAmount ta = Util.parseTemporalAmount("PT0S"); //$NON-NLS-1$
+    // toDate = fromDateTime.plus(ta);
+    // }
+    // }
+    //
+    // if (LOGGER.isTraceEnabled()) {
+    // Marker marker = jobInfo.getMarker();
+    // LOGGER.trace(marker, "document.toDate. live: {} toDate:", //$NON-NLS-1$
+    // documentlive, toDate);
+    // }
+    // return Date.from(Instant.from(toDate));
+    // }
 
     /**
      * <p>
@@ -228,16 +208,16 @@ public class DocumentHelper {
      * @throws DataFormatException
      *             if error decompress data
      */
-    public byte[] getDocumentObject(final Document document)
-            throws DataFormatException, IOException {
-        notNull(document, "document must not be null");
-        validState(nonNull(document.getDocumentObject()),
-                "documentObject is null");
-
-        final int bufferLength = 4086;
-        return CompressionUtil.decompressByteArray(
-                (byte[]) document.getDocumentObject(), bufferLength);
-    }
+    // public byte[] getDocumentObject(final Document document)
+    // throws DataFormatException, IOException {
+    // notNull(document, "document must not be null");
+    // validState(nonNull(document.getDocumentObject()),
+    // "documentObject is null");
+    //
+    // final int bufferLength = 4086;
+    // return CompressionUtil.decompressByteArray(
+    // (byte[]) document.getDocumentObject(), bufferLength);
+    // }
 
     /**
      * <p>
@@ -250,19 +230,19 @@ public class DocumentHelper {
      * @throws IOException
      *             any exception while compression
      */
-    public boolean setDocumentObject(final Document document,
-            final byte[] documentObject) throws IOException {
-        notNull(document, "document must not be null");
-        notNull(documentObject, "documentObject must not be null");
-
-        final int bufferLength = 4086;
-        byte[] compressedObject =
-                CompressionUtil.compressByteArray(documentObject, bufferLength);
-        document.setDocumentObject(compressedObject);
-        LOGGER.debug("documentObject size {} compressed size {}",
-                documentObject.length, compressedObject.length);
-        return true;
-    }
+    // public boolean setDocumentObject(final Document document,
+    // final byte[] documentObject) throws IOException {
+    // notNull(document, "document must not be null");
+    // notNull(documentObject, "documentObject must not be null");
+    //
+    // final int bufferLength = 4086;
+    // byte[] compressedObject =
+    // CompressionUtil.compressByteArray(documentObject, bufferLength);
+    // document.setDocumentObject(compressedObject);
+    // LOGGER.debug("documentObject size {} compressed size {}",
+    // documentObject.length, compressedObject.length);
+    // return true;
+    // }
 
     /**
      * <p>

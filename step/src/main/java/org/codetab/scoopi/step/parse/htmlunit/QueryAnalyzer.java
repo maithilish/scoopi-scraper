@@ -68,7 +68,7 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
     }
 
     private String getDocumentHTML() throws DataFormatException, IOException {
-        byte[] bytes = documentHelper.getDocumentObject(document);
+        byte[] bytes = (byte[]) document.getDocumentObject();
         return new String(bytes);
     }
 
@@ -115,13 +115,7 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
 
     @Override
     protected String getPageSource() {
-        String pageSource = "";
-        try {
-            byte[] bytes = documentHelper.getDocumentObject(document);
-            pageSource = new String(bytes);
-        } catch (DataFormatException | IOException e) {
-            LOGGER.error("", e);
-        }
-        return pageSource;
+        byte[] bytes = (byte[]) document.getDocumentObject();
+        return new String(bytes);
     }
 }

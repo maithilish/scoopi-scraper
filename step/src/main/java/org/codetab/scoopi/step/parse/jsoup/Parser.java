@@ -50,7 +50,7 @@ public class Parser extends BaseParser {
 
     private InputStream getDocumentHTML()
             throws DataFormatException, IOException {
-        byte[] bytes = documentHelper.getDocumentObject(document);
+        byte[] bytes = (byte[]) document.getDocumentObject();
         return new ByteArrayInputStream(bytes);
     }
 }
