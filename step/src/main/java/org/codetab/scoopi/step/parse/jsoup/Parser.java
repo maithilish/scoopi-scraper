@@ -12,7 +12,6 @@ import java.util.zip.DataFormatException;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.step.base.BaseParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,8 +24,6 @@ public class Parser extends BaseParser {
 
     @Inject
     private ValueParser jsoupValueParser;
-    @Inject
-    private DocumentHelper documentHelper;
 
     @Override
     protected boolean postInitialize() {

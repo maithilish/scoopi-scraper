@@ -18,23 +18,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
-import org.codetab.scoopi.model.Fingerprint;
 import org.codetab.scoopi.model.JobInfo;
-import org.codetab.scoopi.model.Metadata;
-import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
-public class MetadataHelper {
+public class Documents {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(MetadataHelper.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(Documents.class);
 
     @Inject
     private Configs configs;
-    @Inject
-    private ObjectFactory objectFactory;
 
     public boolean isDocumentLive(final Date toDate) {
         // toDate > runDateTime
@@ -90,9 +85,4 @@ public class MetadataHelper {
         return Date.from(Instant.from(toDate));
     }
 
-    public Metadata createMetadata(final Fingerprint locatorFp,
-            final Fingerprint locatorWithDataFp, final Date documentDate) {
-        return objectFactory.createMetadata(locatorFp, locatorWithDataFp,
-                documentDate);
-    }
 }

@@ -17,7 +17,6 @@ import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.log.ErrorLogger;
 import org.codetab.scoopi.log.Log.CAT;
-import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.step.base.BaseParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +35,6 @@ public class Parser extends BaseParser {
 
     @Inject
     private ValueParser htmlUnitValueParser;
-    @Inject
-    private DocumentHelper documentHelper;
     @Inject
     private ErrorLogger errorLogger;
 

@@ -72,9 +72,8 @@
         </fork>
         <useDatastore>true</useDatastore>
         <datastore>
-            <name>datastore</name>
-            <orm>jdo</orm>
-            <configFile>jdoconfig.properties</configFile>
+            <type>jar:file:</type>
+            <path>data</path>
         </datastore>
         <persist>
             <dataDef>true</dataDef>

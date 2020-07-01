@@ -11,12 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
-import javax.inject.Inject;
-
 import org.apache.commons.validator.routines.UrlValidator;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.step.base.BaseQueryAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +30,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 public class QueryAnalyzer extends BaseQueryAnalyzer {
 
     static final Logger LOGGER = LoggerFactory.getLogger(QueryAnalyzer.class);
-
-    @Inject
-    private DocumentHelper documentHelper;
 
     private static final int TIMEOUT_MILLIS = 120000;
 
