@@ -70,12 +70,12 @@ public class ObjectFactory {
         return document;
     }
 
-    public Metadata createMetadata(final Fingerprint locatorFp,
-            final Fingerprint locatorWithDataFp, final Date documentDate) {
+    public Metadata createMetadata(final Fingerprint locator,
+            final Fingerprint document, final Date documentDate) {
         Metadata metadata = new Metadata();
-        metadata.setLocator(locatorWithDataFp);
+        metadata.setLocator(locator);
+        metadata.setDocument(document);
         metadata.setDocumentDate(documentDate);
-        metadata.setFingerprint(locatorFp);
         return metadata;
     }
 

@@ -10,20 +10,20 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.codetab.scoopi.dao.DaoException;
-import org.codetab.scoopi.dao.ILocatorDao;
+import org.codetab.scoopi.dao.IDocumentDao;
+import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Fingerprint;
-import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.helper.Fingerprints;
 
-public class LocatorDao implements ILocatorDao {
+public class DocumentDao implements IDocumentDao {
 
     @Inject
     private Helper helper;
 
-    private final String filePrefix = "locator";
+    private final String filePrefix = "";
 
     @Override
-    public Locator get(final String dirName, final String fileName)
+    public Document get(final String dirName, final String fileName)
             throws DaoException {
         URI uri = helper.getDataFileURI(dirName, dashit(filePrefix, fileName));
 
@@ -37,8 +37,8 @@ public class LocatorDao implements ILocatorDao {
             return null;
         } else {
             Object obj = SerializationUtils.deserialize(data);
-            if (obj instanceof Locator) {
-                return (Locator) obj;
+            if (obj instanceof Document) {
+                return (Document) obj;
             } else {
                 throw new DaoException("object is not instance of Locator");
             }
@@ -46,12 +46,12 @@ public class LocatorDao implements ILocatorDao {
     }
 
     @Override
-    public Fingerprint save(final String dirName, final Locator locator)
+    public Fingerprint save(final String dirName, final Document document)
             throws DaoException {
-        byte[] data = SerializationUtils.serialize(locator);
-        Fingerprint locatorWithDocFp =
+        byte[] data = SerializationUtils.serialize(document);
+        Fingerprint documentFp =
                 new Fingerprint(Fingerprints.fingerprint(data));
-        String fileName = locatorWithDocFp.getValue();
+        String fileName = documentFp.getValue();
 
         helper.createDataDir(dirName);
         URI uri = helper.getDataFileURI(dirName, dashit(filePrefix, fileName));
@@ -59,7 +59,7 @@ public class LocatorDao implements ILocatorDao {
         helper.createDataFile(uri, data);
 
         // return fingerprint locator with document
-        return locatorWithDocFp;
+        return documentFp;
     }
 
     @Override

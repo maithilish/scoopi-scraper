@@ -18,6 +18,7 @@ public class Locator implements Serializable {
     private String group;
     private String url;
     private Fingerprint fingerprint;
+    // FIXME - dbfix remove documents
     private List<Document> documents;
 
     Locator() {

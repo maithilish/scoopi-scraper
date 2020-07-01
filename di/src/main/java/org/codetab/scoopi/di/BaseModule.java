@@ -8,9 +8,9 @@ import java.util.Properties;
 import javax.inject.Singleton;
 
 import org.codetab.scoopi.config.ConfigProperties;
-import org.codetab.scoopi.dao.ILocatorDao;
+import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.dao.IMetadataDao;
-import org.codetab.scoopi.dao.fs.LocatorDao;
+import org.codetab.scoopi.dao.fs.DocumentDao;
 import org.codetab.scoopi.dao.fs.MetadataDao;
 import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.defs.IDef;
@@ -63,7 +63,7 @@ public abstract class BaseModule extends AbstractModule {
         bind(IPluginDef.class).to(PluginDef.class).in(Singleton.class);
         bind(IDataDefDef.class).to(DataDefDef.class).in(Singleton.class);
 
-        bind(ILocatorDao.class).to(LocatorDao.class).in(Singleton.class);
+        bind(IDocumentDao.class).to(DocumentDao.class).in(Singleton.class);
         bind(IMetadataDao.class).to(MetadataDao.class).in(Singleton.class);
 
         // factory to create instances with constructor parameters

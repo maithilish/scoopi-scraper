@@ -10,11 +10,11 @@ import org.junit.Test;
 
 public class LocatorDaoTest {
 
-    private LocatorDao dao;
+    private DocumentDao dao;
 
     @Before
     public void setUp() throws Exception {
-        dao = new LocatorDao();
+        dao = new DocumentDao();
         Helper helper = new Helper();
         FieldUtils.writeDeclaredField(dao, "helper", helper, true);
     }
