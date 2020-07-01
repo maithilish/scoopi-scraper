@@ -1,9 +1,9 @@
 /target/
-src/main/web/scoopiw/package-lock.json
 .classpath
 .project
 .settings/
 .checkstyle
-logs/
-output/
-/ignite/
+/engine/data
+logs
+output
+src/main/web/scoopiw/package-lock.json

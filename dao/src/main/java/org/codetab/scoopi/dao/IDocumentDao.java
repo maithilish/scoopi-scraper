@@ -1,14 +1,18 @@
 package org.codetab.scoopi.dao;
 
+import java.util.Date;
+
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Fingerprint;
 
 public interface IDocumentDao {
 
-    Document get(String dirName, String fileName) throws DaoException;
+    Fingerprint save(Fingerprint dir, Document document) throws DaoException;
 
-    void delete(String dirName, String fileName) throws DaoException;
+    Document get(Fingerprint dir) throws DaoException, ChecksumException;
 
-    Fingerprint save(String dirName, Document document) throws DaoException;
+    Date getDocumentDate(Fingerprint dir) throws DaoException;
+
+    void delete(Fingerprint dir) throws DaoException;
 
 }

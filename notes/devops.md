@@ -29,6 +29,8 @@ mvn dependency:resolve -Dclassifier=JavaDoc		# download javadoc
 mvn dependency:sources					# download source
 
 # run, skips exec in all modules except in engine
+# Could not resolve dependencies error is thrown if no process-classes
+# otherwise works fine  
 mvn process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" -Dexec.cleanupDaemonThreads=false -Dlogback.configurationFile=src/main/resources/logback-dev.xml -Dscoopi.mode=dev -Dexec.skip=true
 
 ```

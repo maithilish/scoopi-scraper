@@ -11,10 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
-import javax.inject.Inject;
-
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.step.base.BaseQueryAnalyzer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,9 +22,6 @@ import org.slf4j.LoggerFactory;
 public class QueryAnalyzer extends BaseQueryAnalyzer {
 
     static final Logger LOGGER = LoggerFactory.getLogger(QueryAnalyzer.class);
-
-    @Inject
-    private DocumentHelper documentHelper;
 
     private Document page;
 

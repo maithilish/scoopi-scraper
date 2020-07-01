@@ -1,14 +1,17 @@
 package org.codetab.scoopi.dao.fs;
 
 import static java.util.Objects.isNull;
-import static org.codetab.scoopi.util.Util.dashit;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.codetab.scoopi.dao.ChecksumException;
 import org.codetab.scoopi.dao.DaoException;
 import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.model.Document;
@@ -18,25 +21,20 @@ import org.codetab.scoopi.model.helper.Fingerprints;
 public class DocumentDao implements IDocumentDao {
 
     @Inject
-    private Helper helper;
+    private FsHelper fsHelper;
 
-    private final String filePrefix = "";
+    private final String fileName = "document.dat";
 
     @Override
-    public Document get(final String dirName, final String fileName)
-            throws DaoException {
-        URI uri = helper.getDataFileURI(dirName, dashit(filePrefix, fileName));
+    public Document get(final Fingerprint dir)
+            throws DaoException, ChecksumException {
+        URI uri = fsHelper.getURI(dir.getValue(), fileName);
 
-        byte[] data = helper.readDataFile(uri);
-        if (!fileName.equals(Fingerprints.fingerprint(data))) {
-            // FIXME - dbfix, what to do if mismatch?
-            throw new DaoException("fingerprint mismatch");
-        }
-
-        if (isNull(data)) {
+        byte[] serializedData = fsHelper.readDataObj(uri);
+        if (isNull(serializedData)) {
             return null;
         } else {
-            Object obj = SerializationUtils.deserialize(data);
+            Object obj = SerializationUtils.deserialize(serializedData);
             if (obj instanceof Document) {
                 return (Document) obj;
             } else {
@@ -46,27 +44,46 @@ public class DocumentDao implements IDocumentDao {
     }
 
     @Override
-    public Fingerprint save(final String dirName, final Document document)
-            throws DaoException {
-        byte[] data = SerializationUtils.serialize(document);
-        Fingerprint documentFp =
-                new Fingerprint(Fingerprints.fingerprint(data));
-        String fileName = documentFp.getValue();
-
-        helper.createDataDir(dirName);
-        URI uri = helper.getDataFileURI(dirName, dashit(filePrefix, fileName));
-
-        helper.createDataFile(uri, data);
-
-        // return fingerprint locator with document
-        return documentFp;
+    public Date getDocumentDate(final Fingerprint dir) throws DaoException {
+        URI uri = fsHelper.getURI(dir.getValue(), fileName);
+        byte[] serializedData = fsHelper.readFile(uri, "/documentDate");
+        if (isNull(serializedData)) {
+            return null;
+        } else {
+            Object obj = SerializationUtils.deserialize(serializedData);
+            if (obj instanceof Date) {
+                return (Date) obj;
+            } else {
+                throw new DaoException("object is not instance of Date");
+            }
+        }
     }
 
     @Override
-    public void delete(final String dirName, final String fileName)
+    public Fingerprint save(final Fingerprint dir, final Document document)
             throws DaoException {
-        Path path =
-                helper.getDataFilePath(dirName, dashit(filePrefix, fileName));
-        helper.deleteDataFile(path);
+
+        byte[] serializedData = SerializationUtils.serialize(document);
+        byte[] documentDate =
+                SerializationUtils.serialize(document.getFromDate());
+        byte[] checksum = fsHelper.getChecksum(serializedData);
+
+        Map<String, byte[]> dataMap = new HashMap<>();
+        dataMap.put("/data", serializedData);
+        dataMap.put("/documentDate", documentDate);
+        dataMap.put("/checksum", checksum);
+
+        fsHelper.createDir(dir.getValue());
+        URI uri = fsHelper.getURI(dir.getValue(), fileName);
+
+        fsHelper.writeObjFile(uri, dataMap);
+
+        return Fingerprints.fingerprint(serializedData);
+    }
+
+    @Override
+    public void delete(final Fingerprint dir) throws DaoException {
+        Path path = fsHelper.getDirPath(dir.getValue());
+        fsHelper.deleteDir(path);
     }
 }

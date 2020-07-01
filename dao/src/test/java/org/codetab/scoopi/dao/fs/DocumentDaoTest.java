@@ -15,8 +15,8 @@ public class LocatorDaoTest {
     @Before
     public void setUp() throws Exception {
         dao = new DocumentDao();
-        Helper helper = new Helper();
-        FieldUtils.writeDeclaredField(dao, "helper", helper, true);
+        FsHelper fsHelper = new FsHelper();
+        FieldUtils.writeDeclaredField(dao, "helper", fsHelper, true);
     }
 
     @After

@@ -11,14 +11,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Document implements Serializable {
 
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8309456077125211948L;
+
     private Long id;
-    private Object documentObject;
     private String name;
-    // FIXME - dbfix, remove from and todate
     private Date fromDate;
-    private Date toDate;
     private String url;
+    private Fingerprint locatorId;
+    private Object documentObject;
 
     Document() {
     }
@@ -86,46 +86,12 @@ public class Document implements Serializable {
         this.name = value;
     }
 
-    /**
-     * Gets the value of the fromDate property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
     public Date getFromDate() {
         return fromDate;
     }
 
-    /**
-     * Sets the value of the fromDate property.
-     *
-     * @param value
-     *            allowed object is {@link String }
-     *
-     */
-    public void setFromDate(final Date value) {
-        this.fromDate = value;
-    }
-
-    /**
-     * Gets the value of the toDate property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public Date getToDate() {
-        return toDate;
-    }
-
-    /**
-     * Sets the value of the toDate property.
-     *
-     * @param value
-     *            allowed object is {@link String }
-     *
-     */
-    public void setToDate(final Date value) {
-        this.toDate = value;
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
     }
 
     /**
@@ -136,6 +102,14 @@ public class Document implements Serializable {
      */
     public String getUrl() {
         return url;
+    }
+
+    public Fingerprint getLocatorId() {
+        return locatorId;
+    }
+
+    public void setLocatorId(final Fingerprint locatorId) {
+        this.locatorId = locatorId;
     }
 
     /**
@@ -151,15 +125,13 @@ public class Document implements Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return EqualsBuilder.reflectionEquals(this, obj, excludes);
     }
 
     @Override
     public int hashCode() {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return HashCodeBuilder.reflectionHashCode(this, excludes);
     }
 
@@ -167,7 +139,6 @@ public class Document implements Serializable {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId()).append("name", getName())
-                .append("fromDate", fromDate).append("toDate", toDate)
                 .append("url", url).toString();
     }
 
