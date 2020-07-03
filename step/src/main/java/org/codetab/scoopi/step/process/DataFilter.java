@@ -19,7 +19,7 @@ public class DataFilter extends BaseProcessor {
     private FilterHelper filterHelper;
 
     @Override
-    public boolean process() {
+    public void process() {
         /*
          * data uses composite pattern and data.getItems() returns copy of
          * DataComponet list with only objects of Item type. The removeItem()
@@ -37,8 +37,5 @@ public class DataFilter extends BaseProcessor {
         }
         data.setItems(items);
         setOutput(data);
-        setConsistent(true);
-
-        return true;
     }
 }

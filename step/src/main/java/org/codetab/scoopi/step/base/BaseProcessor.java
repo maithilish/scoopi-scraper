@@ -20,7 +20,7 @@ public abstract class BaseProcessor extends Step {
     protected Data data;
 
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
@@ -32,16 +32,13 @@ public abstract class BaseProcessor extends Step {
                     pData.getClass().getName());
             throw new StepRunException(message);
         }
-        return true;
     }
 
     @Override
-    public boolean load() {
-        return true;
+    public void load() {
     }
 
     @Override
-    public boolean store() {
-        return true;
+    public void store() {
     }
 }

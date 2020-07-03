@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LocatorDaoTest {
+public class DocumentDaoTest {
 
     private DocumentDao dao;
 

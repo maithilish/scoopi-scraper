@@ -7,25 +7,25 @@ import org.slf4j.Marker;
 
 public interface IStep {
 
-    boolean setup();
+    void setup();
 
-    boolean initialize();
+    void initialize();
 
-    boolean load();
+    void load();
 
-    boolean store();
+    void store();
 
-    boolean process();
+    void process();
 
-    boolean handover();
+    void handover();
 
-    boolean isConsistent();
-
-    void setConsistent(boolean consistent);
+    void setPayload(Payload payload);
 
     Payload getPayload();
 
-    void setPayload(Payload payload);
+    void setOutput(Object data);
+
+    Object getOutput();
 
     JobInfo getJobInfo();
 
@@ -38,8 +38,4 @@ public interface IStep {
     String getLabel();
 
     String getLabeled(String message);
-
-    Object getOutput();
-
-    void setOutput(Object data);
 }

@@ -50,7 +50,7 @@ public final class DataConverter extends BaseProcessor {
      * @return true when no error
      */
     @Override
-    public boolean process() {
+    public void process() {
         validState(nonNull(data), "data not set");
 
         LOGGER.debug(getMarker(), getLabeled("convert values"));
@@ -81,9 +81,7 @@ public final class DataConverter extends BaseProcessor {
         }
 
         setOutput(data);
-        setConsistent(true);
         trace();
-        return true;
     }
 
     private String convert(final String value,

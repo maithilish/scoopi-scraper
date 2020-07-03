@@ -11,33 +11,26 @@ import org.codetab.scoopi.step.Step;
 public abstract class BaseSeeder extends Step {
 
     /**
-     * <p>
      * do nothing.
      * @return false
      */
     @Override
-    public boolean load() {
-        return false;
+    public void load() {
     }
 
     /**
-     * <p>
      * do nothing.
      * @return false
      */
     @Override
-    public boolean process() {
-        return false;
+    public void store() {
     }
 
     /**
-     * <p>
      * do nothing.
      * @return false
      */
     @Override
-    public boolean store() {
-        return false;
+    public void process() {
     }
-
 }
