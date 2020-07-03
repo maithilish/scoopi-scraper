@@ -78,7 +78,7 @@ public abstract class BaseParser extends Step {
     private boolean persist;
 
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
@@ -102,16 +102,16 @@ public abstract class BaseParser extends Step {
         persist = persists.persistData(jobInfo);
 
         // TODO move this to load as loadPage()
-        return postInitialize();
+        postInitialize();
     }
 
     protected abstract boolean postInitialize();
 
     @Override
-    public boolean load() {
+    public void load() {
 
         if (!persist) {
-            return true;
+            return;
         }
 
         try {
@@ -126,11 +126,10 @@ public abstract class BaseParser extends Step {
         } catch (DaoException e) {
             LOGGER.debug(marker, getLabeled("load data {}"), e);
         }
-        return true;
     }
 
     @Override
-    public boolean store() {
+    public void store() {
 
         if (parseData && persist) {
             try {
@@ -144,11 +143,10 @@ public abstract class BaseParser extends Step {
         } else {
             LOGGER.debug(marker, getLabeled("persist false, data not stored"));
         }
-        return true;
     }
 
     @Override
-    public boolean process() {
+    public void process() {
         Counter dataParseCounter =
                 metricsHelper.getCounter(this, "data", "parse");
         Counter dataReuseCounter =
@@ -166,7 +164,6 @@ public abstract class BaseParser extends Step {
                 dataHelper.addAxisTags(data, null);
 
                 parse();
-                setConsistent(true);
                 dataParseCounter.inc();
             } catch (IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException | DataDefNotFoundException
@@ -175,7 +172,6 @@ public abstract class BaseParser extends Step {
                 throw new StepRunException(message, e);
             }
         } else {
-            setConsistent(true);
             dataReuseCounter.inc();
             LOGGER.debug(marker, "{}", getLabeled("data exists, reuse"));
         }
@@ -184,8 +180,6 @@ public abstract class BaseParser extends Step {
 
         timer.stop();
         LOGGER.trace(marker, "parse time: {}", timer.toString());
-
-        return true;
     }
 
     protected void setValueParser(final IValueParser valueParser) {

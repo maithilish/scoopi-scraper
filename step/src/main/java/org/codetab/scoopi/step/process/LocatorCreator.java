@@ -33,22 +33,19 @@ public class LocatorCreator extends BaseProcessor {
     private long jobId;
 
     @Override
-    public boolean process() {
+    public void process() {
         final String locatorName = getPayload().getJobInfo().getName();
         final String dataDef = getPayload().getJobInfo().getDataDef();
         jobId = getPayload().getJobInfo().getId();
         locatorGroups = locatorGroupFactory.createLocatorGroups(dataDef,
                 data.getItems(), locatorName);
         setOutput(locatorGroups);
-        setConsistent(true);
-        return true;
     }
 
     @Override
-    public boolean handover() {
-        validState(nonNull(getOutput()), "output is null");
-        validState(isConsistent(), "step inconsistent");
-        validState(nonNull(locatorGroups), "locatorGroups is null");
+    public void handover() {
+        validState(nonNull(getOutput()), "output is not set");
+        validState(nonNull(locatorGroups), "locatorGroups is not set");
 
         final String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
@@ -73,6 +70,5 @@ public class LocatorCreator extends BaseProcessor {
                     spaceit("handover link locators,", getPayload().toString());
             throw new StepRunException(message, e);
         }
-        return true;
     }
 }

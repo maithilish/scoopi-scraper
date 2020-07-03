@@ -33,7 +33,7 @@ public class DataAppender extends BaseAppender {
     private ErrorLogger errorLogger;
 
     @Override
-    public boolean process() {
+    public void process() {
         List<PrintPayload> printPayloads = new ArrayList<>();
         for (String appenderName : appenders.keySet()) {
             try {
@@ -67,8 +67,5 @@ public class DataAppender extends BaseAppender {
             throw new JobRunException("unable to append data to an appender");
         }
         setOutput(data);
-        setConsistent(true);
-        // trace();
-        return true;
     }
 }

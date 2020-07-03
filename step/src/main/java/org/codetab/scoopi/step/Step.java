@@ -31,7 +31,6 @@ public abstract class Step implements IStep {
 
     private Object output;
     private Payload payload;
-    private boolean consistent = false;
     private String stepLabel;
     protected Marker marker;
 
@@ -51,15 +50,13 @@ public abstract class Step implements IStep {
     protected ObjectFactory factory;
 
     @Override
-    public boolean setup() {
+    public void setup() {
         marker = getJobInfo().getMarker();
-        return true;
     }
 
     @Override
-    public boolean handover() {
+    public void handover() {
         validState(nonNull(output), "output is null");
-        validState(isConsistent(), "step inconsistent");
 
         try {
             final String group = getJobInfo().getGroup();
@@ -84,7 +81,6 @@ public abstract class Step implements IStep {
                 | IllegalStateException | TransactionException e) {
             throw new StepRunException("unable to handover", e);
         }
-        return true;
     }
 
     @Override
@@ -120,16 +116,6 @@ public abstract class Step implements IStep {
     @Override
     public String getStepName() {
         return payload.getStepInfo().getStepName();
-    }
-
-    @Override
-    public boolean isConsistent() {
-        return consistent && nonNull(output);
-    }
-
-    @Override
-    public void setConsistent(final boolean consistent) {
-        this.consistent = consistent;
     }
 
     @Override

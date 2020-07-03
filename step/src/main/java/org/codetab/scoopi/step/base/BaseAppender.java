@@ -36,7 +36,7 @@ public abstract class BaseAppender extends Step {
     protected Data data;
 
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
@@ -64,7 +64,6 @@ public abstract class BaseAppender extends Step {
         } catch (Exception e) {
             throw new StepRunException("unable to create appenders", e);
         }
-        return true;
     }
 
     protected void doAppend(final Appender appender,
@@ -82,12 +81,10 @@ public abstract class BaseAppender extends Step {
     }
 
     @Override
-    public boolean load() {
-        return false;
+    public void load() {
     }
 
     @Override
-    public boolean store() {
-        return false;
+    public void store() {
     }
 }

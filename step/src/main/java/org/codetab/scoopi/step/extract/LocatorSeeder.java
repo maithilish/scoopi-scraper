@@ -1,5 +1,6 @@
 package org.codetab.scoopi.step.extract;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
 import static org.codetab.scoopi.util.Util.spaceit;
 
@@ -57,12 +58,11 @@ public final class LocatorSeeder extends BaseSeeder {
      * Initialise list of locators
      */
     @Override
-    public boolean initialize() {
+    public void initialize() {
         final Object pData = getPayload().getData();
         if (pData instanceof LocatorGroup) {
             locatorGroup = (LocatorGroup) pData;
             setOutput(pData);
-            setConsistent(true);
         } else {
             final String message =
                     spaceit("payload data is not instance of locator, but",
@@ -71,7 +71,6 @@ public final class LocatorSeeder extends BaseSeeder {
         }
         final Meter meter = metricsHelper.getMeter(this, "locator", "provided");
         meter.mark(locatorGroup.getLocators().size());
-        return true;
     }
 
     /**
@@ -79,8 +78,8 @@ public final class LocatorSeeder extends BaseSeeder {
      * Submit tasks to queue.
      */
     @Override
-    public boolean handover() {
-        validState(isConsistent(), "step inconsistent");
+    public void handover() {
+        validState(nonNull(getOutput()), "output is not set");
 
         final Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
 
@@ -149,7 +148,5 @@ public final class LocatorSeeder extends BaseSeeder {
         }
         LOGGER.debug("locator group: {}, locators: {}, queued to taskpool",
                 locatorGroup.getGroup(), locatorGroup.getLocators().size());
-        return true;
     }
-
 }

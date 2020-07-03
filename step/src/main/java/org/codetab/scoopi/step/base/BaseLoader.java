@@ -70,7 +70,7 @@ public abstract class BaseLoader extends Step {
      * @see org.codetab.scoopi.step.IStep#initialize()
      */
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
@@ -85,7 +85,6 @@ public abstract class BaseLoader extends Step {
         }
 
         persist = persists.persistDocument();
-        return true;
     }
 
     /**
@@ -100,11 +99,11 @@ public abstract class BaseLoader extends Step {
      * @see org.codetab.scoopi.step.IStep#load()
      */
     @Override
-    public boolean load() {
+    public void load() {
         validState(nonNull(locator), "locator is null");
 
         if (!persist) {
-            return true;
+            return;
         }
 
         String live = "PT0S"; // default
@@ -148,7 +147,6 @@ public abstract class BaseLoader extends Step {
                 LOGGER.debug(marker, "{}", message);
                 LOGGER.trace(marker, "loaded document:{}{}", LINE, document);
             }
-            return true;
         } catch (DaoException e) {
             final String message = "load document";
             throw new StepRunException(message, e);
@@ -167,7 +165,7 @@ public abstract class BaseLoader extends Step {
      * @see org.codetab.scoopi.step.IStep#process()
      */
     @Override
-    public boolean process() {
+    public void process() {
         validState(nonNull(locator), "locator is null");
 
         /**
@@ -195,14 +193,11 @@ public abstract class BaseLoader extends Step {
             document = newDocument;
             setOutput(newDocument);
 
-            setConsistent(true);
             LOGGER.debug(marker, "{} create new document", getLabel());
             LOGGER.trace(marker, "create new document{}{}", LINE, document);
         } else {
             setOutput(document);
-            setConsistent(true);
         }
-        return true;
     }
 
     /**
@@ -216,7 +211,7 @@ public abstract class BaseLoader extends Step {
      * @see org.codetab.scoopi.step.IStep#store()
      */
     @Override
-    public boolean store() {
+    public void store() {
         validState(nonNull(locator), "locator is null");
         validState(nonNull(document), "document is null");
 
@@ -232,12 +227,11 @@ public abstract class BaseLoader extends Step {
             final String message = "unable to store document";
             throw new StepRunException(message, e);
         }
-        return true;
     }
 
     @Override
-    public boolean handover() {
-        validState(isConsistent(), "step inconsistent");
+    public void handover() {
+        validState(nonNull(getOutput()), "output is not set");
 
         LOGGER.debug("push document tasks to taskpool");
         final String group = getJobInfo().getGroup();
@@ -266,7 +260,6 @@ public abstract class BaseLoader extends Step {
                             getPayload().toString());
             throw new StepRunException(message, e);
         }
-        return true;
     }
 
     /**
