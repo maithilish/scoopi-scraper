@@ -9,10 +9,15 @@
     </parent>
     <artifactId>helper</artifactId>
 
-    <dependencies>
+    <dependencies>        
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
-            <artifactId>log</artifactId>
+            <artifactId>model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codetab.scoopi</groupId>
+            <artifactId>metric</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

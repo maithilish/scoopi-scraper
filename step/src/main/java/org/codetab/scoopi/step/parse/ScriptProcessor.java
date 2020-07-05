@@ -12,16 +12,16 @@ import javax.inject.Inject;
 import javax.script.ScriptException;
 
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.model.Query;
 import org.codetab.scoopi.model.TaskInfo;
 import org.codetab.scoopi.step.parse.cache.ParserCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ScriptProcessor {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ScriptProcessor.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IItemDef itemDef;
@@ -63,8 +63,8 @@ public class ScriptProcessor {
             value = ConvertUtils.convert(val);
             parserCache.put(key, value);
         }
-        LOGGER.trace(taskInfo.getMarker(), "[{}], value: {}",
-                taskInfo.getLabel(), value);
+        LOG.trace(taskInfo.getMarker(), "[{}], value: {}", taskInfo.getLabel(),
+                value);
         return value;
     }
 

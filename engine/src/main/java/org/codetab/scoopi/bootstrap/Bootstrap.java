@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.BootConfigs;
 import org.codetab.scoopi.di.BaseModule;
 import org.codetab.scoopi.di.ClusterModule;
@@ -14,12 +16,10 @@ import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.store.IBarricade;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Bootstrap {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Bootstrap.class);
+    static final Logger LOG = LogManager.getLogger();
 
     private DInjector dInjector; // actual injector to run scoopi
     private IStore store;
@@ -34,14 +34,13 @@ public class Bootstrap {
         bootConfigs = new BootConfigs();
 
         if (bootConfigs.isSolo()) {
-
-            LOGGER.info("Scoopi [solo/cluster]: solo"); //$NON-NLS-1$
-            LOGGER.info("initialize solo injector");
+            LOG.info("Scoopi [solo/cluster]: solo"); //$NON-NLS-1$
+            LOG.info("initialize solo injector");
             module = new SoloModule();
             dInjector = new DInjector(module).instance(DInjector.class);
         } else {
-            LOGGER.info("Scoopi [solo/cluster]: cluster"); //$NON-NLS-1$
-            LOGGER.info("initialize cluster injector");
+            LOG.info("Scoopi [solo/cluster]: cluster"); //$NON-NLS-1$
+            LOG.info("initialize cluster injector");
             module = new ClusterModule();
             dInjector = new DInjector(module).instance(DInjector.class);
         }
@@ -49,14 +48,14 @@ public class Bootstrap {
 
     public void bootCluster() {
         if (!bootConfigs.isSolo()) {
-            LOGGER.info("bootup cluster");
+            LOG.info("bootup cluster");
         }
 
         store = dInjector.instance(IStore.class);
         cluster = dInjector.instance(ICluster.class);
         cluster.start();
 
-        LOGGER.info("open store");
+        LOG.info("open store");
         store.open();
         module.setStore(store);
     }
@@ -75,18 +74,18 @@ public class Bootstrap {
                         break;
                     }
                 }
-                LOGGER.info("cluster quorum of {} formed", qSize);
+                LOG.info("cluster quorum of {} formed", qSize);
             });
             try {
                 future.get(qTimeout, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException
                     | TimeoutException e) {
-                LOGGER.error("failed to get quorum of {} after {} seconds",
-                        qSize, qTimeout);
-                LOGGER.info(
+                LOG.error("failed to get quorum of {} after {} seconds", qSize,
+                        qTimeout);
+                LOG.info(
                         "timeout and quorum size are set with {} and {} properties",
                         qTimeoutKey, qSizeKey);
-                LOGGER.info(
+                LOG.info(
                         "set them via system property or in scoopi.properties");
                 cluster.shutdown();
                 throw new CriticalException("failed to get cluster quorum", e);
@@ -105,7 +104,7 @@ public class Bootstrap {
 
         // one node is allowed to init system
         if (barricade.isAllowed()) {
-            LOGGER.info("setup system");
+            LOG.info("setup system");
             /*
              * ConfigComposer has to be ready before DefComposer creation, so
              * can't be injected.
@@ -114,7 +113,7 @@ public class Bootstrap {
             dInjector.instance(DefsComposer.class).compose();
             barricade.finish();
         } else {
-            LOGGER.info("system already initialized");
+            LOG.info("system already initialized by another node");
         }
 
     }

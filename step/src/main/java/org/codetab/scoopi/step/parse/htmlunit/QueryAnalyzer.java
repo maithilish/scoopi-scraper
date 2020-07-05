@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.step.base.BaseQueryAnalyzer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ImmediateRefreshHandler;
@@ -29,7 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class QueryAnalyzer extends BaseQueryAnalyzer {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(QueryAnalyzer.class);
+    static final Logger LOG = LogManager.getLogger();
 
     private static final int TIMEOUT_MILLIS = 120000;
 
@@ -102,7 +102,7 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
             List<Object> elements = page.getByXPath(xpath);
             elements.stream().forEach(e -> list.add(((DomNode) e).asXml()));
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOG.error(e.getMessage());
         }
         return list;
     }

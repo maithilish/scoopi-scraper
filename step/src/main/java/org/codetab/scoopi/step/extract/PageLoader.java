@@ -8,12 +8,12 @@ import java.net.URL;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.helper.HttpHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.step.base.BaseLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -25,11 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PageLoader extends BaseLoader {
 
-    /**
-     * logger.
-     */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(PageLoader.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * Helper to handle URLConnection.
@@ -63,12 +59,12 @@ public class PageLoader extends BaseLoader {
 
         final String protocol = httpHelper.getProtocol(urlSpec);
         if (protocol.equals("resource")) {
-            LOGGER.info(marker, "fetch resource: {}", urlSpec);
+            LOG.info(jobMarker, "fetch resource: {}", urlSpec);
             try {
                 final URL fileURL = PageLoader.class.getResource(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
-                LOGGER.debug(marker, "fetched resource: {}", urlSpec);
+                LOG.debug(jobMarker, "fetched resource: {}", urlSpec);
                 return bytes;
             } catch (final IOException e1) {
                 throw new IOException(spaceit("file not found: ", urlSpec));
@@ -76,12 +72,12 @@ public class PageLoader extends BaseLoader {
         }
 
         if (protocol.equals("file")) {
-            LOGGER.info(marker, "fetch file: {}", urlSpec);
+            LOG.info(jobMarker, "fetch file: {}", urlSpec);
             try {
                 final URL fileURL = new URL(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "file").inc();
-                LOGGER.debug(marker, "fetched file: {}", urlSpec);
+                LOG.debug(jobMarker, "fetched file: {}", urlSpec);
                 return bytes;
             } catch (IOException | NullPointerException e) {
                 throw new IOException(spaceit("file not found: ", urlSpec));
@@ -94,12 +90,12 @@ public class PageLoader extends BaseLoader {
             final String userAgent = configs.getUserAgent();
 
             final String urlSpecEscaped = httpHelper.escapeUrl(urlSpec);
-            LOGGER.info(marker, "fetch web resource: {}", urlSpecEscaped);
+            LOG.info(jobMarker, "fetch web resource: {}", urlSpecEscaped);
 
             bytes = httpHelper.getContent(urlSpecEscaped, userAgent, timeout);
 
             metricsHelper.getCounter(this, "fetch", "web").inc();
-            LOGGER.debug(marker, "fetched: {}, length: {}", urlSpecEscaped,
+            LOG.debug(jobMarker, "fetched: {}, length: {}", urlSpecEscaped,
                     bytes.length);
             return bytes;
         }

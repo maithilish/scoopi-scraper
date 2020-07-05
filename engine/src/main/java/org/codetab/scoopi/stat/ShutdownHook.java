@@ -3,9 +3,9 @@ package org.codetab.scoopi.stat;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.step.webdriver.WebDriverPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -16,18 +16,14 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ShutdownHook extends Thread {
 
-    /**
-     * logger.
-     */
-    private final Logger logger = LoggerFactory.getLogger(ShutdownHook.class);
+    private static final Logger LOG = LogManager.getLogger();
 
-    /**
-     * activity service.
-     */
     @Inject
     private Stats stats;
     @Inject
     private WebDriverPool webDriverPool;
+
+    private boolean cleanShutdown = false;
 
     /**
      * <p>
@@ -36,7 +32,7 @@ public class ShutdownHook extends Thread {
     @Inject
     public ShutdownHook() {
         // cs - if private then class has to be final which is unable to mock
-        logger.info("shutdown hook created");
+        LOG.info("shutdown hook created");
     }
 
     /**
@@ -44,10 +40,27 @@ public class ShutdownHook extends Thread {
      */
     @Override
     public synchronized void start() {
-        stats.outputStats();
+        if (cleanShutdown) {
+            stats.outputStats();
+        } else {
+            outputTerminated();
+        }
         stats.outputMemStats();
 
-        logger.debug("closing webdrivers");
+        LOG.debug("close webdrivers");
         webDriverPool.close();
+
+        LOG.debug("shutdown log manager");
+        LogManager.shutdown();
+    }
+
+    public void setCleanShutdown(final boolean cleanShutdown) {
+        this.cleanShutdown = cleanShutdown;
+    }
+
+    private void outputTerminated() {
+        LOG.info("{}", "");
+        LOG.info("{}", "--- Summary ---");
+        LOG.error("Scoopi terminated");
     }
 }

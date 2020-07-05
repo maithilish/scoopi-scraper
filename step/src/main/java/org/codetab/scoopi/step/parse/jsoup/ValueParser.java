@@ -4,16 +4,16 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.model.TaskInfo;
 import org.codetab.scoopi.step.parse.IValueParser;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ValueParser implements IValueParser {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ValueParser.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private NodeSelector nodeSelector;
@@ -34,8 +34,8 @@ public class ValueParser implements IValueParser {
         String value =
                 nodeSelector.selectSelector(blockNode, selector, attribute);
 
-        LOGGER.trace(taskInfo.getMarker(), "[{}], value: {}",
-                taskInfo.getLabel(), value);
+        LOG.trace(taskInfo.getMarker(), "[{}], value: {}", taskInfo.getLabel(),
+                value);
 
         return value;
     }

@@ -6,6 +6,9 @@ import static org.apache.commons.lang3.Validate.validState;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
@@ -17,9 +20,6 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 
 /**
  * @author maithilish
@@ -27,12 +27,7 @@ import org.slf4j.Marker;
  */
 public abstract class Step implements IStep {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Step.class);
-
-    private Object output;
-    private Payload payload;
-    private String stepLabel;
-    protected Marker marker;
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     protected Configs configs;
@@ -49,9 +44,16 @@ public abstract class Step implements IStep {
     @Inject
     protected ObjectFactory factory;
 
+    private Object output;
+    private Payload payload;
+    private String stepLabel;
+    protected Marker jobMarker;
+    protected Marker jobAbortedMarker;
+
     @Override
     public void setup() {
-        marker = getJobInfo().getMarker();
+        jobMarker = getJobInfo().getJobMarker();
+        jobAbortedMarker = getJobInfo().getJobAbortedMarker();
     }
 
     @Override
@@ -66,7 +68,7 @@ public abstract class Step implements IStep {
             if (getStepInfo().getNextStepName().equalsIgnoreCase("end")) {
                 long jobId = getJobInfo().getId();
                 jobMediator.markJobFinished(jobId);
-                LOGGER.info(marker, "job: {} finished",
+                LOG.info(jobMarker, "job: {} finished",
                         getJobInfo().getLabel());
             } else {
                 final StepInfo nextStep =
@@ -74,7 +76,7 @@ public abstract class Step implements IStep {
                 final Payload nextStepPayload =
                         factory.createPayload(getJobInfo(), nextStep, output);
                 taskMediator.pushPayload(nextStepPayload);
-                LOGGER.debug(marker, "{} handover to step: {}", getLabel(),
+                LOG.debug(jobMarker, "{} handover to step: {}", getLabel(),
                         nextStep.getStepName());
             }
         } catch (DefNotFoundException | InterruptedException | JobStateException
@@ -119,8 +121,13 @@ public abstract class Step implements IStep {
     }
 
     @Override
-    public Marker getMarker() {
-        return marker;
+    public Marker getJobMarker() {
+        return jobMarker;
+    }
+
+    @Override
+    public Marker getJobAbortedMarker() {
+        return jobAbortedMarker;
     }
 
     /**

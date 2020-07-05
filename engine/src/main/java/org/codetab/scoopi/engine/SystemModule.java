@@ -9,12 +9,14 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
 import org.codetab.scoopi.helper.ThreadSleep;
-import org.codetab.scoopi.log.ErrorLogger;
+import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.metrics.IMetricsServer;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.SystemStat;
@@ -28,12 +30,10 @@ import org.codetab.scoopi.store.IBarricade;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IShutdown;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SystemModule {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(SystemModule.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -50,7 +50,7 @@ public class SystemModule {
     @Inject
     private IShutdown shutdown;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
     @Inject
     private AppenderPoolService appenderPoolService;
     @Inject
@@ -113,7 +113,7 @@ public class SystemModule {
             future.get(clusterShutdownTimeout, timeUnit);
             return true;
         } catch (Exception e) {
-            LOGGER.warn("failed to shutdown cluster {}", e.getMessage());
+            LOG.error("failed to shutdown cluster {}", e);
             return false;
         }
     }
@@ -125,7 +125,7 @@ public class SystemModule {
     }
 
     public boolean startErrorLogger() {
-        errorLogger.start();
+        errors.start();
         return true;
     }
 
@@ -180,7 +180,7 @@ public class SystemModule {
                 jobSeedBrricade.finish();
             });
         } else {
-            LOGGER.info("jobs are already seeded by another node");
+            LOG.info("jobs are already seeded by another node");
             // other nodes
             jobSeeder.setSeedDoneSignal();
         }
@@ -189,6 +189,10 @@ public class SystemModule {
     public void waitForFinish() {
         appenderMediator.closeAll();
         appenderPoolService.waitForFinish();
+    }
+
+    public void setCleanShutdown() {
+        shutdownHook.setCleanShutdown(true);
     }
 
     public void waitForInput() {

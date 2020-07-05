@@ -16,17 +16,17 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 
 public class Documents {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Documents.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -70,16 +70,16 @@ public class Documents {
                 toDate = ZonedDateTime.ofInstant(td.toInstant(),
                         ZoneId.systemDefault());
             } catch (ParseException | ConfigNotFoundException pe) {
-                LOGGER.warn("{} live is {} {}, defaults to 0 days",
+                LOG.warn("{} live is {} {}, defaults to 0 days",
                         jobInfo.getLabel(), documentlive, e);
                 TemporalAmount ta = Util.parseTemporalAmount("PT0S"); //$NON-NLS-1$
                 toDate = fromDateTime.plus(ta);
             }
         }
 
-        if (LOGGER.isTraceEnabled()) {
-            Marker marker = jobInfo.getMarker();
-            LOGGER.trace(marker, "document.toDate. live: {} toDate:", //$NON-NLS-1$
+        if (LOG.isTraceEnabled()) {
+            Marker marker = jobInfo.getJobMarker();
+            LOG.trace(marker, "document.toDate. live: {} toDate:", //$NON-NLS-1$
                     documentlive, toDate);
         }
         return Date.from(Instant.from(toDate));

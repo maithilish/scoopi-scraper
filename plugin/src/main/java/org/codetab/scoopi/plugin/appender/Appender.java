@@ -1,7 +1,6 @@
 package org.codetab.scoopi.plugin.appender;
 
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -9,16 +8,16 @@ import java.util.concurrent.BlockingQueue;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.model.PrintPayload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -41,15 +40,14 @@ public abstract class Appender implements Runnable {
         END_OF_STREAM
     }
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(Appender.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
     @Inject
     private IPluginDef pluginDef;
     @Inject
-    protected ErrorLogger errorLogger;
+    protected Errors errors;
 
     /**
      * Queue to hold objects pushed to appenders.
@@ -104,11 +102,13 @@ public abstract class Appender implements Runnable {
         }
         try {
             queue = new ArrayBlockingQueue<>(Integer.parseInt(queueSize));
-            LOGGER.info("initialized appender: {}, queue size: {}", name,
+            LOG.info("initialized appender: {}, queue size: {}", name,
                     queueSize);
         } catch (NumberFormatException e) {
-            String message = spaceit("unable to create appender:", name);
-            errorLogger.log(CAT.ERROR, message, e);
+            // FIXME - logfix, throw critical exception
+            errors.inc();
+            LOG.error("unable to create appender: {} [{}]", name,
+                    ERRORCAT.INTERNAL);
         }
     }
 

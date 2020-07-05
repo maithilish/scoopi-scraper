@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.store.IBarricade;
 import org.codetab.scoopi.store.ICluster;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
@@ -27,7 +27,7 @@ public class Barricade implements IBarricade {
         INITIALIZE, READY
     }
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Barricade.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ICluster cluster;
@@ -71,14 +71,14 @@ public class Barricade implements IBarricade {
                 tx1.beginTransaction();
                 TransactionalMap<String, Object> txCache =
                         tx1.getMap(objectMapKey);
-                LOGGER.debug("lock key {} for update", key);
+                LOG.debug("lock key {} for update", key);
                 State state = (State) txCache.getForUpdate(key);
                 if (isNull(state)) {
                     txCache.set(key, State.INITIALIZE);
                     txCache.set(ownerKey, memberId);
                     allowed = true; // allow to cross barricade
-                    LOGGER.debug("state is {}, node {} allowed to cross {}",
-                            state, memberId, key);
+                    LOG.debug("state is {}, node {} allowed to cross {}", state,
+                            memberId, key);
                 }
                 tx1.commitTransaction();
                 if (allowed) {
@@ -87,10 +87,10 @@ public class Barricade implements IBarricade {
             } catch (Exception e) {
                 allowed = false;
                 tx1.rollbackTransaction();
-                LOGGER.error("{}", e);
+                LOG.error("{}", e);
             }
 
-            LOGGER.debug("wait on {}", key);
+            LOG.debug("wait on {}", key);
             State state = (State) objectMap.get(key);
             if (nonNull(state) && state.equals(State.READY)) {
                 return;
@@ -102,7 +102,7 @@ public class Barricade implements IBarricade {
 
             TransactionContext tx2 = hz.newTransactionContext(txOptions);
             if (crashedMembers.contains(keyOwner)) {
-                LOGGER.debug("allowed node crashed, reset state {}");
+                LOG.debug("allowed node crashed, reset state {}");
                 try {
                     tx2.beginTransaction();
                     TransactionalMap<String, Object> txCache =
@@ -110,11 +110,11 @@ public class Barricade implements IBarricade {
                     txCache.getForUpdate(key);
                     txCache.getForUpdate(ownerKey);
                     if (txCache.remove(ownerKey, keyOwner)) {
-                        LOGGER.debug("remove allowed node {}", keyOwner);
+                        LOG.debug("remove allowed node {}", keyOwner);
                         if (txCache.remove(key, State.INITIALIZE)) {
-                            LOGGER.debug("remove state {}", key);
+                            LOG.debug("remove state {}", key);
                         } else {
-                            LOGGER.debug("unable to remove state {}", key);
+                            LOG.debug("unable to remove state {}", key);
                         }
                     }
                     tx2.commitTransaction();
@@ -140,7 +140,7 @@ public class Barricade implements IBarricade {
             txCache.delete(ownerKey);
             txCache.set(key, State.READY);
             tx.commitTransaction();
-            LOGGER.debug("barricade {} removed", key);
+            LOG.debug("barricade {} removed", key);
         } catch (Exception e) {
             tx.rollbackTransaction();
             e.printStackTrace();

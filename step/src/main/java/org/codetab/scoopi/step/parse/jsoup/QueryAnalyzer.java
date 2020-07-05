@@ -11,17 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.step.base.BaseQueryAnalyzer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class QueryAnalyzer extends BaseQueryAnalyzer {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(QueryAnalyzer.class);
+    static final Logger LOG = LogManager.getLogger();
 
     private Document page;
 
@@ -56,7 +56,7 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
             Elements elements = page.select(selector);
             elements.stream().forEach(e -> list.add(e.outerHtml()));
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOG.error(e.getMessage());
         }
         return list;
     }

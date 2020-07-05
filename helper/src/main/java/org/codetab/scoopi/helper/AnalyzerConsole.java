@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.io.input.CloseShieldInputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AnalyzerConsole {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(AnalyzerConsole.class);
+    static final Logger LOG = LogManager.getLogger();
 
     private final String dashes = "-----";
     private int lines = Integer.parseInt("5");
@@ -71,7 +71,7 @@ public class AnalyzerConsole {
             w.write(pageSource);
             System.out.println(spaceit("wrote page source to file:", fileName));
         } catch (IOException e) {
-            LOGGER.error("", e);
+            LOG.error("", e);
         }
     }
 

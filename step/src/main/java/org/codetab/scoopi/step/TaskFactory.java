@@ -6,15 +6,15 @@ import static org.codetab.scoopi.util.Util.spaceit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Payload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class TaskFactory {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(TaskFactory.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private DInjector dInjector;

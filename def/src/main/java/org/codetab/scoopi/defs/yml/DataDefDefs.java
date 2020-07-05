@@ -14,25 +14,21 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 class DataDefDefs {
 
-    /**
-     * logger.
-     */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(DataDefDefs.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -90,14 +86,14 @@ class DataDefDefs {
 
     public void traceDataDefs(final Map<String, DataDef> dataDefMap,
             final Map<String, Data> dataTemplateMap) {
-        LOGGER.trace("--- datadefs and data templates ---");
+        LOG.trace("--- datadefs and data templates ---");
         for (String dataDefName : dataDefMap.keySet()) {
             String markerName = dashit("datadef", dataDefName);
-            Marker marker = MarkerFactory.getMarker(markerName);
+            Marker marker = MarkerManager.getMarker(markerName);
             DataDef dataDef = dataDefMap.get(dataDefName);
             Data dataTemplate = dataTemplateMap.get(dataDefName);
-            LOGGER.trace(marker, "{}{}{}", dataDef, LINE, dataDef.getDefJson());
-            LOGGER.trace(marker, "data template:{}{}", LINE,
+            LOG.trace(marker, "{}{}{}", dataDef, LINE, dataDef.getDefJson());
+            LOG.trace(marker, "data template:{}{}", LINE,
                     dataTemplate.toTraceString());
         }
     }

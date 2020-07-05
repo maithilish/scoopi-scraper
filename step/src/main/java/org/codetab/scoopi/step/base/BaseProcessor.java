@@ -4,18 +4,15 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
 import static org.codetab.scoopi.util.Util.spaceit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.step.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class BaseProcessor extends Step {
 
-    /**
-     * logger.
-     */
-    static final Logger LOGGER = LoggerFactory.getLogger(BaseProcessor.class);
+    static final Logger LOG = LogManager.getLogger();
 
     protected Data data;
 

@@ -2,7 +2,7 @@ package org.codetab.scoopi.model;
 
 import javax.inject.Singleton;
 
-import org.slf4j.Marker;
+import org.apache.logging.log4j.Marker;
 
 @Singleton
 public class TaskInfo {
@@ -14,7 +14,7 @@ public class TaskInfo {
     }
 
     public Marker getMarker() {
-        return jobInfo.get().getMarker();
+        return jobInfo.get().getJobMarker();
     }
 
     public String getLabel() {

@@ -16,8 +16,7 @@
         <module>util</module>
         <module>def</module>
         <module>model</module>
-        <module>helper</module>
-        <module>log</module>
+        <module>helper</module>        
         <module>metric</module>
         <module>dao</module>
         <module>di</module>
@@ -51,18 +50,18 @@
         <jetty.version>9.4.14.v20181114</jetty.version>
         <json-validator.version>2.2.11</json-validator.version>
         <jsoup.version>1.12.1</jsoup.version>
-
-        <log4j.version>1.2.17</log4j.version>
-        <logback.version>1.2.3</logback.version>
         <metrics.version>4.1.1</metrics.version>
         <selenium.version>3.141.59</selenium.version>
 
+        <hazelcast.version>4.0.1</hazelcast.version>
+
+        <log4j2.version>2.13.3</log4j2.version>
+        <slf4j-simple.version>1.7.28</slf4j-simple.version>
+
         <junit.version>4.12</junit.version>
+        <assertj.version>3.14.0</assertj.version>
         <mockito.version>3.1.0</mockito.version>
         <byte-budy.version>1.9.10</byte-budy.version>
-        <assertj.version>3.14.0</assertj.version>
-
-        <hazelcast.version>4.0.1</hazelcast.version>
         
         <!-- plugin version -->
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
@@ -221,21 +220,32 @@
     
     <!-- common to all modules -->
     <dependencies>
+        <!-- log -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <!-- for any dependency that uses sl4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-simple.version}</version>
+        </dependency>
+
+        <!-- inject -->
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>${java-inject.version}</version>
         </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
+
+        <!-- test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -351,8 +361,7 @@
                                 <configuration>
                                     <classifier>release</classifier>
                                     <excludes>
-                                        <exclude>*.properties</exclude>
-                                        <exclude>logback.xml</exclude>
+                                        <exclude>*.properties</exclude>                                     
                                         <exclude>hazelcast.xml</exclude>
                                         <exclude>simple/</exclude>
                                         <exclude>defs/**</exclude>

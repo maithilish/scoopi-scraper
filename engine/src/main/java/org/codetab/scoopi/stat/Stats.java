@@ -7,15 +7,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.codetab.scoopi.log.ErrorLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.metrics.SystemStat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class Stats {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Stats.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Timer timer;
@@ -30,7 +30,7 @@ public class Stats {
     @Inject
     private SystemStat systemStat;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
 
     @Inject
     private Stats() {
@@ -54,26 +54,25 @@ public class Stats {
     }
 
     public void outputStats() {
-        LOGGER.info("{}", "");
-        LOGGER.info("{}", "--- Summary ---");
-        long errorCount = errorLogger.getErrorCount();
+        LOG.info("{}", "");
+        LOG.info("{}", "--- Summary ---");
+        long errorCount = errors.getCount();
         if (errorCount == 0) {
-            LOGGER.info("scoopi run success");
+            LOG.info("scoopi run success");
         } else {
-            LOGGER.info("scoopi run errors: {}", errorCount);
-            LOGGER.info("see logs/error.log for details");
+            LOG.info("scoopi run errors: {}", errorCount);
+            LOG.info("see logs/error.log for details");
         }
-        LOGGER.info("{}  {}", "time taken:", stopWatch);
+        LOG.info("{}  {}", "time taken:", stopWatch);
     }
 
     public void outputMemStats() {
-        LOGGER.info("{}", "");
-        LOGGER.info("{}", "--- Memory Usage ---");
-        LOGGER.info("Max   : {}", systemStat.getMaxMemory());
-        LOGGER.info("Total : Avg {} High {} Low {}",
-                (long) totalMem.getAverage(), totalMem.getMax(),
-                totalMem.getMin());
-        LOGGER.info("Free : Avg {} High {} Low {}", (long) freeMem.getAverage(),
+        LOG.info("{}", "");
+        LOG.info("{}", "--- Memory Usage ---");
+        LOG.info("Max   : {}", systemStat.getMaxMemory());
+        LOG.info("Total : Avg {} High {} Low {}", (long) totalMem.getAverage(),
+                totalMem.getMax(), totalMem.getMin());
+        LOG.info("Free : Avg {} High {} Low {}", (long) freeMem.getAverage(),
                 freeMem.getMax(), freeMem.getMin());
     }
 }

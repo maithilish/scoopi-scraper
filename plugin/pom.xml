@@ -14,12 +14,7 @@
             <groupId>org.codetab.scoopi</groupId>
             <artifactId>exception</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codetab.scoopi</groupId>
-            <artifactId>log</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
             <artifactId>def</artifactId>

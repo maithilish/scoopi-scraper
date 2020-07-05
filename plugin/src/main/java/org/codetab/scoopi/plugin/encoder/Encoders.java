@@ -2,7 +2,6 @@ package org.codetab.scoopi.plugin.encoder;
 
 import static java.util.Objects.nonNull;
 import static org.codetab.scoopi.util.Util.dashit;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,23 +10,27 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.Plugin;
 
 public class Encoders extends HashMap<String, List<IEncoder<?>>> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1556127336620930856L;
+
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IPluginDef pluginDef;
     @Inject
     private EncoderFactory encoderFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
 
     public void createEncoders(final List<Plugin> plugins,
             final String stepsName, final String stepName) {
@@ -48,10 +51,11 @@ public class Encoders extends HashMap<String, List<IEncoder<?>>> {
                         encoders.add(encoder);
                     } catch (ClassCastException | IllegalStateException
                             | ClassNotFoundException | DefNotFoundException e) {
-                        String message = spaceit(
-                                "unable to create appender from plugin:",
-                                plugin.toString());
-                        errorLogger.log(CAT.ERROR, message, e);
+                        // FIXME - logfix dataerror or critical
+                        errors.inc();
+                        LOG.error(
+                                "unable to create encoder from plugin: {} [{}]",
+                                plugin, ERRORCAT.DATAERROR, e);
                     }
                 }
                 put(appenderName, encoders);

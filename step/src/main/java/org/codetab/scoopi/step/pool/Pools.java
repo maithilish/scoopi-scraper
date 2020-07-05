@@ -14,14 +14,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.PoolStat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
@@ -36,10 +36,7 @@ import net.jcip.annotations.ThreadSafe;
 @ThreadSafe
 public abstract class Pools {
 
-    /**
-     * logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Pools.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * default pool size.
@@ -148,7 +145,7 @@ public abstract class Pools {
         while (!isAllTerminated()) {
             threadSleep.sleep(SLEEP_MILLIS);
         }
-        LOGGER.info("pools shutdown complete");
+        LOG.info("pools shutdown complete");
     }
 
     /**
@@ -186,12 +183,11 @@ public abstract class Pools {
                 final String ps = configs.getConfig(key);
                 poolSize = Integer.valueOf(ps);
             } catch (NumberFormatException | ConfigNotFoundException e) {
-                LOGGER.warn(
-                        "pool size not defined for pool: {}, defaults to {}",
+                LOG.warn("pool size not defined for pool: {}, defaults to {}",
                         key, POOL_SIZE);
             }
             executor = Executors.newFixedThreadPool(poolSize);
-            LOGGER.info("create executor pool: {}, size: {}", poolName, //$NON-NLS-1$
+            LOG.info("create executor pool: {}, size: {}", poolName, //$NON-NLS-1$
                     poolSize);
             executorsMap.put(poolName, executor);
             final PoolStat poolStat = di.instance(PoolStat.class);

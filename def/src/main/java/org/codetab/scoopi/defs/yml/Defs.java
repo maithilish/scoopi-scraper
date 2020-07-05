@@ -13,13 +13,13 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.ValidationException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -27,7 +27,7 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 
 class Defs {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Defs.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Yamls yamls;
@@ -52,23 +52,23 @@ class Defs {
 
     public JsonNode loadDefinedDefs(final Collection<String> defsFiles)
             throws ConfigNotFoundException, IOException, URISyntaxException {
-        LOGGER.info("load defined defs");
+        LOG.info("load defined defs");
         List<JsonNode> nodesList = yamls.loadYamls(defsFiles);
         JsonNode defs = yamls.mergeNodes(nodesList);
-        LOGGER.debug("defined defs loaded");
+        LOG.debug("defined defs loaded");
         return defs;
     }
 
     public JsonNode loadDefaultSteps()
             throws ConfigNotFoundException, IOException, URISyntaxException {
-        LOGGER.info("load default steps");
+        LOG.info("load default steps");
 
         String defaultStepsFile =
                 configs.getConfig("scoopi.defs.defaultStepsFile");
 
         JsonNode defaultSteps = yamls.loadYaml(defaultStepsFile);
 
-        LOGGER.debug("default steps loaded");
+        LOG.debug("default steps loaded");
 
         return defaultSteps;
     }
@@ -95,31 +95,31 @@ class Defs {
     public void validateDefinedDefs(final JsonNode definedDefs)
             throws FileNotFoundException, ProcessingException, IOException,
             ConfigNotFoundException, ValidationException {
-        LOGGER.info("validate defined defs");
+        LOG.info("validate defined defs");
 
         String schema = configs.getConfig("scoopi.defs.definedSchema"); //$NON-NLS-1$
 
         try (InputStream schemaStream = ioHelper.getInputStream(schema)) {
             yamls.validateSchema(schema, schemaStream, definedDefs);
         }
-        LOGGER.debug("defined defs validated");
+        LOG.debug("defined defs validated");
     }
 
     public void validateEffectiveDefs(final JsonNode effectiveDefs)
             throws FileNotFoundException, ProcessingException, IOException,
             ConfigNotFoundException, ValidationException {
-        LOGGER.info("validate effective defs");
+        LOG.info("validate effective defs");
 
         String schema = configs.getConfig("scoopi.defs.effectiveSchema"); //$NON-NLS-1$
         yamls.validateSchema(schema, ioHelper.getInputStream(schema),
                 effectiveDefs);
 
-        LOGGER.debug("effectvie defs validated");
+        LOG.debug("effectvie defs validated");
     }
 
     public JsonNode createEffectiveDefs(final JsonNode defs)
             throws IOException, DefNotFoundException {
-        LOGGER.info("create effective defs");
+        LOG.info("create effective defs");
 
         String defaultStepsName;
         try {
@@ -142,7 +142,7 @@ class Defs {
         normalizer.setDefaultSteps(eDefs, defaultStepsName);
         normalizer.expandTaskSteps(eDefs);
 
-        LOGGER.debug("effectvie defs created");
+        LOG.debug("effectvie defs created");
 
         return eDefs;
     }

@@ -5,8 +5,8 @@ import java.util.Stack;
 
 import javax.inject.Singleton;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hazelcast.cluster.MembershipEvent;
 
@@ -14,8 +14,7 @@ import com.hazelcast.cluster.MembershipEvent;
 public class MembershipListener
         implements com.hazelcast.cluster.MembershipListener {
 
-    static final Logger LOGGER =
-            LoggerFactory.getLogger(MembershipListener.class);
+    static final Logger LOG = LogManager.getLogger();
 
     private Stack<String> crashedMembers = new Stack<>();
 
@@ -26,16 +25,16 @@ public class MembershipListener
     @Override
     public void memberAdded(final MembershipEvent membershipEvent) {
         String addedMemberId = membershipEvent.getMember().getUuid().toString();
-        LOGGER.info("member joined cluster {}", addedMemberId);
+        LOG.info("member joined cluster {}", addedMemberId);
     }
 
     @Override
     public void memberRemoved(final MembershipEvent membershipEvent) {
         String crashedMemberId =
                 membershipEvent.getMember().getUuid().toString();
-        LOGGER.info("member {} left cluster", crashedMemberId);
+        LOG.info("member {} left cluster", crashedMemberId);
         crashedMembers.push(crashedMemberId);
-        LOGGER.debug("crashed members {}",
+        LOG.debug("crashed members {}",
                 Arrays.toString(crashedMembers.toArray()));
     }
 }

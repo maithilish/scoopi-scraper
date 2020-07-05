@@ -7,8 +7,8 @@ import java.io.Serializable;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 public class JobInfo implements Serializable {
 
@@ -21,7 +21,8 @@ public class JobInfo implements Serializable {
     private final String steps;
     private final String dataDef;
     private final String label;
-    private final Marker marker;
+    private final Marker jobMarker;
+    private final Marker jobAbortedMarker;
 
     JobInfo(final String locator, final String group, final String task,
             final String steps, final String dataDef) {
@@ -41,7 +42,9 @@ public class JobInfo implements Serializable {
         this.label = String.join(":", locator, task, dataDef);
 
         final String markerName = dashit("task", locator, group, task);
-        marker = MarkerFactory.getMarker(markerName);
+        jobMarker = MarkerManager.getMarker(markerName);
+        jobAbortedMarker = MarkerManager.getMarker("task-aborted");
+        jobAbortedMarker.addParents(jobMarker);
     }
 
     public long getId() {
@@ -76,8 +79,12 @@ public class JobInfo implements Serializable {
         return label;
     }
 
-    public Marker getMarker() {
-        return marker;
+    public Marker getJobMarker() {
+        return jobMarker;
+    }
+
+    public Marker getJobAbortedMarker() {
+        return jobAbortedMarker;
     }
 
     @Override

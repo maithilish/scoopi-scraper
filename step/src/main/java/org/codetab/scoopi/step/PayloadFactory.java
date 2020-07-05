@@ -1,35 +1,33 @@
 package org.codetab.scoopi.step;
 
-import static org.codetab.scoopi.util.Util.spaceit;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PayloadFactory {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(PayloadFactory.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ITaskDef taskDef;
     @Inject
     private ObjectFactory objectFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
 
     public List<Payload> createSeedPayloads(
             final List<LocatorGroup> locatorGroups, final String stepName,
@@ -83,10 +81,10 @@ public class PayloadFactory {
                     payloads.add(nextStepPayload);
                 }
             } catch (final DefNotFoundException | IOException e) {
-                final String message = spaceit(
-                        "unable to create payload for taskGroup:taskName ",
-                        taskGroup + ":" + taskName);
-                errorLogger.log(CAT.ERROR, message, e);
+                errors.inc();
+                LOG.error(
+                        "unable to create payload for taskGroup:taskName {}:{} [{}]",
+                        taskGroup, taskName, ERRORCAT.DATAERROR, e);
             }
         }
         return payloads;

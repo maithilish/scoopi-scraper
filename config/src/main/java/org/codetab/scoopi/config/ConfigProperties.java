@@ -7,14 +7,13 @@ import static org.codetab.scoopi.util.Util.spaceit;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ConfigProperties {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(ConfigProperties.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private Properties properties;
 
@@ -67,8 +66,7 @@ public class ConfigProperties {
             if (StringUtils.equalsAnyIgnoreCase(value, "true", "false")) {
                 return Boolean.valueOf(value);
             } else {
-                LOGGER.error(
-                        "config {}: {} is not boolean, using default value",
+                LOG.error("config {}: {} is not boolean, using default value",
                         configKey, value);
                 return defaultValue;
             }
@@ -80,7 +78,7 @@ public class ConfigProperties {
         if (isNull(value)) {
             final String message = spaceit("config not found:", configKey,
                     ", defaults to:", String.valueOf(defaultValue));
-            LOGGER.debug("{}", message);
+            LOG.debug("{}", message);
             return defaultValue;
         } else {
             try {
@@ -89,7 +87,7 @@ public class ConfigProperties {
                 final String message =
                         spaceit("parse error, config:", configKey,
                                 ", defaults to:", String.valueOf(defaultValue));
-                LOGGER.error("{}, {}", e, message);
+                LOG.error("{}, {}", e, message);
                 return defaultValue;
             }
         }
