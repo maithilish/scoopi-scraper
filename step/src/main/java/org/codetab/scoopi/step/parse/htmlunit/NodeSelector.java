@@ -9,17 +9,17 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.model.TaskInfo;
 import org.codetab.scoopi.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class NodeSelector {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(NodeSelector.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private TaskInfo taskInfo;
@@ -40,7 +40,7 @@ public class NodeSelector {
             blockCache.put(hash, elements);
         }
 
-        LOGGER.trace(taskInfo.getMarker(), "[{}], block nodes: {}",
+        LOG.trace(taskInfo.getMarker(), "[{}], block nodes: {}",
                 taskInfo.getLabel(), elements.size());
         for (Object element : elements) {
             traceElement(selector, element);
@@ -53,7 +53,7 @@ public class NodeSelector {
         String value = null;
 
         List<?> subElements = element.getByXPath(selector);
-        LOGGER.trace(taskInfo.getMarker(), "[{}], selector nodes: {}",
+        LOG.trace(taskInfo.getMarker(), "[{}], selector nodes: {}",
                 taskInfo.getLabel(), subElements.size());
 
         for (Object o : subElements) {
@@ -69,7 +69,7 @@ public class NodeSelector {
     }
 
     public void traceElement(final String selector, final Object element) {
-        if (!LOGGER.isTraceEnabled()) {
+        if (!LOG.isTraceEnabled()) {
             return;
         }
         String trace = null;
@@ -79,7 +79,7 @@ public class NodeSelector {
         } else {
             trace = element.toString();
         }
-        LOGGER.trace(taskInfo.getMarker(), "selector: {}{}{}{}{}", selector,
-                LINE, LINE, Util.indent(trace, "  "), LINE);
+        LOG.trace(taskInfo.getMarker(), "selector: {}{}{}{}{}", selector, LINE,
+                LINE, Util.indent(trace, "  "), LINE);
     }
 }

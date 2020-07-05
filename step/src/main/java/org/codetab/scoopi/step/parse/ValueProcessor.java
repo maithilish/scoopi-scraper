@@ -15,18 +15,18 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
 import org.seleniumhq.jetty9.util.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ValueProcessor {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ValueProcessor.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ScriptProcessor scriptProcessor;
@@ -130,7 +130,7 @@ public class ValueProcessor {
                     if (prefixes.isPresent()) {
                         value = prefixProcessor.prefixValue(value,
                                 prefixes.get());
-                        LOGGER.trace(taskInfo.getMarker(), "prefixed value: {}",
+                        LOG.trace(taskInfo.getMarker(), "prefixed value: {}",
                                 value);
                     }
                 }
@@ -154,7 +154,7 @@ public class ValueProcessor {
 
     private void appendQueryTrace(final StringBuilder trace,
             final String message, final Map<String, String> queries) {
-        if (!LOGGER.isTraceEnabled()) {
+        if (!LOG.isTraceEnabled()) {
             return;
         }
         String[] keys = new String[] {"script", "region", "field", "attribute"};
@@ -175,7 +175,7 @@ public class ValueProcessor {
 
     private void logQueryTrace(final String itemName,
             final StringBuilder trace) {
-        LOGGER.trace(taskInfo.getMarker(), "[{}]:{} query{}{}",
+        LOG.trace(taskInfo.getMarker(), "[{}]:{} query{}{}",
                 taskInfo.getLabel(), itemName, LINE, trace.toString());
     }
 

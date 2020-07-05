@@ -1,9 +1,9 @@
 package org.codetab.scoopi.step;
 
+import org.apache.logging.log4j.Marker;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.slf4j.Marker;
 
 public interface IStep {
 
@@ -33,9 +33,11 @@ public interface IStep {
 
     String getStepName();
 
-    Marker getMarker();
+    Marker getJobMarker();
 
     String getLabel();
 
     String getLabeled(String message);
+
+    Marker getJobAbortedMarker();
 }

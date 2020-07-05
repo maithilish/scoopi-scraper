@@ -9,16 +9,16 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 
 @Singleton
 public class Configs {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Configs.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final int TIMEOUT_MILLIS = 120000;
 
@@ -216,7 +216,7 @@ public class Configs {
         } catch (final ConfigNotFoundException e) {
             final String message = spaceit("config not found:", key,
                     ", defaults to: ", userAgent);
-            LOGGER.warn(marker, "{}, {}", e, message);
+            LOG.warn(marker, "{}, {}", e, message);
         }
         return userAgent;
     }

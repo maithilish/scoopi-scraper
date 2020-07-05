@@ -5,16 +5,16 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.model.JobInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Persists {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Persists.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ITaskDef taskDef;
@@ -44,7 +44,7 @@ public class Persists {
                     taskName, "persist", "data"));
         } catch (DefNotFoundException e) {
         } catch (IOException e) {
-            LOGGER.error("get persist for {} {}, {}", taskGroup, taskName,
+            LOG.error("get persist for {} {}, {}", taskGroup, taskName,
                     e.getMessage());
         }
 

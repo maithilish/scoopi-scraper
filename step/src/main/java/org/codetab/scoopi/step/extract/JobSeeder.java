@@ -1,32 +1,30 @@
 package org.codetab.scoopi.step.extract;
 
-import static org.codetab.scoopi.util.Util.spaceit;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.TaskMediator;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class JobSeeder {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(JobSeeder.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -39,7 +37,7 @@ public class JobSeeder {
     @Inject
     private PayloadFactory payloadFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
     @Inject
     private CrashCleaner crashCleaner;
 
@@ -47,7 +45,7 @@ public class JobSeeder {
 
     public void seedLocatorGroups() {
         seeder.set(true);
-        LOGGER.info("seed defined locator groups");
+        LOG.info("seed defined locator groups");
         final String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
         try {
@@ -66,9 +64,11 @@ public class JobSeeder {
             try {
                 taskMediator.pushPayload(payload);
             } catch (final InterruptedException e) {
-                final String group = payload.getJobInfo().getGroup();
-                final String message = spaceit("seed locator group: ", group);
-                errorLogger.log(CAT.INTERNAL, message, e);
+                // FIXME - interruptedFix refactor all
+                String group = payload.getJobInfo().getGroup();
+                errors.inc();
+                LOG.error("seed locator group: {} [{}]", group,
+                        ERRORCAT.INTERNAL, e);
             }
         }
     }

@@ -2,15 +2,15 @@ package org.codetab.scoopi;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.bootstrap.Bootstrap;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.engine.ScoopiEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class Scoopi {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Scoopi.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ScoopiEngine scoopiEngine;
@@ -32,7 +32,7 @@ public final class Scoopi {
             Scoopi scoopi = dInjector.instance(Scoopi.class);
             scoopi.start();
         } catch (Exception e) {
-            LOGGER.error("Scoopi terminated, {}", e.getMessage());
+            LOG.error("Scoopi terminated, {}", e);
         }
     }
 
@@ -41,7 +41,7 @@ public final class Scoopi {
             scoopiEngine.initSystem();
             scoopiEngine.runJobs();
         } catch (Exception e) {
-            // ignore, handled in scoopiEngine
+            // ignore, error logged in scoopiEngine
         } finally {
             scoopiEngine.shutdown();
         }

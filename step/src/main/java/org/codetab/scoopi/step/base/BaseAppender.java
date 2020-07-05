@@ -9,6 +9,8 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
@@ -19,12 +21,10 @@ import org.codetab.scoopi.plugin.appender.Appenders;
 import org.codetab.scoopi.plugin.encoder.Encoders;
 import org.codetab.scoopi.plugin.encoder.IEncoder;
 import org.codetab.scoopi.step.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class BaseAppender extends Step {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(BaseAppender.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IPluginDef pluginDef;

@@ -14,9 +14,9 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.SystemConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.CriticalException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Build composite configs from system, user provided and default configs. Also,
@@ -37,8 +37,7 @@ public class ConfigBuilder {
         SYSTEM, PROVIDED, DEFAULTS
     }
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(ConfigBuilder.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private CompositeConfiguration configuration;
@@ -52,7 +51,7 @@ public class ConfigBuilder {
     public void build(final String userConfigFile,
             final String defaultConfigFile) {
 
-        LOGGER.info("build config");
+        LOG.info("build config");
 
         configuration.addConfiguration(systemConfigs);
 
@@ -62,7 +61,7 @@ public class ConfigBuilder {
             configuration.addConfiguration(userProvided);
         } catch (ConfigurationException e) {
             configuration.addConfiguration(new PropertiesConfiguration());
-            LOGGER.info("{}, {}", e.getMessage(), "use default configs");
+            LOG.info("{}, {}", e.getMessage(), "use default configs");
         }
 
         try {
@@ -105,10 +104,9 @@ public class ConfigBuilder {
             sb.append(v);
             sb.append(newline);
         });
-        LOGGER.info("rundate {}",
+        LOG.info("rundate {}",
                 properties.getProperty("scoopi.runDateTimeString"));
-        LOGGER.debug(
-                "{}---- effective configuration ----{}{}-------------------",
+        LOG.debug("{}---- effective configuration ----{}{}-------------------",
                 newline, newline, sb.toString());
     }
 }

@@ -13,6 +13,8 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
@@ -23,8 +25,6 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.cluster.IClusterJobStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.flakeidgen.FlakeIdGenerator;
@@ -35,7 +35,7 @@ import com.hazelcast.transaction.TransactionalMap;
 @Singleton
 public class JobStore implements IClusterJobStore {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(JobStore.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -103,7 +103,7 @@ public class JobStore implements IClusterJobStore {
 
             if (Objects.isNull(txJobsMap.put(jobId, cluserJob))) {
                 txPayloadsMap.put(jobId, payload);
-                LOGGER.debug("put payload {}", jobId);
+                LOG.debug("put payload {}", jobId);
             } else {
                 throw new JobStateException(
                         spaceit("duplicate job", String.valueOf(jobId)));
@@ -208,7 +208,7 @@ public class JobStore implements IClusterJobStore {
                             "payload not found jobid", String.valueOf(jobId)));
                 }
                 tx.commitTransaction();
-                LOGGER.debug("job taken {}", cJob.getJobId());
+                LOG.debug("job taken {}", cJob.getJobId());
                 return payload;
             } else {
                 throw new JobStateException("job taken by another node");
@@ -271,7 +271,7 @@ public class JobStore implements IClusterJobStore {
             TransactionalMap<Long, ClusterJob> txTakenJobsMap =
                     tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
 
-            LOGGER.debug("reset taken job {}", jobId);
+            LOG.debug("reset taken job {}", jobId);
             ClusterJob cJob = txTakenJobsMap.remove(jobId);
             cJob.setTaken(false);
             cJob.setMemberId(null);

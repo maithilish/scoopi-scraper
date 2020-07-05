@@ -27,14 +27,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.MoreFiles;
 
 public class IOHelper {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(IOHelper.class);
+    static final Logger LOG = LogManager.getLogger();
 
     /**
      * Search for file in classpath if not found then in file system and return
@@ -79,7 +79,7 @@ public class IOHelper {
                         url = fsPath.toUri().toURL();
                     } catch (MalformedURLException e) {
                         // can't test
-                        LOGGER.debug("{}", e);
+                        LOG.debug("{}", e);
                     }
                 }
             }

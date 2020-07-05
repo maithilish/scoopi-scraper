@@ -6,16 +6,15 @@ import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
-import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class Shutdown implements IShutdown {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(CrashCleaner.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IJobStore jobStore;

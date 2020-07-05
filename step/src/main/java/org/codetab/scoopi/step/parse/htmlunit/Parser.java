@@ -3,7 +3,6 @@ package org.codetab.scoopi.step.parse.htmlunit;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,13 +12,13 @@ import java.util.zip.DataFormatException;
 import javax.inject.Inject;
 
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.step.base.BaseParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ImmediateRefreshHandler;
@@ -31,12 +30,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class Parser extends BaseParser {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ValueParser htmlUnitValueParser;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
 
     private static final int TIMEOUT_MILLIS = 120000;
 
@@ -80,9 +79,9 @@ public class Parser extends BaseParser {
         try {
             timeout = Integer.parseInt(configs.getConfig(key));
         } catch (NumberFormatException | ConfigNotFoundException e) {
-            String message =
-                    spaceit("use default value:", String.valueOf(timeout));
-            errorLogger.log(CAT.INTERNAL, message, e);
+            errors.inc();
+            LOG.error("config: {}, use default: {} [{}]", timeout,
+                    ERRORCAT.INTERNAL, e);
         }
 
         WebClient webClient = new WebClient(BrowserVersion.CHROME);

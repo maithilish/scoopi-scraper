@@ -9,22 +9,22 @@ import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.TransactionException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.extract.JobSeeder;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class JobMediator {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(JobMediator.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -35,7 +35,7 @@ public class JobMediator {
     @Inject
     private IShutdown shutdown;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
     @Inject
     private JobSeeder jobSeeder;
 
@@ -75,8 +75,8 @@ public class JobMediator {
             jobStore.close();
             shutdown.setTerminate();
         } catch (final InterruptedException e) {
-            final String message = "wait for finish interrupted";
-            errorLogger.log(CAT.INTERNAL, message, e);
+            errors.inc();
+            LOG.error("wait for finish interrupted [{}]", ERRORCAT.INTERNAL, e);
         }
     }
 
@@ -92,7 +92,7 @@ public class JobMediator {
         try {
             jobStore.putJobs(payloads, jobId);
         } catch (JobStateException e) {
-            LOGGER.debug("{}", e.getLocalizedMessage());
+            LOG.debug("{}", e.getLocalizedMessage());
         } catch (TransactionException e) {
             jobStore.resetTakenJob(jobId);
         }
@@ -100,12 +100,12 @@ public class JobMediator {
 
     public void setSeedDoneSignal(final int size) {
         this.seedDoneSignal = new CountDownLatch(size);
-        LOGGER.debug("job seed countdown latch set: " + size);
+        LOG.debug("job seed countdown latch set: " + size);
     }
 
     public void countDownSeedDone() {
         seedDoneSignal.countDown();
-        LOGGER.debug("job seed latch countdown");
+        LOG.debug("job seed latch countdown");
     }
 
     public void awaitForSeedDone() throws InterruptedException {
@@ -120,7 +120,7 @@ public class JobMediator {
         try {
             jobStore.markFinished(jobId);
         } catch (JobStateException e) {
-            LOGGER.debug("{}", e.getLocalizedMessage());
+            LOG.debug("{}", e.getLocalizedMessage());
         } catch (TransactionException e) {
             jobStore.resetTakenJob(jobId);
         }
@@ -139,16 +139,17 @@ public class JobMediator {
              * count downs the latch
              */
             try {
-                LOGGER.debug("wait on job countdown latch");
+                LOG.debug("wait on job countdown latch");
                 seedDoneSignal.await();
             } catch (final InterruptedException e) {
-                errorLogger.log(CAT.ERROR, "unable finish seeding", e);
+                errors.inc();
+                LOG.error("unable finish seeding [{}]", ERRORCAT.INTERNAL, e);
             }
             if (jobSeeder.isSeeder()) {
                 jobStore.setState(IJobStore.State.READY);
             }
 
-            LOGGER.debug("take jobs from cluster and initiate task");
+            LOG.debug("take jobs from cluster and initiate task");
 
             while (true) {
                 if (taskMediator.isState(TMState.TERMINATED)) {
@@ -159,8 +160,9 @@ public class JobMediator {
                     initiateJob();
                 } catch (ClassNotFoundException | InstantiationException
                         | IllegalAccessException | InterruptedException e) {
-                    final String message = "unable to initiate job";
-                    errorLogger.log(CAT.ERROR, message, e);
+                    errors.inc();
+                    LOG.error("unable to initiate job [{}]", ERRORCAT.INTERNAL,
+                            e);
                 }
             }
         }
@@ -178,7 +180,7 @@ public class JobMediator {
                 if (takenCount <= takeLimit) {
                     break;
                 }
-                LOGGER.debug("wait... jobs taken {} limit: {}", takenCount,
+                LOG.debug("wait... jobs taken {} limit: {}", takenCount,
                         takeLimit);
                 Thread.sleep(takeLimitWait);
             }
@@ -189,7 +191,7 @@ public class JobMediator {
 
             if (taskMediator.isState(TMState.DONE)
                     && taskMediator.tryShutdown()) {
-                LOGGER.info("task mediator state change {}",
+                LOG.info("task mediator state change {}",
                         taskMediator.getState());
                 return false;
             }
@@ -206,10 +208,11 @@ public class JobMediator {
         } catch (JobStateException | NoSuchElementException
                 | IllegalStateException | TransactionException e) {
             if (e instanceof IllegalStateException) {
-                errorLogger.log(CAT.INTERNAL, "unable to initiate job", e);
+                errors.inc();
+                LOG.error("unable to initiate job [{}]", ERRORCAT.INTERNAL, e);
             }
-            LOGGER.debug("task mediator state {}", taskMediator.getState());
-            LOGGER.debug("retry initiate job after {} ms, {}", takeFailWait,
+            LOG.debug("task mediator state {}", taskMediator.getState());
+            LOG.debug("retry initiate job after {} ms, {}", takeFailWait,
                     e.getLocalizedMessage());
             Thread.sleep(takeFailWait);
             return false;

@@ -5,17 +5,17 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.model.TaskInfo;
 import org.codetab.scoopi.step.parse.IValueParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class ValueParser implements IValueParser {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ValueParser.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private NodeSelector nodeSelector;
@@ -37,8 +37,8 @@ public class ValueParser implements IValueParser {
             value = nodeSelector.selectSelector((DomNode) o, selectorSelector);
         }
 
-        LOGGER.trace(taskInfo.getMarker(), "[{}], value: {}",
-                taskInfo.getLabel(), value);
+        LOG.trace(taskInfo.getMarker(), "[{}], value: {}", taskInfo.getLabel(),
+                value);
 
         return value;
     }

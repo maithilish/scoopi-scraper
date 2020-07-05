@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.dao.ChecksumException;
 import org.codetab.scoopi.dao.DaoException;
 import org.codetab.scoopi.dao.IDataDao;
@@ -35,14 +37,12 @@ import org.codetab.scoopi.step.parse.IValueParser;
 import org.codetab.scoopi.step.parse.Indexer;
 import org.codetab.scoopi.step.parse.IndexerFactory;
 import org.codetab.scoopi.step.parse.ValueProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.Counter;
 
 public abstract class BaseParser extends Step {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(BaseParser.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ValueProcessor valueProcessor;
@@ -124,7 +124,7 @@ public abstract class BaseParser extends Step {
                 parseData = false;
             }
         } catch (DaoException e) {
-            LOGGER.debug(marker, getLabeled("load data {}"), e);
+            LOG.debug(jobMarker, getLabeled("load data {}"), e);
         }
     }
 
@@ -135,13 +135,13 @@ public abstract class BaseParser extends Step {
             try {
                 dataDao.save(document.getLocatorId(), dataFingerprint, data);
                 setOutput(data);
-                LOGGER.debug(marker, getLabeled("data stored"));
+                LOG.debug(jobMarker, getLabeled("data stored"));
             } catch (DaoException e) {
                 String message = "store data";
                 throw new StepRunException(message, e);
             }
         } else {
-            LOGGER.debug(marker, getLabeled("persist false, data not stored"));
+            LOG.debug(jobMarker, getLabeled("persist false, data not stored"));
         }
     }
 
@@ -154,7 +154,7 @@ public abstract class BaseParser extends Step {
 
         if (parseData) {
             try {
-                LOGGER.debug(marker, "{}", getLabeled("parse data"));
+                LOG.debug(jobMarker, "{}", getLabeled("parse data"));
                 String dataDefName = getJobInfo().getDataDef();
                 data = dataFactory.createData(dataDefName, document.getId(),
                         getJobInfo().getLabel(), configs.getRunDateTime());
@@ -173,13 +173,13 @@ public abstract class BaseParser extends Step {
             }
         } else {
             dataReuseCounter.inc();
-            LOGGER.debug(marker, "{}", getLabeled("data exists, reuse"));
+            LOG.debug(jobMarker, "{}", getLabeled("data exists, reuse"));
         }
 
         setOutput(data);
 
         timer.stop();
-        LOGGER.trace(marker, "parse time: {}", timer.toString());
+        LOG.trace(jobMarker, "parse time: {}", timer.toString());
     }
 
     protected void setValueParser(final IValueParser valueParser) {
@@ -214,7 +214,7 @@ public abstract class BaseParser extends Step {
         // replace with expanded item list
         data.setItems(newItems);
 
-        LOGGER.trace(marker, "-- data after parse --{}{}{}", LINE, getLabel(),
+        LOG.trace(jobMarker, "-- data after parse --{}{}{}", LINE, getLabel(),
                 LINE, data);
     }
 

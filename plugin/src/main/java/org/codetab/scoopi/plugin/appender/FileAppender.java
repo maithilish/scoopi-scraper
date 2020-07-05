@@ -1,7 +1,6 @@
 package org.codetab.scoopi.plugin.appender;
 
 import static java.util.Objects.nonNull;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,13 +11,13 @@ import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.http.client.utils.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.PrintPayload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -28,11 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class FileAppender extends Appender {
 
-    /**
-     * logger.
-     */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(FileAppender.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IOHelper ioHelper;
@@ -61,9 +56,10 @@ public final class FileAppender extends Appender {
                             "ddMMMyyyy-HHmmss"));
             setInitialized(true);
         } catch (DefNotFoundException e) {
-            final String message =
-                    spaceit("unable to create appender:", getName());
-            errorLogger.log(CAT.ERROR, message, e);
+            // FIXME - logfix, dataerror or critical
+            errors.inc();
+            LOG.error("unable to create appender: {} [{}]", getName(),
+                    ERRORCAT.DATAERROR, e);
         }
     }
 
@@ -85,8 +81,8 @@ public final class FileAppender extends Appender {
                     break;
                 }
             } catch (final InterruptedException e) {
-                final String message = spaceit("appender:", getName());
-                errorLogger.log(CAT.INTERNAL, message, e);
+                errors.inc();
+                LOG.error("appender: {} [{}]", getName(), ERRORCAT.INTERNAL, e);
             }
             if (nonNull(printPayload)) {
                 String jobFilePath = getJobFilePath(printPayload);
@@ -112,14 +108,14 @@ public final class FileAppender extends Appender {
                     printPayload.setProcessed(true);
                 } catch (IOException e) {
                     printPayload.setProcessed(false);
-                    final String message = spaceit("appender:", getName(),
-                            " file path:", jobFilePath);
-                    errorLogger.log(CAT.ERROR, message, e);
+                    // recoverable - so no data error
+                    LOG.error("appender: {} file path: {} [{}]", getName(),
+                            jobFilePath, ERRORCAT.ERROR);
                 }
                 printPayload.finished();
             }
         }
-        LOGGER.info("appender: {}, {} item appended", getName(), count);
+        LOG.info("appender: {}, {} item appended", getName(), count);
     }
 
     private String getJobFilePath(final PrintPayload printPayload) {

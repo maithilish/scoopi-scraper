@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.metrics.serialize.Serializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
@@ -29,7 +29,7 @@ public class MetricsHelper {
     static final MetricRegistry METRICS =
             SharedMetricRegistries.getOrCreate("scoopi");
 
-    static final Logger LOGGER = LoggerFactory.getLogger(MetricsHelper.class);
+    static final Logger LOG = LogManager.getLogger();
 
     public Timer getTimer(final Object clz, final String... names) {
         return METRICS.timer(getName(clz, names));
@@ -82,9 +82,9 @@ public class MetricsHelper {
             try {
                 metricsMap.put(memberId, metricsJsonData);
             } catch (Exception e) {
-                LOGGER.error("unable to put metrics json to metrics map {}",
+                LOG.error("unable to put metrics json to metrics map {}",
                         e.getLocalizedMessage());
-                LOGGER.debug("{}", e);
+                LOG.debug("{}", e);
             }
         };
         Serializer serializer = Serializer.forRegistry(METRICS)
@@ -106,7 +106,7 @@ public class MetricsHelper {
                         url = fsPath.toUri().toURL();
                     } catch (MalformedURLException e) {
                         // can't test
-                        LOGGER.debug("{}", e);
+                        LOG.debug("{}", e);
                     }
                 }
             }

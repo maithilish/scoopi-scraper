@@ -7,16 +7,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.JobRunException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.PrintPayload;
 import org.codetab.scoopi.plugin.appender.Appender;
 import org.codetab.scoopi.plugin.encoder.IEncoder;
 import org.codetab.scoopi.step.base.BaseAppender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Encode and append Data objects to defined appenders
@@ -25,12 +25,12 @@ import org.slf4j.LoggerFactory;
  */
 public class DataAppender extends BaseAppender {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(DataAppender.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ObjectFactory objectFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
 
     @Override
     public void process() {
@@ -50,7 +50,9 @@ public class DataAppender extends BaseAppender {
 
             } catch (Exception e) {
                 String message = spaceit("unable to append to:", appenderName);
-                errorLogger.log(getMarker(), CAT.ERROR, getLabeled(message), e);
+                errors.inc();
+                LOG.error(getJobAbortedMarker(), "{} [{}]", getLabeled(message),
+                        ERRORCAT.DATAERROR, e);
             }
         }
         boolean appendError = false;

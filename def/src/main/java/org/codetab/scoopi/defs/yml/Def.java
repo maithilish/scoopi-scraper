@@ -12,10 +12,10 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IDef;
 import org.codetab.scoopi.exception.CriticalException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 @Singleton
 public class Def implements IDef {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Def.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Defs defs;
@@ -44,13 +44,13 @@ public class Def implements IDef {
             definedDefs = defs.loadDefinedDefs(defsFiles);
             JsonNode defaultSteps = defs.loadDefaultSteps();
             defs.mergeDefaultSteps(definedDefs, defaultSteps);
-            LOGGER.debug("--- defined defs ---{}{}", LINE,
+            LOG.debug("--- defined defs ---{}{}", LINE,
                     defs.pretty(definedDefs));
             defs.validateDefinedDefs(definedDefs);
 
             // create effective defs and validate
             effectiveDefs = defs.createEffectiveDefs(definedDefs);
-            LOGGER.debug("--- effective defs ---{}{}", LINE,
+            LOG.debug("--- effective defs ---{}{}", LINE,
                     defs.pretty(effectiveDefs));
             defs.validateEffectiveDefs(effectiveDefs);
             defsMap = Lists.newArrayList(effectiveDefs.fields());

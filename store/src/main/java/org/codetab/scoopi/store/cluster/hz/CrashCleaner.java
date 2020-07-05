@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.model.ClusterJob;
 import org.codetab.scoopi.store.ICluster;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
@@ -22,7 +22,7 @@ import com.hazelcast.transaction.TransactionalMap;
 @Singleton
 public class CrashCleaner {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(CrashCleaner.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -45,12 +45,12 @@ public class CrashCleaner {
     public boolean resetCrashedJobs() {
         Stack<String> crashedMembers = membershipListener.getCrashedMembers();
         if (crashedMembers.isEmpty()) {
-            LOGGER.debug("no crashed members");
+            LOG.debug("no crashed members");
             return false;
         }
         String leader = cluster.getLeader();
         if (!leader.equals(cluster.getMemberId())) {
-            LOGGER.debug("not leader, don't reset crashed jobs. leader is {}",
+            LOG.debug("not leader, don't reset crashed jobs. leader is {}",
                     leader);
             return false;
         }
@@ -66,7 +66,7 @@ public class CrashCleaner {
                 // no taken job by crashed node, remove it
                 crashedMembers.pop();
             } else {
-                LOGGER.info("reset {} jobs taken by {}", takenJobs.size(),
+                LOG.info("reset {} jobs taken by {}", takenJobs.size(),
                         crashedMemberId);
                 TransactionContext tx = hz.newTransactionContext(txOptions);
                 try {
@@ -77,7 +77,7 @@ public class CrashCleaner {
                             tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
 
                     for (Long jobId : takenJobs) {
-                        LOGGER.debug("reset taken job {}", jobId);
+                        LOG.debug("reset taken job {}", jobId);
                         ClusterJob cJob = txTakenJobsMap.remove(jobId);
                         cJob.setTaken(false);
                         cJob.setMemberId(null);
@@ -88,9 +88,9 @@ public class CrashCleaner {
                     crashedMembers.pop();
                 } catch (Exception e) {
                     tx.rollbackTransaction();
-                    LOGGER.warn("could not reset jobs taken by {}, {}",
+                    LOG.warn("could not reset jobs taken by {}, {}",
                             crashedMemberId, e.getLocalizedMessage());
-                    LOGGER.debug("{}", e);
+                    LOG.debug("{}", e);
                 }
             }
         }

@@ -10,19 +10,19 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.exception.TransactionException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseSeeder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.Meter;
 import com.google.common.collect.Lists;
@@ -35,21 +35,17 @@ import com.google.common.collect.Lists;
 
 public final class LocatorSeeder extends BaseSeeder {
 
-    /**
-     * logger.
-     */
-    static final Logger LOGGER = LoggerFactory.getLogger(LocatorSeeder.class);
+    static final Logger LOG = LogManager.getLogger();
 
     /**
      * list of locator don't name the next as locators as it hides field.
      * (checkstyle)
      */
-
     private LocatorGroup locatorGroup;
     @Inject
     private PayloadFactory payloadFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
     @Inject
     private JobMediator jobMediator;
 
@@ -84,9 +80,9 @@ public final class LocatorSeeder extends BaseSeeder {
         final Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
 
         final String group = locatorGroup.getGroup();
-        LOGGER.debug("push {} locators from locatorGroup {}",
+        LOG.debug("push {} locators from locatorGroup {}",
                 locatorGroup.getLocators().size(), group);
-        LOGGER.debug("is locator group defined by defs : {}",
+        LOG.debug("is locator group defined by defs : {}",
                 locatorGroup.isByDef());
         for (final Locator locator : locatorGroup.getLocators()) {
             // create and push first task payload for each locator
@@ -105,7 +101,7 @@ public final class LocatorSeeder extends BaseSeeder {
                                 // if seed, push to JM (local or cluster)
                                 payload.getJobInfo()
                                         .setId(jobMediator.getJobIdSequence());
-                                LOGGER.debug(
+                                LOG.debug(
                                         "locator defined by def, push jobId {} to jobMediator",
                                         payload.getJobInfo().getId());
                                 jobMediator.pushPayload(payload);
@@ -115,7 +111,7 @@ public final class LocatorSeeder extends BaseSeeder {
                                 final long linkJobId =
                                         getPayload().getJobInfo().getId();
                                 payload.getJobInfo().setId(linkJobId);
-                                LOGGER.debug(
+                                LOG.debug(
                                         "link locator, push jobId {} to taskMediator",
                                         payload.getJobInfo().getId());
                                 taskMediator.pushPayload(payload);
@@ -124,9 +120,9 @@ public final class LocatorSeeder extends BaseSeeder {
                         } catch (final InterruptedException | JobStateException
                                 | TransactionException e) {
                             // just log error for this payload and continue
-                            final String message = spaceit("handover locator,",
-                                    payload.toString());
-                            errorLogger.log(CAT.INTERNAL, message, e);
+                            errors.inc();
+                            LOG.error("handover locator,{} [{}]", payload,
+                                    ERRORCAT.INTERNAL, e);
                         }
                     }
                 } else {
@@ -135,18 +131,19 @@ public final class LocatorSeeder extends BaseSeeder {
                             ", expected one payload for taskGroup:", group,
                             "task:", firstTask.get(), "but got:",
                             String.valueOf(payloads.size()));
-                    errorLogger.log(CAT.ERROR, message);
+                    errors.inc();
+                    LOG.error("{} [{}]", message, ERRORCAT.INTERNAL);
                 }
             } else {
-                final String message = spaceit(
-                        "unable to get first task for locator group:", group);
-                errorLogger.log(CAT.ERROR, message);
+                errors.inc();
+                LOG.error("unable to get first task for locator group: {} [{}]",
+                        group, ERRORCAT.INTERNAL);
             }
         }
         if (locatorGroup.isByDef()) {
             jobMediator.countDownSeedDone();
         }
-        LOGGER.debug("locator group: {}, locators: {}, queued to taskpool",
+        LOG.debug("locator group: {}, locators: {}, queued to taskpool",
                 locatorGroup.getGroup(), locatorGroup.getLocators().size());
     }
 }

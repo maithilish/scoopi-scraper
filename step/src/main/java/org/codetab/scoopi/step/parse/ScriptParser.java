@@ -11,14 +11,14 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.model.TaskInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ScriptParser {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ScriptParser.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ScriptEngineManager seManager;
@@ -33,7 +33,7 @@ public class ScriptParser {
         if (nonNull(jsEngine)) {
             return;
         }
-        LOGGER.debug(taskInfo.getMarker(), "{}", "initialize script engine");
+        LOG.debug(taskInfo.getMarker(), "{}", "initialize script engine");
         jsEngine = seManager.getEngineByName("JavaScript"); //$NON-NLS-1$
         if (isNull(jsEngine)) {
             throw new CriticalException(

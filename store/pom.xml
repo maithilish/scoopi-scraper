@@ -13,12 +13,7 @@
             <groupId>org.codetab.scoopi</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codetab.scoopi</groupId>
-            <artifactId>log</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        </dependency>       
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
             <artifactId>model</artifactId>

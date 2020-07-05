@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.dao.ChecksumException;
 import org.codetab.scoopi.dao.DaoException;
 import org.codetab.scoopi.dao.IDocumentDao;
@@ -28,8 +30,6 @@ import org.codetab.scoopi.model.helper.Documents;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -41,8 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseLoader extends Step {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(BaseLoader.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IDocumentDao documentDao;
@@ -112,7 +111,7 @@ public abstract class BaseLoader extends Step {
             live = taskDef.getLive(taskGroup);
         } catch (final DefNotFoundException e1) {
         } catch (IOException e) {
-            LOGGER.error(marker, "{}, unable to get live, defaults to PT0S",
+            LOG.error(jobMarker, "{}, unable to get live, defaults to PT0S",
                     getLabel());
         }
 
@@ -132,7 +131,7 @@ public abstract class BaseLoader extends Step {
                 try {
                     document = documentDao.get(locatorFp);
                 } catch (ChecksumException e) {
-                    LOGGER.error(marker, "load document {}", e);
+                    LOG.error(jobMarker, "load document {}", e);
                 }
             }
 
@@ -144,8 +143,8 @@ public abstract class BaseLoader extends Step {
                 // don't fetch fresh document, use saved document
                 fetchDocument = false;
                 final String message = getLabeled("use saved document");
-                LOGGER.debug(marker, "{}", message);
-                LOGGER.trace(marker, "loaded document:{}{}", LINE, document);
+                LOG.debug(jobMarker, "{}", message);
+                LOG.trace(jobMarker, "loaded document:{}{}", LINE, document);
             }
         } catch (DaoException e) {
             final String message = "load document";
@@ -193,8 +192,8 @@ public abstract class BaseLoader extends Step {
             document = newDocument;
             setOutput(newDocument);
 
-            LOGGER.debug(marker, "{} create new document", getLabel());
-            LOGGER.trace(marker, "create new document{}{}", LINE, document);
+            LOG.debug(jobMarker, "{} create new document", getLabel());
+            LOG.trace(jobMarker, "create new document{}{}", LINE, document);
         } else {
             setOutput(document);
         }
@@ -221,7 +220,7 @@ public abstract class BaseLoader extends Step {
                 // in load(). Create fresh folder and save document
                 Fingerprint locatorFp = locator.getFingerprint();
                 documentDao.save(locatorFp, document);
-                LOGGER.debug(marker, "document stored, {}", getLabel());
+                LOG.debug(jobMarker, "document stored, {}", getLabel());
             }
         } catch (final DaoException e) {
             final String message = "unable to store document";
@@ -233,7 +232,7 @@ public abstract class BaseLoader extends Step {
     public void handover() {
         validState(nonNull(getOutput()), "output is not set");
 
-        LOGGER.debug("push document tasks to taskpool");
+        LOG.debug("push document tasks to taskpool");
         final String group = getJobInfo().getGroup();
 
         /*

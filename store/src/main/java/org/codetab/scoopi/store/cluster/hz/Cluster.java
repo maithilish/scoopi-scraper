@@ -10,12 +10,12 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.store.ICluster;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.hazelcast.cluster.Member;
 import com.hazelcast.config.Config;
@@ -29,7 +29,7 @@ import com.hazelcast.transaction.TransactionOptions.TransactionType;
 @Singleton
 public class Cluster implements ICluster {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Cluster.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private MembershipListener membershipListener;
@@ -40,19 +40,19 @@ public class Cluster implements ICluster {
     public void start() {
         String hzConfigFile = getConfigFile();
         try {
-            LOGGER.info("load hz config file {}", hzConfigFile);
+            LOG.info("load hz config file {}", hzConfigFile);
             Config cfg = new XmlConfigBuilder(
                     Cluster.class.getResourceAsStream(hzConfigFile)).build();
             cfg.addListenerConfig(new ListenerConfig(membershipListener));
             addSystemProperties(cfg);
 
-            LOGGER.info("start Hazelcast cluster");
+            LOG.info("start Hazelcast cluster");
             hz = Hazelcast.newHazelcastInstance(cfg);
 
             String group = cfg.getClusterName();
             logMemberInfo(group);
         } catch (IllegalArgumentException e) {
-            LOGGER.error("hz config file {} not found", hzConfigFile);
+            LOG.error("hz config file {} not found", hzConfigFile);
             throw new CriticalException("fail to start Hazelcast cluster");
         }
     }
@@ -129,19 +129,19 @@ public class Cluster implements ICluster {
                 .filter(e -> ((String) e.getKey()).startsWith("hazelcast"))
                 .forEach(e -> {
                     cfg.setProperty((String) e.getKey(), (String) e.getValue());
-                    LOGGER.debug("set {} {}", e.getKey(), e.getValue());
+                    LOG.debug("set {} {}", e.getKey(), e.getValue());
                 });
     }
 
     private void logMemberInfo(final String group) {
         Set<Member> members = hz.getCluster().getMembers();
-        LOGGER.info("joined Hazelcast cluster: group: {}, members: {}", group,
+        LOG.info("joined Hazelcast cluster: group: {}, members: {}", group,
                 members.size());
         for (Member member : members) {
             if (member.localMember()) {
-                LOGGER.info("member: {} this", member.getUuid());
+                LOG.info("member: {} this", member.getUuid());
             } else {
-                LOGGER.info("member: {}", member.getUuid());
+                LOG.info("member: {}", member.getUuid());
             }
         }
     }

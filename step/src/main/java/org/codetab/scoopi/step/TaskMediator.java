@@ -9,20 +9,20 @@ import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.pool.TaskPoolService;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.codetab.scoopi.store.IShutdown;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class TaskMediator {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(TaskMediator.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -33,7 +33,7 @@ public class TaskMediator {
     @Inject
     private TaskFactory taskFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
     @Inject
     private IShutdown shutdown;
 
@@ -52,10 +52,10 @@ public class TaskMediator {
         try {
             taskRunner.join();
             state.set(TMState.TERMINATED);
-            LOGGER.info("task mediator state change {}", state);
+            LOG.info("task mediator state change {}", state);
         } catch (final InterruptedException e) {
-            final String message = "wait for finish interrupted";
-            errorLogger.log(CAT.INTERNAL, message, e);
+            errors.inc();
+            LOG.error("wait for finish interrupted [{}]", ERRORCAT.INTERNAL, e);
         }
     }
 
@@ -111,7 +111,7 @@ public class TaskMediator {
                     }
                     if (initiateTask(takeTimeout)) {
                         if (retryCount > 1) {
-                            LOGGER.debug(
+                            LOG.debug(
                                     "take task timeout {} ms, timed out {} times",
                                     takeTimeout, retryCount);
                             retryCount = 1;
@@ -121,8 +121,9 @@ public class TaskMediator {
                     }
                 } catch (ClassNotFoundException | InstantiationException
                         | IllegalAccessException | InterruptedException e) {
-                    final String message = "unable to initiate task";
-                    errorLogger.log(CAT.ERROR, message, e);
+                    errors.inc();
+                    LOG.error("unable to initiate task [{}]", ERRORCAT.INTERNAL,
+                            e);
                 }
             }
         }
@@ -143,14 +144,14 @@ public class TaskMediator {
     }
 
     public boolean tryShutdown() {
-        LOGGER.info("task mediator done, try shutdown");
+        LOG.info("task mediator done, try shutdown");
         shutdown.setDone();
         if (shutdown.tryShutdown(shutdownFunction, this)) {
-            LOGGER.info("task mediator shutdown successful");
+            LOG.info("task mediator shutdown successful");
             return true;
         } else {
             state.set(TMState.READY);
-            LOGGER.info(
+            LOG.info(
                     "task mediator shutdown failed, reset state back to ready");
             return false;
         }

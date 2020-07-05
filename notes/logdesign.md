@@ -1,4 +1,7 @@
-# Categories
+# Scoopi Logging
+
+
+## Categories
 
 Critical errors 
  - throw CriticalException 
@@ -9,40 +12,68 @@ Step errors
  - throw StepRunException
  - catch in Task 
  - terminate the step
+ - count error in Errors
 
 Step errors in some items but others are fine
  - catch and log error
  - do not terminate the step
 
+## Levels
 
-# Log 
+Log4j2 levels - ERROR, WARN, INFO, DEBUG, TRACE, OFF
+
+## Log 
 
 info 
  - to output completion of phases and app progress
- - use standard logging statement
 
 warn
  - any minor aspects
- - used by user to correct definitions 
- - use standard logging statement
+ - used by user to correct definitions/config
    
 error
  - for critical and step errors
  - used by user to correct definitions 
- - use ErrorLog class
  
 debug
  - for critical, step errors and for variables
  - used by developer to debug
- - use standard logging statement
- - apart from message, output stack trace or debug variables
+ - log stack trace with %ex in appender pattern (only top level, no nested exception)
  
 trace
- - use MDC to trace the flow of Job and Steps
  - to debug variables
  - used by user to fine tune definitions and correct queries
- - use standard logging statement
+ - log stack trace with %rEx in appender pattern (recursive - nested exceptions)
  
-Notes:  ErrorLog class is used to centralise error logs as we can keep count of errors and output errors through logging mechanism. In errors, we are more interested in error message and not the file name. Hence, the deviation from standard logging practice. ErrorLog also output debug stack trace as it is useful for developers. 
-  
-         
+Notes:
+
+ - Errors class counts errors using metrics counter
+ 
+## Markers
+
+JobInfo provides two markers - JobMarker (task-<locatorName>-<groupName>-<taskName>) and JobAbortedMarker (task-aborted).
+ - JobMarker is used to mark any log (i.e.any level) that needs task wise classification. The logs are appended to task log file. 
+ - The JobAbortedMarker is for error logs (only error level) that needs task wise classification. The logs are appended to task log file and to data error log file. Unmarked error logs go to error log file. 
+ 
+DataDefDefs has one marker to trace datadef (datadef-xxx)
+
+## Exception stacktrace
+
+In a logging statement, if exception is last argument then stacktrace is printed with %ex or %rEx patterns. For, console use %ex{short.message}, for error log file %ex{short}, for debug file %ex (full tracktrace but without nested exceptions) and for trace %rEx (full tracktrace including nested exceptions)
+
+	Exception e = new IllegalStateException("x not allowed");
+	
+        LOGGER.error("some exception", e);	
+	LogDemo:19           [ERROR]  some exception
+	+ stacktrace
+	
+        LOGGER.error("some exception {}", "foo", e);	
+	LogDemo:21           [ERROR]  some exception foo
+	+ stacktrace
+
+        LOGGER.error("some exception {}", e, "foo");	
+	LogDemo:23           [ERROR]  some exception java.lang.IllegalStateException: not allowed
+        
+        LOGGER.error("some exception {}", e.getMessage());	
+	LogDemo:25           [ERROR]  some exception not allowed
+

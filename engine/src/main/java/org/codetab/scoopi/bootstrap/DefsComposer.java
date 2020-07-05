@@ -2,6 +2,8 @@ package org.codetab.scoopi.bootstrap;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IDef;
 import org.codetab.scoopi.defs.yml.DataDefDefBuilder;
 import org.codetab.scoopi.defs.yml.DataDefDefData;
@@ -17,12 +19,10 @@ import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.store.IStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefsComposer {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(DefsComposer.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IDef def;
@@ -40,7 +40,7 @@ public class DefsComposer {
     private IStore store;
 
     public void compose() {
-        LOGGER.info("bootstrap def data and push to store");
+        LOG.info("bootstrap def data and push to store");
         def.init();
         try {
             // def data build, serialize and store
@@ -65,8 +65,7 @@ public class DefsComposer {
             store.put("dataDefDef", dataDefDefData);
 
         } catch (DefNotFoundException | InvalidDefException e) {
-            String message = "unable initialize defs";
-            throw new CriticalException(message, e);
+            throw new CriticalException("unable initialize defs", e);
         }
     }
 }

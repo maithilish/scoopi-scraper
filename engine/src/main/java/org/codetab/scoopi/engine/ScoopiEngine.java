@@ -2,17 +2,16 @@ package org.codetab.scoopi.engine;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.model.ERRORCAT;
 import org.codetab.scoopi.step.JobMediator;
 import org.codetab.scoopi.step.TaskMediator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ScoopiEngine {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ScoopiEngine.class);
+    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private SystemModule systemModule;
@@ -20,8 +19,6 @@ public class ScoopiEngine {
     private TaskMediator taskMediator;
     @Inject
     private JobMediator jobMediator;
-    @Inject
-    private ErrorLogger errorLogger;
 
     /*
      * single thread env throws CriticalException and terminates the app and
@@ -32,9 +29,9 @@ public class ScoopiEngine {
     public void initSystem() {
         try {
             // single thread
-            LOGGER.info("Start scoopi ..."); //$NON-NLS-1$
+            LOG.info("Start scoopi ..."); //$NON-NLS-1$
 
-            LOGGER.info("initialize basic system");
+            LOG.info("initialize basic system");
             systemModule.startStats();
             systemModule.startErrorLogger();
             systemModule.addShutdownHook();
@@ -46,11 +43,10 @@ public class ScoopiEngine {
 
             systemModule.seedJobs();
 
-            LOGGER.info("scoopi initialized");
+            LOG.info("scoopi initialized");
             systemModule.waitForInput();
         } catch (final CriticalException e) {
-            final String message = "terminate scoopi";
-            errorLogger.log(CAT.FATAL, message, e);
+            LOG.error("terminate scoopi [{}]", ERRORCAT.FATAL, e);
             throw e;
         }
     }
@@ -58,7 +54,7 @@ public class ScoopiEngine {
     public void runJobs() {
         try {
             // multi thread
-            LOGGER.info("--- switch to multi thread system ---");
+            LOG.info("--- switch to multi thread system ---");
             taskMediator.start();
             jobMediator.start();
 
@@ -66,10 +62,9 @@ public class ScoopiEngine {
             systemModule.waitForFinish();
 
             systemModule.waitForInput();
-            LOGGER.info("shutdown ...");
+            LOG.info("shutdown ...");
         } catch (final CriticalException e) {
-            final String message = "terminate scoopi";
-            errorLogger.log(CAT.FATAL, message, e);
+            LOG.error("terminate scoopi [{}]", ERRORCAT.FATAL, e);
             throw e;
         }
     }
@@ -78,9 +73,10 @@ public class ScoopiEngine {
         systemModule.stopMetrics();
         if (systemModule.stopCluster()) {
             systemModule.stopStats();
-            LOGGER.info("scoopi completed");
+            LOG.info("scoopi run finished");
+            systemModule.setCleanShutdown();
         } else {
-            LOGGER.info("scoopi exit");
+            LOG.error("exit scoopi [{}]", ERRORCAT.FATAL);
             System.exit(1);
         }
     }
