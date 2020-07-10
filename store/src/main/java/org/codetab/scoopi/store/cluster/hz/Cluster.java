@@ -71,8 +71,7 @@ public class Cluster implements ICluster {
 
     @Override
     public void shutdown() {
-        // FIXME - bootfix, cluster shutdown/node shutdown
-        // hz.getCluster().shutdown();
+        // prefer node shutdown as cluster shutdown occasionally fails
         hz.shutdown();
     }
 

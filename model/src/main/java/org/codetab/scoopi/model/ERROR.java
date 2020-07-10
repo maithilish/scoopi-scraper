@@ -1,5 +1,5 @@
 package org.codetab.scoopi.model;
 
-public enum ERRORCAT {
+public enum ERROR {
     ERROR, DATAERROR, CONFIG, FATAL, INTERNAL, USER
 };

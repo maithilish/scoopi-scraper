@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.step.base.BaseParser;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -81,7 +81,7 @@ public class Parser extends BaseParser {
         } catch (NumberFormatException | ConfigNotFoundException e) {
             errors.inc();
             LOG.error("config: {}, use default: {} [{}]", timeout,
-                    ERRORCAT.INTERNAL, e);
+                    ERROR.INTERNAL, e);
         }
 
         WebClient webClient = new WebClient(BrowserVersion.CHROME);

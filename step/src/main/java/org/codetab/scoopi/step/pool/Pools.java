@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -19,9 +20,10 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
-import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.PoolStat;
+
+import com.google.common.util.concurrent.Uninterruptibles;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
@@ -73,9 +75,6 @@ public abstract class Pools {
      */
     @GuardedBy("this")
     private List<NamedFuture> futures;
-
-    @Inject
-    private ThreadSleep threadSleep;
 
     /**
      * <p>
@@ -137,13 +136,15 @@ public abstract class Pools {
      */
     public void waitForFinish() {
         while (!isDone()) {
-            threadSleep.sleep(SLEEP_MILLIS);
+            Uninterruptibles.sleepUninterruptibly(SLEEP_MILLIS,
+                    TimeUnit.MILLISECONDS);
         }
 
         shutdownAll();
 
         while (!isAllTerminated()) {
-            threadSleep.sleep(SLEEP_MILLIS);
+            Uninterruptibles.sleepUninterruptibly(SLEEP_MILLIS,
+                    TimeUnit.MILLISECONDS);
         }
         LOG.info("pools shutdown complete");
     }

@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -53,8 +56,11 @@ public class JobStore implements IClusterJobStore {
     private Map<String, String> keyStoreMap;
 
     private String memberId;
-    private int jobTakeLimit;
     private FlakeIdGenerator jobIdGenerator;
+
+    private int jobTakeLimit;
+    private int jobTakeTimeout;
+    private Semaphore jobTakeThrottle;
 
     private TransactionOptions txOptions;
 
@@ -63,8 +69,8 @@ public class JobStore implements IClusterJobStore {
         try {
             hz = (HazelcastInstance) cluster.getInstance();
             memberId = configs.getConfig("scoopi.cluster.memberId");
-            jobTakeLimit = Integer
-                    .parseInt(configs.getConfig("scoopi.job.takeLimit", "4"));
+            jobTakeLimit = configs.getInt("scoopi.job.takeLimit", "4");
+            jobTakeTimeout = configs.getInt("scoopi.job.takeTimeout", "1000");
             jobIdGenerator = hz.getFlakeIdGenerator("job_id_seq");
 
             txOptions = (TransactionOptions) cluster.getTxOptions(configs);
@@ -73,6 +79,8 @@ public class JobStore implements IClusterJobStore {
             jobsMap = hz.getMap(DsName.JOBS_MAP.toString());
             takenJobsMap = hz.getMap(DsName.TAKEN_JOBS_MAP.toString());
             keyStoreMap = hz.getMap(DsName.KEYSTORE_MAP.toString());
+
+            jobTakeThrottle = new Semaphore(jobTakeLimit);
         } catch (NumberFormatException | ConfigNotFoundException e) {
             throw new CriticalException(e);
         }
@@ -160,6 +168,11 @@ public class JobStore implements IClusterJobStore {
             }
 
             tx.commitTransaction();
+
+            if (jobTakeThrottle.availablePermits() < jobTakeLimit) {
+                jobTakeThrottle.release();
+            }
+
             return true;
         } catch (JobStateException e) {
             tx.rollbackTransaction();
@@ -173,7 +186,8 @@ public class JobStore implements IClusterJobStore {
     }
 
     @Override
-    public Payload takeJob() throws InterruptedException, TransactionException {
+    public Payload takeJob() throws InterruptedException, TransactionException,
+            TimeoutException {
         Optional<ClusterJob> opt =
                 jobsMap.values().stream().filter(p -> !p.isTaken()).findFirst();
         long jobId = -1;
@@ -183,9 +197,15 @@ public class JobStore implements IClusterJobStore {
             throw new NoSuchElementException("jobs queue is empty");
         }
 
+        boolean acquired = jobTakeThrottle.tryAcquire(jobTakeTimeout,
+                TimeUnit.MILLISECONDS);
+        if (!acquired) {
+            throw new TimeoutException(
+                    "jobs taken limit exceeded, unable to acquire permit");
+        }
         TransactionContext tx = hz.newTransactionContext(txOptions);
-
         try {
+
             tx.beginTransaction();
             TransactionalMap<Long, ClusterJob> txJobsMap =
                     tx.getMap(DsName.JOBS_MAP.toString());
@@ -215,6 +235,7 @@ public class JobStore implements IClusterJobStore {
             }
         } catch (Exception e) {
             tx.rollbackTransaction();
+            jobTakeThrottle.release();
             String message = "take job";
             throw new TransactionException(message, e);
         }
@@ -227,7 +248,6 @@ public class JobStore implements IClusterJobStore {
 
         try {
             tx.beginTransaction();
-
             TransactionalMap<Long, ClusterJob> txTakenJobsMap =
                     tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
             TransactionalMap<Long, Payload> txPayloadsMap =
@@ -244,6 +264,9 @@ public class JobStore implements IClusterJobStore {
                                 String.valueOf(jobId)));
             }
             tx.commitTransaction();
+            if (jobTakeThrottle.availablePermits() < jobTakeLimit) {
+                jobTakeThrottle.release();
+            }
             return true;
         } catch (JobStateException e) {
             tx.rollbackTransaction();
@@ -276,8 +299,12 @@ public class JobStore implements IClusterJobStore {
             cJob.setTaken(false);
             cJob.setMemberId(null);
             txJobsMap.put(jobId, cJob);
-
             tx.commitTransaction();
+
+            if (jobTakeThrottle.availablePermits() < jobTakeLimit) {
+                jobTakeThrottle.release();
+            }
+
             return true;
         } catch (Exception e) {
             // FIXME this method is called when an node crashes and tx ex

@@ -65,6 +65,11 @@ public class Configs {
         return configProperties.getInt(configKey, defaultValue);
     }
 
+    public int getInt(final String configKey, final String defaultValue) {
+        return configProperties.getInt(configKey,
+                Integer.parseInt(defaultValue));
+    }
+
     public Object getProperty(final String configKey) {
         return configProperties.get(configKey);
     }

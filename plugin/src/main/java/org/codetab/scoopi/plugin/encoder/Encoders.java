@@ -16,7 +16,7 @@ import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Plugin;
 
 public class Encoders extends HashMap<String, List<IEncoder<?>>> {
@@ -55,7 +55,7 @@ public class Encoders extends HashMap<String, List<IEncoder<?>>> {
                         errors.inc();
                         LOG.error(
                                 "unable to create encoder from plugin: {} [{}]",
-                                plugin, ERRORCAT.DATAERROR, e);
+                                plugin, ERROR.DATAERROR, e);
                     }
                 }
                 put(appenderName, encoders);

@@ -10,8 +10,9 @@ import org.codetab.scoopi.exception.StepPersistenceException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.metrics.MetricsHelper;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.TaskInfo;
+import org.codetab.scoopi.step.mediator.JobMediator;
 
 import com.codahale.metrics.Timer.Context;
 
@@ -70,17 +71,16 @@ public class Task implements Runnable {
             } catch (Exception e1) {
                 errors.inc();
                 LOG.error(jobAbortedMarker, "{} [{}]",
-                        step.getLabeled(e.getMessage()), ERRORCAT.DATAERROR,
-                        e1);
+                        step.getLabeled(e.getMessage()), ERROR.DATAERROR, e1);
             }
         } catch (StepRunException | StepPersistenceException e) {
             errors.inc();
             LOG.error(jobAbortedMarker, "{} [{}]",
-                    step.getLabeled(e.getMessage()), ERRORCAT.DATAERROR, e);
+                    step.getLabeled(e.getMessage()), ERROR.DATAERROR, e);
         } catch (Exception e) {
             errors.inc();
             LOG.error(jobAbortedMarker, "{} [{}]",
-                    step.getLabeled(e.getMessage()), ERRORCAT.DATAERROR, e);
+                    step.getLabeled(e.getMessage()), ERROR.DATAERROR, e);
         }
     }
 }

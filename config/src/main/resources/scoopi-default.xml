@@ -76,7 +76,6 @@
             <path>data</path>
         </datastore>
         <persist>
-            <dataDef>true</dataDef>
             <locator>true</locator>
             <data>true</data>
         </persist>
@@ -94,9 +93,7 @@
         </cluster>
         <job>
             <takeLimit>4</takeLimit>
-            <takeLimitWait>500</takeLimitWait>
-            <takeFailWait>1000</takeFailWait>
-            <pushInterval>0</pushInterval>
+            <takeTimeout>1000</takeTimeout>
         </job>
         <task>
             <pollRetryInterval>500</pollRetryInterval>

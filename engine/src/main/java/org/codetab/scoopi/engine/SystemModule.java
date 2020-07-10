@@ -15,7 +15,6 @@ import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.helper.SystemHelper;
-import org.codetab.scoopi.helper.ThreadSleep;
 import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.metrics.IMetricsServer;
 import org.codetab.scoopi.metrics.MetricsHelper;
@@ -28,8 +27,11 @@ import org.codetab.scoopi.stat.Stats;
 import org.codetab.scoopi.step.extract.JobSeeder;
 import org.codetab.scoopi.store.IBarricade;
 import org.codetab.scoopi.store.ICluster;
+import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
+
+import com.google.common.util.concurrent.Uninterruptibles;
 
 public class SystemModule {
 
@@ -59,6 +61,8 @@ public class SystemModule {
     @Inject
     private JobSeeder jobSeeder;
     @Inject
+    private IJobStore jobStore;
+    @Inject
     private IBarricade jobSeedBrricade;
 
     @Inject
@@ -70,8 +74,6 @@ public class SystemModule {
     private SystemStat systemStat;
     @Inject
     private SystemHelper systemHelper;
-    @Inject
-    private ThreadSleep threadSleep;
 
     private Serializer metricsSerializer;
 
@@ -101,12 +103,9 @@ public class SystemModule {
                 .getConfig("scoopi.cluster.shutdown.timeoutUnit", "SECONDS")
                 .toUpperCase());
 
-        // clusterShutdownTimeout = 2;
-        // timeUnit = TimeUnit.MILLISECONDS;
-
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             shutdown.setTerminate();
-            shutdown.tryTerminate();
+            shutdown.terminate();
         });
 
         try {
@@ -157,9 +156,9 @@ public class SystemModule {
         // FIXME is null
         metricsSerializer.stop();
         if (configs.isMetricsServerEnabled()) {
-            int period = Integer.parseInt(
-                    configs.getConfig("scoopi.metrics.serializer.period", "5"));
-            threadSleep.sleep(period, TimeUnit.SECONDS);
+            int period =
+                    configs.getInt("scoopi.metrics.serializer.period", "5");
+            Uninterruptibles.sleepUninterruptibly(period, TimeUnit.SECONDS);
             metricsServer.stop();
         }
         return true;
@@ -177,12 +176,11 @@ public class SystemModule {
             jobSeeder.seedLocatorGroups();
             CompletableFuture.runAsync(() -> {
                 jobSeeder.awaitForSeedDone();
+                jobStore.setState(IJobStore.State.READY);
                 jobSeedBrricade.finish();
             });
         } else {
             LOG.info("jobs are already seeded by another node");
-            // other nodes
-            jobSeeder.setSeedDoneSignal();
         }
     }
 

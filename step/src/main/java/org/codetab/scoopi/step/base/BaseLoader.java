@@ -27,9 +27,8 @@ import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.helper.Documents;
-import org.codetab.scoopi.step.JobMediator;
-import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.Step;
+import org.codetab.scoopi.step.mediator.JobMediator;
 
 /**
  * <p>
@@ -251,7 +250,7 @@ public abstract class BaseLoader extends Step {
         // mark this job as finished and push new task jobs for this document
         try {
             long jobId = getPayload().getJobInfo().getId();
-            jobMediator.pushPayloads(payloads, jobId);
+            jobMediator.pushJobs(payloads, jobId);
         } catch (InterruptedException | JobStateException
                 | TransactionException e) {
             final String message =

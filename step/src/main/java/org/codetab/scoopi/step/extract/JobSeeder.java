@@ -1,7 +1,7 @@
 package org.codetab.scoopi.step.extract;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CountDownLatch;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,12 +13,11 @@ import org.codetab.scoopi.defs.ILocatorDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.step.JobMediator;
-import org.codetab.scoopi.step.PayloadFactory;
-import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.step.base.PayloadFactory;
+import org.codetab.scoopi.step.mediator.TaskMediator;
 import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
 
 @Singleton
@@ -31,8 +30,6 @@ public class JobSeeder {
     @Inject
     private ILocatorDef locatorDef;
     @Inject
-    private JobMediator jobMediator;
-    @Inject
     private TaskMediator taskMediator;
     @Inject
     private PayloadFactory payloadFactory;
@@ -41,10 +38,13 @@ public class JobSeeder {
     @Inject
     private CrashCleaner crashCleaner;
 
-    private AtomicBoolean seeder = new AtomicBoolean(false);
+    /**
+     * Except seeder node, all others set seedDoneSignal (CountDownLatch) to
+     * zero as they are all blocked by Barricade till seed is completed.
+     */
+    private CountDownLatch seedLatch = new CountDownLatch(0);
 
     public void seedLocatorGroups() {
-        seeder.set(true);
         LOG.info("seed defined locator groups");
         final String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
@@ -56,7 +56,10 @@ public class JobSeeder {
         }
 
         final List<LocatorGroup> locatorGroups = locatorDef.getLocatorGroups();
-        jobMediator.setSeedDoneSignal(locatorGroups.size()); // CountDownLatch
+
+        // only by seeder node
+        seedLatch = new CountDownLatch(locatorGroups.size());
+        LOG.debug("job seed countdown latch set: {}", locatorGroups.size());
 
         final List<Payload> payloads = payloadFactory
                 .createSeedPayloads(locatorGroups, stepName, seederClzName);
@@ -67,8 +70,8 @@ public class JobSeeder {
                 // FIXME - interruptedFix refactor all
                 String group = payload.getJobInfo().getGroup();
                 errors.inc();
-                LOG.error("seed locator group: {} [{}]", group,
-                        ERRORCAT.INTERNAL, e);
+                LOG.error("seed locator group: {} [{}]", group, ERROR.INTERNAL,
+                        e);
             }
         }
     }
@@ -79,23 +82,17 @@ public class JobSeeder {
         }
     }
 
-    /**
-     * Except seeder node, all others set seedDoneSignal (CountDownLatch) to
-     * zero as they are all blocked by Barricade till seed is completed.
-     */
-    public void setSeedDoneSignal() {
-        jobMediator.setSeedDoneSignal(0);
-    }
-
     public void awaitForSeedDone() {
         try {
-            jobMediator.awaitForSeedDone();
+            seedLatch.await();
         } catch (InterruptedException e) {
             throw new CriticalException("await for seed done", e);
         }
     }
 
-    public boolean isSeeder() {
-        return seeder.get();
+    public void countDownSeedLatch() {
+        seedLatch.countDown();
+        LOG.debug("job seed latch countdown");
     }
+
 }

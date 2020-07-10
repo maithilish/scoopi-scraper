@@ -47,6 +47,6 @@ public class Shutdown implements IShutdown {
     }
 
     @Override
-    public void tryTerminate() {
+    public void terminate() {
     }
 }

@@ -5,9 +5,9 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.CriticalException;
-import org.codetab.scoopi.model.ERRORCAT;
-import org.codetab.scoopi.step.JobMediator;
-import org.codetab.scoopi.step.TaskMediator;
+import org.codetab.scoopi.model.ERROR;
+import org.codetab.scoopi.step.mediator.JobMediator;
+import org.codetab.scoopi.step.mediator.TaskMediator;
 
 public class ScoopiEngine {
 
@@ -46,7 +46,7 @@ public class ScoopiEngine {
             LOG.info("scoopi initialized");
             systemModule.waitForInput();
         } catch (final CriticalException e) {
-            LOG.error("terminate scoopi [{}]", ERRORCAT.FATAL, e);
+            LOG.error("terminate scoopi [{}]", ERROR.FATAL, e);
             throw e;
         }
     }
@@ -62,21 +62,21 @@ public class ScoopiEngine {
             systemModule.waitForFinish();
 
             systemModule.waitForInput();
-            LOG.info("shutdown ...");
         } catch (final CriticalException e) {
-            LOG.error("terminate scoopi [{}]", ERRORCAT.FATAL, e);
+            LOG.error("terminate scoopi [{}]", ERROR.FATAL, e);
             throw e;
         }
     }
 
     public void shutdown() {
+        LOG.info("shutdown ...");
         systemModule.stopMetrics();
         if (systemModule.stopCluster()) {
             systemModule.stopStats();
             LOG.info("scoopi run finished");
             systemModule.setCleanShutdown();
         } else {
-            LOG.error("exit scoopi [{}]", ERRORCAT.FATAL);
+            LOG.error("exit scoopi [{}]", ERROR.FATAL);
             System.exit(1);
         }
     }

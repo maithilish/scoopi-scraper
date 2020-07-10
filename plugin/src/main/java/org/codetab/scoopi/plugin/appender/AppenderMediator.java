@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.model.PrintPayload;
@@ -74,7 +74,7 @@ public class AppenderMediator {
             } catch (InterruptedException e) {
                 errors.inc();
                 LOG.error("close appender: {} [{}]", appenderName,
-                        ERRORCAT.INTERNAL);
+                        ERROR.INTERNAL);
             }
         }
     }
