@@ -15,7 +15,7 @@ import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.model.PrintPayload;
 
@@ -108,7 +108,7 @@ public abstract class Appender implements Runnable {
             // FIXME - logfix, throw critical exception
             errors.inc();
             LOG.error("unable to create appender: {} [{}]", name,
-                    ERRORCAT.INTERNAL);
+                    ERROR.INTERNAL);
         }
     }
 

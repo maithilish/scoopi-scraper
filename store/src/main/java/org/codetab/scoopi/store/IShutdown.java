@@ -12,5 +12,5 @@ public interface IShutdown {
 
     void setTerminate();
 
-    void tryTerminate();
+    void terminate();
 }

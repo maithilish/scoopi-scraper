@@ -118,10 +118,13 @@ public abstract class BaseParser extends Step {
             try {
                 data = dataDao.get(document.getLocatorId(), dataFingerprint);
             } catch (ChecksumException e) {
+                LOG.error(jobMarker, getLabeled("load data {}"), e);
                 dataDao.delete(document.getLocatorId(), dataFingerprint);
             }
             if (nonNull(data)) {
                 parseData = false;
+            } else {
+                LOG.debug(jobMarker, getLabeled("no parsed data in datastore"));
             }
         } catch (DaoException e) {
             LOG.debug(jobMarker, getLabeled("load data {}"), e);
@@ -135,13 +138,16 @@ public abstract class BaseParser extends Step {
             try {
                 dataDao.save(document.getLocatorId(), dataFingerprint, data);
                 setOutput(data);
-                LOG.debug(jobMarker, getLabeled("data stored"));
+                LOG.debug(jobMarker, getLabeled("persist true, data stored"));
             } catch (DaoException e) {
                 String message = "store data";
                 throw new StepRunException(message, e);
             }
         } else {
-            LOG.debug(jobMarker, getLabeled("persist false, data not stored"));
+            if (!persist) {
+                LOG.debug(jobMarker,
+                        getLabeled("persist false, data not stored"));
+            }
         }
     }
 
@@ -173,7 +179,8 @@ public abstract class BaseParser extends Step {
             }
         } else {
             dataReuseCounter.inc();
-            LOG.debug(jobMarker, "{}", getLabeled("data exists, reuse"));
+            LOG.debug(jobMarker, "{}",
+                    getLabeled("parsed data found in datastore, reuse"));
         }
 
         setOutput(data);

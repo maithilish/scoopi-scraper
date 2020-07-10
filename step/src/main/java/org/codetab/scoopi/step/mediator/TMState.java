@@ -1,10 +1,10 @@
-package org.codetab.scoopi.step;
+package org.codetab.scoopi.step.mediator;
 
 /**
  * READY - accept tasks for execution
  * <p>
  * DONE - accepted tasks are completed and no task in pending in taskpool, but
- * ready to accept more
+ * may flip to READY state.
  * <p>
  * SHUTDOWN - no more tasks are accepted, wait for pool service to end and exit
  * the task runner

@@ -74,7 +74,7 @@ public class Shutdown implements IShutdown {
                 return false;
             }
         } catch (NullPointerException e) {
-            LOG.debug("try shutdown, {}", e);
+            LOG.debug("try shutdown", e);
             return false;
         }
 
@@ -87,17 +87,14 @@ public class Shutdown implements IShutdown {
     }
 
     @Override
-    public void tryTerminate() {
-        /**
-         * shutdown initiated at cluster level fails sometimes, so reverted back
-         * to node shutdown.
-         */
+    public void terminate() {
+        // prefer node shutdown as cluster shutdown occasionally fails
         try {
-            LOG.info("try shutdown node");
+            LOG.info("try node shutdown");
             hz.shutdown();
             LOG.info("node shutdown completed");
         } catch (HazelcastInstanceNotActiveException e) {
-
+            LOG.debug("try terminate", e);
         }
     }
 }

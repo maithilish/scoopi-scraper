@@ -1,4 +1,4 @@
-package org.codetab.scoopi.step;
+package org.codetab.scoopi.step.mediator;
 
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.codetab.scoopi.util.Util.spaceit;
@@ -10,6 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.model.Payload;
+import org.codetab.scoopi.step.IStep;
+import org.codetab.scoopi.step.Task;
 
 @Singleton
 public class TaskFactory {

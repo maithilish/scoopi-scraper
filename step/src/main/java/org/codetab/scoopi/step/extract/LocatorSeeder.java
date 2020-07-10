@@ -16,13 +16,13 @@ import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.step.JobMediator;
-import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseSeeder;
+import org.codetab.scoopi.step.base.PayloadFactory;
+import org.codetab.scoopi.step.mediator.JobMediator;
 
 import com.codahale.metrics.Meter;
 import com.google.common.collect.Lists;
@@ -48,6 +48,8 @@ public final class LocatorSeeder extends BaseSeeder {
     private Errors errors;
     @Inject
     private JobMediator jobMediator;
+    @Inject
+    private JobSeeder jobSeeder;
 
     /**
      * <p>
@@ -104,7 +106,7 @@ public final class LocatorSeeder extends BaseSeeder {
                                 LOG.debug(
                                         "locator defined by def, push jobId {} to jobMediator",
                                         payload.getJobInfo().getId());
-                                jobMediator.pushPayload(payload);
+                                jobMediator.pushJob(payload);
                             } else {
                                 // if from parse link, push to TM (local). JobId
                                 // of parent job is reused
@@ -122,7 +124,7 @@ public final class LocatorSeeder extends BaseSeeder {
                             // just log error for this payload and continue
                             errors.inc();
                             LOG.error("handover locator,{} [{}]", payload,
-                                    ERRORCAT.INTERNAL, e);
+                                    ERROR.INTERNAL, e);
                         }
                     }
                 } else {
@@ -132,16 +134,16 @@ public final class LocatorSeeder extends BaseSeeder {
                             "task:", firstTask.get(), "but got:",
                             String.valueOf(payloads.size()));
                     errors.inc();
-                    LOG.error("{} [{}]", message, ERRORCAT.INTERNAL);
+                    LOG.error("{} [{}]", message, ERROR.INTERNAL);
                 }
             } else {
                 errors.inc();
                 LOG.error("unable to get first task for locator group: {} [{}]",
-                        group, ERRORCAT.INTERNAL);
+                        group, ERROR.INTERNAL);
             }
         }
         if (locatorGroup.isByDef()) {
-            jobMediator.countDownSeedDone();
+            jobSeeder.countDownSeedLatch();
         }
         LOG.debug("locator group: {}, locators: {}, queued to taskpool",
                 locatorGroup.getGroup(), locatorGroup.getLocators().size());

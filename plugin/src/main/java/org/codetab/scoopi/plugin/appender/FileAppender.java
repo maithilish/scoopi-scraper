@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.PrintPayload;
 
 /**
@@ -59,7 +59,7 @@ public final class FileAppender extends Appender {
             // FIXME - logfix, dataerror or critical
             errors.inc();
             LOG.error("unable to create appender: {} [{}]", getName(),
-                    ERRORCAT.DATAERROR, e);
+                    ERROR.DATAERROR, e);
         }
     }
 
@@ -82,7 +82,7 @@ public final class FileAppender extends Appender {
                 }
             } catch (final InterruptedException e) {
                 errors.inc();
-                LOG.error("appender: {} [{}]", getName(), ERRORCAT.INTERNAL, e);
+                LOG.error("appender: {} [{}]", getName(), ERROR.INTERNAL, e);
             }
             if (nonNull(printPayload)) {
                 String jobFilePath = getJobFilePath(printPayload);
@@ -110,7 +110,7 @@ public final class FileAppender extends Appender {
                     printPayload.setProcessed(false);
                     // recoverable - so no data error
                     LOG.error("appender: {} file path: {} [{}]", getName(),
-                            jobFilePath, ERRORCAT.ERROR);
+                            jobFilePath, ERROR.ERROR);
                 }
                 printPayload.finished();
             }

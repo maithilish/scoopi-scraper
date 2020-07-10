@@ -20,6 +20,8 @@ import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
+import org.codetab.scoopi.step.mediator.JobMediator;
+import org.codetab.scoopi.step.mediator.TaskMediator;
 
 /**
  * @author maithilish
@@ -31,8 +33,6 @@ public abstract class Step implements IStep {
 
     @Inject
     protected Configs configs;
-    @Inject
-    protected TaskFactory taskFactory;
     @Inject
     protected MetricsHelper metricsHelper;
     @Inject

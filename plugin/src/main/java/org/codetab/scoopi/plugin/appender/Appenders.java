@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Plugin;
 
 public class Appenders extends HashMap<String, Appender> {
@@ -43,7 +43,7 @@ public class Appenders extends HashMap<String, Appender> {
                     | ClassNotFoundException | DefNotFoundException e) {
                 errors.inc();
                 LOG.error("unable to create appender from plugin: {} [{}]",
-                        plugin, ERRORCAT.INTERNAL, e);
+                        plugin, ERROR.INTERNAL, e);
             }
         }
 

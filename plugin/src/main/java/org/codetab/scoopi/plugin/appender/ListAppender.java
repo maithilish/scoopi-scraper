@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.PrintPayload;
 
 /**
@@ -53,7 +53,7 @@ public final class ListAppender extends Appender {
                 list.add(printPayload.getData());
             } catch (InterruptedException e) {
                 errors.inc();
-                LOG.error("appender: {} [{}]", getName(), ERRORCAT.INTERNAL, e);
+                LOG.error("appender: {} [{}]", getName(), ERROR.INTERNAL, e);
             }
         }
         LOG.info("appender: {}, {} item appended", getName(), count - 1);

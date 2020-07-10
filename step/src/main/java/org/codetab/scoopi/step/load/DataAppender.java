@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.JobRunException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.PrintPayload;
 import org.codetab.scoopi.plugin.appender.Appender;
@@ -52,7 +52,7 @@ public class DataAppender extends BaseAppender {
                 String message = spaceit("unable to append to:", appenderName);
                 errors.inc();
                 LOG.error(getJobAbortedMarker(), "{} [{}]", getLabeled(message),
-                        ERRORCAT.DATAERROR, e);
+                        ERROR.DATAERROR, e);
             }
         }
         boolean appendError = false;

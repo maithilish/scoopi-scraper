@@ -16,8 +16,8 @@ import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseProcessor;
+import org.codetab.scoopi.step.base.PayloadFactory;
 
 public class LocatorCreator extends BaseProcessor {
 
@@ -63,7 +63,7 @@ public class LocatorCreator extends BaseProcessor {
 
         // mark this job as finished and push new task jobs for this document
         try {
-            jobMediator.pushPayloads(payloads, jobId);
+            jobMediator.pushJobs(payloads, jobId);
         } catch (InterruptedException | JobStateException
                 | TransactionException e) {
             final String message =

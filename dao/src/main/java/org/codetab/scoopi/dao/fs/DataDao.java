@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 import static org.codetab.scoopi.util.Util.dashit;
 
 import java.net.URI;
+import java.nio.file.FileSystemNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +30,16 @@ public class DataDao implements IDataDao {
         URI uri = fsHelper.getURI(dir.getValue(),
                 dashit(filePrefix, file.getValue()));
 
-        byte[] serializedData = fsHelper.readDataObj(uri);
+        byte[] serializedData = null;
+        try {
+            serializedData = fsHelper.readDataObj(uri);
+        } catch (DaoException e) {
+            if (e.getCause() instanceof FileSystemNotFoundException) {
+                // no data file, null is returned
+            } else {
+                throw e;
+            }
+        }
 
         if (isNull(serializedData)) {
             return null;

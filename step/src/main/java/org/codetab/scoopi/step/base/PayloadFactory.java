@@ -1,4 +1,4 @@
-package org.codetab.scoopi.step;
+package org.codetab.scoopi.step.base;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERRORCAT;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -84,7 +84,7 @@ public class PayloadFactory {
                 errors.inc();
                 LOG.error(
                         "unable to create payload for taskGroup:taskName {}:{} [{}]",
-                        taskGroup, taskName, ERRORCAT.DATAERROR, e);
+                        taskGroup, taskName, ERROR.DATAERROR, e);
             }
         }
         return payloads;
