@@ -29,7 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class QueryAnalyzer extends BaseQueryAnalyzer {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final int TIMEOUT_MILLIS = 120000;
 

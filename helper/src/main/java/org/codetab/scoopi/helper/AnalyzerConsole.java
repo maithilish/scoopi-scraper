@@ -14,7 +14,7 @@ import org.codetab.scoopi.util.Util;
 
 public class AnalyzerConsole {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     private final String dashes = "-----";
     private int lines = Integer.parseInt("5");

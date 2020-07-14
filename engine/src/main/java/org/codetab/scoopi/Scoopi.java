@@ -10,7 +10,7 @@ import org.codetab.scoopi.engine.ScoopiEngine;
 
 public final class Scoopi {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ScoopiEngine scoopiEngine;

@@ -29,7 +29,7 @@ import org.codetab.scoopi.step.mediator.TaskMediator;
  */
 public abstract class Step implements IStep {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     protected Configs configs;

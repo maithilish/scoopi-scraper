@@ -166,3 +166,4 @@ serializable
 bootfix
 dbfix
 filesystem
+async

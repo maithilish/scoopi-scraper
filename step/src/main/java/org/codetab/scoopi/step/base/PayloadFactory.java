@@ -20,7 +20,7 @@ import org.codetab.scoopi.model.StepInfo;
 
 public class PayloadFactory {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ITaskDef taskDef;

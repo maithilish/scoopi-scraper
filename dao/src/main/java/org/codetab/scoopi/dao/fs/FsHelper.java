@@ -122,7 +122,8 @@ public class FsHelper {
                 bytes = IOUtils.toByteArray(is);
             }
             return bytes;
-        } catch (IOException | FileSystemNotFoundException e) {
+        } catch (IOException | FileSystemNotFoundException
+                | UnsupportedOperationException e) {
             String message = spaceit("read file path", uri.toString());
             throw new DaoException(message, e);
         }

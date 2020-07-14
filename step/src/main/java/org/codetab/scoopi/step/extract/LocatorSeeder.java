@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
 
 public final class LocatorSeeder extends BaseSeeder {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * list of locator don't name the next as locators as it hides field.

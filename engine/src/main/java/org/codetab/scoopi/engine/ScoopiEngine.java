@@ -4,21 +4,28 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.engine.module.ClusterModule;
+import org.codetab.scoopi.engine.module.JobSeedModule;
+import org.codetab.scoopi.engine.module.MediatorModule;
+import org.codetab.scoopi.engine.module.MetricsModule;
+import org.codetab.scoopi.engine.module.ShutdownModule;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.model.ERROR;
-import org.codetab.scoopi.step.mediator.JobMediator;
-import org.codetab.scoopi.step.mediator.TaskMediator;
 
 public class ScoopiEngine {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
-    private SystemModule systemModule;
+    private ClusterModule clusterModule;
     @Inject
-    private TaskMediator taskMediator;
+    private MetricsModule metricsModule;
     @Inject
-    private JobMediator jobMediator;
+    private JobSeedModule jobSeedModule;
+    @Inject
+    private MediatorModule mediatorModule;
+    @Inject
+    private ShutdownModule shutdownModule;
 
     /*
      * single thread env throws CriticalException and terminates the app and
@@ -32,19 +39,20 @@ public class ScoopiEngine {
             LOG.info("Start scoopi ..."); //$NON-NLS-1$
 
             LOG.info("initialize basic system");
-            systemModule.startStats();
-            systemModule.startErrorLogger();
-            systemModule.addShutdownHook();
-            systemModule.startMetrics();
+            metricsModule.startStats();
+            metricsModule.startErrors();
+            shutdownModule.addShutdownHook();
+            metricsModule.startMetrics();
 
-            systemModule.initCluster();
-            jobMediator.init();
-            systemModule.initClusterListeners();
+            clusterModule.initCluster();
 
-            systemModule.seedJobs();
+            mediatorModule.initJobMediator();
+
+            clusterModule.initClusterListeners();
+
+            jobSeedModule.seedJobs();
 
             LOG.info("scoopi initialized");
-            systemModule.waitForInput();
         } catch (final CriticalException e) {
             LOG.error("terminate scoopi [{}]", ERROR.FATAL, e);
             throw e;
@@ -55,13 +63,16 @@ public class ScoopiEngine {
         try {
             // multi thread
             LOG.info("--- switch to multi thread system ---");
-            taskMediator.start();
-            jobMediator.start();
 
-            jobMediator.waitForFinish();
-            systemModule.waitForFinish();
+            mediatorModule.startTaskMediator();
 
-            systemModule.waitForInput();
+            // job seed is async, wait else monitor may trigger early shutdown
+            jobSeedModule.awaitForJobSeed();
+            mediatorModule.startJobMediator();
+
+            mediatorModule.waitForJobMediator();
+            mediatorModule.waitForAppenderMediator();
+
         } catch (final CriticalException e) {
             LOG.error("terminate scoopi [{}]", ERROR.FATAL, e);
             throw e;
@@ -70,11 +81,11 @@ public class ScoopiEngine {
 
     public void shutdown() {
         LOG.info("shutdown ...");
-        systemModule.stopMetrics();
-        if (systemModule.stopCluster()) {
-            systemModule.stopStats();
+        metricsModule.stopMetrics();
+        if (clusterModule.stopCluster()) {
+            metricsModule.stopStats();
             LOG.info("scoopi run finished");
-            systemModule.setCleanShutdown();
+            shutdownModule.setCleanShutdown();
         } else {
             LOG.error("exit scoopi [{}]", ERROR.FATAL);
             System.exit(1);

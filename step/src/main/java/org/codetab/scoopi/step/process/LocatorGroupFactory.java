@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 
 public class LocatorGroupFactory {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IItemDef itemDef;

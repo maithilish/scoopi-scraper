@@ -94,10 +94,14 @@
         <job>
             <takeLimit>4</takeLimit>
             <takeTimeout>1000</takeTimeout>
+            <takeRetryDelay>50</takeRetryDelay>
         </job>
         <task>
-            <pollRetryInterval>500</pollRetryInterval>
+            <takeTimeout>500</takeTimeout>
         </task>
+        <monitor>
+            <timerPeriod>1000</timerPeriod>
+        </monitor>
         <metrics>
             <server>
                 <enable>true</enable>

@@ -27,7 +27,7 @@ public class Barricade implements IBarricade {
         INITIALIZE, READY
     }
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ICluster cluster;

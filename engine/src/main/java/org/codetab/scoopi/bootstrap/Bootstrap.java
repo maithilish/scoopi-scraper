@@ -19,7 +19,7 @@ import org.codetab.scoopi.store.IStore;
 
 public class Bootstrap {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     private DInjector dInjector; // actual injector to run scoopi
     private IStore store;

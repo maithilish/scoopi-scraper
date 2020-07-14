@@ -20,7 +20,7 @@ import org.jsoup.select.Elements;
 
 public class NodeSelector {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private TaskInfo taskInfo;

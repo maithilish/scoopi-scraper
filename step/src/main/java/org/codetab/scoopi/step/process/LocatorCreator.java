@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
@@ -20,8 +18,6 @@ import org.codetab.scoopi.step.base.BaseProcessor;
 import org.codetab.scoopi.step.base.PayloadFactory;
 
 public class LocatorCreator extends BaseProcessor {
-
-    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private LocatorGroupFactory locatorGroupFactory;

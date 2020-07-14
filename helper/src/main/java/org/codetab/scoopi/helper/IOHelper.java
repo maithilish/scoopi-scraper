@@ -34,7 +34,7 @@ import com.google.common.io.MoreFiles;
 
 public class IOHelper {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * Search for file in classpath if not found then in file system and return

@@ -19,7 +19,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 @Singleton
 public class MetricsServer implements IMetricsServer {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;

@@ -42,7 +42,7 @@ import com.codahale.metrics.Counter;
 
 public abstract class BaseParser extends Step {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ValueProcessor valueProcessor;

@@ -20,7 +20,7 @@ import com.hazelcast.core.HazelcastInstanceNotActiveException;
 @Singleton
 public class Shutdown implements IShutdown {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ICluster cluster;

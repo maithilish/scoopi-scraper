@@ -24,7 +24,7 @@ import org.codetab.scoopi.step.base.BaseScripter;
  */
 public final class Scripter extends BaseScripter {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IPluginDef pluginDef;

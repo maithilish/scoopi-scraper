@@ -38,7 +38,7 @@ import com.hazelcast.transaction.TransactionalMap;
 @Singleton
 public class JobStore implements IClusterJobStore {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;
@@ -236,7 +236,7 @@ public class JobStore implements IClusterJobStore {
         } catch (Exception e) {
             tx.rollbackTransaction();
             jobTakeThrottle.release();
-            String message = "take job";
+            String message = e.getMessage();
             throw new TransactionException(message, e);
         }
     }
