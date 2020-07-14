@@ -22,7 +22,7 @@ import com.hazelcast.transaction.TransactionalMap;
 @Singleton
 public class CrashCleaner {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;

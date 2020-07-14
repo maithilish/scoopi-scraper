@@ -49,17 +49,19 @@ public class JobRunner extends Thread {
                 Payload payload = jobStore.takeJob();
                 taskMediator.pushPayload(payload);
             } catch (NoSuchElementException e) {
-                LOG.debug("{}, retry", e.getLocalizedMessage());
+                // SPINNER
+                LOG.debug("{}, retry", e.getMessage());
                 Uninterruptibles.sleepUninterruptibly(jobTakeRetryDelay,
                         TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             } catch (JobStateException | IllegalStateException
-                    | TransactionException | InterruptedException
-                    | TimeoutException e) {
+                    | TransactionException | TimeoutException e) {
                 if (e instanceof IllegalStateException) {
                     LOG.error("unable to initiate job [{}]", ERROR.INTERNAL, e);
                 }
                 LOG.debug("task mediator state {}", stateFliper.getTMState());
-                LOG.debug("retry initiate job, {}", e.getLocalizedMessage());
+                LOG.debug("retry initiate job, {}", e.getMessage());
             }
         }
     }

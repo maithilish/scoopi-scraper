@@ -23,7 +23,7 @@ import org.codetab.scoopi.store.cluster.hz.CrashCleaner;
 @Singleton
 public class JobSeeder {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;

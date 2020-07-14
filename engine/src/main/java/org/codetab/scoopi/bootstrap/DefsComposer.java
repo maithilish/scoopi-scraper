@@ -22,7 +22,7 @@ import org.codetab.scoopi.store.IStore;
 
 public class DefsComposer {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IDef def;

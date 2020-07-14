@@ -30,7 +30,7 @@ import org.codetab.scoopi.step.base.BaseProcessor;
  */
 public final class DataConverter extends BaseProcessor {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IPluginDef pluginDef;

@@ -29,7 +29,7 @@ public class MetricsHelper {
     static final MetricRegistry METRICS =
             SharedMetricRegistries.getOrCreate("scoopi");
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     public Timer getTimer(final Object clz, final String... names) {
         return METRICS.timer(getName(clz, names));

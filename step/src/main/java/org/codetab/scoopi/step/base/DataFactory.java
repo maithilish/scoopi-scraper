@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
@@ -17,8 +15,6 @@ import org.codetab.scoopi.model.Data;
  *
  */
 public class DataFactory {
-
-    static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IDataDefDef dataDefDef;

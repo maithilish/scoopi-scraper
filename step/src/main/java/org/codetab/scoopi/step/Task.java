@@ -18,7 +18,7 @@ import com.codahale.metrics.Timer.Context;
 
 public class Task implements Runnable {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Errors errors;

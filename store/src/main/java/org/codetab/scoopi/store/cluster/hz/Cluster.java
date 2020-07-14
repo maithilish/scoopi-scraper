@@ -29,7 +29,7 @@ import com.hazelcast.transaction.TransactionOptions.TransactionType;
 @Singleton
 public class Cluster implements ICluster {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private MembershipListener membershipListener;

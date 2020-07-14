@@ -26,7 +26,7 @@ import org.seleniumhq.jetty9.util.StringUtil;
 
 public class ValueProcessor {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ScriptProcessor scriptProcessor;

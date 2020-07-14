@@ -26,7 +26,7 @@ import org.codetab.scoopi.util.Util;
 
 public class Documents {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Configs configs;

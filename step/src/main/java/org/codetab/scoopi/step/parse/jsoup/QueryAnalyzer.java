@@ -21,7 +21,7 @@ import org.jsoup.select.Elements;
 
 public class QueryAnalyzer extends BaseQueryAnalyzer {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     private Document page;
 

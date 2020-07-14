@@ -14,7 +14,7 @@ import org.codetab.scoopi.model.JobInfo;
 
 public class Persists {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ITaskDef taskDef;

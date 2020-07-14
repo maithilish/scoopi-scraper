@@ -15,7 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class ValueParser implements IValueParser {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private NodeSelector nodeSelector;

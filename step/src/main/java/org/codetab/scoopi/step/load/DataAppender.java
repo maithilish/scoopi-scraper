@@ -25,7 +25,7 @@ import org.codetab.scoopi.step.base.BaseAppender;
  */
 public class DataAppender extends BaseAppender {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ObjectFactory objectFactory;

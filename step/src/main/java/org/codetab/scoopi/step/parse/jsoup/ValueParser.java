@@ -13,7 +13,7 @@ import org.jsoup.select.Elements;
 
 public class ValueParser implements IValueParser {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private NodeSelector nodeSelector;

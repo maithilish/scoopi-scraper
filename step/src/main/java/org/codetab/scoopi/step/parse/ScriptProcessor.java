@@ -21,7 +21,7 @@ import org.codetab.scoopi.step.parse.cache.ParserCache;
 
 public class ScriptProcessor {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IItemDef itemDef;

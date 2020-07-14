@@ -29,7 +29,7 @@ public class Monitor implements Runnable {
 
     public void start() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
-        final int initialDelay = 50;
+        final int initialDelay = 10;
         int delay = configs.getInt("scoopi.monitor.timerPeriod", "1000");
         scheduler.scheduleWithFixedDelay(this, initialDelay, delay,
                 TimeUnit.MILLISECONDS);

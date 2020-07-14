@@ -18,7 +18,7 @@ import org.codetab.scoopi.model.TaskInfo;
 
 public class ScriptParser {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ScriptEngineManager seManager;

@@ -12,7 +12,7 @@ import org.codetab.scoopi.store.IStore;
 
 public class ConfigsComposer {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ConfigBuilder configBuilder;

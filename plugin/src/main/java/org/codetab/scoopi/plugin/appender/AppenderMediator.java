@@ -63,7 +63,6 @@ public class AppenderMediator {
         }
     }
 
-    @GuardedBy("this")
     private void close(final String appenderName) {
         Appender appender = appenders.get(appenderName);
         if (nonNull(appender)) {
@@ -77,5 +76,9 @@ public class AppenderMediator {
                         ERROR.INTERNAL);
             }
         }
+    }
+
+    public void waitForFinish() {
+        appenderPoolService.waitForFinish();
     }
 }

@@ -14,7 +14,7 @@ import com.hazelcast.cluster.MembershipEvent;
 public class MembershipListener
         implements com.hazelcast.cluster.MembershipListener {
 
-    static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     private Stack<String> crashedMembers = new Stack<>();
 
