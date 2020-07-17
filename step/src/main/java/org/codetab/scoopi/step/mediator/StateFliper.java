@@ -22,9 +22,21 @@ public class StateFliper {
     private AtomicReference<TMState> tmState =
             new AtomicReference<>(TMState.READY);
 
+    public void cancel() {
+        shutdown.cancel();
+    }
+
     public boolean tryTMShutdown() {
         LOG.info("task mediator done, try shutdown");
         shutdown.setDone();
+
+        // if (cancelled.get()) {
+        // don't consult jobStore to get pending job count
+        // return shutdownFunction.apply(this);
+        // } else {
+        // }
+
+        // shutdown consults jobStore and shuts only if no job pending
         if (shutdown.tryShutdown(shutdownFunction, this)) {
             LOG.info("task mediator shutdown successful");
             return true;
@@ -34,6 +46,7 @@ public class StateFliper {
                     "task mediator shutdown failed, reset state back to ready");
             return false;
         }
+
     }
 
     private Function<StateFliper, Boolean> shutdownFunction = tm -> {

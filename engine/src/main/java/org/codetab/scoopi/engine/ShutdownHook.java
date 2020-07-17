@@ -1,10 +1,11 @@
-package org.codetab.scoopi.stat;
+package org.codetab.scoopi.engine;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.stat.Stats;
 import org.codetab.scoopi.step.webdriver.WebDriverPool;
 
 /**
@@ -22,13 +23,11 @@ public class ShutdownHook extends Thread {
     private Stats stats;
     @Inject
     private WebDriverPool webDriverPool;
+    @Inject
+    private ScoopiEngine scoopiEngine;
 
     private boolean cleanShutdown = false;
 
-    /**
-     * <p>
-     * public constructor.
-     */
     @Inject
     public ShutdownHook() {
         // cs - if private then class has to be final which is unable to mock
@@ -40,11 +39,22 @@ public class ShutdownHook extends Thread {
      */
     @Override
     public synchronized void start() {
+
         if (cleanShutdown) {
             stats.outputStats();
         } else {
-            outputTerminated();
+            LOG.info("cancel requested");
+            try {
+                scoopiEngine.cancel();
+                scoopiEngine.waitForShutdown();
+            } catch (Exception e) {
+                LOG.error("cancel run", e);
+            } finally {
+                scoopiEngine.shutdown(false);
+            }
+            stats.outputCancelled();
         }
+
         stats.outputMemStats();
 
         LOG.debug("close webdrivers");
@@ -58,9 +68,4 @@ public class ShutdownHook extends Thread {
         this.cleanShutdown = cleanShutdown;
     }
 
-    private void outputTerminated() {
-        LOG.info("{}", "");
-        LOG.info("{}", "--- Summary ---");
-        LOG.error("Scoopi terminated");
-    }
 }

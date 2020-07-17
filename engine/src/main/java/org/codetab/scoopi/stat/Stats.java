@@ -66,6 +66,13 @@ public class Stats {
         LOG.info("{}  {}", "time taken:", stopWatch);
     }
 
+    public void outputCancelled() {
+        LOG.info("{}", "");
+        LOG.info("{}", "--- Summary ---");
+        LOG.error("Scoopi run cancelled");
+        LOG.info("{}  {}", "time taken:", stopWatch);
+    }
+
     public void outputMemStats() {
         LOG.info("{}", "");
         LOG.info("{}", "--- Memory Usage ---");

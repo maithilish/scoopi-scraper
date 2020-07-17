@@ -3,6 +3,7 @@ package org.codetab.scoopi.step.mediator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,13 @@ public class JobRunner extends Thread {
     @Inject
     private StateFliper stateFliper;
 
+    private AtomicBoolean cancelled = new AtomicBoolean(false);
+
+    public void cancel() {
+        cancelled.set(true);
+        stateFliper.cancel();
+    }
+
     @Override
     public void run() {
 
@@ -39,9 +47,11 @@ public class JobRunner extends Thread {
 
         while (true) {
             if (stateFliper.isTMState(TMState.TERMINATED)
-                    || stateFliper.isTMState(TMState.SHUTDOWN)) {
+                    || stateFliper.isTMState(TMState.SHUTDOWN)
+                    || cancelled.get()) {
                 break;
             }
+
             try {
                 jobStore.resetCrashedJobs();
 

@@ -40,10 +40,11 @@ public final class Scoopi {
         try {
             scoopiEngine.initSystem();
             scoopiEngine.runJobs();
+            scoopiEngine.waitForShutdown();
         } catch (Exception e) {
             // ignore, error logged in scoopiEngine
         } finally {
-            scoopiEngine.shutdown();
+            scoopiEngine.shutdown(true);
         }
     }
 

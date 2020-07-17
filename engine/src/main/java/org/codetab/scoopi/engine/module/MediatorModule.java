@@ -35,4 +35,8 @@ public class MediatorModule {
         appenderMediator.closeAll();
         appenderMediator.waitForFinish();
     }
+
+    public void cancelJobMediator() {
+        jobMediator.cancel();
+    }
 }
