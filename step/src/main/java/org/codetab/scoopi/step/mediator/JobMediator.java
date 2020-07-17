@@ -52,12 +52,21 @@ public class JobMediator {
         monitor.start();
     }
 
+    public void cancel() {
+        jobRunner.cancel();
+    }
+
     public void waitForFinish() {
         try {
+            LOG.info("TM wait for finish");
             taskMediator.waitForFinish();
+            LOG.info("Job runner join");
             jobRunner.join();
+            LOG.info("monitor stop");
             monitor.stop();
+            LOG.info("jobstore close");
             jobStore.close();
+            LOG.info("shutdown set terminate");
             shutdown.setTerminate();
         } catch (final InterruptedException e) {
             errors.inc();

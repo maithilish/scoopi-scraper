@@ -70,25 +70,45 @@ public class ScoopiEngine {
             jobSeedModule.awaitForJobSeed();
             mediatorModule.startJobMediator();
 
-            mediatorModule.waitForJobMediator();
-            mediatorModule.waitForAppenderMediator();
-
         } catch (final CriticalException e) {
             LOG.error("terminate scoopi [{}]", ERROR.FATAL, e);
             throw e;
         }
     }
 
-    public void shutdown() {
-        LOG.info("shutdown ...");
+    public void waitForShutdown() {
+        try {
+            LOG.info("wait for JobMediator");
+            mediatorModule.waitForJobMediator();
+            LOG.info("wait for AppenderMediator");
+            mediatorModule.waitForAppenderMediator();
+        } catch (final CriticalException e) {
+            LOG.error("terminate scoopi [{}]", ERROR.FATAL, e);
+            throw e;
+        }
+    }
+
+    public void shutdown(final boolean cleanShutdown) {
+        if (shutdownModule.hasShutdownStarted()) {
+            return;
+        }
+        shutdownModule.setCleanShutdown(cleanShutdown);
+        if (cleanShutdown) {
+            LOG.info("start normal shutdown ...");
+        } else {
+            LOG.info("cancel requested, start shutdown ...");
+        }
         metricsModule.stopMetrics();
         if (clusterModule.stopCluster()) {
             metricsModule.stopStats();
             LOG.info("scoopi run finished");
-            shutdownModule.setCleanShutdown();
         } else {
             LOG.error("exit scoopi [{}]", ERROR.FATAL);
             System.exit(1);
         }
+    }
+
+    public void cancel() {
+        mediatorModule.cancelJobMediator();
     }
 }

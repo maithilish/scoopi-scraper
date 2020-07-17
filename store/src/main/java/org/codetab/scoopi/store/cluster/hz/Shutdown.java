@@ -1,6 +1,7 @@
 package org.codetab.scoopi.store.cluster.hz;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import javax.inject.Inject;
@@ -36,6 +37,8 @@ public class Shutdown implements IShutdown {
 
     private com.hazelcast.cluster.Cluster clst;
 
+    private AtomicBoolean cancelled = new AtomicBoolean(false);
+
     @Override
     public void init() {
         hz = (HazelcastInstance) cluster.getInstance();
@@ -48,22 +51,11 @@ public class Shutdown implements IShutdown {
     }
 
     @Override
-    public void setDone() {
-        doneMap.put(memberId, true);
-    }
-
-    @Override
-    public void setTerminate() {
-        // FIXME - null or hz not active exception
-        try {
-            terminateMap.put(memberId, true);
-        } catch (HazelcastInstanceNotActiveException e) {
-            LOG.warn("set terminate {}", e.getLocalizedMessage());
-        }
-    }
-
-    @Override
     public <T> boolean tryShutdown(final Function<T, Boolean> func, final T t) {
+        if (cancelled.get() && !cluster.isNodeRunning()) {
+            return func.apply(t);
+        }
+
         try {
             if (clst.getMembers().stream().map(Member::getUuid).map(uuid -> {
                 return ObjectUtils.defaultIfNull(doneMap.get(uuid.toString()),
@@ -78,11 +70,34 @@ public class Shutdown implements IShutdown {
             return false;
         }
 
+        if (cancelled.get()) {
+            LOG.debug("cancel requrested, ignore pending jobs");
+            return func.apply(t);
+        }
+
         if (jobStore.isDone()) {
             return func.apply(t);
         } else {
             LOG.debug("try shutdown, all done, job store isDone false");
             return false;
+        }
+    }
+
+    @Override
+    public void setDone() {
+        if (cluster.isNodeRunning()) {
+            doneMap.put(memberId, true);
+        }
+    }
+
+    @Override
+    public void setTerminate() {
+        if (cluster.isNodeRunning()) {
+            try {
+                terminateMap.put(memberId, true);
+            } catch (HazelcastInstanceNotActiveException e) {
+                LOG.warn("set terminate {}", e.getLocalizedMessage());
+            }
         }
     }
 
@@ -96,5 +111,10 @@ public class Shutdown implements IShutdown {
         } catch (HazelcastInstanceNotActiveException e) {
             LOG.debug("try terminate", e);
         }
+    }
+
+    @Override
+    public void cancel() {
+        cancelled.set(true);
     }
 }

@@ -56,4 +56,9 @@ public class SoloCluster implements ICluster {
         return 1;
     }
 
+    @Override
+    public boolean isNodeRunning() {
+        return true;
+    }
+
 }

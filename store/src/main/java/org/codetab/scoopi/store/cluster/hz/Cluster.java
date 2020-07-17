@@ -149,4 +149,9 @@ public class Cluster implements ICluster {
     public int getSize() {
         return hz.getCluster().getMembers().size();
     }
+
+    @Override
+    public boolean isNodeRunning() {
+        return hz.getLifecycleService().isRunning();
+    }
 }

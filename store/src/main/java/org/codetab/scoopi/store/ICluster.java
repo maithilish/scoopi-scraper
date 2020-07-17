@@ -21,4 +21,6 @@ public interface ICluster {
     Object getTxOptions(Configs configs);
 
     int getSize();
+
+    boolean isNodeRunning();
 }

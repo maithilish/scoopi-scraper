@@ -13,4 +13,6 @@ public interface IShutdown {
     void setTerminate();
 
     void terminate();
+
+    void cancel();
 }
