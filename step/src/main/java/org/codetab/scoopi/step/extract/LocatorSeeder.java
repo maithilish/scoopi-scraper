@@ -86,6 +86,10 @@ public final class LocatorSeeder extends BaseSeeder {
                 locatorGroup.getLocators().size(), group);
         LOG.debug("is locator group defined by defs : {}",
                 locatorGroup.isByDef());
+
+        int seedRetryTimes =
+                configs.getInt("scoopi.seeder.seedRetryTimes", "3");
+
         for (final Locator locator : locatorGroup.getLocators()) {
             // create and push first task payload for each locator
             // so that loader fetch only one document for each locator
@@ -96,52 +100,39 @@ public final class LocatorSeeder extends BaseSeeder {
                 final List<Payload> payloads =
                         payloadFactory.createPayloads(group, firstTaskName,
                                 getStepInfo(), locator.getName(), locator);
+
                 if (payloads.size() == 1) {
                     for (final Payload payload : payloads) {
-                        try {
-                            if (locatorGroup.isByDef()) {
-                                // if seed, push to JM (local or cluster)
-                                payload.getJobInfo()
-                                        .setId(jobMediator.getJobIdSequence());
-                                LOG.debug(
-                                        "locator defined by def, push jobId {} to jobMediator",
-                                        payload.getJobInfo().getId());
-                                jobMediator.pushJob(payload);
+                        for (int r = 1; r <= seedRetryTimes; r++) {
+                            LOG.debug("seed {}, try # {}",
+                                    payload.getJobInfo().getLabel(), r);
+                            boolean logError = false;
+                            if (r < seedRetryTimes) {
+                                // retry on error else break
+                                if (pushPayload(meter, payload, logError)) {
+                                    break;
+                                }
                             } else {
-                                // if from parse link, push to TM (local). JobId
-                                // of parent job is reused
-                                final long linkJobId =
-                                        getPayload().getJobInfo().getId();
-                                payload.getJobInfo().setId(linkJobId);
-                                LOG.debug(
-                                        "link locator, push jobId {} to taskMediator",
-                                        payload.getJobInfo().getId());
-                                taskMediator.pushPayload(payload);
-                            }
-                            meter.mark();
-                        } catch (InterruptedException | JobStateException
-                                | TransactionException e) {
-                            // just log error for this payload and continue
-                            errors.inc();
-                            LOG.error("handover locator,{} [{}]", payload,
-                                    ERROR.INTERNAL, e);
-                            if (e instanceof InterruptedException) {
-                                Thread.currentThread().interrupt();
+                                // on last try if error, log it and continue
+                                logError = true;
+                                pushPayload(meter, payload, logError);
                             }
                         }
                     }
                 } else {
-                    final String message = spaceit("unable to seed locator:",
-                            locator.getName(),
-                            ", expected one payload for taskGroup:", group,
-                            "task:", firstTask.get(), "but got:",
-                            String.valueOf(payloads.size()));
+                    final String message =
+                            spaceit("seed locator:", locator.getName(),
+                                    ", expected one payload for taskGroup:",
+                                    group, "task:", firstTask.get(), "but got:",
+                                    String.valueOf(payloads.size()));
                     errors.inc();
                     LOG.error("{} [{}]", message, ERROR.INTERNAL);
                 }
+
             } else {
                 errors.inc();
-                LOG.error("unable to get first task for locator group: {} [{}]",
+                LOG.error(
+                        "seed locator, get first task for locator group: {} [{}]",
                         group, ERROR.INTERNAL);
             }
         }
@@ -150,5 +141,44 @@ public final class LocatorSeeder extends BaseSeeder {
         }
         LOG.debug("locator group: {}, locators: {}, queued to taskpool",
                 locatorGroup.getGroup(), locatorGroup.getLocators().size());
+    }
+
+    private boolean pushPayload(final Meter meter, final Payload payload,
+            final boolean logError) {
+        try {
+            String pushedTo = null;
+            if (locatorGroup.isByDef()) {
+                // if seed, push to JM (local or cluster)
+                pushedTo = "to jobMediator [locator from def]";
+
+                payload.getJobInfo().setId(jobMediator.getJobIdSequence());
+                jobMediator.pushJob(payload);
+            } else {
+                // if from parse link, push to TM (local). JobId
+                // of parent job is reused
+                pushedTo = "to taskMediator [locator from link]";
+
+                final long linkJobId = getPayload().getJobInfo().getId();
+                payload.getJobInfo().setId(linkJobId);
+                taskMediator.pushPayload(payload);
+            }
+
+            LOG.debug("push {} jobId {} {}", payload.getJobInfo().getLabel(),
+                    payload.getJobInfo().getId(), pushedTo);
+
+            meter.mark();
+            return true;
+        } catch (InterruptedException | JobStateException
+                | TransactionException e) {
+            if (logError) {
+                // log error for this payload and continue
+                errors.inc();
+                LOG.error("push locator,{} [{}]", payload, ERROR.INTERNAL, e);
+            }
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            return false;
+        }
     }
 }
