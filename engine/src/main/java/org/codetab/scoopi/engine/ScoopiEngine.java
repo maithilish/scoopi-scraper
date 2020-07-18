@@ -88,27 +88,22 @@ public class ScoopiEngine {
         }
     }
 
-    public void shutdown(final boolean cleanShutdown) {
-        if (shutdownModule.hasShutdownStarted()) {
-            return;
-        }
-        shutdownModule.setCleanShutdown(cleanShutdown);
-        if (cleanShutdown) {
-            LOG.info("start normal shutdown ...");
-        } else {
-            LOG.info("cancel requested, start shutdown ...");
-        }
+    public void shutdown() {
+        LOG.info("Scoopi shutdown ...");
+        shutdownModule.setNormalShutdown(true);
         metricsModule.stopMetrics();
         if (clusterModule.stopCluster()) {
             metricsModule.stopStats();
             LOG.info("scoopi run finished");
+            shutdownModule.downShutdownLatch();
         } else {
             LOG.error("exit scoopi [{}]", ERROR.FATAL);
             System.exit(1);
         }
     }
 
-    public void cancel() {
+    public void cancel() throws InterruptedException {
         mediatorModule.cancelJobMediator();
+        shutdownModule.awaitShutdown();
     }
 }

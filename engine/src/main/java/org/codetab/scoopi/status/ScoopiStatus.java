@@ -1,4 +1,4 @@
-package org.codetab.scoopi.stat;
+package org.codetab.scoopi.status;
 
 import java.util.LongSummaryStatistics;
 import java.util.Timer;
@@ -13,7 +13,7 @@ import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.metrics.SystemStat;
 
 @Singleton
-public class Stats {
+public class ScoopiStatus {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -33,7 +33,7 @@ public class Stats {
     private Errors errors;
 
     @Inject
-    private Stats() {
+    private ScoopiStatus() {
     }
 
     public void start() {
@@ -53,24 +53,22 @@ public class Stats {
         totalMem.accept(systemStat.getTotalMemory());
     }
 
-    public void outputStats() {
+    public void outputStats(final boolean cancelled) {
         LOG.info("{}", "");
         LOG.info("{}", "--- Summary ---");
-        long errorCount = errors.getCount();
-        if (errorCount == 0) {
-            LOG.info("scoopi run success");
+        if (cancelled) {
+            LOG.info("Status: scoopi run cancelled");
         } else {
-            LOG.info("scoopi run errors: {}", errorCount);
-            LOG.info("see logs/error.log for details");
+            long errorCount = errors.getCount();
+            if (errorCount == 0) {
+                LOG.info("Status: normal shutdown, scoopi run successful");
+            } else {
+                LOG.info("Status: normal shutdown but with errors: {}",
+                        errorCount);
+                LOG.info("see logs/error.log for details");
+            }
         }
-        LOG.info("{}  {}", "time taken:", stopWatch);
-    }
-
-    public void outputCancelled() {
-        LOG.info("{}", "");
-        LOG.info("{}", "--- Summary ---");
-        LOG.error("Scoopi run cancelled");
-        LOG.info("{}  {}", "time taken:", stopWatch);
+        LOG.info("Time taken: {}", stopWatch);
     }
 
     public void outputMemStats() {

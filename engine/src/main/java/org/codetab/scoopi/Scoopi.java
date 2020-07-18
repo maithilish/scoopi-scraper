@@ -44,7 +44,7 @@ public final class Scoopi {
         } catch (Exception e) {
             // ignore, error logged in scoopiEngine
         } finally {
-            scoopiEngine.shutdown(true);
+            scoopiEngine.shutdown();
         }
     }
 

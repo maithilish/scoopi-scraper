@@ -111,5 +111,9 @@
                 <period>5</period>
             </serializer>
         </metrics>
+        <shutdown>
+            <timeout>10</timeout>
+            <timeoutUnit>SECONDS</timeoutUnit>
+        </shutdown>
     </scoopi>
 </configuration>
