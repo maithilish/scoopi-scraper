@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codetab.scoopi.stat.Stats;
+import org.codetab.scoopi.status.ScoopiStatus;
 import org.codetab.scoopi.step.webdriver.WebDriverPool;
 
 /**
@@ -20,42 +20,35 @@ public class ShutdownHook extends Thread {
     private static final Logger LOG = LogManager.getLogger();
 
     @Inject
-    private Stats stats;
+    private ScoopiStatus scoopiStatus;
     @Inject
     private WebDriverPool webDriverPool;
     @Inject
     private ScoopiEngine scoopiEngine;
 
-    private boolean cleanShutdown = false;
+    private boolean normalShutdown = false;
 
-    @Inject
     public ShutdownHook() {
         // cs - if private then class has to be final which is unable to mock
-        LOG.info("shutdown hook created");
+        LOG.info("shutdown hook added");
     }
 
-    /**
-     * log activities and memory stats.
-     */
     @Override
     public synchronized void start() {
 
-        if (cleanShutdown) {
-            stats.outputStats();
+        if (normalShutdown) {
+            scoopiStatus.outputMemStats();
+            scoopiStatus.outputStats(false);
         } else {
             LOG.info("cancel requested");
             try {
                 scoopiEngine.cancel();
-                scoopiEngine.waitForShutdown();
-            } catch (Exception e) {
-                LOG.error("cancel run", e);
-            } finally {
-                scoopiEngine.shutdown(false);
+            } catch (InterruptedException e) {
+                LOG.error("cancel wait", e);
             }
-            stats.outputCancelled();
+            scoopiStatus.outputMemStats();
+            scoopiStatus.outputStats(true);
         }
-
-        stats.outputMemStats();
 
         LOG.debug("close webdrivers");
         webDriverPool.close();
@@ -64,8 +57,7 @@ public class ShutdownHook extends Thread {
         LogManager.shutdown();
     }
 
-    public void setCleanShutdown(final boolean cleanShutdown) {
-        this.cleanShutdown = cleanShutdown;
+    public void setNormalShutdown(final boolean normalShutdown) {
+        this.normalShutdown = normalShutdown;
     }
-
 }

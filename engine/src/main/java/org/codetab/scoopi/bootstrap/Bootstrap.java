@@ -68,6 +68,8 @@ public class Bootstrap {
             int qTimeout =
                     Integer.parseInt(bootConfigs.getConfig(qTimeoutKey, "60"));
 
+            LOG.info("wait for cluster quorum of {} nodes, timeout {}", qSize,
+                    qTimeout);
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 while (true) {
                     if (cluster.getSize() >= qSize) {
@@ -83,10 +85,9 @@ public class Bootstrap {
                 LOG.error("failed to get quorum of {} after {} seconds", qSize,
                         qTimeout);
                 LOG.info(
-                        "timeout and quorum size are set with {} and {} properties",
-                        qTimeoutKey, qSizeKey);
-                LOG.info(
-                        "set them via system property or in scoopi.properties");
+                        "timeout and quorum size are set with {} and {} properties, {}",
+                        qTimeoutKey, qSizeKey,
+                        "set them via system property or scoopi.properties");
                 cluster.shutdown();
                 throw new CriticalException("failed to get cluster quorum", e);
             }

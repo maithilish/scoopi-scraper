@@ -1,4 +1,4 @@
-package org.codetab.scoopi.stat;
+package org.codetab.scoopi.status;
 
 import java.util.TimerTask;
 
@@ -13,10 +13,10 @@ import javax.inject.Inject;
 public class MemoryTask extends TimerTask {
 
     @Inject
-    private Stats stats;
+    private ScoopiStatus scoopiStatus;
 
     @Override
     public void run() {
-        stats.collectMemStats();
+        scoopiStatus.collectMemStats();
     }
 }

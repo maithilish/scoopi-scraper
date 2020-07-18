@@ -13,7 +13,6 @@ import javax.inject.Singleton;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.store.ICluster;
 
@@ -104,18 +103,19 @@ public class Cluster implements ICluster {
     @Override
     public Object getTxOptions(final Configs configs) {
         int txTimeout;
-        try {
-            txTimeout = Integer
-                    .parseInt(configs.getConfig("scoopi.cluster.tx.timeout"));
-            TimeUnit timeUnit = TimeUnit.valueOf(configs
-                    .getConfig("scoopi.cluster.tx.timeoutUnit").toUpperCase());
-            TransactionType txType = TransactionType.valueOf(
-                    configs.getConfig("scoopi.cluster.tx.type").toUpperCase());
-            return new TransactionOptions().setTransactionType(txType)
-                    .setTimeout(txTimeout, timeUnit);
-        } catch (NumberFormatException | ConfigNotFoundException e) {
-            throw new CriticalException(e);
-        }
+
+        txTimeout = configs.getInt("scoopi.cluster.tx.timeout", "10");
+
+        TimeUnit timeUnit = TimeUnit.valueOf(
+                configs.getConfig("scoopi.cluster.tx.timeoutUnit", "SECONDS")
+                        .toUpperCase());
+
+        TransactionType txType = TransactionType.valueOf(
+                configs.getConfig("scoopi.cluster.tx.type", "TWO_PHASE")
+                        .toUpperCase());
+
+        return new TransactionOptions().setTransactionType(txType)
+                .setTimeout(txTimeout, timeUnit);
     }
 
     /**

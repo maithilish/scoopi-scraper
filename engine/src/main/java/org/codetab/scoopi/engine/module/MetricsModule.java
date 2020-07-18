@@ -11,7 +11,7 @@ import org.codetab.scoopi.metrics.IMetricsServer;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.metrics.SystemStat;
 import org.codetab.scoopi.metrics.serialize.Serializer;
-import org.codetab.scoopi.stat.Stats;
+import org.codetab.scoopi.status.ScoopiStatus;
 import org.codetab.scoopi.store.ICluster;
 
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -29,7 +29,7 @@ public class MetricsModule {
     @Inject
     private SystemStat systemStat;
     @Inject
-    private Stats stats;
+    private ScoopiStatus scoopiStatus;
     @Inject
     private Errors errors;
 
@@ -65,11 +65,11 @@ public class MetricsModule {
     }
 
     public void startStats() {
-        stats.start();
+        scoopiStatus.start();
     }
 
     public void stopStats() {
-        stats.stop();
+        scoopiStatus.stop();
     }
 
     public void startErrors() {
