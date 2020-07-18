@@ -68,9 +68,10 @@ public class JobMediator {
             jobStore.close();
             LOG.info("shutdown set terminate");
             shutdown.setTerminate();
-        } catch (final InterruptedException e) {
+        } catch (InterruptedException e) {
             errors.inc();
             LOG.error("wait for finish interrupted [{}]", ERROR.INTERNAL, e);
+            Thread.currentThread().interrupt();
         }
     }
 

@@ -61,6 +61,9 @@ public class TaskRunner extends Thread {
                     | IllegalAccessException | InterruptedException e) {
                 errors.inc();
                 LOG.error("unable to initiate task [{}]", ERROR.INTERNAL, e);
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }

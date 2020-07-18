@@ -63,10 +63,12 @@ public class JobRunner extends Thread {
                 LOG.debug("{}, retry", e.getMessage());
                 Uninterruptibles.sleepUninterruptibly(jobTakeRetryDelay,
                         TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             } catch (JobStateException | IllegalStateException
-                    | TransactionException | TimeoutException e) {
+                    | InterruptedException | TransactionException
+                    | TimeoutException e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
                 if (e instanceof IllegalStateException) {
                     LOG.error("unable to initiate job [{}]", ERROR.INTERNAL, e);
                 }

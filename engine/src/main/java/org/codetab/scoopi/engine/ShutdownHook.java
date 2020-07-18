@@ -44,6 +44,7 @@ public class ShutdownHook extends Thread {
             try {
                 scoopiEngine.cancel();
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 LOG.error("cancel wait", e);
             }
             scoopiStatus.outputMemStats();
