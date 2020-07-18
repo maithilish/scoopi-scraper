@@ -24,6 +24,7 @@
               org.codetab.scoopi.step.extract.LocatorSeeder
             ]]>
             </class>
+            <seedRetryTimes>3</seedRetryTimes>
         </seeder>
         <poolsize>
             <start>4</start>
