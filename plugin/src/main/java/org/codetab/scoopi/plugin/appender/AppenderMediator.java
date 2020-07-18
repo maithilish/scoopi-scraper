@@ -74,6 +74,7 @@ public class AppenderMediator {
                 errors.inc();
                 LOG.error("close appender: {} [{}]", appenderName,
                         ERROR.INTERNAL);
+                Thread.currentThread().interrupt();
             }
         }
     }

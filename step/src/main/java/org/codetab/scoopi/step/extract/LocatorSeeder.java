@@ -119,12 +119,15 @@ public final class LocatorSeeder extends BaseSeeder {
                                 taskMediator.pushPayload(payload);
                             }
                             meter.mark();
-                        } catch (final InterruptedException | JobStateException
+                        } catch (InterruptedException | JobStateException
                                 | TransactionException e) {
                             // just log error for this payload and continue
                             errors.inc();
                             LOG.error("handover locator,{} [{}]", payload,
                                     ERROR.INTERNAL, e);
+                            if (e instanceof InterruptedException) {
+                                Thread.currentThread().interrupt();
+                            }
                         }
                     }
                 } else {

@@ -81,6 +81,9 @@ public abstract class Step implements IStep {
             }
         } catch (DefNotFoundException | InterruptedException | JobStateException
                 | IllegalStateException | TransactionException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             throw new StepRunException("unable to handover", e);
         }
     }

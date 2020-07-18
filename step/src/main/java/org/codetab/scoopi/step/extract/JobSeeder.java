@@ -66,12 +66,12 @@ public class JobSeeder {
         for (final Payload payload : payloads) {
             try {
                 taskMediator.pushPayload(payload);
-            } catch (final InterruptedException e) {
-                // FIXME - interruptedFix refactor all
+            } catch (InterruptedException e) {
                 String group = payload.getJobInfo().getGroup();
                 errors.inc();
                 LOG.error("seed locator group: {} [{}]", group, ERROR.INTERNAL,
                         e);
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -86,6 +86,7 @@ public class JobSeeder {
         try {
             seedLatch.await();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new CriticalException("await for seed done", e);
         }
     }

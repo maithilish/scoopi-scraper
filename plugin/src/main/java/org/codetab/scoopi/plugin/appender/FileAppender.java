@@ -83,6 +83,7 @@ public final class FileAppender extends Appender {
             } catch (final InterruptedException e) {
                 errors.inc();
                 LOG.error("appender: {} [{}]", getName(), ERROR.INTERNAL, e);
+                Thread.currentThread().interrupt();
             }
             if (nonNull(printPayload)) {
                 String jobFilePath = getJobFilePath(printPayload);

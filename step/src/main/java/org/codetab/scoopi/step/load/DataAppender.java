@@ -63,6 +63,7 @@ public class DataAppender extends BaseAppender {
                 }
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             appendError = true;
         }
         if (appendError) {

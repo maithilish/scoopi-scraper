@@ -62,6 +62,9 @@ public class LocatorCreator extends BaseProcessor {
             jobMediator.pushJobs(payloads, jobId);
         } catch (InterruptedException | JobStateException
                 | TransactionException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             final String message =
                     spaceit("handover link locators,", getPayload().toString());
             throw new StepRunException(message, e);

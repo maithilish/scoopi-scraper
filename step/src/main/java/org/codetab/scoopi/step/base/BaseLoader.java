@@ -253,6 +253,9 @@ public abstract class BaseLoader extends Step {
             jobMediator.pushJobs(payloads, jobId);
         } catch (InterruptedException | JobStateException
                 | TransactionException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             final String message =
                     spaceit("create defined tasks for the document and push",
                             getPayload().toString());

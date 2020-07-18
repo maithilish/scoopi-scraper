@@ -82,6 +82,9 @@ public class Bootstrap {
                 future.get(qTimeout, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException
                     | TimeoutException e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
                 LOG.error("failed to get quorum of {} after {} seconds", qSize,
                         qTimeout);
                 LOG.info(

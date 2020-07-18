@@ -54,6 +54,7 @@ public final class ListAppender extends Appender {
             } catch (InterruptedException e) {
                 errors.inc();
                 LOG.error("appender: {} [{}]", getName(), ERROR.INTERNAL, e);
+                Thread.currentThread().interrupt();
             }
         }
         LOG.info("appender: {}, {} item appended", getName(), count - 1);
