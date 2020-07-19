@@ -103,6 +103,9 @@
         <monitor>
             <timerPeriod>1000</timerPeriod>
         </monitor>
+        <loader>
+            <fetchDelay>1000</fetchDelay>
+        </loader>
         <metrics>
             <server>
                 <enable>true</enable>

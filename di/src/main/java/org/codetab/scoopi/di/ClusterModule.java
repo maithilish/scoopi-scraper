@@ -24,7 +24,7 @@ public class ClusterModule extends BaseModule {
                 .to(org.codetab.scoopi.store.cluster.hz.JobStore.class)
                 .in(Singleton.class);
         bind(IShutdown.class)
-                .to(org.codetab.scoopi.store.cluster.hz.Shutdown.class)
+                .to(org.codetab.scoopi.store.cluster.hz.ClusterShutdown.class)
                 .in(Singleton.class);
 
         bind(IBarricade.class)

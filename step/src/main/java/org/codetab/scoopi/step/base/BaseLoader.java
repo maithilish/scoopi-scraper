@@ -54,6 +54,8 @@ public abstract class BaseLoader extends Step {
     private JobMediator jobMediator;
     @Inject
     private Persists persists;
+    @Inject
+    private FetchThrottle fetchThrottle;
 
     private Locator locator;
     private Document document;
@@ -174,8 +176,10 @@ public abstract class BaseLoader extends Step {
             // no active document, create new one
             byte[] documentObject = null;
             try {
+                fetchThrottle.acquirePermit();
                 // fetch documentObject as byte[]
                 documentObject = fetchDocumentObject(locator.getUrl());
+                fetchThrottle.releasePermit();
             } catch (final IOException e) {
                 final String message = "unable to fetch document page";
                 throw new StepRunException(message, e);
