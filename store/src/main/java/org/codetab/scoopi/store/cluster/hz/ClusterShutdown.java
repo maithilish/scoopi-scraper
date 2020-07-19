@@ -19,7 +19,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.HazelcastInstanceNotActiveException;
 
 @Singleton
-public class Shutdown implements IShutdown {
+public class ClusterShutdown implements IShutdown {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -61,7 +61,8 @@ public class Shutdown implements IShutdown {
                 return ObjectUtils.defaultIfNull(doneMap.get(uuid.toString()),
                         false);
             }).anyMatch(v -> v.equals(false))) {
-                LOG.debug("try shutdown, all not done, job store isDone {}",
+                LOG.debug(
+                        "try shutdown [failed], all nodes not done, job store isDone {}",
                         jobStore.isDone());
                 return false;
             }
@@ -71,14 +72,17 @@ public class Shutdown implements IShutdown {
         }
 
         if (cancelled.get()) {
-            LOG.debug("cancel requrested, ignore pending jobs");
+            LOG.info(
+                    "try shutdown [success], cancel requrested, ignore pending jobs");
             return func.apply(t);
         }
 
         if (jobStore.isDone()) {
+            LOG.info("try shutdown [success], all nodes and job store done");
             return func.apply(t);
         } else {
-            LOG.debug("try shutdown, all done, job store isDone false");
+            LOG.debug(
+                    "try shutdown [failed], all nodes done but job store not done");
             return false;
         }
     }

@@ -22,7 +22,7 @@ public class SoloModule extends BaseModule {
                 .to(org.codetab.scoopi.store.solo.simple.JobStore.class)
                 .in(Singleton.class);
         bind(IShutdown.class)
-                .to(org.codetab.scoopi.store.solo.simple.Shutdown.class)
+                .to(org.codetab.scoopi.store.solo.simple.SoloShutdown.class)
                 .in(Singleton.class);
 
         // solo - dummy cluster, barricade

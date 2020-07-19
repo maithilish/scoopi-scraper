@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Payload;
+import org.codetab.scoopi.step.base.FetchThrottle;
 import org.codetab.scoopi.store.IPayloadStore;
 
 @Singleton
@@ -24,9 +25,12 @@ public class TaskMediator {
     @Inject
     private StateFliper stateFliper;
     @Inject
+    private FetchThrottle fetchThrottle;
+    @Inject
     private Errors errors;
 
     public void start() {
+        fetchThrottle.init();
         taskRunner.start();
     }
 

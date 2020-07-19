@@ -58,16 +58,23 @@ public class JobMediator {
 
     public void waitForFinish() {
         try {
-            LOG.info("TM wait for finish");
+            LOG.debug("wait for finish");
+
             taskMediator.waitForFinish();
-            LOG.info("Job runner join");
+            LOG.debug("task mediator finished");
+
             jobRunner.join();
-            LOG.info("monitor stop");
+            LOG.debug("Job runner joined");
+
             monitor.stop();
-            LOG.info("jobstore close");
+            LOG.debug("monitor stopped");
+
             jobStore.close();
-            LOG.info("shutdown set terminate");
+            LOG.debug("jobstore closed");
+
             shutdown.setTerminate();
+            LOG.debug("shutdown terminate set");
+
         } catch (InterruptedException e) {
             errors.inc();
             LOG.error("wait for finish interrupted [{}]", ERROR.INTERNAL, e);

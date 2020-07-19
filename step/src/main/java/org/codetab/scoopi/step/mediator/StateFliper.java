@@ -30,13 +30,7 @@ public class StateFliper {
         LOG.info("task mediator done, try shutdown");
         shutdown.setDone();
 
-        // if (cancelled.get()) {
-        // don't consult jobStore to get pending job count
-        // return shutdownFunction.apply(this);
-        // } else {
-        // }
-
-        // shutdown consults jobStore and shuts only if no job pending
+        // consult jobStore and shut only if no job pending or cancel is set
         if (shutdown.tryShutdown(shutdownFunction, this)) {
             LOG.info("task mediator shutdown successful");
             return true;

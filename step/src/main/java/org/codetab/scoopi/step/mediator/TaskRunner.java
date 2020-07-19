@@ -46,6 +46,7 @@ public class TaskRunner extends Thread {
             try {
                 int takeTimeout = 0;
                 if (payloadStore.getPayloadsCount() == 0) {
+                    // no payload wait else take payload without wait
                     takeTimeout = taskTakeTimeout;
                 }
                 if (initiateTask(takeTimeout)) {

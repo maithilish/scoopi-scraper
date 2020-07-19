@@ -12,7 +12,7 @@ import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
 
 @Singleton
-public class Shutdown implements IShutdown {
+public class SoloShutdown implements IShutdown {
 
     private static final Logger LOG = LogManager.getLogger();
 
