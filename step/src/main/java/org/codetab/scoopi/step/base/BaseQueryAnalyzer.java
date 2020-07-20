@@ -35,7 +35,6 @@ public abstract class BaseQueryAnalyzer extends Step {
             throw new StepRunException(message);
         }
 
-        // TODO move this to load as loadPage()
         postInitialize();
     }
 

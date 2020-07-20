@@ -44,7 +44,7 @@ public class DataAppender extends BaseAppender {
                 PrintPayload printPayload = objectFactory.createPrintPayload(
                         getPayload().getJobInfo(), encodedData);
 
-                // FIXME whether streaming is required
+                // TODO check whether needs streaming
                 doAppend(appender, printPayload);
                 printPayloads.add(printPayload);
 

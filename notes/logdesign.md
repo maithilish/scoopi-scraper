@@ -12,7 +12,7 @@ Step errors
  - throw StepRunException
  - catch in Task 
  - terminate the step
- - count error in Errors
+ - count error only if data error or error that has impact on data
 
 Step errors in some items but others are fine
  - catch and log error

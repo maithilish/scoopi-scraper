@@ -58,6 +58,7 @@ public abstract class BaseAppender extends Step {
                 encoders.createEncoders(plugins.get(), stepsName, stepName);
             }
         } catch (Exception e) {
+            // TODO - validate appender/encoder def at boot, on error shutdown
             throw new StepRunException("unable to create appenders", e);
         }
     }

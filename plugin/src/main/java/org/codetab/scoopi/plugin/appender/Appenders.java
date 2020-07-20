@@ -26,14 +26,23 @@ public class Appenders extends HashMap<String, Appender> {
     @Inject
     private Errors errors;
 
+    /**
+     * For each appender plugin, get appender if exists else create and get a
+     * new one and put. If unable to create an appender error is logged.
+     * @param plugins
+     * @param stepsName
+     * @param stepName
+     */
     public void createAppenders(final List<Plugin> plugins,
             final String stepsName, final String stepName) {
 
         for (Plugin plugin : plugins) {
             try {
                 String appenderName = dashit(stepName, plugin.getName());
+                // avoid calling synchronized createAppender
                 Appender appender =
                         appenderMediator.getAppender(appenderName, plugin);
+                // if no such appender then call createAppender
                 if (isNull(appender)) {
                     appender = appenderMediator.createAppender(appenderName,
                             plugin);

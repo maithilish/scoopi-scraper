@@ -1,7 +1,6 @@
 package org.codetab.scoopi.config;
 
 import static java.util.Objects.isNull;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.Date;
 
@@ -9,20 +8,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.CriticalException;
 
 @Singleton
 public class Configs {
-
-    private static final Logger LOG = LogManager.getLogger();
-
-    private static final int TIMEOUT_MILLIS = 120000;
-
-    private Marker marker;
 
     @Inject
     private ConfigProperties configProperties;
@@ -166,7 +156,6 @@ public class Configs {
         return configProperties.getBoolean(configKey, true);
     }
 
-    // FIXME - testfix, below methods needs some cleanup, above cleaned up
     /**
      *
      * <p>
@@ -196,9 +185,10 @@ public class Configs {
         return modeInfo;
     }
 
-    public int getTimeout() {
+    public int getWebClientTimeout() {
+        final int defaultTimeout = 120000;
         return configProperties.getInt("scoopi.webClient.timeout",
-                TIMEOUT_MILLIS);
+                defaultTimeout);
     }
 
     /**
@@ -213,17 +203,15 @@ public class Configs {
      * @return user agent string
      */
     public String getUserAgent() {
-        String userAgent =
+        String defaultUserAgent =
                 "Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0"; //$NON-NLS-1$
-        final String key = "scoopi.webClient.userAgent";
+        String key = "scoopi.webClient.userAgent";
         try {
-            userAgent = configProperties.getConfig(key);
-        } catch (final ConfigNotFoundException e) {
-            final String message = spaceit("config not found:", key,
-                    ", defaults to: ", userAgent);
-            LOG.warn(marker, "{}, {}", e, message);
+            return configProperties.getConfig(key);
+        } catch (ConfigNotFoundException e) {
+            return defaultUserAgent;
         }
-        return userAgent;
+
     }
 
     public boolean isMetricsServerEnabled() {

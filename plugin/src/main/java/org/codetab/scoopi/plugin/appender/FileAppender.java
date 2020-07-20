@@ -56,7 +56,6 @@ public final class FileAppender extends Appender {
                             "ddMMMyyyy-HHmmss"));
             setInitialized(true);
         } catch (DefNotFoundException e) {
-            // FIXME - logfix, dataerror or critical
             errors.inc();
             LOG.error("unable to create appender: {} [{}]", getName(),
                     ERROR.DATAERROR, e);

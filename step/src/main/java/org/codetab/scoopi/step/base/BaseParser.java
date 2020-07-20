@@ -101,7 +101,6 @@ public abstract class BaseParser extends Step {
 
         persist = persists.persistData(jobInfo);
 
-        // TODO move this to load as loadPage()
         postInitialize();
     }
 

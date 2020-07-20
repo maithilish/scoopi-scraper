@@ -7,7 +7,6 @@ import java.util.concurrent.BlockingQueue;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
@@ -15,7 +14,6 @@ import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.metrics.Errors;
-import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.model.PrintPayload;
 
@@ -84,32 +82,28 @@ public abstract class Appender implements Runnable {
      * If size is invalid, then queue is not initialized.
      */
     public void initializeQueue() {
-        String queueSize = null;
+        String qSizeValue = null;
         try {
-            queueSize = configs.getConfig("scoopi.appender.queueSize"); //$NON-NLS-1$
+            qSizeValue = configs.getConfig("scoopi.appender.queueSize"); //$NON-NLS-1$
         } catch (ConfigNotFoundException e) {
         }
         try {
-            queueSize = pluginDef.getValue(plugin, "queueSize");
+            qSizeValue = pluginDef.getValue(plugin, "queueSize");
         } catch (DefNotFoundException e) {
         }
-        /*
-         * default queue size. configService mock returns null so default is set
-         * here
-         */
-        if (StringUtils.isBlank(queueSize)) {
-            queueSize = "4096"; //$NON-NLS-1$
-        }
+
+        final int defaultQSize = 4096;
+        int qSize = defaultQSize;
         try {
-            queue = new ArrayBlockingQueue<>(Integer.parseInt(queueSize));
-            LOG.info("initialized appender: {}, queue size: {}", name,
-                    queueSize);
+            qSize = Integer.parseInt(qSizeValue);
         } catch (NumberFormatException e) {
-            // FIXME - logfix, throw critical exception
-            errors.inc();
-            LOG.error("unable to create appender: {} [{}]", name,
-                    ERROR.INTERNAL);
+            LOG.error("invalid appender queue size {}, defaults {}", qSizeValue,
+                    qSize);
         }
+
+        queue = new ArrayBlockingQueue<>(qSize);
+        LOG.info("initialized appender: {}, queue size: {}", name, qSizeValue);
+
     }
 
     public BlockingQueue<PrintPayload> getQueue() {
