@@ -86,7 +86,7 @@ public class PageLoader extends BaseLoader {
 
         if (protocol.equals("http") || protocol.equals("https")) {
 
-            final int timeout = configs.getTimeout();
+            final int timeout = configs.getWebClientTimeout();
             final String userAgent = configs.getUserAgent();
 
             final String urlSpecEscaped = httpHelper.escapeUrl(urlSpec);

@@ -40,7 +40,7 @@ public class Encoders extends HashMap<String, List<IEncoder<?>>> {
             try {
                 encoderPlugins = pluginDef.getPlugins(plugin);
             } catch (Exception e) {
-                throw new StepRunException("unable to create appenders", e);
+                throw new StepRunException("unable to get encoder plugins", e);
             }
             if (nonNull(encoderPlugins) && encoderPlugins.isPresent()) {
                 List<IEncoder<?>> encoders = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Encoders extends HashMap<String, List<IEncoder<?>>> {
                         encoders.add(encoder);
                     } catch (ClassCastException | IllegalStateException
                             | ClassNotFoundException | DefNotFoundException e) {
-                        // FIXME - logfix dataerror or critical
+                        // log error and proceed
                         errors.inc();
                         LOG.error(
                                 "unable to create encoder from plugin: {} [{}]",

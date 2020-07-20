@@ -91,7 +91,12 @@ public class JobStore implements IClusterJobStore {
         // ScoopiEngine stops cluster
     }
 
-    // FIXME - bootfix, document the logic
+    /*
+     * For the payload, it creates ClusterJob containing job taken status and
+     * the node, and adds it to txJobsMap. If map already contains ClusterJob
+     * for the jobId then duplicate exception is thrown else payload is added to
+     * txPayloadsMap.
+     */
     @Override
     public boolean putJob(final Payload payload)
             throws InterruptedException, TransactionException {
@@ -307,9 +312,10 @@ public class JobStore implements IClusterJobStore {
 
             return true;
         } catch (Exception e) {
-            // FIXME this method is called when an node crashes and tx ex
-            // is thrown, but if this also throws tx ex, then reset and also
-            // termination fails
+            // TODO look at this if data error in cluster
+            // this method is called when an node crashes and tx ex is thrown,
+            // but if this also throws tx ex, then reset and also termination
+            // fails
             tx.rollbackTransaction();
             String message = spaceit("reset taken job", String.valueOf(jobId));
             throw new TransactionException(message, e);

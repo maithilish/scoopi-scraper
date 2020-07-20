@@ -41,6 +41,7 @@ Normal shutdown - In Scoopi, if cancel is not requested with Ctrl-C then normal 
 Cancel the run - If JVM receives Ctrl-C it agains goes for orderly shutdown but immediately starts shutdown hook. The shutdown hook run() sets cancel status by calling scoopiEngine.cancel() which in turn sets cancelled flag in JobRunner and waits for normal shut down as explained above using a countdown latch in shutdownModule. The cancelled flag in jobRunner breaks it and no more jobs are pushed to taskMediator. Whatever running in task pool are eventually are normally completed. When monitor checks the condition IShutdown.tryShutdown() changes tmState to SHUTDOWN as a special case because its cancelled flag is set. The main method calles scoopiEngine.shutdown() which apart from stopping the metrics and cluster as explained above, also count down the shutdownModule countdown latch. The shutdown hook thread waiting on this latch wakes and outputs cancel status and does cleanup such as closing webdriver and log manager and eventually JVM terminates. This is graceful termination as whatever already running jobs are completed but no new jobs are allowed to run.
 
 
+InterruptedException - Scoopi doesn't use them for shutdown. Normally, methods throws them, but few catch them to log message. Threads are reinterrupted with Thread.currentThread().interrupt().
 
 ## Mediators
 
@@ -155,5 +156,17 @@ TaskRunner
       take payload from payloadStore and push pool service
         no payload in store wait (scoopi.task.takeTimeout) else take payload without wait
 ```
+
+## Appenders
+
+The appender step in default steps uses DataAppender Step to append Data. It uses FileAppender plugin to write data files and CsvEncoder plugin to encode.
+
+The baseAppender holds Appenders which is a collection (HashMap) of appenders defined for the step. Appenders.createAppenders initialize collection by get or create appender from AppenderMediator which is holder of all defined appenders. Similarly, BaseAppender also hold Encoders which is collection of encoders.
+
+The Appender (abstract) is a runnable that uses BlockingQueue<PrintPayload> and defines an abstract method append. The AppenderMediator submits the newly created appender (runnable) to appenderPoolService which  runs the appender in its pool of Executor.
+
+FileAppender is subclass of Appender that implements run() and append() methods. The append method puts printPayload to queue while the run method takes printPayload and writes its data object (list or object) to data file. For each payload PrintWriter is created from printPayload jobId info. Appender run breaks when printPayload is Marker.END_OF_STREAM.
+
+The main thread waits on JobMediator.waitForFinish(). The wait ends once all tasks and jobs are finished and there is nothing left to append. Next, main calls waitForAppenderMediator which calls appenderMediator.closeAll() and appenderMediator.waitForFinish(). The closeAll appends Marker.END_OF_STREAM to all appenders which breaks run in all blocking appenders. The waitForFinish calls appenderPoolService.waitForFinish() to shutdown the executor responsible to run appenders.
 
 

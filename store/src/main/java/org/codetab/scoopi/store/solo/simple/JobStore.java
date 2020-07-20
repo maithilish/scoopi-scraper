@@ -87,7 +87,6 @@ public class JobStore implements ISoloJobStore {
 
     @Override
     public int getJobTakenByMemberCount() {
-        // TODO Auto-generated method stub
         return 0;
     }
 

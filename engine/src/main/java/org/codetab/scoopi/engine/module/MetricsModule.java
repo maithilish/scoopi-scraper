@@ -54,7 +54,6 @@ public class MetricsModule {
     }
 
     public void stopMetrics() {
-        // FIXME is null
         metricsSerializer.stop();
         if (configs.isMetricsServerEnabled()) {
             int period =
