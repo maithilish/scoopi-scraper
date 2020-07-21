@@ -29,12 +29,18 @@ public class JobSeedModule {
 
         if (jobSeedBrricade.isAllowed()) {
             // seeder node
+            LOG.info("allowed to pass barricade, seed jobs");
             jobSeeder.clearDanglingJobs();
             jobSeeder.seedLocatorGroups();
             CompletableFuture.runAsync(() -> {
+                LOG.debug("await for seed done");
                 jobSeeder.awaitForSeedDone();
+
+                LOG.debug("set jobStore state to READY");
                 jobStore.setState(IJobStore.State.READY);
+
                 jobSeedBrricade.finish();
+                LOG.debug("job seed done");
             });
         } else {
             LOG.info("jobs are already seeded by another node");

@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.IPluginDef;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.model.Plugin;
@@ -82,27 +81,24 @@ public abstract class Appender implements Runnable {
      * If size is invalid, then queue is not initialized.
      */
     public void initializeQueue() {
-        String qSizeValue = null;
-        try {
-            qSizeValue = configs.getConfig("scoopi.appender.queueSize"); //$NON-NLS-1$
-        } catch (ConfigNotFoundException e) {
-        }
-        try {
-            qSizeValue = pluginDef.getValue(plugin, "queueSize");
-        } catch (DefNotFoundException e) {
-        }
+        String configKey = "scoopi.appender.queueSize";
+        final int defaultValue = 4096;
 
-        final int defaultQSize = 4096;
-        int qSize = defaultQSize;
+        int qSize = configs.getInt(configKey, defaultValue);
+
+        String qSizeInPlugin = null;
         try {
-            qSize = Integer.parseInt(qSizeValue);
+            qSizeInPlugin = pluginDef.getValue(plugin, "queueSize");
+            qSize = Integer.parseInt(qSizeInPlugin);
+        } catch (DefNotFoundException e) {
         } catch (NumberFormatException e) {
-            LOG.error("invalid appender queue size {}, defaults {}", qSizeValue,
-                    qSize);
+            LOG.error(
+                    "invalid queueSize in appender plugin, use default: {}, parse error:",
+                    qSize, e);
         }
 
         queue = new ArrayBlockingQueue<>(qSize);
-        LOG.info("initialized appender: {}, queue size: {}", name, qSizeValue);
+        LOG.info("initialized appender: {}, queue size: {}", name, qSize);
 
     }
 

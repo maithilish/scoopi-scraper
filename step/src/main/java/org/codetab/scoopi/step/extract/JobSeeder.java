@@ -84,16 +84,18 @@ public class JobSeeder {
 
     public void awaitForSeedDone() {
         try {
+            LOG.debug("await for job seed completion");
             seedLatch.await();
+            LOG.debug("job seed completed");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new CriticalException("await for seed done", e);
+            throw new CriticalException("await for job seed completion", e);
         }
     }
 
     public void countDownSeedLatch() {
         seedLatch.countDown();
-        LOG.debug("job seed latch countdown");
+        LOG.debug("count down job seed latch by [1]");
     }
 
 }

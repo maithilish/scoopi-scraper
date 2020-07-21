@@ -55,6 +55,10 @@ public class Def implements IDef {
             defs.validateEffectiveDefs(effectiveDefs);
             defsMap = Lists.newArrayList(effectiveDefs.fields());
         } catch (Exception e) {
+            // Jackson exception toString is useful to find error in def files.
+            // Stack trace is not useful.
+            LOG.error("{}", e.toString());
+            // higher up logs stack trace
             throw new CriticalException("unable to initialize defs", e);
         }
     }

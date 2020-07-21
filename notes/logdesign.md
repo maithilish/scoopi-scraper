@@ -1,6 +1,10 @@
 # Scoopi Logging
 
 
+## Log4j2
+
+Scoopi uses log4j2 async appenders, so shutdown before exit with LogManager.shutdown() to flush logs.
+
 ## Categories
 
 Critical errors 
@@ -79,3 +83,27 @@ In a logging statement, if exception is last argument then stack trace is printe
     LOG.error("message", e);
 	LogDemo [ERROR]  message java.lang.IllegalStateException: x not allowed
 	  at log2.LogDemo.logException(LogDemo.java:18) // stack trace
+	  
+# Examples
+
+ConfigProperties.getBoolean()
+
+        LOG.error("config: {}, {} is not boolean, use default: {}", configKey, v, defaultValue);
+
+Def.init()
+
+While validating in defination files, the stacktrace is not of much use. Instead to find errors in def file, error description by Jackson parsing is more useful and toString() returns such description. 
+        LOG.error("{}", e.toString());
+
+        // higher up logs stack trace
+        throw new CriticalException("unable to initialize defs", e);
+
+and in main method try block the exception is passed the as last parm which outputs the stacktrace.
+
+        LOG.error("Scoopi terminated", e);
+        LogManager.shutdown();
+        
+With this, we get useful error description in console and error log; debug log outs stacktrace.
+
+
+

@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
 
@@ -84,17 +83,12 @@ class DataDefDefs {
         return dataDefMap;
     }
 
-    public void traceDataDefs(final Map<String, DataDef> dataDefMap,
-            final Map<String, Data> dataTemplateMap) {
-        LOG.trace("--- datadefs and data templates ---");
-        for (String dataDefName : dataDefMap.keySet()) {
-            String markerName = dashit("datadef", dataDefName);
+    public void traceDataDef(final List<DataDef> dataDefs) {
+        for (DataDef dataDef : dataDefs) {
+            String markerName = dashit("datadef", dataDef.getName());
             Marker marker = MarkerManager.getMarker(markerName);
-            DataDef dataDef = dataDefMap.get(dataDefName);
-            Data dataTemplate = dataTemplateMap.get(dataDefName);
-            LOG.trace(marker, "{}{}{}", dataDef, LINE, dataDef.getDefJson());
-            LOG.trace(marker, "data template:{}{}", LINE,
-                    dataTemplate.toTraceString());
+            LOG.trace(marker, "datadef: {}{}{}{}", dataDef.getName(), LINE,
+                    dataDef.getDefJson());
         }
     }
 }
