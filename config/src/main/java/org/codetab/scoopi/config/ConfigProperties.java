@@ -2,7 +2,6 @@ package org.codetab.scoopi.config;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.Properties;
 
@@ -59,38 +58,37 @@ public class ConfigProperties {
 
     public boolean getBoolean(final String configKey,
             final boolean defaultValue) {
-        String value = properties.getProperty(configKey);
-        if (isNull(value)) {
-            return defaultValue;
+        String v = properties.getProperty(configKey);
+        boolean value = defaultValue;
+        if (isNull(v)) {
+            LOG.debug("config: {} not found, use default: {}", configKey,
+                    defaultValue);
         } else {
-            if (StringUtils.equalsAnyIgnoreCase(value, "true", "false")) {
-                return Boolean.valueOf(value);
+            if (StringUtils.equalsAnyIgnoreCase(v, "true", "false")) {
+                value = Boolean.valueOf(v);
             } else {
-                LOG.error("config {}: {} is not boolean, using default value",
-                        configKey, value);
-                return defaultValue;
+                LOG.error("config: {}, {} is not boolean, use default: {}",
+                        configKey, v, defaultValue);
             }
         }
+        return value;
     }
 
     public int getInt(final String configKey, final int defaultValue) {
-        String value = properties.getProperty(configKey);
-        if (isNull(value)) {
-            final String message = spaceit("config not found:", configKey,
-                    ", defaults to:", String.valueOf(defaultValue));
-            LOG.debug("{}", message);
-            return defaultValue;
+        String v = properties.getProperty(configKey);
+        int value = defaultValue;
+        if (isNull(v)) {
+            LOG.debug("config: {} not found, use default: {}", configKey,
+                    defaultValue);
         } else {
             try {
-                return Integer.parseInt(value);
+                value = Integer.parseInt(v);
             } catch (NumberFormatException e) {
-                final String message =
-                        spaceit("parse error, config:", configKey,
-                                ", defaults to:", String.valueOf(defaultValue));
-                LOG.error("{}, {}", e, message);
-                return defaultValue;
+                LOG.error("config: {}, use default: {}, parse error:",
+                        configKey, defaultValue, e);
             }
         }
+        return value;
     }
 
     /*

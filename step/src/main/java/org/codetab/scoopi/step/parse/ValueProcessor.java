@@ -15,6 +15,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
@@ -22,7 +23,6 @@ import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
-import org.seleniumhq.jetty9.util.StringUtil;
 
 public class ValueProcessor {
 
@@ -52,8 +52,11 @@ public class ValueProcessor {
             NoSuchMethodException, InvalidDefException {
 
         boolean replaceBlank =
-                configs.getBoolean("scoopi.fact.replaceBlank", true);
-        String replaceWith = configs.getConfig("scoopi.fact.replaceWith", "-");
+                configs.getBoolean("scoopi.fact.blank.replace", true);
+        String blankReplaceWith =
+                configs.getConfig("scoopi.fact.blank.replaceWith", "-");
+        String notFoundReplaceWith = configs
+                .getConfig("scoopi.fact.notFound.replaceWith", "not found");
 
         // as index of AxisName.FACT is zero, process in reverse so that
         // all other axis are processed before the fact
@@ -135,9 +138,17 @@ public class ValueProcessor {
                     }
                 }
 
-                if (axisName.equals("fact") && StringUtil.isBlank(value)) {
-                    if (replaceBlank) {
-                        value = replaceWith;
+                if (axisName.equals("fact")) {
+                    if (isNull(value)) {
+                        value = notFoundReplaceWith;
+                    } else {
+                        if (value.trim().equalsIgnoreCase("null")) {
+                            value = notFoundReplaceWith;
+                        } else if (StringUtils.isBlank(value)) {
+                            if (replaceBlank) {
+                                value = blankReplaceWith;
+                            }
+                        }
                     }
                 }
                 axis.setValue(value);

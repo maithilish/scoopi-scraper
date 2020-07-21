@@ -1,6 +1,7 @@
 package org.codetab.scoopi.defs.yml;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -9,6 +10,7 @@ import org.codetab.scoopi.defs.IDefBuilder;
 import org.codetab.scoopi.defs.IDefData;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.model.DataDef;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -32,10 +34,14 @@ public class DataDefDefBuilder implements IDefBuilder {
         try {
             dataDefDefData = new DataDefDefData();
             JsonNode node = (JsonNode) defs;
-            dataDefDefData.setDefinedDataDefs(dataDefDefs.createDataDefs(node));
+            List<DataDef> dataDefs = dataDefDefs.createDataDefs(node);
+            dataDefDefData.setDefinedDataDefs(dataDefs);
             dataDefDefs.setDefs(dataDefDefData.getDefinedDataDefs());
             dataDefDefData.setDataDefMap(
                     dataDefDefs.toMap(dataDefDefData.getDefinedDataDefs()));
+
+            dataDefDefs.traceDataDef(dataDefs);
+
             return dataDefDefData;
         } catch (IOException e) {
             throw new CriticalException("unable to create datadefs", e);

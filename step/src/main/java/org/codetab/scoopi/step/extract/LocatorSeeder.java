@@ -136,11 +136,11 @@ public final class LocatorSeeder extends BaseSeeder {
                         group, ERROR.INTERNAL);
             }
         }
+        LOG.debug("locator group: {}, locators: {}, queued to taskpool",
+                locatorGroup.getGroup(), locatorGroup.getLocators().size());
         if (locatorGroup.isByDef()) {
             jobSeeder.countDownSeedLatch();
         }
-        LOG.debug("locator group: {}, locators: {}, queued to taskpool",
-                locatorGroup.getGroup(), locatorGroup.getLocators().size());
     }
 
     private boolean pushPayload(final Meter meter, final Payload payload,

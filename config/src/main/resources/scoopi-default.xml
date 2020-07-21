@@ -14,8 +14,13 @@
         </defs>
 
         <fact>
-            <replaceBlank>true</replaceBlank>
-            <replaceWith>-</replaceWith>
+            <blank>
+                <replace>true</replace>
+                <replaceWith>-</replaceWith>
+            </blank>
+            <notFound>
+                <replaceWith>not found</replaceWith>
+            </notFound>
         </fact>
 
         <seeder>
@@ -36,7 +41,7 @@
             <appender>2</appender>
         </poolsize>
         <appender>
-            <queuesize>4096</queuesize>
+            <queueSize>4096</queueSize>
         </appender>
         <webClient>
             <timeout>120000</timeout>

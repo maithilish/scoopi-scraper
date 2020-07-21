@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.codetab.scoopi.defs.IDefBuilder;
 import org.codetab.scoopi.defs.IDefData;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.model.Data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -36,12 +37,15 @@ public class ItemDefBuilder implements IDefBuilder {
         itemDefData.setDimAxisMap(itemDefs.getDimAxisMap(node));
         itemDefData.setFactAxisMap(itemDefs.getFactAxisMap(node));
 
-        itemDefData.setDataTemplateMap(itemDefs.generateDataTemplates(
+        Map<String, Data> dataTemplates = itemDefs.generateDataTemplates(
                 itemDefData.getItemAxisMap(), itemDefData.getDimAxisMap(),
-                itemDefData.getFactAxisMap()));
+                itemDefData.getFactAxisMap());
+        itemDefData.setDataTemplateMap(dataTemplates);
         Map<String, JsonNode> itemNodeMap = itemDefs.getItemNodeMap(node);
         itemDefData.setItemAttributeMap(
                 itemDefs.getItemAttributeMap(node, itemNodeMap));
+
+        itemDefs.traceDataTemplates(dataTemplates);
 
         return itemDefData;
     }

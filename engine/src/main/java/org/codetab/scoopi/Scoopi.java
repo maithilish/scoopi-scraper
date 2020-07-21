@@ -32,7 +32,8 @@ public final class Scoopi {
             Scoopi scoopi = dInjector.instance(Scoopi.class);
             scoopi.start();
         } catch (Exception e) {
-            LOG.error("Scoopi terminated, {}", e);
+            LOG.error("Scoopi terminated", e);
+            LogManager.shutdown();
         }
     }
 
