@@ -38,7 +38,7 @@ public class TaskMediator {
         try {
             taskRunner.join();
             stateFliper.setTMState(TMState.TERMINATED);
-            LOG.info("task mediator state change {}", TMState.TERMINATED);
+            LOG.info("taskMediator state changed to {}", TMState.TERMINATED);
         } catch (InterruptedException e) {
             errors.inc();
             LOG.error("wait for finish interrupted [{}]", ERROR.INTERNAL, e);

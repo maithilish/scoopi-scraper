@@ -52,5 +52,4 @@ public interface IJobStore {
     void setRunDateTime(String value);
 
     String getRunDateTime();
-
 }

@@ -2,6 +2,8 @@ package org.codetab.scoopi.step.mediator;
 
 import static java.util.Objects.isNull;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +33,8 @@ public class TaskRunner extends Thread {
     @Inject
     private Errors errors;
 
+    private final int aquireLockTimeout = 50;
+
     @Override
     public void run() {
 
@@ -49,14 +53,26 @@ public class TaskRunner extends Thread {
                     // no payload wait else take payload without wait
                     takeTimeout = taskTakeTimeout;
                 }
-                if (initiateTask(takeTimeout)) {
-                    if (retryCount > 1) {
-                        LOG.debug("take task timeout {} ms, timed out {} times",
-                                takeTimeout, retryCount);
+
+                try {
+                    stateFliper.acquireTaskQueueToPoolLock(aquireLockTimeout,
+                            TimeUnit.MILLISECONDS);
+                    Payload payload = payloadStore.takePayload(takeTimeout);
+
+                    if (isNull(payload)) {
+                        retryCount++;
+                    } else {
+
+                        logRetryCount(retryCount, takeTimeout);
                         retryCount = 1;
+
+                        Task task = taskFactory.createTask(payload);
+                        String poolName = task.getStep().getStepName();
+                        poolService.submit(poolName, task);
                     }
-                } else {
-                    retryCount++;
+
+                } finally {
+                    stateFliper.releaseTaskQueueToPoolLock();
                 }
             } catch (ClassNotFoundException | InstantiationException
                     | IllegalAccessException | InterruptedException e) {
@@ -69,17 +85,10 @@ public class TaskRunner extends Thread {
         }
     }
 
-    private boolean initiateTask(final int timeout)
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException, InterruptedException {
-        Payload payload = payloadStore.takePayload(timeout);
-        if (isNull(payload)) {
-            return false;
+    private void logRetryCount(final int retryCount, final int takeTimeout) {
+        if (retryCount > 1) {
+            LOG.debug("take task timed out {} times, timeout {} ms", retryCount,
+                    takeTimeout);
         }
-
-        final Task task = taskFactory.createTask(payload);
-        final String poolName = task.getStep().getStepName();
-        poolService.submit(poolName, task);
-        return true;
     }
 }

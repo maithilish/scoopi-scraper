@@ -1,20 +1,15 @@
 package org.codetab.scoopi.store.solo.simple;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
 
 @Singleton
 public class SoloShutdown implements IShutdown {
-
-    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IJobStore jobStore;
@@ -33,25 +28,6 @@ public class SoloShutdown implements IShutdown {
     }
 
     @Override
-    public <T> boolean tryShutdown(final Function<T, Boolean> func, final T t) {
-
-        if (cancelled.get()) {
-            LOG.debug("cancel requrested, ignore pending jobs");
-            return func.apply(t);
-        }
-
-        if (!done.get()) {
-            return false;
-        }
-
-        if (jobStore.isDone()) {
-            return func.apply(t);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public void setTerminate() {
     }
 
@@ -62,5 +38,20 @@ public class SoloShutdown implements IShutdown {
     @Override
     public void cancel() {
         cancelled.set(true);
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled.get();
+    }
+
+    @Override
+    public boolean allNodesDone() {
+        return true;
+    }
+
+    @Override
+    public boolean jobStoreDone() {
+        return jobStore.isDone();
     }
 }
