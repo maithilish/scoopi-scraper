@@ -43,4 +43,9 @@ public class PayloadStore implements IPayloadStore {
     public void clear() {
         payloads.clear();
     }
+
+    @Override
+    public boolean isDone() {
+        return payloads.size() == 0;
+    }
 }

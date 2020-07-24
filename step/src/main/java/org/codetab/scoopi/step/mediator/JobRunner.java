@@ -33,6 +33,8 @@ public class JobRunner extends Thread {
 
     private AtomicBoolean cancelled = new AtomicBoolean(false);
 
+    private final int aquireLockTimeout = 50;
+
     public void cancel() {
         cancelled.set(true);
         stateFliper.cancel();
@@ -41,9 +43,10 @@ public class JobRunner extends Thread {
     @Override
     public void run() {
 
-        LOG.debug("take jobs from cluster and initiate task");
         int jobTakeRetryDelay =
                 configs.getInt("scoopi.job.takeRetryDelay", "50");
+
+        LOG.debug("take jobs from jobStore and initiate task");
 
         while (true) {
             if (stateFliper.isTMState(TMState.TERMINATED)
@@ -55,9 +58,13 @@ public class JobRunner extends Thread {
             try {
                 jobStore.resetCrashedJobs();
 
+                stateFliper.acquireJobToTaskQueueLock(aquireLockTimeout,
+                        TimeUnit.MILLISECONDS);
+
                 // job store Semaphore throttles take job
                 Payload payload = jobStore.takeJob();
                 taskMediator.pushPayload(payload);
+
             } catch (NoSuchElementException e) {
                 // SPINNER
                 LOG.debug("{}, retry", e.getMessage());
@@ -74,6 +81,8 @@ public class JobRunner extends Thread {
                 }
                 LOG.debug("task mediator state {}", stateFliper.getTMState());
                 LOG.debug("retry initiate job, {}", e.getMessage());
+            } finally {
+                stateFliper.releaseJobToTaskQueueLock();
             }
         }
     }

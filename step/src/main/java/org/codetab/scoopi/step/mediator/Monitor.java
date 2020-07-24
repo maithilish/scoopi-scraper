@@ -9,8 +9,6 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.step.pool.TaskPoolService;
-import org.codetab.scoopi.store.IPayloadStore;
 
 public class Monitor implements Runnable {
 
@@ -20,19 +18,18 @@ public class Monitor implements Runnable {
     private Configs configs;
     @Inject
     private StateFliper stateFliper;
-    @Inject
-    private TaskPoolService poolService;
-    @Inject
-    private IPayloadStore payloadStore;
 
     private ScheduledExecutorService scheduler;
 
     public void start() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
-        final int initialDelay = 10;
+        final int initialDelay = 1;
         int delay = configs.getInt("scoopi.monitor.timerPeriod", "1000");
+
         scheduler.scheduleWithFixedDelay(this, initialDelay, delay,
                 TimeUnit.MILLISECONDS);
+
+        LOG.info("shutdown monitor service started");
     }
 
     public void stop() throws InterruptedException {
@@ -43,15 +40,6 @@ public class Monitor implements Runnable {
 
     @Override
     public void run() {
-        if (payloadStore.getPayloadsCount() == 0 && poolService.isDone()) {
-            stateFliper.setTMState(TMState.DONE);
-            if (stateFliper.tryTMShutdown()) {
-                LOG.info("task mediator state change {}",
-                        stateFliper.getTMState());
-            } else {
-                LOG.debug("unable to shudown task mediator, state fliped to {}",
-                        stateFliper.getTMState());
-            }
-        }
+        stateFliper.tryTMShutdown();
     }
 }
