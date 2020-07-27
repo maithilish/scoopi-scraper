@@ -36,6 +36,9 @@ public class StateFliper {
         shutdown.cancel();
     }
 
+    // FIXME - clusterfix - if example is htmlunit and scoopi.defs.defaultSteps
+    // is jsoupDefault then cluster fails to shutdown
+
     public void tryTMShutdown() {
 
         boolean payloadStoreDone = payloadStore.isDone();

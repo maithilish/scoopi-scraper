@@ -169,3 +169,6 @@ filesystem
 async
 bootup
 ref
+itestfix
+itests
+clusterfix

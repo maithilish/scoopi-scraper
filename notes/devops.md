@@ -11,8 +11,10 @@ mvn integration-test -Dtest=HttpHelperIT.java -P basic
 # skip test and run itests
 mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P basic
 
-mvn test jacoco:report					# without itest
-mvn verify jacoco:report				# with itest
+# test coverage without itest
+mvn test jacoco:report
+# test coverage with itest
+mvn verify jacoco:report
 mvn JavaDoc:JavaDoc
 
 # add -DskipTests to skip all tests
@@ -25,8 +27,11 @@ mvn clean verify -P basic,ng,release,docker
 
 mvn versions:display-dependency-updates
 mvn versions:display-plugin-updates
-mvn dependency:resolve -Dclassifier=JavaDoc		# download javadoc
-mvn dependency:sources					# download source
+
+# download javadoc
+mvn dependency:resolve -Dclassifier=JavaDoc
+# download source
+mvn dependency:sources
 
 # run, skips exec in all modules except in engine
 # Could not resolve dependencies error is thrown if no process-classes
