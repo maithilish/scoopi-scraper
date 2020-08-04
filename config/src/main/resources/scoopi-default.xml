@@ -42,6 +42,9 @@
         </poolsize>
         <appender>
             <queueSize>4096</queueSize>
+            <file>
+                <baseDir></baseDir> <!-- intentionally empty -->
+            </file>
         </appender>
         <webClient>
             <timeout>120000</timeout>

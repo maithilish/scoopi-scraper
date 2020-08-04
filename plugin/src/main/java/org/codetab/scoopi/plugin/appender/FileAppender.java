@@ -4,11 +4,13 @@ import static java.util.Objects.nonNull;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.http.client.utils.DateUtils;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +36,7 @@ public final class FileAppender extends Appender {
     @Inject
     private Configs configs;
 
+    private String baseDir;
     private String fileDir;
     private String fileBaseName;
     private String fileExtension;
@@ -48,9 +51,12 @@ public final class FileAppender extends Appender {
     public void init() {
         try {
             String filePath = getPluginField("file");
+            baseDir = configs.getConfig("scoopi.appender.file.baseDir", "");
             fileDir = FilenameUtils.getFullPath(filePath);
             fileBaseName = FilenameUtils.getBaseName(filePath);
             fileExtension = FilenameUtils.getExtension(filePath);
+            System.out.printf("base %s dir %s name %s ext %s\n", baseDir,
+                    fileDir, fileBaseName, fileExtension);
             dirTimestamp = DateUtils.formatDate(configs.getRunDateTime(),
                     configs.getConfig("outputDirTimestampPattern",
                             "ddMMMyyyy-HHmmss"));
@@ -118,11 +124,26 @@ public final class FileAppender extends Appender {
         LOG.info("appender: {}, {} item appended", getName(), count);
     }
 
+    /**
+     * Construct path defined in plugin.
+     * <p>
+     * If path (plugin) is not absolute then prefix it with path, if not blank,
+     * defined by config: scoopi.appender.file.baseDir
+     * <p>
+     * Example: scoopi.appender.file.baseDir=/tmp/scoopi for plugin file path:
+     * output, appender writes file to /tmp/scoopi/output
+     * @param printPayload
+     * @return
+     */
     private String getJobFilePath(final PrintPayload printPayload) {
-        return FilenameUtils.separatorsToSystem(
+        String path =
                 String.join("", fileDir, "/", dirTimestamp, "/", fileBaseName,
                         "-", String.valueOf(printPayload.getJobInfo().getId()),
-                        ".", fileExtension));
+                        ".", fileExtension);
+        if (!Paths.get(path).isAbsolute() && StringUtils.isNotBlank(baseDir)) {
+            path = String.join("/", baseDir, path);
+        }
+        return FilenameUtils.separatorsToSystem(path);
     }
 
     /**
