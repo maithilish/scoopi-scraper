@@ -98,9 +98,10 @@ checkConsistency() {
     # prepare expected file
     cp $defsDir/expected.txt $outputDir/$dirTimestamp/expected.tmp
     sed -i "s/%{runDateTime}/$runDateTime/" $outputDir/$dirTimestamp/expected.tmp
+    sed -i "s/%{documentFromDate}/$documentFromDate/" $outputDir/$dirTimestamp/expected.tmp
     sort -t '|' -k 1 -k 2 -k 3 -k 4 $outputDir/$dirTimestamp/expected.tmp >$outputDir/$dirTimestamp/expected.txt
 
-    diff -q $outputDir/$dirTimestamp/expected.txt $outputDir/$dirTimestamp/actual.txt
+    diff -q $outputDir/$dirTimestamp/expected.txt $outputDir/$dirTimestamp/actual.txt > /dev/null
     if [[ $? == 0 ]]; then
         echo "  $(tput setaf 2)success$(tput sgr0)"
     else
