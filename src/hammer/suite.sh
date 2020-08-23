@@ -21,7 +21,7 @@ touch $logFile
 #hammer -r run-4 defs/examples/fin/jsoup/ex-13
 #hammer -r run-5 -p htmlunit defs/examples/fin/htmlunit/ex-13
 
-# fine kill increment by 0.25 seconds
+# fine - increment kill by 0.25 seconds
 
 hammer -r run-6 -n 100 -i 0.25 defs/fin-ex-13-ext
 hammer -r run-7 -n 100 -i 0.25 defs/examples/fin/jsoup/ex-1

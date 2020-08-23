@@ -32,9 +32,14 @@
         </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
+            <artifactId>pool</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codetab.scoopi</groupId>
             <artifactId>dao</artifactId>
             <version>${project.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
             <artifactId>plugin</artifactId>
@@ -59,7 +64,7 @@
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-server</artifactId>            
+            <artifactId>selenium-server</artifactId>
         </dependency>
     </dependencies>
 </project>

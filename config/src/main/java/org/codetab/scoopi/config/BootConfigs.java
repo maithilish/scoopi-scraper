@@ -5,6 +5,9 @@ import static java.util.Objects.isNull;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
+
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Bare minimum configuration required to start Scoopi. It is used before DI
@@ -32,6 +35,22 @@ public class BootConfigs {
             userDefinedProperties = new Properties();
         }
         systemProperties = System.getProperties();
+    }
+
+    public void configureLogPath() {
+        String logKey = "scoopi.log.dir";
+        String logPath = getConfig(logKey, "logs");
+        if (!isSolo()) {
+            Boolean splitLogs = Boolean.valueOf(
+                    getConfig("scoopi.cluster.log.path.suffixUid", "true"));
+            if (splitLogs) {
+                String uuid = UUID.randomUUID().toString();
+                String upart = uuid.split("-")[0];
+                logPath = FilenameUtils
+                        .separatorsToSystem(String.join("/", logPath, upart));
+            }
+        }
+        System.setProperty(logKey, logPath);
     }
 
     public String getConfig(final String key, final String defaultValue) {

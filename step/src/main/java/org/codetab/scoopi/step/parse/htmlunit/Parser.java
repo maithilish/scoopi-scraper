@@ -39,6 +39,7 @@ public class Parser extends BaseParser {
 
     private static final int TIMEOUT_MILLIS = 120000;
 
+    // TODO check behaviour if jsoup def but defaultSteps htmlUnit
     @Override
     protected boolean postInitialize() {
         notNull(document, "document must not be null");

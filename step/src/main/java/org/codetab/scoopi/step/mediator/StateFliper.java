@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codetab.scoopi.step.pool.TaskPoolService;
 import org.codetab.scoopi.store.IPayloadStore;
 import org.codetab.scoopi.store.IShutdown;
 
