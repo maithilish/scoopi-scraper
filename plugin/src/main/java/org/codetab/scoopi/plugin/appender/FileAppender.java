@@ -55,8 +55,6 @@ public final class FileAppender extends Appender {
             fileDir = FilenameUtils.getFullPath(filePath);
             fileBaseName = FilenameUtils.getBaseName(filePath);
             fileExtension = FilenameUtils.getExtension(filePath);
-            System.out.printf("base %s dir %s name %s ext %s\n", baseDir,
-                    fileDir, fileBaseName, fileExtension);
             dirTimestamp = DateUtils.formatDate(configs.getRunDateTime(),
                     configs.getConfig("outputDirTimestampPattern",
                             "ddMMMyyyy-HHmmss"));

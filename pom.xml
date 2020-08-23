@@ -24,6 +24,7 @@
         <module>scoopi</module>
         <module>step</module>
         <module>plugin</module>
+        <module>pool</module>
     </modules>
 
     <properties>
@@ -211,7 +212,7 @@
 
             <dependency>
                 <groupId>com.hazelcast</groupId>
-                <artifactId>hazelcast</artifactId>
+                <artifactId>hazelcast-all</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
 
@@ -363,6 +364,7 @@
                                     <excludes>
                                         <exclude>*.properties</exclude>                                     
                                         <exclude>hazelcast.xml</exclude>
+                                        <exclude>log4j2.xml</exclude>
                                         <exclude>simple/</exclude>
                                         <exclude>defs/**</exclude>
                                         <exclude>devdefs/**</exclude>

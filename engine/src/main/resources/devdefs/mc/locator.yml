@@ -1,7 +1,0 @@
-locatorGroups:
-
-  bsGroup:
-    locators: [
-      { name: "asian", url: "/devdefs/mc/asianbs.html" },
-    ]
-

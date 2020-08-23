@@ -13,7 +13,6 @@ import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.Task;
-import org.codetab.scoopi.step.pool.TaskPoolService;
 import org.codetab.scoopi.store.IPayloadStore;
 
 public class TaskRunner extends Thread {

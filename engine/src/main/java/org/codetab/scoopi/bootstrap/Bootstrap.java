@@ -27,11 +27,14 @@ public class Bootstrap {
     private BootConfigs bootConfigs;
     private BaseModule module;
 
+    public Bootstrap(final BootConfigs bootConfigs) {
+        this.bootConfigs = bootConfigs;
+    }
+
     /**
      * create DI, store and cluster
      */
     public void bootDi() {
-        bootConfigs = new BootConfigs();
 
         if (bootConfigs.isSolo()) {
             LOG.info("Scoopi [solo/cluster]: solo"); //$NON-NLS-1$

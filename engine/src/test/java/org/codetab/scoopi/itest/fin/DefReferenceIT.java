@@ -1,6 +1,7 @@
 package org.codetab.scoopi.itest.fin;
 
 import org.codetab.scoopi.bootstrap.Bootstrap;
+import org.codetab.scoopi.config.BootConfigs;
 import org.junit.Test;
 
 public class DefReferenceIT {
@@ -14,7 +15,9 @@ public class DefReferenceIT {
         System.setProperty("scoopi.propertyFile", "scoopi-test.properties");
         System.setProperty("scoopi.cluster.enable", "false");
 
-        Bootstrap bootstrap = new Bootstrap();
+        BootConfigs bootConfigs = new BootConfigs();
+        bootConfigs.configureLogPath();
+        Bootstrap bootstrap = new Bootstrap(bootConfigs);
         bootstrap.bootDi();
 
         bootstrap.bootCluster();

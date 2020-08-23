@@ -359,6 +359,10 @@ as messages_fr_CA.properties and run app with
 
 java -Duser.language=fr -Duser.country=CA Default
 
+## Sort data files
+
+sort -t '|' -k 1 -k 2 -k 3 -k 4 data*.txt > expected.txt
+
 ## WINE
 
 windows test is not really essential, but just to clear any doubt about bad coding, prefer to test scoopi with wine.

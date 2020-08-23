@@ -45,7 +45,9 @@ public class MetricsHelper {
 
     public <T> void registerGuage(final T value, final Object clz,
             final String... names) {
-        METRICS.register(getName(clz, names), new Gauge<T>() {
+        String guageName = getName(clz, names);
+        LOG.info("register metrics guage: {}", guageName);
+        METRICS.register(guageName, new Gauge<T>() {
             @Override
             public T getValue() {
                 return value;

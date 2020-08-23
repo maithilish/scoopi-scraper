@@ -43,6 +43,8 @@ Cancel the run - If JVM receives Ctrl-C it agains goes for orderly shutdown but 
 
 InterruptedException - Scoopi doesn't use them for shutdown. Normally, methods throws them, but few catch them to log message. Threads are reinterrupted with Thread.currentThread().interrupt().
 
+Kubernetes - when pod is deleted k8s sends a SIGTERM signal to the process and waits a certain number of seconds (30 by default) for it to shut down gracefully. If it doesn’t shut down in time, the process is then killed through SIGKILL . To make sure your processes are always shut down gracefully, they need to handle the SIGTERM signal properly.
+
 ## Mediators
 
 Engine

@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.codetab.scoopi.bootstrap.Bootstrap;
+import org.codetab.scoopi.config.BootConfigs;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.engine.ScoopiEngine;
@@ -63,7 +64,9 @@ public class ITestBase {
     }
 
     protected void bootstrap() {
-        Bootstrap bootstrap = new Bootstrap();
+        BootConfigs bootConfigs = new BootConfigs();
+        bootConfigs.configureLogPath();
+        Bootstrap bootstrap = new Bootstrap(bootConfigs);
         bootstrap.bootDi();
 
         bootstrap.bootCluster();

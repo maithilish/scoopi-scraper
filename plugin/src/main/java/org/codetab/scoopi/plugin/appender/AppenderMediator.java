@@ -19,7 +19,6 @@ import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.model.PrintPayload;
 import org.codetab.scoopi.plugin.appender.Appender.Marker;
-import org.codetab.scoopi.plugin.pool.AppenderPoolService;
 
 @Singleton
 public class AppenderMediator {
