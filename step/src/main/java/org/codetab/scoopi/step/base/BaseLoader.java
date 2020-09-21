@@ -239,31 +239,44 @@ public abstract class BaseLoader extends Step {
         final String group = getJobInfo().getGroup();
 
         /*
-         * one or more tasks are applied to a document, create new payloads for
-         * each task
+         * if single task is defined for a document, then normal handover to
+         * taskMediator defined in super Step is called without compressing the
+         * document. When multiple tasks are defined, then new payload jobs are
+         * created for tasks and compressed document is assigned to each
+         * payload. As they are pushed to cluster, document is compressed.
+         * Payloads are pushed job mediator as new jobs and old job is marked as
+         * finished.
          */
         final List<String> taskNames = taskDef.getTaskNames(group);
-        final List<Payload> payloads = payloadFactory.createPayloads(group,
-                taskNames, getStepInfo(), getJobInfo().getName(), getOutput());
 
-        for (final Payload payload : payloads) {
-            // treat each task as new job with new seq job id
-            payload.getJobInfo().setId(jobMediator.getJobIdSequence());
-        }
-
-        // mark this job as finished and push new task jobs for this document
-        try {
-            long jobId = getPayload().getJobInfo().getId();
-            jobMediator.pushJobs(payloads, jobId);
-        } catch (InterruptedException | JobStateException
-                | TransactionException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
+        if (taskNames.size() == 1) {
+            // normal task handover - pushes to task mediator
+            super.handover();
+        } else {
+            if (configs.isCluster()) {
+                ((Document) getOutput()).compress();
             }
-            final String message =
-                    spaceit("create defined tasks for the document and push",
-                            getPayload().toString());
-            throw new StepRunException(message, e);
+            final List<Payload> payloads =
+                    payloadFactory.createPayloads(group, taskNames,
+                            getStepInfo(), getJobInfo().getName(), getOutput());
+            for (final Payload payload : payloads) {
+                // treat each task as new job with new seq job id
+                payload.getJobInfo().setId(jobMediator.getJobIdSequence());
+            }
+            try {
+                long jobId = getPayload().getJobInfo().getId();
+                // push new jobs and mark old job as finished
+                jobMediator.pushJobs(payloads, jobId);
+            } catch (InterruptedException | JobStateException
+                    | TransactionException e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                final String message = spaceit(
+                        "create defined tasks for the document and push",
+                        getPayload().toString());
+                throw new StepRunException(message, e);
+            }
         }
     }
 

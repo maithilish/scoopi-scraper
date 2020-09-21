@@ -24,9 +24,8 @@ public class JobStore implements ISoloJobStore {
 
     private AtomicLong jobIdCounter = new AtomicLong();
 
+    @SuppressWarnings("unused")
     private State state = State.NEW;
-
-    private String runDateTime;
 
     @Override
     public void open() {
@@ -49,11 +48,6 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public State getState() {
-        return state;
-    }
-
-    @Override
     public void setState(final State state) {
         this.state = state;
     }
@@ -65,35 +59,8 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public int getJobCount() {
-        return jobs.size();
-    }
-
-    @Override
     public boolean isDone() {
         return jobs.size() == 0;
-    }
-
-    @Override
-    public String getMemberId() {
-        return "solo";
-    }
-
-    @Override
-    public int getJobTakenCount() {
-        // solo no limit
-        return 0;
-    }
-
-    @Override
-    public int getJobTakenByMemberCount() {
-        return 0;
-    }
-
-    @Override
-    public int getJobTakeLimit() {
-        // solo - no take job limit
-        return Integer.MAX_VALUE;
     }
 
     @Override
@@ -122,15 +89,5 @@ public class JobStore implements ISoloJobStore {
     @Override
     public boolean resetTakenJob(final long jobId) throws TransactionException {
         return true;
-    }
-
-    @Override
-    public void setRunDateTime(final String value) {
-        this.runDateTime = value;
-    }
-
-    @Override
-    public String getRunDateTime() {
-        return runDateTime;
     }
 }

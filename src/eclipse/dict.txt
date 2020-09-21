@@ -174,3 +174,5 @@ itests
 clusterfix
 kubernetes
 mc
+mediator
+docs

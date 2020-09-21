@@ -16,7 +16,7 @@
         <module>util</module>
         <module>def</module>
         <module>model</module>
-        <module>helper</module>        
+        <module>helper</module>
         <module>metric</module>
         <module>dao</module>
         <module>di</module>
@@ -40,7 +40,8 @@
         <commons-codec.version>1.14</commons-codec.version>
         <commons-validator.version>1.6</commons-validator.version>
         <httpclient.version>4.5.10</httpclient.version>
-
+        <lz4.version>1.7.1</lz4.version>
+        
         <guava.version>28.1-jre</guava.version>
         <gson.version>2.8.6</gson.version>
         <java-inject.version>1</java-inject.version>
@@ -173,6 +174,11 @@
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>${lz4.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.jcip</groupId>
@@ -362,7 +368,7 @@
                                 <configuration>
                                     <classifier>release</classifier>
                                     <excludes>
-                                        <exclude>*.properties</exclude>                                     
+                                        <exclude>*.properties</exclude>
                                         <exclude>hazelcast.xml</exclude>
                                         <exclude>log4j2.xml</exclude>
                                         <exclude>simple/</exclude>

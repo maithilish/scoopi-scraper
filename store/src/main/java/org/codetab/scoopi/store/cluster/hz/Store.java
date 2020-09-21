@@ -1,7 +1,5 @@
 package org.codetab.scoopi.store.cluster.hz;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -9,6 +7,7 @@ import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.cluster.IClusterStore;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 
 @Singleton
 public class Store implements IClusterStore {
@@ -16,7 +15,7 @@ public class Store implements IClusterStore {
     @Inject
     private ICluster cluster;
 
-    private Map<String, Object> objectMap;
+    private IMap<String, Object> objectMap;
 
     @Override
     public void open() {
@@ -31,7 +30,7 @@ public class Store implements IClusterStore {
 
     @Override
     public boolean put(final String key, final Object value) {
-        objectMap.put(key, value);
+        objectMap.set(key, value);
         return true;
     }
 

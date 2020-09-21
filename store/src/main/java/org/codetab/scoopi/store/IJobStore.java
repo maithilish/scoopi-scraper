@@ -31,25 +31,9 @@ public interface IJobStore {
 
     void resetCrashedJobs();
 
-    int getJobCount();
-
-    boolean isDone();
-
-    State getState();
-
     void setState(State state);
-
-    String getMemberId();
-
-    int getJobTakenCount();
-
-    int getJobTakenByMemberCount();
-
-    int getJobTakeLimit();
 
     long getJobIdSeq();
 
-    void setRunDateTime(String value);
-
-    String getRunDateTime();
+    boolean isDone();
 }

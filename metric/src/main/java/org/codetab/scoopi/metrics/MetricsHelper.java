@@ -22,6 +22,7 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
+import com.codahale.metrics.Snapshot;
 import com.codahale.metrics.Timer;
 
 public class MetricsHelper {
@@ -118,5 +119,32 @@ public class MetricsHelper {
             throw new FileNotFoundException(path);
         }
         return url;
+    }
+
+    public String printSnapshot(final String name, final long count,
+            final Snapshot ss, final long divisor) {
+        String cr = System.lineSeparator();
+        StringBuilder b = new StringBuilder();
+        b.append("metrics snapshot: ").append(name).append(cr);
+        b.append("count: ").append(count).append(cr);
+        b.append("min: ").append(format(ss.getMin(), divisor)).append(cr);
+        b.append("max: ").append(format(ss.getMax(), divisor)).append(cr);
+        b.append("mean: ").append(format(ss.getMean(), divisor)).append(cr);
+        b.append("median: ").append(format(ss.getMedian(), divisor)).append(cr);
+        b.append("75p: ").append(format(ss.get75thPercentile(), divisor))
+                .append(cr);
+        b.append("95p: ").append(format(ss.get95thPercentile(), divisor))
+                .append(cr);
+        b.append("98p: ").append(format(ss.get98thPercentile(), divisor))
+                .append(cr);
+        b.append("99p: ").append(format(ss.get99thPercentile(), divisor))
+                .append(cr);
+        b.append("99.9p: ").append(format(ss.get999thPercentile(), divisor))
+                .append(cr);
+        return b.toString();
+    }
+
+    private String format(final double value, final long divisor) {
+        return String.format("%4.2f", value / divisor);
     }
 }
