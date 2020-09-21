@@ -57,6 +57,7 @@ public class PageLoader extends BaseLoader {
         // TODO charset encoding
         byte[] bytes = null;
 
+        // TODO if doc not found, show helpful log
         final String protocol = httpHelper.getProtocol(urlSpec);
         if (protocol.equals("resource")) {
             LOG.info(jobMarker, "fetch resource: {}", urlSpec);

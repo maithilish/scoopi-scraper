@@ -81,7 +81,7 @@ public class CrashCleaner {
                         ClusterJob cJob = txTakenJobsMap.remove(jobId);
                         cJob.setTaken(false);
                         cJob.setMemberId(null);
-                        txJobsMap.put(jobId, cJob);
+                        txJobsMap.set(jobId, cJob);
                     }
                     tx.commitTransaction();
                     // done, remove the crashed node

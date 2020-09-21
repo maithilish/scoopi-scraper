@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.codetab.scoopi.util.LzCompressUtil;
 
 public class Document implements Serializable {
 
@@ -19,6 +20,7 @@ public class Document implements Serializable {
     private String url;
     private Fingerprint locatorId;
     private Object documentObject;
+    private boolean compressed = false;
 
     Document() {
     }
@@ -63,6 +65,20 @@ public class Document implements Serializable {
      */
     public void setDocumentObject(final Object value) {
         this.documentObject = value;
+    }
+
+    public void compress() {
+        if (!compressed) {
+            documentObject = LzCompressUtil.compress((byte[]) documentObject);
+            compressed = true;
+        }
+    }
+
+    public void decompress() {
+        if (compressed) {
+            documentObject = LzCompressUtil.decompress((byte[]) documentObject);
+            compressed = false;
+        }
     }
 
     /**

@@ -87,6 +87,9 @@ public abstract class BaseParser extends Step {
         Object pData = getPayload().getData();
         if (pData instanceof Document) {
             document = (Document) pData;
+            // documents taken from cluster (multi task docs) are compressed,
+            // local documents (single task) are not. Decompress if compressed.
+            document.decompress();
         } else {
             String message = spaceit("payload data type is not Document but",
                     pData.getClass().getName());
