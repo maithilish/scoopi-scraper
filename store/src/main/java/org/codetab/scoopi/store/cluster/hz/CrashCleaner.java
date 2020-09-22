@@ -18,6 +18,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
 import com.hazelcast.transaction.TransactionalMap;
+import com.hazelcast.transaction.TransactionalQueue;
 
 @Singleton
 public class CrashCleaner {
@@ -71,8 +72,8 @@ public class CrashCleaner {
                 TransactionContext tx = hz.newTransactionContext(txOptions);
                 try {
                     tx.beginTransaction();
-                    TransactionalMap<Long, ClusterJob> txJobsMap =
-                            tx.getMap(DsName.JOBS_MAP.toString());
+                    TransactionalQueue<ClusterJob> txJobsQ =
+                            tx.getQueue(DsName.JOBS_QUEUE.toString());
                     TransactionalMap<Long, ClusterJob> txTakenJobsMap =
                             tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
 
@@ -81,7 +82,7 @@ public class CrashCleaner {
                         ClusterJob cJob = txTakenJobsMap.remove(jobId);
                         cJob.setTaken(false);
                         cJob.setMemberId(null);
-                        txJobsMap.set(jobId, cJob);
+                        txJobsQ.offer(cJob);
                     }
                     tx.commitTransaction();
                     // done, remove the crashed node
@@ -98,7 +99,7 @@ public class CrashCleaner {
     }
 
     public void clearDanglingJobs() {
-        Map<Long, ClusterJob> jobsMap = hz.getMap(DsName.JOBS_MAP.toString());
+        Map<Long, ClusterJob> jobsMap = hz.getMap(DsName.JOBS_QUEUE.toString());
         jobsMap.clear();
     }
 }
