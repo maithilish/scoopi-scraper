@@ -13,6 +13,13 @@
         <property name="log4j2.configuration">/log4j2.xml</property>
     </properties>
 
+    <queue name="default">
+        <backup-count>2</backup-count>
+    </queue>
+    <map name="default">
+        <backup-count>2</backup-count>
+    </map>
+
     <network>
         <join>
             <multicast enabled="false">

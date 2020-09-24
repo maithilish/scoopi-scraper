@@ -4,6 +4,7 @@ taskGroups:
     plTask:
       dataDef: pl
       steps: fooSteps
+    live: P1W
       
 dataDefs:
 

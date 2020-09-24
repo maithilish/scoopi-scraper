@@ -197,7 +197,7 @@ public class JobStore implements IClusterJobStore {
                             objFactory.createClusterJob(newJobId);
                     txJobsQ.offer(cluserJob);
                     txPayloadsMap.set(newJobId, payload);
-                    LOG.debug("put payload {}", jobId);
+                    LOG.debug("batch put payload {}", newJobId);
                 }
             }
 

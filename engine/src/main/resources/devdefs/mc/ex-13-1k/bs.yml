@@ -4,6 +4,7 @@ taskGroups:
     bsTask:
       dataDef: bs
       steps: fooSteps
+    live: P1W
 
 steps:
   fooSteps:

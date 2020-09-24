@@ -9,3 +9,5 @@ write a program to find unused public methods by scanning classes in jar
 
 Analyze logging and segregate errors for data and warning for others, 
 	or explore some better way 
+
+Hammer - four nodes and simultaneous two failure 	

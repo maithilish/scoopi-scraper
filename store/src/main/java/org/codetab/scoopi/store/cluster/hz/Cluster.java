@@ -68,9 +68,13 @@ public class Cluster implements ICluster {
         return configFile;
     }
 
+    /**
+     * Called by Bootstrap wait for quorum to shutdown the cluster. Normal
+     * shutdown is managed by ClusterShutdown. Instance (node) shutdown is
+     * preferred as cluster shutdown fails occasionally.
+     */
     @Override
     public void shutdown() {
-        // prefer node shutdown as cluster shutdown occasionally fails
         hz.shutdown();
     }
 

@@ -88,7 +88,7 @@ public class MetricsHelper {
                 LOG.error("unable to put metrics json to metrics map {}",
                         e.getMessage());
                 LOG.debug("{}", e);
-                throw e;
+                // throw e;
             }
         };
         Serializer serializer = Serializer.forRegistry(METRICS)
