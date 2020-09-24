@@ -40,7 +40,9 @@ public class ShutdownHook extends Thread {
             scoopiStatus.outputMemStats();
             scoopiStatus.outputStats(false);
         } else {
-            LOG.info("cancel requested");
+            final int[] surrogates = {0xD83D, 0xDC7D};
+            String emoji = new String(surrogates, 0, surrogates.length);
+            LOG.info("{} {} {} cancel requested", emoji, emoji, emoji);
             try {
                 scoopiEngine.cancel();
             } catch (InterruptedException e) {

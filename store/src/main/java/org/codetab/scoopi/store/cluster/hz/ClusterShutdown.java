@@ -67,6 +67,11 @@ public class ClusterShutdown implements IShutdown {
         }
     }
 
+    /**
+     * Called by ClusterModule to shutdown the cluster. Similar method in
+     * ICluster is used by Bootstrap when quorum is not formed. Instance (node)
+     * shutdown is preferred as cluster shutdown fails occasionally.
+     */
     @Override
     public void terminate() {
         // prefer node shutdown as cluster shutdown occasionally fails
