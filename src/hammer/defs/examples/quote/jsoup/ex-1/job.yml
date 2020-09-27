@@ -1,0 +1,41 @@
+locatorGroups:
+  
+  quoteGroup:   
+    locators: [
+       { name: quotes, url: "http://quotes.toscrape.com/js/" }  
+    ]
+                                        
+taskGroups:
+
+  quoteGroup:
+    quoteTask:
+      dataDef: quote
+      steps: 
+        jsoupDefault:
+          loader:
+            class: "org.codetab.scoopi.step.extract.DomLoader"
+            previous: seeder 
+            next: parser
+              
+dataDefs:
+
+  quoteLink:
+    query:
+      block: "li.next"              
+    items: [ 
+      item: { name: "link",  selector: "a:nth-child(1) attribute: href", linkGroup: quoteGroup, 
+              prefix: [ "http://quotes.toscrape.com" ],  
+              linkBreakOn: [ "http://quotes.toscrape.com/js/page/4/" ] },
+    ]
+
+  quote:           
+    query:
+      block: "body > div div.quote:nth-child(%{item.index})"
+      selector: "span:nth-child(1)"            
+    items: [
+      item: { name: "quote", indexRange: 4-13, value: "quote"},      
+    ]
+    dims: [
+      item: { name: "by", selector: "span:nth-child(2) > small" },
+      item: { name: "tags", selector: "div a" },     
+    ]    

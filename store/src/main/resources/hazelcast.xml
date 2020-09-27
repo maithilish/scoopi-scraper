@@ -13,6 +13,14 @@
         <property name="log4j2.configuration">/log4j2.xml</property>
     </properties>
 
+<!--
+    <split-brain-protection name="sGuard"
+        enabled="true">
+        <minimum-cluster-size>3</minimum-cluster-size>
+    </split-brain-protection>
+    <split-brain-protection-ref>sGuard</split-brain-protection-ref>
+ -->
+
     <queue name="default">
         <backup-count>2</backup-count>
     </queue>

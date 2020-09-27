@@ -1,0 +1,25 @@
+locatorGroups:
+
+  snapshotGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/fin/page/acme-snapshot.html" }  
+    ]
+
+taskGroups:
+
+  snapshotGroup:
+    priceTask:
+      dataDef: price
+
+dataDefs:
+
+  price:            
+    query:
+      block: "div#price_tick"
+      selector: "*"
+    items: [ 
+      item: { name: "Price", value: "Price" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]        

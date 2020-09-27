@@ -19,20 +19,24 @@ runDir=$workDir/run
 scoopiOutputDir=output
 outputDir=$runDir/output
 logsDir=$runDir/logs
-releaseZip=../../scoopi/target/scoopi-$scoopiVersion-release.zip
+projectBase=/orange/data/eclipse-workspace/scoopi-scraper
+releaseZip=$projectBase/scoopi/target/scoopi-$scoopiVersion-release.zip
 moduleDir=$workDir/module
 
-source ./opts.sh
-source ./funcs.sh
+source ./script/opts.sh
+source ./script/funcs.sh
+
+# export to docker
+export logsDir
+export outputDir
 
 ## configs
 
-JAVA_OPTS="-Dhazelcast.config=/hazelcast.xml "
-JAVA_OPTS+="-Dscoopi.cluster.quorum.size=2 "
+JAVA_OPTS="-Dscoopi.cluster.quorum.size=2 "
 JAVA_OPTS+="-Dlog4j.configurationFile=conf/log4j2.xml "
 JAVA_OPTS+="-Dscoopi.metrics.server.enable=false "
 JAVA_OPTS+="-Dscoopi.defs.dir=$defsDir "
-JAVA_OPTS+="-Dscoopi.defs.defaultSteps=$parser"
+JAVA_OPTS+="-Dscoopi.defs.defaultSteps=$parser "
 
 ## main
 
@@ -42,15 +46,24 @@ for ((c = 0; c < numOfTimes; c++)); do
 
     cleanup
 
-    nodes=("node-a" "node-b" "node-c")
+    nodes=("node-a" "node-b" "node-c" "node-d")
 
-    pids=($(runScoopi))
-
+    if [[ "$runtime" == "java" ]]; then
+      pids=($(runScoopi))
+    else
+      pids=($(runScoopiInDocker))    
+    fi
+   
     crashAfter=$(echo "$crashStartOffset + ($c * $incrementBy)" | bc)
 
     echo -n "[$runName] #$(($c + 1)), kill after: $crashAfter seconds "
 
-    nodeToCrash=${pids[0]}
+    if [[ "$killHowMany" == "1" ]]; then
+      nodesToCrash=(${pids[0]})
+    else
+      nodesToCrash=(${pids[0]} ${pids[2]})
+    fi
+
     scheduleNodeCrash
 
     waitForFinish ${pids[@]}

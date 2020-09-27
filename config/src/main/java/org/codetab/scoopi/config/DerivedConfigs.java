@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.configuration2.CompositeConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.codetab.scoopi.exception.CriticalException;
@@ -15,14 +16,15 @@ public class DerivedConfigs {
 
     public void addRunDates(final CompositeConfiguration configuration)
             throws ParseException {
-        Date date = new Date();
-        // override date with user provided date if any
+        Date date;
         String runDateTimeString =
                 configuration.getString("scoopi.runDateTimeString");
         if (nonNull(runDateTimeString)) {
-            String[] dateTimeFormat = configuration
-                    .getString("scoopi.dateTimeParsePattern").split(" ; ");
+            String[] dateTimeFormat = getDateTimeParsePatterns(
+                    configuration.getString("scoopi.dateTimeParsePattern"));
             date = DateUtils.parseDate(runDateTimeString, dateTimeFormat);
+        } else {
+            date = new Date();
         }
 
         // date instances
@@ -33,8 +35,8 @@ public class DerivedConfigs {
         configuration.setProperty("scoopi.runDate", runDate);
 
         // date and time string
-        String dateTimeFormat = configuration
-                .getString("scoopi.dateTimeParsePattern").split(" ; ")[0]; //$NON-NLS-1$
+        String dateTimeFormat = getDateTimeParsePatterns(
+                configuration.getString("scoopi.dateTimeParsePattern"))[0];
         runDateTimeString = DateFormatUtils.format(runDateTime, dateTimeFormat);
         configuration.setProperty("scoopi.runDateTimeString", //$NON-NLS-1$
                 runDateTimeString);
@@ -53,8 +55,8 @@ public class DerivedConfigs {
         final String key = "scoopi.highDate";
         try {
             final String dateStr = configuration.getString(key);
-            String[] dateTimeFormat = configuration
-                    .getString("scoopi.dateTimeParsePattern").split(" ; "); //$NON-NLS-1$
+            String[] dateTimeFormat = getDateTimeParsePatterns(
+                    configuration.getString("scoopi.dateTimeParsePattern"));
             Date highDate = DateUtils.parseDate(dateStr, dateTimeFormat);
             configuration.setProperty(key, highDate);
         } catch (ParseException e) {
@@ -71,4 +73,13 @@ public class DerivedConfigs {
                 stackElement.getClassName());
     }
 
+    private String[] getDateTimeParsePatterns(
+            final String dateTimeParsePattern) {
+        String normalized = StringUtils.normalizeSpace(dateTimeParsePattern);
+        String[] dateTimeFormat = normalized.split(" ; ");
+        for (int c = 0; c < dateTimeFormat.length; c++) {
+            dateTimeFormat[c] = dateTimeFormat[c].trim();
+        }
+        return dateTimeFormat;
+    }
 }

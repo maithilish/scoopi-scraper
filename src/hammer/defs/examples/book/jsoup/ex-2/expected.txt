@@ -1,0 +1,20 @@
+books|bookGroup|book|catalogue/a-light-in-the-attic_1000/index.html|£51.77|A Light in the Attic
+books|bookGroup|book|catalogue/tipping-the-velvet_999/index.html|£53.74|Tipping the Velvet
+books|bookGroup|book|catalogue/soumission_998/index.html|£50.10|Soumission
+books|bookGroup|book|catalogue/sharp-objects_997/index.html|£47.82|Sharp Objects
+books|bookGroup|book|catalogue/sapiens-a-brief-history-of-humankind_996/index.html|£54.23|Sapiens: A Brief History of Humankind
+books|bookGroup|book|catalogue/the-requiem-red_995/index.html|£22.65|The Requiem Red
+books|bookGroup|book|catalogue/the-dirty-little-secrets-of-getting-your-dream-job_994/index.html|£33.34|The Dirty Little Secrets of Getting Your Dream Job
+books|bookGroup|book|catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html|£17.93|The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull
+books|bookGroup|book|catalogue/the-boys-in-the-boat-nine-americans-and-their-epic-quest-for-gold-at-the-1936-berlin-olympics_992/index.html|£22.60|The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics
+books|bookGroup|book|catalogue/the-black-maria_991/index.html|£52.15|The Black Maria
+books|bookGroup|book|catalogue/starving-hearts-triangular-trade-trilogy-1_990/index.html|£13.99|Starving Hearts (Triangular Trade Trilogy, #1)
+books|bookGroup|book|catalogue/shakespeares-sonnets_989/index.html|£20.66|Shakespeare's Sonnets
+books|bookGroup|book|catalogue/set-me-free_988/index.html|£17.46|Set Me Free
+books|bookGroup|book|catalogue/scott-pilgrims-precious-little-life-scott-pilgrim-1_987/index.html|£52.29|Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)
+books|bookGroup|book|catalogue/rip-it-up-and-start-again_986/index.html|£35.02|Rip it Up and Start Again
+books|bookGroup|book|catalogue/our-band-could-be-your-life-scenes-from-the-american-indie-underground-1981-1991_985/index.html|£57.25|Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991
+books|bookGroup|book|catalogue/olio_984/index.html|£23.88|Olio
+books|bookGroup|book|catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html|£37.59|Mesaerion: The Best Science Fiction Stories 1800-1849
+books|bookGroup|book|catalogue/libertarianism-for-beginners_982/index.html|£51.33|Libertarianism for Beginners
+books|bookGroup|book|catalogue/its-only-the-himalayas_981/index.html|£45.17|It's Only the Himalayas

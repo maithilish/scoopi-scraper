@@ -1,0 +1,6 @@
+locatorGroups:
+
+  snapshotGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/fin/page/acme-snapshot-links.html" }  
+    ]

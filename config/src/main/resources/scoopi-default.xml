@@ -63,11 +63,12 @@
                 <implicitWait>10</implicitWait>
             </timeout>
         </webDriver>
-        <highDate>31-12-2037 23:59:59.999</highDate>
+        <highDate>31-12-2037T23:59:59.999</highDate>
         <dateParsePattern>dd-MM-yyyy ; dd/MM/yyyy</dateParsePattern>
         <dateTimeParsePattern>
             <![CDATA[
-                 dd-MM-yyyy HH:mm:ss.SSS ; dd/MM/yyyy HH:mm:ss.SSS
+                 dd-MM-yyyy'T'HH:mm:ss.SSSZ ; dd/MM/yyyy'T'HH:mm:ss.SSSZ ;
+                 dd-MM-yyyy'T'HH:mm:ss.SSS ; dd/MM/yyyy'T'HH:mm:ss.SSS
             ]]>
         </dateTimeParsePattern>
         <outputDirTimestampPattern>
