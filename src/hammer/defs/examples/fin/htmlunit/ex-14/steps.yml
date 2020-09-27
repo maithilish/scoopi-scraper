@@ -1,0 +1,16 @@
+steps:
+  fooSteps:
+    htmlUnitDefault:
+      converter:
+        class: "org.codetab.scoopi.step.process.DataConverter"
+        previous: filter
+        next: appender           
+        plugins: [
+          plugin: { 
+            name: dateConverter, 
+            class: "org.codetab.scoopi.plugin.converter.DateRoller", 
+            item: year, 
+            inPattern: "MMM ''YY", 
+            outPattern: "yyyy-MM-dd", 
+            roll: "DAY_OF_MONTH=ceil" }            
+        ]

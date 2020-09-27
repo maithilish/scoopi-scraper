@@ -1,0 +1,16 @@
+# examples 
+
+ex-1 single item - price
+ex-2 multi item, region, field, scripts - snapshot
+ex-3 index and indexRange - BS
+ex-4 breakAfter - BS
+ex-5 filters - BS
+ex-6 multiple tasks - price, snapshot
+ex-7 multiple locators and tasks - price, snapshot, BS
+ex-8 override steps and convert value - price, snapshot, BS
+ex-9 links - BS,PL
+ex-10 All
+ex-11 document live
+ex-12 persistence of locator and data
+ex-13 split on tasks
+ex-14 split on model

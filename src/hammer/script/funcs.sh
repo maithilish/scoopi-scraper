@@ -16,17 +16,31 @@ extractModules() {
 }
 
 cleanup() {
-    rm -rf $scoopiOutputDir
-    rm -rf $runDir
+    sudo rm -rf $scoopiOutputDir
+    sudo rm -rf $runDir
 }
 
 runScoopi() {
     pids=()
     for node in ${nodes[@]}; do
-        NODE_OPTS="-Dscoopi.log.dir=$logsDir/$node"
+        NODE_OPTS="-Dscoopi.log.dir=$logsDir/$node"        
+        JAVA_OPTS+="-Dscoopi.appender.file.baseDir=/tmp/hammer/run "
+        JAVA_OPTS+="-Dhazelcast.config=/hazelcast-tcp.xml "
         java $JAVA_OPTS $NODE_OPTS -cp $moduleDir/*:conf:. org.codetab.scoopi.Scoopi >/dev/null &
         pids+=($!)
     done
+
+    echo ${pids[@]}
+}
+
+runScoopiInDocker() {
+    pids=()
+    JAVA_OPTS+="-Dhazelcast.config=/hazelcast-mcast.xml "
+    export JAVA_OPTS
+
+    docker-compose --project-directory . -f docker/docker-compose.yaml up -d
+    sleep 1
+    pids=($(pgrep -f Scoopi))
 
     echo ${pids[@]}
 }
@@ -67,11 +81,11 @@ scheduleNodeCrash() {
     slept=0
     while true; do
         if (($(echo $slept == $crashAfter | bc -l))); then
-            if [[ "$(isPidAlive $nodeToCrash)" == "true" ]]; then
-                kill $nodeToCrash
-                echo -n " pid $nodeToCrash killed at $slept"
+            if [[ "$(isPidAlive ${nodesToCrash[0]})" == "true" || "$(isPidAlive ${nodesToCrash[1]})" == "true" ]]; then
+                sudo kill ${nodesToCrash[@]}
+                echo -n " pid ${nodesToCrash[@]} killed at $slept"
             else
-                echo -n " pid $nodeToCrash completed, can't kill"
+                echo -n " pid ${nodesToCrash[@]} completed, can't kill"
             fi
             echo -n " "
             break
@@ -92,6 +106,7 @@ checkConsistency() {
     errorDir="$workDir/errors/$runName/$crashAfter"
     rm -rf $errorDir
 
+    sudo chown m.m $outputDir -R
     # prepare actual file
     sort -t '|' -k 1 -k 2 -k 3 -k 4 $outputDir/$dirTimestamp/data-*.txt >$outputDir/$dirTimestamp/actual.txt
 

@@ -1,0 +1,27 @@
+taskGroups:
+
+  snapshotGroup:    
+    priceTask:
+      dataDef: price
+  
+    snapshotTask:
+      dataDef: snapshot
+    
+    linkTask:
+      dataDef: links
+      steps:
+        htmlUnitDefault:
+          process:
+            class: "org.codetab.scoopi.step.process.LocatorCreator"
+            previous: parser
+            next: seeder
+
+  bsGroup:
+    bsTask:
+      dataDef: bs
+      steps: fooSteps
+                   
+  plGroup:
+    plTask:
+      dataDef: pl
+      steps: fooSteps

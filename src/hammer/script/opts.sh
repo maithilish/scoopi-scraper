@@ -6,6 +6,8 @@
 [ -z ${incrementBy+x} ] && incrementBy=1
 [ -z ${numOfTimes+x} ] && numOfTimes=25
 [ -z ${parser+x} ] && parser="jsoupDefault"
+[ -z ${killHowMany+x} ] && killHowMany=1
+[ -z ${runtime+x} ] && runtime="java"
 
 # Reset getopts
 OPTIND=1
@@ -21,9 +23,10 @@ Check consistency of Scoopi cluster by crashing a node at specified time.
     -n      number of runs
     -s      kill after s seconds
     -i      increment kill seconds in each run (integer or decimal)
-    -p      parser (jsoup or htmlunit)
+    -p      parser (jsoup or htmlunit, default jsoup)
+    -k      kill how many processes
+    -e      runtime (java or docker, default java)
     -h      display this help and exit    
-
 EOF
 }
 
@@ -51,7 +54,7 @@ validateNumber() {
 
 # process options
 
-while getopts "hr:n:s:i:p:" opt; do
+while getopts "hr:n:s:i:p:k:e:" opt; do
     case $opt in
     r)
         runName=$OPTARG
@@ -64,6 +67,12 @@ while getopts "hr:n:s:i:p:" opt; do
         ;;
     i)
         incrementBy=$OPTARG
+        ;;
+    k)
+        killHowMany=$OPTARG
+        ;;
+    e)
+        runtime=$OPTARG
         ;;
     p)
         if [[ $OPTARG == "jsoup" ]]; then
@@ -88,9 +97,10 @@ shift "$((OPTIND - 1))" # get parameters, discard options
 [[ -z "$@" ]] && show_help_exit 1 # no parameters exit - no def dir
 
 defsDir=$1
+defsDirBaseName=$(basename $defsDir)
 
 echo
-echo "$(tput setaf 3)[$runName]$(tput sgr0), runs: $(tput setaf 3)$numOfTimes$(tput sgr0), kill start: $(tput setaf 3)$crashStartOffset$(tput sgr0), increment by: $(tput setaf 3)$incrementBy$(tput sgr0), parser: $parser, defs: $(tput setaf 3)$defsDir$(tput sgr0)"
+echo "$(tput setaf 3)[$runName]$(tput sgr0)  runs: $(tput setaf 3)$numOfTimes$(tput sgr0)  kill start: $(tput setaf 3)$crashStartOffset$(tput sgr0)  increment by: $(tput setaf 3)$incrementBy$(tput sgr0) kill: $(tput setaf 3)$killHowMany pids$(tput sgr0)  parser: $(tput setaf 3)$parser$(tput sgr0)  defs: $(tput setaf 3)$defsDirBaseName$(tput sgr0)"
 echo
 
 nConstraint="error: option -n not integer or out of range 1..100"
@@ -101,5 +111,8 @@ $(validateNumber $crashStartOffset '^[0-9]+$' 1 100) && echo $sConstraint && exi
 
 iConstraint="error: option -i not decimal or out of range 0.1..5"
 $(validateNumber $incrementBy '^[0-9]+([.][0-9]+)?$' 0.1 5) && echo $iConstraint && exit 1
+
+nConstraint="error: option -k not integer or out of range 1..2"
+$(validateNumber $killHowMany '^[0-9]+$' 1 2) && echo $nConstraint && exit 1
 
 [ ! -d $defsDir ] && echo "error: def dir not found, $defsDir" && exit 1

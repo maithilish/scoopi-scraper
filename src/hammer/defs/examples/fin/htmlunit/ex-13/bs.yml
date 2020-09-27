@@ -1,0 +1,46 @@
+taskGroups:
+
+  bsGroup:
+    bsTask:
+      dataDef: bs
+      steps: fooSteps
+                   
+steps:
+  fooSteps:
+    htmlUnitDefault:
+      converter:
+        class: "org.codetab.scoopi.step.process.DataConverter"
+        previous: filter
+        next: appender           
+        plugins: [
+          plugin: { 
+            name: dateConverter, 
+            class: "org.codetab.scoopi.plugin.converter.DateRoller", 
+            item: year, 
+            inPattern: "MMM ''YY", 
+            outPattern: "yyyy-MM-dd", 
+            roll: "DAY_OF_MONTH=ceil" }            
+        ]
+
+dataDefs:
+
+  bs:
+    query:
+      block: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]"
+      selector: "*//*[.='%{item.value}']/following-sibling::td[%{dim.year.index}-1]"       
+    items:  
+      - item:
+          name: item
+          selector: "*//tr[%{index}+1]/td[1]"                        
+          index: 5
+          breakAfter:
+            - "Book Value (Rs)"
+          filters: 
+            - filter: { type: value, pattern: "" }
+            - filter: { type: value, pattern: "Sources Of Funds" }
+            - filter: { type: value, pattern: "Application Of Funds" }
+    dims:  
+      - item:
+          name: year
+          selector: "*//tr[1]/td[%{index}]"
+          indexRange: 2-6
