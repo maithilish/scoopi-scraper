@@ -412,6 +412,8 @@ travis maven and build steps
 
 ## Release
 
+update dependencies and plugin to latest version.
+
 merge branch if any and change version in all modules
 
 	mvn versions:set -DnewVersion=0.9.7-beta

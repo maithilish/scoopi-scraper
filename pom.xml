@@ -30,52 +30,54 @@
     <properties>
         <java-release>8</java-release>
 
-        <commons-beanutils.version>1.9.4</commons-beanutils.version>
-        <commons-configuration2.version>2.6</commons-configuration2.version>
-        <commons-csv.version>1.7</commons-csv.version>
-        <commons-lang3.version>3.9</commons-lang3.version>
-        <commons-pool2.version>2.7.0</commons-pool2.version>
-        <commons-text.version>1.8</commons-text.version>
-        <commons-io.version>2.6</commons-io.version>
-        <commons-codec.version>1.14</commons-codec.version>
-        <commons-validator.version>1.6</commons-validator.version>
-        <httpclient.version>4.5.10</httpclient.version>
-        <lz4.version>1.7.1</lz4.version>
-        
-        <guava.version>28.1-jre</guava.version>
-        <gson.version>2.8.6</gson.version>
-        <java-inject.version>1</java-inject.version>
-        <guice.version>4.2.2</guice.version>
+        <jsoup.version>1.13.1</jsoup.version>
         <htmlunit.version>2.36.0</htmlunit.version>
-        <jackson.version>2.10.1</jackson.version>
+
+        <commons-lang3.version>3.11</commons-lang3.version>
+        <commons-configuration2.version>2.7</commons-configuration2.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-csv.version>1.8</commons-csv.version>
+        <commons-pool2.version>2.9.0</commons-pool2.version>
+        <commons-text.version>1.9</commons-text.version>
+        <commons-io.version>2.8.0</commons-io.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <commons-validator.version>1.7</commons-validator.version>
+
+        <java-inject.version>1</java-inject.version>
+        <guice.version>4.2.3</guice.version>
+        <guava.version>29.0-jre</guava.version>
+        <jackson.version>2.11.3</jackson.version>
+        <gson.version>2.8.6</gson.version>
+        <json-validator.version>2.2.14</json-validator.version>
+        <lz4.version>1.7.1</lz4.version>
+        <metrics.version>4.1.12.1</metrics.version>
+
         <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jetty.version>9.4.14.v20181114</jetty.version>
-        <json-validator.version>2.2.11</json-validator.version>
-        <jsoup.version>1.12.1</jsoup.version>
-        <metrics.version>4.1.1</metrics.version>
+        <jetty.version>9.4.32.v20200930</jetty.version>
+        <httpclient.version>4.5.12</httpclient.version>
         <selenium.version>3.141.59</selenium.version>
 
-        <hazelcast.version>4.0.1</hazelcast.version>
+        <hazelcast.version>4.0.3</hazelcast.version>
 
         <log4j2.version>2.13.3</log4j2.version>
-        <slf4j-simple.version>1.7.28</slf4j-simple.version>
+        <slf4j-simple.version>2.0.0-alpha1</slf4j-simple.version>
 
-        <junit.version>4.12</junit.version>
-        <assertj.version>3.14.0</assertj.version>
-        <mockito.version>3.1.0</mockito.version>
-        <byte-budy.version>1.9.10</byte-budy.version>
+        <junit.version>4.13</junit.version>
+        <assertj.version>3.17.2</assertj.version>
+        <mockito.version>3.5.13</mockito.version>
+        <byte-budy.version>1.10.16</byte-budy.version>
         
         <!-- plugin version -->
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <jar-plugin.version>3.2.0</jar-plugin.version>
         <dependency-plugin.version>3.1.1</dependency-plugin.version>
-        <assembly-plugin.version>3.2.0</assembly-plugin.version>
+        <assembly-plugin.version>3.3.0</assembly-plugin.version>
         <install-plugin.version>3.0.0-M1</install-plugin.version>
-        <failsafe-plugin.version>3.0.0-M3</failsafe-plugin.version>
-        <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
+        <failsafe-plugin.version>3.0.0-M5</failsafe-plugin.version>
+        <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
-        <versions-plugin.version>2.7</versions-plugin.version>
-        <exec-plugin.version>1.6.0</exec-plugin.version>
+        <versions-plugin.version>2.8.1</versions-plugin.version>
+        <exec-plugin.version>3.0.0</exec-plugin.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
