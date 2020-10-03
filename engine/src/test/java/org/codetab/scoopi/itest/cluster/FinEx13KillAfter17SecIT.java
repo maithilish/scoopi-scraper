@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.itest.ITestClusterBase;
 import org.junit.Test;
 
@@ -18,10 +18,11 @@ public class FinEx13KillAfter17SecIT extends ITestClusterBase {
     private String exName = "ex-13";
     private String exBase = "/defs/examples/fin";
     private String outputDir = "output";
+    private String runDateTimeText = "01-07-2020 10:59:59";
 
     @Test
     public void jsoupTest()
-            throws FileNotFoundException, IOException, ParseException {
+            throws FileNotFoundException, IOException, ConfigNotFoundException {
         String cat = "jsoup";
         String exDir = getExampleDir(exName, exBase, cat);
         String expectedFile = getExpectedFile(exName, exBase, cat);
@@ -29,9 +30,7 @@ public class FinEx13KillAfter17SecIT extends ITestClusterBase {
         deleteOutputDir(outputDir);
 
         Properties properties = getCommonProperties(exDir);
-
-        String runDateTimeString = "01-07-2020 10:59:59.999";
-        properties.put("scoopi.runDateTimeString", runDateTimeString);
+        properties.put("scoopi.runDateTimeText", runDateTimeText);
 
         // seconds
         int timeout = 60;
@@ -44,8 +43,7 @@ public class FinEx13KillAfter17SecIT extends ITestClusterBase {
         runScoopiCluster(nodesMap, properties);
 
         List<String> actual = getOutputData(outputDir);
-        List<String> expected =
-                getExpectedList(expectedFile, runDateTimeString);
+        List<String> expected = getExpectedList(expectedFile, runDateTimeText);
 
         assertThat(actual.size()).isEqualTo(expected.size());
         assertThat(actual).containsAll(expected);
@@ -53,7 +51,7 @@ public class FinEx13KillAfter17SecIT extends ITestClusterBase {
 
     @Test
     public void htmlunitTest()
-            throws FileNotFoundException, IOException, ParseException {
+            throws FileNotFoundException, IOException, ConfigNotFoundException {
         String cat = "htmlunit";
         String exDir = getExampleDir(exName, exBase, cat);
         String expectedFile = getExpectedFile(exName, exBase, cat);
@@ -61,9 +59,7 @@ public class FinEx13KillAfter17SecIT extends ITestClusterBase {
         deleteOutputDir(outputDir);
 
         Properties properties = getCommonProperties(exDir);
-
-        String runDateTimeString = "01-07-2020 10:59:59.999";
-        properties.put("scoopi.runDateTimeString", runDateTimeString);
+        properties.put("scoopi.runDateTimeText", runDateTimeText);
         properties.put("scoopi.defs.defaultSteps", "htmlUnitDefault");
 
         // seconds
@@ -77,8 +73,7 @@ public class FinEx13KillAfter17SecIT extends ITestClusterBase {
         runScoopiCluster(nodesMap, properties);
 
         List<String> actual = getOutputData(outputDir);
-        List<String> expected =
-                getExpectedList(expectedFile, runDateTimeString);
+        List<String> expected = getExpectedList(expectedFile, runDateTimeText);
 
         assertThat(actual.size()).isEqualTo(expected.size());
         assertThat(actual).containsAll(expected);

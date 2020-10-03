@@ -4,8 +4,8 @@ import static org.codetab.scoopi.util.Util.LINE;
 import static org.codetab.scoopi.util.Util.dashit;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,8 +52,8 @@ class DataDefDefs {
             String dataDefName = entry.getKey();
             JsonNode jDataDef = entry.getValue();
             String defJson = yamls.toJson(jDataDef);
-            Date fromDate = configs.getRunDateTime();
-            Date toDate = configs.getHighDate();
+            ZonedDateTime fromDate = configs.getRunDateTime();
+            ZonedDateTime toDate = configs.getHighDate();
             DataDef dataDef = objectFactory.createDataDef(dataDefName, fromDate,
                     toDate, defJson);
             dataDefs.add(dataDef);

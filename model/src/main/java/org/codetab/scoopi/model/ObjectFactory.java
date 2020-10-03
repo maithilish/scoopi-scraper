@@ -1,6 +1,6 @@
 package org.codetab.scoopi.model;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.codetab.scoopi.model.helper.Fingerprints;
 
@@ -58,8 +58,9 @@ public class ObjectFactory {
         return locator;
     }
 
-    public Document createDocument(final String name, final Date fromDate,
-            final String url, final Fingerprint locator) {
+    public Document createDocument(final String name,
+            final ZonedDateTime fromDate, final String url,
+            final Fingerprint locator) {
         final Document document = new Document();
         document.setName(name);
         document.setFromDate(fromDate);
@@ -106,8 +107,9 @@ public class ObjectFactory {
         return axis;
     }
 
-    public DataDef createDataDef(final String name, final Date fromDate,
-            final Date toDate, final String defJson) {
+    public DataDef createDataDef(final String name,
+            final ZonedDateTime fromDate, final ZonedDateTime toDate,
+            final String defJson) {
         final DataDef dataDef = new DataDef();
         dataDef.setName(name);
         dataDef.setFromDate(fromDate);

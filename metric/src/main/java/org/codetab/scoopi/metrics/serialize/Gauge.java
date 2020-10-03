@@ -2,10 +2,10 @@ package org.codetab.scoopi.metrics.serialize;
 
 import static org.codetab.scoopi.util.Util.spaceit;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -88,11 +88,13 @@ public class Gauge implements Metric {
         return result;
     }
 
+    // FIXME - datefix, check the result
     private long convertTime(final Object timeStr) throws ParseException {
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-        Date reference = dateFormat.parse("00:00:00");
-        Date date = dateFormat.parse((String) timeStr);
-        return date.getTime() - reference.getTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalTime reference = LocalTime.parse("00:00:00", formatter);
+        LocalTime time = LocalTime.parse((String) timeStr, formatter);
+        Duration duration = Duration.between(reference, time);
+        return duration.toMillis();
     }
 
 }

@@ -105,7 +105,7 @@ public class ConfigBuilder {
             sb.append(newline);
         });
         LOG.info("rundate {}",
-                properties.getProperty("scoopi.runDateTimeString"));
+                properties.getProperty("scoopi.runDateTimeText"));
         LOG.debug("{}---- effective configuration ----{}{}-------------------",
                 newline, newline, sb.toString());
     }

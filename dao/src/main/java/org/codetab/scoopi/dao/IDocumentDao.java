@@ -1,6 +1,6 @@
 package org.codetab.scoopi.dao;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Fingerprint;
@@ -11,7 +11,7 @@ public interface IDocumentDao {
 
     Document get(Fingerprint dir) throws DaoException, ChecksumException;
 
-    Date getDocumentDate(Fingerprint dir) throws DaoException;
+    ZonedDateTime getDocumentDate(Fingerprint dir) throws DaoException;
 
     void delete(Fingerprint dir) throws DaoException;
 

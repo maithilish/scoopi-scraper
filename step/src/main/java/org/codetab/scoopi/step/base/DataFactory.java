@@ -1,6 +1,6 @@
 package org.codetab.scoopi.step.base;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import javax.inject.Inject;
 
@@ -26,7 +26,7 @@ public class DataFactory {
     }
 
     public Data createData(final String dataDef, final Long documentId,
-            final String label, final Date runDateTime)
+            final String label, final ZonedDateTime runDateTime)
             throws DataDefNotFoundException {
         Data data = itemDef.getDataTemplate(dataDef);
         data.setName(label);

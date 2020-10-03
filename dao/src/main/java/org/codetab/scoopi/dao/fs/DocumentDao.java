@@ -4,7 +4,7 @@ import static java.util.Objects.isNull;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,17 +44,19 @@ public class DocumentDao implements IDocumentDao {
     }
 
     @Override
-    public Date getDocumentDate(final Fingerprint dir) throws DaoException {
+    public ZonedDateTime getDocumentDate(final Fingerprint dir)
+            throws DaoException {
         URI uri = fsHelper.getURI(dir.getValue(), fileName);
         byte[] serializedData = fsHelper.readFile(uri, "/documentDate");
         if (isNull(serializedData)) {
             return null;
         } else {
             Object obj = SerializationUtils.deserialize(serializedData);
-            if (obj instanceof Date) {
-                return (Date) obj;
+            if (obj instanceof ZonedDateTime) {
+                return (ZonedDateTime) obj;
             } else {
-                throw new DaoException("object is not instance of Date");
+                throw new DaoException(
+                        "object is not instance of ZonedDateTime");
             }
         }
     }

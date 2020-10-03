@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,7 +13,6 @@ import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.http.client.utils.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
@@ -55,9 +55,10 @@ public final class FileAppender extends Appender {
             fileDir = FilenameUtils.getFullPath(filePath);
             fileBaseName = FilenameUtils.getBaseName(filePath);
             fileExtension = FilenameUtils.getExtension(filePath);
-            dirTimestamp = DateUtils.formatDate(configs.getRunDateTime(),
-                    configs.getConfig("outputDirTimestampPattern",
-                            "ddMMMyyyy-HHmmss"));
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern(configs.getConfig(
+                            "outputDirTimestampPattern", "yyyyMMMdd-HHmmss"));
+            dirTimestamp = configs.getRunDateTime().format(formatter);
             setInitialized(true);
         } catch (DefNotFoundException e) {
             errors.inc();

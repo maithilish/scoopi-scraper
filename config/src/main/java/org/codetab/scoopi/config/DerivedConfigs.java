@@ -1,67 +1,90 @@
 package org.codetab.scoopi.config;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 import org.apache.commons.configuration2.CompositeConfiguration;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.codetab.scoopi.exception.CriticalException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DerivedConfigs {
 
+    private static final Logger LOG = LogManager.getLogger();
+
     public void addRunDates(final CompositeConfiguration configuration)
             throws ParseException {
-        Date date;
-        String runDateTimeString =
-                configuration.getString("scoopi.runDateTimeString");
-        if (nonNull(runDateTimeString)) {
-            String[] dateTimeFormat = getDateTimeParsePatterns(
-                    configuration.getString("scoopi.dateTimeParsePattern"));
-            date = DateUtils.parseDate(runDateTimeString, dateTimeFormat);
+
+        ZonedDateTime date;
+        String runDateTimeText =
+                configuration.getString("scoopi.runDateTimeText");
+        DateTimeFormatter formatter = getDateTimeFormatter(
+                configuration.getString("scoopi.dateTimePattern"));
+
+        if (nonNull(runDateTimeText)) {
+            LOG.debug("create runDateTime from configuration");
+            date = ZonedDateTime.parse(runDateTimeText, formatter);
         } else {
-            date = new Date();
+            LOG.debug("create runDateTime from system clock");
+            date = ZonedDateTime.now();
         }
 
-        // date instances
-        Date runDateTime = DateUtils.truncate(date, Calendar.SECOND);
+        // set date,time instances
+        ZonedDateTime runDateTime = date.truncatedTo(ChronoUnit.SECONDS);
         configuration.setProperty("scoopi.runDateTime", runDateTime);
 
-        Date runDate = DateUtils.truncate(date, Calendar.DATE);
+        ZonedDateTime runDate = date.truncatedTo(ChronoUnit.DAYS);
         configuration.setProperty("scoopi.runDate", runDate);
 
-        // date and time string
-        String dateTimeFormat = getDateTimeParsePatterns(
-                configuration.getString("scoopi.dateTimeParsePattern"))[0];
-        runDateTimeString = DateFormatUtils.format(runDateTime, dateTimeFormat);
-        configuration.setProperty("scoopi.runDateTimeString", //$NON-NLS-1$
-                runDateTimeString);
+        // date,time text
+        runDateTimeText = runDateTime.format(formatter);
+        configuration.setProperty("scoopi.runDateTimeText", //$NON-NLS-1$
+                runDateTimeText);
 
-        String dateFormat = configuration.getString("scoopi.dateParsePattern") //$NON-NLS-1$
-                .split(" ; ")[0];
-        String runDateString = DateFormatUtils.format(runDate, dateFormat);
-        configuration.setProperty("scoopi.runDateString", runDateString); //$NON-NLS-1$
+        String runDateText = runDate.format(formatter);
+        configuration.setProperty("scoopi.runDateText", runDateText); //$NON-NLS-1$
+
+        LOG.debug("runDateTime      {}", runDateTime);
+        LOG.debug("runDateTimeText  {}", runDateTimeText);
+        LOG.debug("runDate          {}", runDate);
+        LOG.debug("runDateText      {}", runDateText);
+    }
+
+    private DateTimeFormatter getDateTimeFormatter(final String pattern) {
+        DateTimeFormatter formatter;
+        if (isNull(pattern)) {
+            formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+        } else {
+            formatter = DateTimeFormatter.ofPattern(pattern);
+
+            // FIXME - datefix, what is outcome
+            if (isNull(formatter.getZone())) {
+                formatter = formatter.withZone(ZoneId.systemDefault());
+            }
+        }
+        return formatter;
     }
 
     /**
-     * Replace HighDate string with Date instance
+     * Replace HighDate string with ZonedDateTime instance
      * @param configuration
      */
     public void replaceHighDate(final CompositeConfiguration configuration) {
         final String key = "scoopi.highDate";
-        try {
-            final String dateStr = configuration.getString(key);
-            String[] dateTimeFormat = getDateTimeParsePatterns(
-                    configuration.getString("scoopi.dateTimeParsePattern"));
-            Date highDate = DateUtils.parseDate(dateStr, dateTimeFormat);
-            configuration.setProperty(key, highDate);
-        } catch (ParseException e) {
-            throw new CriticalException("unable to parse highDate", e);
-        }
+
+        final String highDateText = configuration.getString(key);
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        LocalDateTime highDate = LocalDateTime.parse(highDateText, formatter);
+        ZonedDateTime zonedHighDate =
+                ZonedDateTime.of(highDate, ZoneId.systemDefault());
+        configuration.setProperty(key, zonedHighDate);
     }
 
     public void addRunnerClass(final CompositeConfiguration configuration) {
@@ -73,13 +96,15 @@ public class DerivedConfigs {
                 stackElement.getClassName());
     }
 
-    private String[] getDateTimeParsePatterns(
-            final String dateTimeParsePattern) {
-        String normalized = StringUtils.normalizeSpace(dateTimeParsePattern);
-        String[] dateTimeFormat = normalized.split(" ; ");
-        for (int c = 0; c < dateTimeFormat.length; c++) {
-            dateTimeFormat[c] = dateTimeFormat[c].trim();
-        }
-        return dateTimeFormat;
-    }
+    // FIXME - datefix remove this
+    // private String[] getDateTimeParsePatterns(
+    // final String dateTimeParsePattern) {
+    // String normalized = StringUtils.normalizeSpace(dateTimeParsePattern);
+    // String[] dateTimeFormat = normalized.split(" ; ");
+    // for (int c = 0; c < dateTimeFormat.length; c++) {
+    // dateTimeFormat[c] = dateTimeFormat[c].trim();
+    // }
+    // return dateTimeFormat;
+    // }
+
 }

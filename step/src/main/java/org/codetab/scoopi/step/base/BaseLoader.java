@@ -7,7 +7,7 @@ import static org.codetab.scoopi.util.Util.LINE;
 import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -118,9 +118,9 @@ public abstract class BaseLoader extends Step {
 
         Fingerprint locatorFp = locator.getFingerprint();
 
-        Date documentToDate = null;
+        ZonedDateTime documentToDate = null;
         try {
-            Date documentDate = documentDao.getDocumentDate(locatorFp);
+            ZonedDateTime documentDate = documentDao.getDocumentDate(locatorFp);
             documentToDate =
                     documents.getToDate(documentDate, live, getJobInfo());
         } catch (DaoException e) {
@@ -186,7 +186,7 @@ public abstract class BaseLoader extends Step {
             }
 
             // create new document
-            Date documentDate = configs.getRunDateTime();
+            ZonedDateTime documentDate = configs.getRunDateTime();
             Document newDocument = objectFactory.createDocument(
                     locator.getName(), documentDate, locator.getUrl(),
                     locator.getFingerprint());
