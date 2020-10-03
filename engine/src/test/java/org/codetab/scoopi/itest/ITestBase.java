@@ -7,10 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +19,13 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.codetab.scoopi.bootstrap.Bootstrap;
 import org.codetab.scoopi.config.BootConfigs;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.di.DInjector;
 import org.codetab.scoopi.engine.ScoopiEngine;
+import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 
 public class ITestBase {
@@ -39,6 +40,7 @@ public class ITestBase {
         properties.put("scoopi.propertyFile", "scoopi-test.properties");
         properties.put("scoopi.defs.defaultSteps", "jsoupDefault");
         properties.put("scoopi.cluster.enable", "false");
+        properties.put("scoopi.dateTimePattern", "dd-MM-yyyy HH:mm:ss");
 
         // FIXME - itestfix remove this
         properties.put("scoopi.fact.notFound.replaceWith", "-");
@@ -97,36 +99,38 @@ public class ITestBase {
         List<String> expectedList = readFileAsList(expectedFile);
         try {
             expectedList = substituteVariables(expectedList, null);
-        } catch (ParseException e) {
+        } catch (ConfigNotFoundException e) {
             // date is null, no parse
         }
         return expectedList;
     }
 
     protected List<String> getExpectedList(final String expectedFile,
-            final String runDateTimeString) throws ParseException {
+            final String runDateTimeText) throws ConfigNotFoundException {
         List<String> expectedList = readFileAsList(expectedFile);
-        expectedList = substituteVariables(expectedList, runDateTimeString);
+        expectedList = substituteVariables(expectedList, runDateTimeText);
         return expectedList;
     }
 
     private List<String> substituteVariables(final List<String> strings,
-            final String runDateTimeString) throws ParseException {
-
-        Date runDateTime = null;
-        if (isNull(runDateTimeString)) {
-            configs = di.instance(Configs.class);
-            runDateTime = configs.getRunDateTime();
-        } else {
-            runDateTime = getDateFromString(runDateTimeString);
-        }
+            final String runDateTimeText) throws ConfigNotFoundException {
 
         Map<String, String> map = new HashMap<>();
-        map.put("runDateTime", runDateTime.toString());
 
-        // FIXME - itestfix correct this
-        Date documentFromDate = runDateTime;
-        map.put("documentFromDate", documentFromDate.toString());
+        if (isNull(runDateTimeText)) {
+            configs = di.instance(Configs.class);
+            ZonedDateTime runDateTime = configs.getRunDateTime();
+            // FIXME - itestfix correct this
+            ZonedDateTime documentFromDate = runDateTime;
+
+            DateTimeFormatter formatter = getDateTimeFormatter(
+                    configs.getConfig("scoopi.dateTimePattern"));
+            map.put("runDateTime", runDateTime.format(formatter));
+            map.put("documentFromDate", documentFromDate.format(formatter));
+        } else {
+            map.put("runDateTime", runDateTimeText);
+            map.put("documentFromDate", runDateTimeText);
+        }
 
         StringSubstitutor ss = new StringSubstitutor(map);
         ss.setVariablePrefix("%{"); //$NON-NLS-1$
@@ -140,10 +144,19 @@ public class ITestBase {
         return list;
     }
 
-    private Date getDateFromString(final String dateStr) throws ParseException {
-        String[] dateTimeFormat =
-                {"dd-MM-yyyy HH:mm:ss.SSS", "dd/MM/yyyy HH:mm:ss.SSS"};
-        return DateUtils.parseDate(dateStr, dateTimeFormat);
+    private DateTimeFormatter getDateTimeFormatter(final String pattern) {
+        DateTimeFormatter formatter;
+        if (isNull(pattern)) {
+            formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+        } else {
+            formatter = DateTimeFormatter.ofPattern(pattern);
+
+            // FIXME - datefix, what is outcome
+            if (isNull(formatter.getZone())) {
+                formatter = formatter.withZone(ZoneId.systemDefault());
+            }
+        }
+        return formatter;
     }
 
     public String getExampleDir(final String exName, final String exBase,

@@ -4,7 +4,7 @@ package org.codetab.scoopi.model;
 import static java.util.Objects.isNull;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -17,8 +17,8 @@ public class DataDef implements Serializable {
 
     private Long id;
     private String name;
-    private Date fromDate;
-    private Date toDate;
+    private ZonedDateTime fromDate;
+    private ZonedDateTime toDate;
     private String defJson;
     private Object def;
 
@@ -73,7 +73,7 @@ public class DataDef implements Serializable {
      * @return possible object is {@link String }
      *
      */
-    public Date getFromDate() {
+    public ZonedDateTime getFromDate() {
         return fromDate;
     }
 
@@ -84,7 +84,7 @@ public class DataDef implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setFromDate(final Date value) {
+    public void setFromDate(final ZonedDateTime value) {
         this.fromDate = value;
     }
 
@@ -94,7 +94,7 @@ public class DataDef implements Serializable {
      * @return possible object is {@link String }
      *
      */
-    public Date getToDate() {
+    public ZonedDateTime getToDate() {
         return toDate;
     }
 
@@ -105,7 +105,7 @@ public class DataDef implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setToDate(final Date value) {
+    public void setToDate(final ZonedDateTime value) {
         this.toDate = value;
     }
 

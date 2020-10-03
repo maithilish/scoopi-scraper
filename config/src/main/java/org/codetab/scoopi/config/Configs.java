@@ -2,7 +2,9 @@ package org.codetab.scoopi.config;
 
 import static java.util.Objects.isNull;
 
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -69,25 +71,27 @@ public class Configs {
     }
 
     // specific property methods
-    public Date getRunDate() {
-        Date runDate = (Date) configProperties.get("scoopi.runDate");
+    public ZonedDateTime getRunDate() {
+        ZonedDateTime runDate =
+                (ZonedDateTime) configProperties.get("scoopi.runDate");
         if (isNull(runDate)) {
             throw new CriticalException("unable to get runDate");
         }
         return runDate;
     }
 
-    public String getRunDateString() {
-        final String key = "scoopi.runDateString";
+    public String getRunDateText() {
+        final String key = "scoopi.runDateText";
         try {
             return configProperties.getConfig(key);
         } catch (ConfigNotFoundException e) {
-            throw new CriticalException("unable to get runDateString", e);
+            throw new CriticalException("unable to get runDateText", e);
         }
     }
 
-    public Date getRunDateTime() {
-        Date runDateTime = (Date) configProperties.get("scoopi.runDateTime");
+    public ZonedDateTime getRunDateTime() {
+        ZonedDateTime runDateTime =
+                (ZonedDateTime) configProperties.get("scoopi.runDateTime");
 
         if (isNull(runDateTime)) {
             throw new CriticalException("unable to get runDateTime");
@@ -95,17 +99,35 @@ public class Configs {
         return runDateTime;
     }
 
-    public String getRunDateTimeString() {
-        final String key = "scoopi.runDateTimeString";
+    public String getRunDateTimeTextg() {
+        final String key = "scoopi.runDateTimeText";
         try {
             return configProperties.getConfig(key);
         } catch (ConfigNotFoundException e) {
-            throw new CriticalException("unable to get runDateTimeString", e);
+            throw new CriticalException("unable to get runDateTimeText", e);
         }
     }
 
-    public Date getHighDate() {
-        return (Date) configProperties.get("scoopi.highDate");
+    public DateTimeFormatter getDateTimeFormatter() {
+        DateTimeFormatter formatter;
+        String pattern;
+        try {
+            final String key = "scoopi.dateTimePattern";
+            pattern = configProperties.getConfig(key);
+            formatter = DateTimeFormatter.ofPattern(pattern);
+
+            // FIXME - datefix, what is outcome
+            if (isNull(formatter.getZone())) {
+                formatter = formatter.withZone(ZoneId.systemDefault());
+            }
+        } catch (ConfigNotFoundException e) {
+            formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+        }
+        return formatter;
+    }
+
+    public ZonedDateTime getHighDate() {
+        return (ZonedDateTime) configProperties.get("scoopi.highDate");
     }
 
     public boolean isCluster() {

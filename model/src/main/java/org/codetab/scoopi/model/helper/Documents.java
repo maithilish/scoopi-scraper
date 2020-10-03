@@ -4,23 +4,20 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
 
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAmount;
-import java.util.Date;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.codetab.scoopi.config.Configs;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.util.Util;
 
@@ -31,13 +28,13 @@ public class Documents {
     @Inject
     private Configs configs;
 
-    public boolean isDocumentLive(final Date toDate) {
+    public boolean isDocumentLive(final ZonedDateTime toDate) {
         // toDate > runDateTime
         return toDate.compareTo(configs.getRunDateTime()) > 0;
     }
 
-    public Date getToDate(final Date fromDate, final String live,
-            final JobInfo jobInfo) {
+    public ZonedDateTime getToDate(final ZonedDateTime fromDate,
+            final String live, final JobInfo jobInfo) {
 
         notNull(fromDate, "fromDate must not be null");
         notNull(live, "live must not be null");
@@ -46,10 +43,12 @@ public class Documents {
         validState(nonNull(configs), "configService is not set");
 
         // convert fromDate to DateTime
+        // FIXME - datefix, refactor this
         ZonedDateTime fromDateTime = ZonedDateTime
                 .ofInstant(fromDate.toInstant(), ZoneId.systemDefault());
         ZonedDateTime toDate = null;
 
+        // live can be duration (PT1W) or date text
         String documentlive = live;
         if (StringUtils.equals(documentlive, "0") //$NON-NLS-1$
                 || StringUtils.isBlank(documentlive)) {
@@ -61,15 +60,11 @@ public class Documents {
             TemporalAmount ta = Util.parseTemporalAmount(documentlive);
             toDate = fromDateTime.plus(ta);
         } catch (DateTimeParseException e) {
-            // if live is not Duration string then parse it as Date
+            // if live is not Duration string then parse it as ZonedDateTime
             try {
-                String[] patterns =
-                        configs.getConfigArray("scoopi.dateParsePattern"); //$NON-NLS-1$
-                // multiple patterns so needs DateUtils
-                Date td = DateUtils.parseDateStrictly(documentlive, patterns);
-                toDate = ZonedDateTime.ofInstant(td.toInstant(),
-                        ZoneId.systemDefault());
-            } catch (ParseException | ConfigNotFoundException pe) {
+                DateTimeFormatter formatter = configs.getDateTimeFormatter();
+                toDate = ZonedDateTime.parse(documentlive, formatter);
+            } catch (DateTimeParseException pe) {
                 LOG.warn("{} live is {} {}, defaults to 0 days",
                         jobInfo.getLabel(), documentlive, e);
                 TemporalAmount ta = Util.parseTemporalAmount("PT0S"); //$NON-NLS-1$
@@ -82,7 +77,7 @@ public class Documents {
             LOG.trace(marker, "document.toDate. live: {} toDate:", //$NON-NLS-1$
                     documentlive, toDate);
         }
-        return Date.from(Instant.from(toDate));
+        return ZonedDateTime.from(Instant.from(toDate));
     }
 
 }

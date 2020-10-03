@@ -2,7 +2,7 @@
 package org.codetab.scoopi.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -16,7 +16,7 @@ public class Document implements Serializable {
 
     private Long id;
     private String name;
-    private Date fromDate;
+    private ZonedDateTime fromDate;
     private String url;
     private Fingerprint locatorId;
     private Object documentObject;
@@ -102,11 +102,11 @@ public class Document implements Serializable {
         this.name = value;
     }
 
-    public Date getFromDate() {
+    public ZonedDateTime getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(final Date fromDate) {
+    public void setFromDate(final ZonedDateTime fromDate) {
         this.fromDate = fromDate;
     }
 

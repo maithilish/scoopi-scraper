@@ -19,7 +19,7 @@ import org.codetab.scoopi.util.Util;
 
 /**
  * <p>
- * String to Date converter.
+ * String to ZonedDateTime converter.
  * @author Maithilish
  *
  */
@@ -38,7 +38,7 @@ public class DateRoller implements IConverter {
      * the input, outPattern - date pattern to format the returned date and
      * field - Calendar field which has to set to its maximum.
      * <p>
-     * Date pattern is java date pattern as defined by
+     * ZonedDateTime pattern is java date pattern as defined by
      * {@link java.text.SimpleDateFormat}.
      * <p>
      * example : if field is DAY_OF_MONTH then date is set as month end date.
