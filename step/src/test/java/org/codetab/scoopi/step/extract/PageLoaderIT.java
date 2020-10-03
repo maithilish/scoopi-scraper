@@ -24,7 +24,7 @@ public class PageLoaderIT {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Payload payload = createPayload();
         pageLoader.setPayload(payload);
         pageLoader.initialize();
