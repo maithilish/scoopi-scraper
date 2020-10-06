@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -14,6 +15,15 @@ import org.apache.commons.lang3.Validate;
 public class Gauge implements Metric {
 
     private Map<String, Object> value;
+    private DateTimeFormatter formatter;
+
+    public Gauge() {
+        formatter = new DateTimeFormatterBuilder()
+                .appendOptional(DateTimeFormatter.ofPattern("H:m:s"))
+                .appendOptional(DateTimeFormatter.ofPattern("H:m:ss"))
+                .appendOptional(DateTimeFormatter.ofPattern(("HH:mm:ss")))
+                .toFormatter();
+    }
 
     public Map<String, Object> getValue() {
         return value;
@@ -88,13 +98,10 @@ public class Gauge implements Metric {
         return result;
     }
 
-    // FIXME - datefix, check the result
     private long convertTime(final Object timeStr) throws ParseException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime reference = LocalTime.parse("00:00:00", formatter);
         LocalTime time = LocalTime.parse((String) timeStr, formatter);
         Duration duration = Duration.between(reference, time);
         return duration.toMillis();
     }
-
 }

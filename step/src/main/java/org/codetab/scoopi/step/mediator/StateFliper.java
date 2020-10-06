@@ -61,7 +61,6 @@ public class StateFliper {
                     allNodesDone, jobStoreDone);
 
             if (allNodesDone && jobStoreDone) {
-
                 try {
                     LOG.debug(
                             "shutdown conditions are met, but may be false positive");
@@ -95,6 +94,9 @@ public class StateFliper {
                 LOG.debug(
                         "taskMediator state reset to READY, not all conditions true");
             }
+        } else {
+            LOG.debug("shutdown states [{}: {}, {}: {}]", "payloadStore done",
+                    payloadStoreDone, "poolService done", poolServiceDone);
         }
     }
 
@@ -131,7 +133,7 @@ public class StateFliper {
     private void logShutdownStateConditions(final boolean payloadStoreDone,
             final boolean poolServiceDone, final boolean allNodesDone,
             final boolean jobStoreDone) {
-        LOG.debug("shutdown state conditions [{}: {}, {}: {}, {}: {}, {}: {}]",
+        LOG.debug("try shutdown, states [{}: {}, {}: {}, {}: {}, {}: {}]",
                 "payloadStore done", payloadStoreDone, "poolService done",
                 poolServiceDone, "all nodes done", allNodesDone,
                 "jobStore done", jobStoreDone);

@@ -2,7 +2,7 @@
 
 ## Bootstrap
 
-Engine module contains Scoopi and bootstrap classes. Scoopi main() creates Bootstrap and calls bootDi. It creates BootConfigs (system and user defined properties) and gets run mode - solo or cluster. If solo, it creates DInjector (DI) with SoloModule else creates DI with ClusterModule. Next, main method calls bootCluster which from di gets IStore and ICluster instances. Actual instance created by DI depends on the module used to create the DI - SoloModule or ClusterModule. It starts the cluster and opens the store which is assigned to the module (its purpose is explained later). The SoloModule returns dummy cluster instance for symetry whereas ClusterModule returns actual cluster instance which starts hazelcast cluster. Next, main calls waitForQuorum to form the cluster quorum. 
+Engine module contains Scoopi and bootstrap classes. Scoopi main() creates Bootstrap and calls bootDi. It creates BootConfigs (system and user defined properties) and gets run mode - solo or cluster. If solo, it creates DInjector (DI) with SoloModule else creates DI with ClusterModule. Next, main method calls bootCluster which from di gets IStore and ICluster instances. Actual instance created by DI depends on the module used to create the DI - SoloModule or ClusterModule. It starts the cluster and opens the store which is assigned to the module (its purpose is explained later). The SoloModule returns dummy cluster instance for symmetry whereas ClusterModule returns actual cluster instance which starts hazelcast cluster. Next, main calls waitForQuorum to form the cluster quorum. 
 
 Once cluster quorum is formed, bootstrap.setup() is called which sets a barricade and create ConfigsComposer and DefsComposer and call their compose methods. Barricade ensures that only one node (loosely called leader node) is allowed to compose defs and configs and store them in IStore. 
 
@@ -14,7 +14,7 @@ The @Provides methods defined in BaseModule fetch config and defs data objects f
 
 Next, main method uses DI to create Scoopi instance and to which DI wires ScoopiEngine. Finally, ScoopiEngine's initSystem() and runJobs() is called. 
 
-The initSystem() takes care of starting Stats, Errors, metrics and plugging shutdown hook. It also initializes cluster, cluster listners and job mediator and seed jobs.
+The initSystem() takes care of starting Stats, Errors, metrics and plugging shutdown hook. It also initialises cluster, cluster listers and job mediator and seed jobs.
 
 The runJobs() starts TaskMediator (TM) and JobMediator (JM) which starts the executor to execute jobs and task in multiple threads.
 
@@ -22,7 +22,7 @@ The runJobs() starts TaskMediator (TM) and JobMediator (JM) which starts the exe
 
 JM starts JobRunner and Monitor. Monitor is a ScheduledExecutor which monitors shutdown conditions every second (scoopi.monitor.timerPeriod). On each scheduled run, it checks whether payloads queue is empty and all tasks in poolService (poolService.isDone()) are completed. If true, it sets StateFliper.tmState to DONE and then asks StateFliper to try to change its state to SHUTDOWN (from DONE or READY). 
 
-StateFliper first calls IShutdown.setDone() which marks node as done as there is not pending task in node.  Next it calls IShutdown.tryShutdown() (cluster or solo) and pass a function (to change tmState). Shutdown consults jobStore (cluster or solo) and executes the passed function if 1. all nodes and job store done or 2. cancel is set. The executed function changes the tmState to SHUTDOWN. If any node is not done it means that some task is still running in poolService in that node which inturn may create some new job, so all nodes should wait. Same is true if some job is pending in jobStore.
+StateFliper first calls IShutdown.setDone() which marks node as done as there is not pending task in node.  Next it calls IShutdown.tryShutdown() (cluster or solo) and pass a function (to change tmState). Shutdown consults jobStore (cluster or solo) and executes the passed function if 1. all nodes and job store done or 2. cancel is set. The executed function changes the tmState to SHUTDOWN. If any node is not done it means that some task is still running in poolService in that node which in turn may create some new job, so all nodes should wait. Same is true if some job is pending in jobStore.
 
 In short, on monitor's schedule run if no task is pending at node level (payload queue is empty and no task pending in pool service) then node is marked as done and like wise if all nodes are done (means no jobs in jobStore and all nodes are done) at that time then StateFliper.TMState is changed to SHUTDOWN.
 
@@ -36,16 +36,25 @@ The JVM can shutdown orderly or abrupt manner. Orderly shut down happens when la
 
 In abrupt shut down JVM simply halts and exits and shutdown hook is never called. 
 
-Normal shutdown - In Scoopi, if cancel is not requested with Ctrl-C then normal shut down happens. In normal shutdown, main thread blocks and waits for jobMediator and appenderMediator to finish. Once they are finished main thread wakes up and calles scoopiEngine.shutdown(). At this point baring few such as metrics and cluster almost all other normal threads are terminates. When metrics and cluster are stopped, main becomes the last normal thread and it terminates. After last thread terminates JVM invokes regisitered shutdown hook which outputs run status and also closes selenium webdriver and log manager to flush any logs pending in async log appenders.
+Normal shutdown - In Scoopi, if cancel is not requested with Ctrl-C then normal shut down happens. In normal shutdown, main thread blocks and waits for jobMediator and appenderMediator to finish. Once they are finished main thread wakes up and calls scoopiEngine.shutdown(). At this point baring few such as metrics and cluster almost all other normal threads are terminates. When metrics and cluster are stopped, main becomes the last normal thread and it terminates. After last thread terminates JVM invokes registered shutdown hook which outputs run status and also closes selenium webdriver and log manager to flush any logs pending in async log appenders.
 
-Cancel the run - If JVM receives Ctrl-C it agains goes for orderly shutdown but immediately starts shutdown hook. The shutdown hook run() sets cancel status by calling scoopiEngine.cancel() which in turn sets cancelled flag in JobRunner and waits for normal shut down as explained above using a countdown latch in shutdownModule. The cancelled flag in jobRunner breaks it and no more jobs are pushed to taskMediator. Whatever running in task pool are eventually are normally completed. When monitor checks the condition IShutdown.tryShutdown() changes tmState to SHUTDOWN as a special case because its cancelled flag is set. The main method calles scoopiEngine.shutdown() which apart from stopping the metrics and cluster as explained above, also count down the shutdownModule countdown latch. The shutdown hook thread waiting on this latch wakes and outputs cancel status and does cleanup such as closing webdriver and log manager and eventually JVM terminates. This is graceful termination as whatever already running jobs are completed but no new jobs are allowed to run.
+Cancel the run - If JVM receives Ctrl-C it again goes for orderly shutdown but immediately starts shutdown hook. The shutdown hook run() sets cancel status by calling scoopiEngine.cancel() which in turn sets cancelled flag in JobRunner and waits for normal shut down as explained above using a count down latch in shutdownModule. The cancelled flag in jobRunner breaks it and no more jobs are pushed to taskMediator. Whatever running in task pool are eventually are normally completed. When monitor checks the condition IShutdown.tryShutdown() changes tmState to SHUTDOWN as a special case because its cancelled flag is set. The main method calls scoopiEngine.shutdown() which apart from stopping the metrics and cluster as explained above, also count down the shutdownModule count down latch. The shutdown hook thread waiting on this latch wakes and outputs cancel status and does cleanup such as closing webdriver and log manager and eventually JVM terminates. This is graceful termination as whatever already running jobs are completed but no new jobs are allowed to run.
 
-
-InterruptedException - Scoopi doesn't use them for shutdown. Normally, methods throws them, but few catch them to log message. Threads are reinterrupted with Thread.currentThread().interrupt().
+InterruptedException - Scoopi doesn't use them for shutdown. Normally, methods throws them, but few catch them to log message. Threads are re-interrupted with Thread.currentThread().interrupt().
 
 Kubernetes - when pod is deleted k8s sends a SIGTERM signal to the process and waits a certain number of seconds (30 by default) for it to shut down gracefully. If it doesn’t shut down in time, the process is then killed through SIGKILL . To make sure your processes are always shut down gracefully, they need to handle the SIGTERM signal properly.
 
-## Mediators
+## Locator Seed
+
+JobSeedModule.seedJobs() setup jobSeedBarricade and calls JobSeeder.seedLocatorGroups(). It creates payload for each LocatorGroup (input: LocatorGroup, nextStep: LocatorSeeder), pushes them to taskMediator and downs the seeder count down latch. 
+
+The LocatorSeeder (one for each LG) handover method, gets the first task name for each locator of LG and creates payload for the locator (input: locator, nextStep: PageLoader). The locators are paused to JM (cluster) if LocatorGroup is byDef otherwise to TM (local).
+
+JobSeedBarricade wait: JobSeedModule setup the barricade and waits (async). JobSeeder sets count down latch count to number of locatorGroups to seed. The LocatorSeeder decrement the latch when it pushes payloads of all locator of a LG to JM. Once LocatorSeeder tasks are finished JobSeederModule releases the barricade and sets JobStore state to ready and other nodes proceed.
+
+LocatorCreator too creates LocatorGroups for parsed links from it creates seed payloads (input: LocatorGroup, nextStep: LocatorSeeder, byDef: false) and pushes them to JM and marks the parent jobId as finished.
+
+## Mediator
 
 Engine
 

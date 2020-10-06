@@ -4,8 +4,6 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
 
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -33,22 +31,18 @@ public class Documents {
         return toDate.compareTo(configs.getRunDateTime()) > 0;
     }
 
-    public ZonedDateTime getToDate(final ZonedDateTime fromDate,
+    public ZonedDateTime getToDate(final ZonedDateTime fromDateTime,
             final String live, final JobInfo jobInfo) {
 
-        notNull(fromDate, "fromDate must not be null");
+        notNull(fromDateTime, "fromDate must not be null");
         notNull(live, "live must not be null");
         notNull(jobInfo, "jobInfo must not be null");
 
         validState(nonNull(configs), "configService is not set");
 
-        // convert fromDate to DateTime
-        // FIXME - datefix, refactor this
-        ZonedDateTime fromDateTime = ZonedDateTime
-                .ofInstant(fromDate.toInstant(), ZoneId.systemDefault());
         ZonedDateTime toDate = null;
 
-        // live can be duration (PT1W) or date text
+        // live can be duration (PT1W) or date-time text
         String documentlive = live;
         if (StringUtils.equals(documentlive, "0") //$NON-NLS-1$
                 || StringUtils.isBlank(documentlive)) {
@@ -77,7 +71,7 @@ public class Documents {
             LOG.trace(marker, "document.toDate. live: {} toDate:", //$NON-NLS-1$
                     documentlive, toDate);
         }
-        return ZonedDateTime.from(Instant.from(toDate));
+        return toDate;
     }
 
 }

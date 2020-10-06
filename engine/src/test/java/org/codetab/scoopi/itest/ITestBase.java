@@ -150,11 +150,10 @@ public class ITestBase {
             formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
         } else {
             formatter = DateTimeFormatter.ofPattern(pattern);
+        }
 
-            // FIXME - datefix, what is outcome
-            if (isNull(formatter.getZone())) {
-                formatter = formatter.withZone(ZoneId.systemDefault());
-            }
+        if (isNull(formatter.getZone())) {
+            formatter = formatter.withZone(ZoneId.systemDefault());
         }
         return formatter;
     }

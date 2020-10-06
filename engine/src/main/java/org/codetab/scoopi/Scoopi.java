@@ -1,5 +1,7 @@
 package org.codetab.scoopi;
 
+import static java.util.Objects.nonNull;
+
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,13 +17,14 @@ public final class Scoopi {
     private ScoopiEngine scoopiEngine;
 
     public static void main(final String[] args) {
+        Bootstrap bootstrap = null;
         try {
             // don't create logger (static or instance) before this
             BootConfigs bootConfigs = new BootConfigs();
             bootConfigs.configureLogPath();
 
             // bootstrap solo or cluster DI
-            Bootstrap bootstrap = new Bootstrap(bootConfigs);
+            bootstrap = new Bootstrap(bootConfigs);
             bootstrap.bootDi();
 
             bootstrap.bootCluster();
@@ -38,6 +41,9 @@ public final class Scoopi {
             // don't create static logger in this class
             Logger log = LogManager.getLogger();
             log.error("Scoopi terminated", e);
+            if (nonNull(bootstrap)) {
+                bootstrap.shutdown();
+            }
             LogManager.shutdown();
         }
     }

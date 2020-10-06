@@ -3,6 +3,8 @@ package org.codetab.scoopi.model;
 import static org.codetab.scoopi.util.Util.dashit;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -19,6 +21,8 @@ public class Plugin implements Serializable {
     private final String defJson;
     private final Object def;
 
+    private final transient Map<Object, Object> cache;
+
     public Plugin(final String name, final String className,
             final String taskGroup, final String taskName,
             final String stepName, final String defJson, final Object def) {
@@ -29,6 +33,7 @@ public class Plugin implements Serializable {
         this.stepName = stepName;
         this.defJson = defJson;
         this.def = def;
+        cache = new ConcurrentHashMap<>();
     }
 
     public String getName() {
@@ -57,6 +62,14 @@ public class Plugin implements Serializable {
 
     public Object getDef() {
         return def;
+    }
+
+    public void put(final Object key, final Object value) {
+        cache.put(key, value);
+    }
+
+    public Object get(final Object key) {
+        return cache.get(key);
     }
 
     @Override

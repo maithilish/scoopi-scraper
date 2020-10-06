@@ -268,17 +268,17 @@ acme0|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme0|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme0|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme0|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme0|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme0|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme0|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme0|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme0|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme0|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme0|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme0|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme0|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme0|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme0|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme0|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme0|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme0|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme0|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme0|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme0|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme0|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme0|snapshotGroup|P/C|%{documentFromDate}|-
+acme0|snapshotGroup|P/E|%{documentFromDate}|-
+acme0|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme0|snapshotGroup|Price|%{documentFromDate}|315.25
 acme10|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme10|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme10|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -549,17 +549,17 @@ acme10|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme10|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme10|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme10|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme10|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme10|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme10|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme10|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme10|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme10|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme10|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme10|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme10|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme10|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme10|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme10|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme10|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme10|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme10|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme10|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme10|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme10|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme10|snapshotGroup|P/C|%{documentFromDate}|-
+acme10|snapshotGroup|P/E|%{documentFromDate}|-
+acme10|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme10|snapshotGroup|Price|%{documentFromDate}|315.25
 acme11|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme11|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme11|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -830,17 +830,17 @@ acme11|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme11|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme11|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme11|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme11|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme11|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme11|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme11|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme11|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme11|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme11|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme11|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme11|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme11|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme11|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme11|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme11|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme11|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme11|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme11|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme11|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme11|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme11|snapshotGroup|P/C|%{documentFromDate}|-
+acme11|snapshotGroup|P/E|%{documentFromDate}|-
+acme11|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme11|snapshotGroup|Price|%{documentFromDate}|315.25
 acme1|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme1|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme1|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -1111,17 +1111,17 @@ acme1|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme1|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme1|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme1|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme1|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme1|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme1|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme1|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme1|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme1|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme1|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme1|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme1|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme1|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme1|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme1|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme1|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme1|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme1|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme1|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme1|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme1|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme1|snapshotGroup|P/C|%{documentFromDate}|-
+acme1|snapshotGroup|P/E|%{documentFromDate}|-
+acme1|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme1|snapshotGroup|Price|%{documentFromDate}|315.25
 acme2|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme2|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme2|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -1392,17 +1392,17 @@ acme2|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme2|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme2|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme2|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme2|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme2|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme2|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme2|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme2|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme2|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme2|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme2|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme2|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme2|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme2|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme2|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme2|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme2|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme2|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme2|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme2|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme2|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme2|snapshotGroup|P/C|%{documentFromDate}|-
+acme2|snapshotGroup|P/E|%{documentFromDate}|-
+acme2|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme2|snapshotGroup|Price|%{documentFromDate}|315.25
 acme3|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme3|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme3|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -1673,17 +1673,17 @@ acme3|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme3|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme3|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme3|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme3|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme3|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme3|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme3|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme3|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme3|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme3|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme3|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme3|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme3|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme3|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme3|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme3|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme3|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme3|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme3|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme3|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme3|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme3|snapshotGroup|P/C|%{documentFromDate}|-
+acme3|snapshotGroup|P/E|%{documentFromDate}|-
+acme3|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme3|snapshotGroup|Price|%{documentFromDate}|315.25
 acme4|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme4|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme4|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -1954,17 +1954,17 @@ acme4|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme4|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme4|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme4|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme4|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme4|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme4|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme4|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme4|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme4|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme4|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme4|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme4|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme4|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme4|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme4|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme4|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme4|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme4|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme4|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme4|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme4|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme4|snapshotGroup|P/C|%{documentFromDate}|-
+acme4|snapshotGroup|P/E|%{documentFromDate}|-
+acme4|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme4|snapshotGroup|Price|%{documentFromDate}|315.25
 acme5|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme5|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme5|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -2235,17 +2235,17 @@ acme5|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme5|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme5|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme5|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme5|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme5|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme5|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme5|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme5|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme5|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme5|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme5|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme5|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme5|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme5|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme5|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme5|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme5|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme5|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme5|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme5|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme5|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme5|snapshotGroup|P/C|%{documentFromDate}|-
+acme5|snapshotGroup|P/E|%{documentFromDate}|-
+acme5|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme5|snapshotGroup|Price|%{documentFromDate}|315.25
 acme6|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme6|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme6|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -2516,17 +2516,17 @@ acme6|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme6|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme6|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme6|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme6|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme6|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme6|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme6|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme6|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme6|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme6|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme6|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme6|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme6|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme6|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme6|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme6|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme6|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme6|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme6|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme6|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme6|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme6|snapshotGroup|P/C|%{documentFromDate}|-
+acme6|snapshotGroup|P/E|%{documentFromDate}|-
+acme6|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme6|snapshotGroup|Price|%{documentFromDate}|315.25
 acme7|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme7|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme7|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -2797,17 +2797,17 @@ acme7|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme7|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme7|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme7|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme7|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme7|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme7|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme7|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme7|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme7|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme7|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme7|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme7|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme7|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme7|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme7|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme7|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme7|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme7|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme7|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme7|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme7|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme7|snapshotGroup|P/C|%{documentFromDate}|-
+acme7|snapshotGroup|P/E|%{documentFromDate}|-
+acme7|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme7|snapshotGroup|Price|%{documentFromDate}|315.25
 acme8|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme8|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme8|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -3078,17 +3078,17 @@ acme8|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme8|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme8|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme8|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme8|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme8|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme8|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme8|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme8|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme8|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme8|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme8|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme8|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme8|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme8|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme8|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme8|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme8|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme8|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme8|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme8|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme8|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme8|snapshotGroup|P/C|%{documentFromDate}|-
+acme8|snapshotGroup|P/E|%{documentFromDate}|-
+acme8|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme8|snapshotGroup|Price|%{documentFromDate}|315.25
 acme9|bsGroup|Book Value (Rs)|2012-12-31|23.97
 acme9|bsGroup|Book Value (Rs)|2013-12-31|28.14
 acme9|bsGroup|Book Value (Rs)|2014-12-31|32.95
@@ -3359,14 +3359,14 @@ acme9|plGroup|Total Value Addition|2013-12-31|6,988.67
 acme9|plGroup|Total Value Addition|2014-12-31|7,390.13
 acme9|plGroup|Total Value Addition|2015-12-31|8,130.56
 acme9|plGroup|Total Value Addition|2016-12-31|8,647.71
-acme9|snapshotGroup|BOOK VALUE|Thu Jan 30 10:20:05 IST 2020|27.89
-acme9|snapshotGroup|DIV (%)|Thu Jan 30 10:20:05 IST 2020|850.00%
-acme9|snapshotGroup|DIV YIELD|Thu Jan 30 10:20:05 IST 2020|2.70%
-acme9|snapshotGroup|EPS (TTM)|Thu Jan 30 10:20:05 IST 2020|-
-acme9|snapshotGroup|FACE VALUE|Thu Jan 30 10:20:05 IST 2020|1.00
-acme9|snapshotGroup|INDUSTRY P/E|Thu Jan 30 10:20:05 IST 2020|37.06
-acme9|snapshotGroup|MARKET CAP|Thu Jan 30 10:20:05 IST 2020|382,642.57
-acme9|snapshotGroup|P/C|Thu Jan 30 10:20:05 IST 2020|-
-acme9|snapshotGroup|P/E|Thu Jan 30 10:20:05 IST 2020|-
-acme9|snapshotGroup|PRICE/BOOK|Thu Jan 30 10:20:05 IST 2020|11.29
-acme9|snapshotGroup|Price|Thu Jan 30 10:20:05 IST 2020|315.25
+acme9|snapshotGroup|BOOK VALUE|%{documentFromDate}|27.89
+acme9|snapshotGroup|DIV (%)|%{documentFromDate}|850.00%
+acme9|snapshotGroup|DIV YIELD|%{documentFromDate}|2.70%
+acme9|snapshotGroup|EPS (TTM)|%{documentFromDate}|-
+acme9|snapshotGroup|FACE VALUE|%{documentFromDate}|1.00
+acme9|snapshotGroup|INDUSTRY P/E|%{documentFromDate}|37.06
+acme9|snapshotGroup|MARKET CAP|%{documentFromDate}|382,642.57
+acme9|snapshotGroup|P/C|%{documentFromDate}|-
+acme9|snapshotGroup|P/E|%{documentFromDate}|-
+acme9|snapshotGroup|PRICE/BOOK|%{documentFromDate}|11.29
+acme9|snapshotGroup|Price|%{documentFromDate}|315.25

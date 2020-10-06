@@ -62,11 +62,10 @@ public class DerivedConfigs {
             formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
         } else {
             formatter = DateTimeFormatter.ofPattern(pattern);
-
-            // FIXME - datefix, what is outcome
-            if (isNull(formatter.getZone())) {
-                formatter = formatter.withZone(ZoneId.systemDefault());
-            }
+        }
+        // zone in both formatters is null
+        if (isNull(formatter.getZone())) {
+            formatter = formatter.withZone(ZoneId.systemDefault());
         }
         return formatter;
     }
@@ -95,16 +94,4 @@ public class DerivedConfigs {
         configuration.addProperty("scoopi.runnerClass",
                 stackElement.getClassName());
     }
-
-    // FIXME - datefix remove this
-    // private String[] getDateTimeParsePatterns(
-    // final String dateTimeParsePattern) {
-    // String normalized = StringUtils.normalizeSpace(dateTimeParsePattern);
-    // String[] dateTimeFormat = normalized.split(" ; ");
-    // for (int c = 0; c < dateTimeFormat.length; c++) {
-    // dateTimeFormat[c] = dateTimeFormat[c].trim();
-    // }
-    // return dateTimeFormat;
-    // }
-
 }
