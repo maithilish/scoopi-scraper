@@ -89,6 +89,10 @@ public class ClusterShutdown implements IShutdown {
         cancelled.set(true);
     }
 
+    /**
+     * Compare cluster members list and done members map, and return true if all
+     * members are done else false.
+     */
     @Override
     public boolean allNodesDone() {
         boolean allDone = true;

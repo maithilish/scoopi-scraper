@@ -1,5 +1,6 @@
 package org.codetab.scoopi.bootstrap;
 
+import java.lang.management.ManagementFactory;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +36,8 @@ public class Bootstrap {
      * create DI, store and cluster
      */
     public void bootDi() {
-
+        LOG.debug("jvm process id {}",
+                ManagementFactory.getRuntimeMXBean().getName());
         if (bootConfigs.isSolo()) {
             LOG.info("Scoopi [solo/cluster]: solo"); //$NON-NLS-1$
             LOG.info("initialize solo injector");
@@ -104,25 +106,37 @@ public class Bootstrap {
      * create config and defs data and push to store
      */
     public void setup() {
-
+        String barricadeName = "setupBarricade";
         IBarricade barricade = dInjector.instance(IBarricade.class);
-        barricade.setup("setupBarricade");
+        barricade.setup(barricadeName);
         barricade.await();
 
-        // one node is allowed to init system
+        // only one node is allowed to init system
         if (barricade.isAllowed()) {
-            LOG.info("setup system");
-            /*
-             * ConfigComposer has to be ready before DefComposer creation, so
-             * can't be injected.
-             */
-            dInjector.instance(ConfigsComposer.class).compose();
-            dInjector.instance(DefsComposer.class).compose();
-            barricade.finish();
+            try {
+                LOG.info("setup system ...");
+                // prepare ConfigComposer before DefComposer creation,
+                // so can't inject it.
+                LOG.info("compose configs");
+                dInjector.instance(ConfigsComposer.class).compose();
+                LOG.info("compose defs");
+                dInjector.instance(DefsComposer.class).compose();
+            } finally {
+                LOG.info("release {}", barricadeName);
+                barricade.finish();
+                LOG.debug("{} released", barricadeName);
+            }
         } else {
-            LOG.info("system already initialized by another node");
+            LOG.info("system initialized by another node, cross {}",
+                    barricadeName);
         }
+    }
 
+    /**
+     * Shutdown bootstrap, in case of errors before engine start.
+     */
+    public void shutdown() {
+        cluster.shutdown();
     }
 
     public DInjector getdInjector() {

@@ -11,9 +11,9 @@ parser=jsoupDefault
 
 # constants
 scoopiVersion=0.9.8-beta
-runDateTime="Thu Jan 30 10:20:05 IST 2020"
-documentFromDate="Thu Jan 30 10:20:05 IST 2020"
-dirTimestamp=30Jan2020-045005
+runDateTime="30-01-2020T10:20:05"
+documentFromDate="30-01-2020T10:20:05"
+dirTimestamp=2020Jan30-102005
 workDir=/tmp/hammer
 runDir=$workDir/run
 scoopiOutputDir=output

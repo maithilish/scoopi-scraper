@@ -22,7 +22,8 @@ public class JobSeedModule {
     private IBarricade jobSeedBrricade;
 
     public void seedJobs() {
-        jobSeedBrricade.setup("jobSeedBarricade");
+        String barricadeName = "jobSeedBarricade";
+        jobSeedBrricade.setup(barricadeName);
 
         // block all nodes except one
         jobSeedBrricade.await();
@@ -43,7 +44,7 @@ public class JobSeedModule {
                 LOG.debug("job seed done");
             });
         } else {
-            LOG.info("jobs are already seeded by another node");
+            LOG.info("jobs seeded by another node, cross {}", barricadeName);
         }
     }
 

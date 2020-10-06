@@ -1,5 +1,6 @@
 package org.codetab.scoopi.plugin.converter;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.text.ParseException;
@@ -58,7 +59,11 @@ public class DateRoller implements IConverter {
             IllegalAccessException, DefNotFoundException {
         notNull(input, "input must not be null");
 
-        // TODO optimise: add PluginCache and get value from it
+        String output = (String) plugin.get(input);
+        if (nonNull(output)) {
+            return output;
+        }
+
         String inPattern = pluginDef.getValue(plugin, "inPattern");
         String[] inPatterns = inPattern.split("\\|");
         String outPattern = pluginDef.getValue(plugin, "outPattern");
@@ -100,7 +105,9 @@ public class DateRoller implements IConverter {
             }
         }
 
-        return DateFormatUtils.format(cal.getTime(), outPattern);
+        output = DateFormatUtils.format(cal.getTime(), outPattern);
+        plugin.put(input, output);
+        return output;
     }
 
     @Override

@@ -112,14 +112,9 @@ public class Configs {
         DateTimeFormatter formatter;
         String pattern;
         try {
-            final String key = "scoopi.dateTimePattern";
-            pattern = configProperties.getConfig(key);
-            formatter = DateTimeFormatter.ofPattern(pattern);
-
-            // FIXME - datefix, what is outcome
-            if (isNull(formatter.getZone())) {
-                formatter = formatter.withZone(ZoneId.systemDefault());
-            }
+            pattern = configProperties.getConfig("scoopi.dateTimePattern");
+            formatter = DateTimeFormatter.ofPattern(pattern)
+                    .withZone(ZoneId.systemDefault());
         } catch (ConfigNotFoundException e) {
             formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
         }

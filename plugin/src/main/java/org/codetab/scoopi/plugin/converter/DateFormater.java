@@ -1,5 +1,6 @@
 package org.codetab.scoopi.plugin.converter;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.time.ZonedDateTime;
@@ -40,16 +41,20 @@ public class DateFormater implements IConverter {
     public String convert(final String input) throws DefNotFoundException {
         notNull(input, "input must not be null");
 
-        // FIXME datefix, optimise, add PluginCache and get value from it
-        String inPattern = pluginDef.getValue(plugin, "inPattern");
-        List<String> inPatterns = Lists.newArrayList(inPattern.split("\\|"));
+        String output = (String) plugin.get(input);
+        if (nonNull(output)) {
+            return output;
+        }
+
+        List<String> inPatterns = Lists.newArrayList(
+                pluginDef.getValue(plugin, "inPattern").split("\\|"));
 
         ZonedDateTime date = null;
         Optional<DateTimeParseException> ex = Optional.empty();
-        for (String pattern : inPatterns) {
+        for (String inPattern : inPatterns) {
             ex = Optional.empty();
             DateTimeFormatter inFormatter =
-                    DateTimeFormatter.ofPattern(pattern);
+                    DateTimeFormatter.ofPattern(inPattern);
             try {
                 date = ZonedDateTime.parse(input, inFormatter);
             } catch (DateTimeParseException e) {
@@ -64,7 +69,9 @@ public class DateFormater implements IConverter {
         DateTimeFormatter outFormatter =
                 DateTimeFormatter.ofPattern(outPattern);
 
-        return date.format(outFormatter);
+        output = date.format(outFormatter);
+        plugin.put(input, output);
+        return output;
     }
 
     @Override
