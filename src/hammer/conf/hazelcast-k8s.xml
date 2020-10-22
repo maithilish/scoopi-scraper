@@ -22,11 +22,12 @@
 
     <network>
         <join>
-            <multicast enabled="true">
+            <multicast enabled="false">
             </multicast>
-            <tcp-ip enabled="false">
-                <member>localhost</member>
-            </tcp-ip>
+            <kubernetes enabled="true">
+                <namespace>default</namespace>
+                <service-name>hz-service</service-name>
+            </kubernetes>
         </join>
     </network>
 

@@ -91,6 +91,11 @@ public class Cluster implements ICluster {
     }
 
     @Override
+    public String getShortId(final String memberId) {
+        return memberId.substring(memberId.lastIndexOf("-") + 1);
+    }
+
+    @Override
     public Map<String, byte[]> getMetricsHolder() {
         return hz.getMap("metrics");
     }

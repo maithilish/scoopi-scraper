@@ -387,7 +387,7 @@
                                     <classifier>release</classifier>
                                     <excludes>
                                         <exclude>*.properties</exclude>
-                                        <exclude>hazelcast.xml</exclude>
+                                        <exclude>hazelcast*.xml</exclude>
                                         <exclude>log4j2.xml</exclude>
                                         <exclude>simple/</exclude>
                                         <exclude>defs/**</exclude>

@@ -3,6 +3,7 @@ package org.codetab.scoopi.store.cluster.hz;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.Arrays;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
@@ -63,6 +64,7 @@ public class Barricade implements IBarricade {
     public void await() {
 
         String memberId = cluster.getMemberId();
+        String memberIdShort = cluster.getShortId(memberId);
         final int retryDelay = 500;
 
         while (true) {
@@ -78,7 +80,7 @@ public class Barricade implements IBarricade {
                     txCache.set(ownerKey, memberId);
                     allowed = true; // allow to cross barricade
                     LOG.debug("{}, node {} allowed to cross, state was {}", key,
-                            memberId, state);
+                            memberIdShort, state);
                 }
                 tx1.commitTransaction();
                 if (allowed) {
@@ -90,38 +92,52 @@ public class Barricade implements IBarricade {
                 LOG.error("try to cross {}", key, e);
             }
 
-            LOG.debug("{}, wait, node {} not allowed to cross", key, memberId);
             State state = (State) objectMap.get(key);
             if (nonNull(state) && state.equals(State.READY)) {
                 return;
+            } else {
+                LOG.debug(
+                        "{}, state {}, wait spinner, node {} not allowed to cross",
+                        key, state, memberIdShort);
             }
 
             Stack<String> crashedMembers =
                     membershipListener.getCrashedMembers();
+            LOG.debug("crashed members {}",
+                    Arrays.toString(crashedMembers.toArray()));
+
             String keyOwner = (String) objectMap.get(ownerKey);
 
-            TransactionContext tx2 = hz.newTransactionContext(txOptions);
-            if (crashedMembers.contains(keyOwner)) {
-                LOG.debug("{}, allowed node {} crashed, reset state", key,
-                        keyOwner);
-                try {
-                    tx2.beginTransaction();
-                    TransactionalMap<String, Object> txCache =
-                            tx2.getMap(objectMapKey);
-                    txCache.getForUpdate(key);
-                    txCache.getForUpdate(ownerKey);
-                    if (txCache.remove(ownerKey, keyOwner)) {
-                        LOG.debug("{}, delete allowed node {}", key, keyOwner);
-                        if (txCache.remove(key, State.INITIALIZE)) {
-                            LOG.debug("delete state {}", key);
-                        } else {
-                            LOG.debug("unable to delete state {}", key);
+            if (nonNull(keyOwner)) {
+                String keyOwnerShort = cluster.getShortId(keyOwner);
+                TransactionContext tx2 = hz.newTransactionContext(txOptions);
+                if (crashedMembers.contains(keyOwner)) {
+                    LOG.debug("{}, allowed node {} crashed, reset state", key,
+                            keyOwnerShort);
+                    try {
+                        tx2.beginTransaction();
+                        TransactionalMap<String, Object> txCache =
+                                tx2.getMap(objectMapKey);
+                        txCache.getForUpdate(key);
+                        txCache.getForUpdate(ownerKey);
+                        if (txCache.remove(ownerKey, keyOwner)) {
+                            LOG.debug("{}, delete allowed node {}", key,
+                                    keyOwnerShort);
+                            if (txCache.remove(key, State.INITIALIZE)) {
+                                LOG.debug("delete state {}", key);
+                            } else {
+                                LOG.debug("unable to delete state {}", key);
+                            }
                         }
+                        tx2.commitTransaction();
+                    } catch (Exception e) {
+                        tx2.rollbackTransaction();
+                        LOG.error("{}, {}", key, e);
                     }
-                    tx2.commitTransaction();
-                } catch (Exception e) {
-                    tx2.rollbackTransaction();
-                    e.printStackTrace();
+                } else {
+                    LOG.debug(
+                            "nothing to clean, barricade owner not in crashed list",
+                            keyOwnerShort);
                 }
             }
             Uninterruptibles.sleepUninterruptibly(retryDelay,
@@ -129,6 +145,12 @@ public class Barricade implements IBarricade {
         }
     }
 
+    /**
+     * If this method changes state to READY during extreme cluster topology
+     * changes, other nodes may still see the stale state INITIALIZE. Call this
+     * method from a while loop until isFinished() is true. See usage in
+     * Bootstrap.setup().
+     */
     @Override
     public void finish() {
         TransactionContext tx = hz.newTransactionContext(txOptions);
@@ -141,7 +163,23 @@ public class Barricade implements IBarricade {
             LOG.debug("{} finished, allow others", key);
         } catch (Exception e) {
             tx.rollbackTransaction();
-            e.printStackTrace();
+            LOG.error("{}, {}", key, e);
+        }
+    }
+
+    @Override
+    public boolean isFinished() {
+        TransactionContext tx = hz.newTransactionContext(txOptions);
+        try {
+            tx.beginTransaction();
+            TransactionalMap<String, Object> txCache = tx.getMap(objectMapKey);
+            State state = (State) txCache.getForUpdate(key);
+            tx.commitTransaction();
+            return nonNull(state) && state.equals(State.READY);
+        } catch (Exception e) {
+            tx.rollbackTransaction();
+            LOG.error("{}, {}", key, e);
+            return false;
         }
     }
 

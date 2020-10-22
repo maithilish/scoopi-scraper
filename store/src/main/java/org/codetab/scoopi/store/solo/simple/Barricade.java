@@ -21,4 +21,9 @@ public class Barricade implements IBarricade {
         return true;
     }
 
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
+
 }

@@ -17,8 +17,8 @@ import org.codetab.scoopi.store.ICluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
+import com.hazelcast.transaction.TransactionalList;
 import com.hazelcast.transaction.TransactionalMap;
-import com.hazelcast.transaction.TransactionalQueue;
 
 @Singleton
 public class CrashCleaner {
@@ -68,12 +68,12 @@ public class CrashCleaner {
                 crashedMembers.pop();
             } else {
                 LOG.info("reset {} jobs taken by {}", takenJobs.size(),
-                        crashedMemberId);
+                        cluster.getShortId(crashedMemberId));
                 TransactionContext tx = hz.newTransactionContext(txOptions);
                 try {
                     tx.beginTransaction();
-                    TransactionalQueue<ClusterJob> txJobsQ =
-                            tx.getQueue(DsName.JOBS_QUEUE.toString());
+                    TransactionalList<ClusterJob> txJobsList =
+                            tx.getList(DsName.JOBS_LIST.toString());
                     TransactionalMap<Long, ClusterJob> txTakenJobsMap =
                             tx.getMap(DsName.TAKEN_JOBS_MAP.toString());
 
@@ -82,15 +82,19 @@ public class CrashCleaner {
                         ClusterJob cJob = txTakenJobsMap.remove(jobId);
                         cJob.setTaken(false);
                         cJob.setMemberId(null);
-                        txJobsQ.offer(cJob);
+                        txJobsList.add(cJob);
                     }
                     tx.commitTransaction();
                     // done, remove the crashed node
-                    crashedMembers.pop();
+                    String removedId = crashedMembers.pop();
+                    LOG.debug(
+                            "reset taken job completed, crashed member {} removed",
+                            cluster.getShortId(removedId));
                 } catch (Exception e) {
                     tx.rollbackTransaction();
                     LOG.warn("could not reset jobs taken by {}, {}",
-                            crashedMemberId, e.getLocalizedMessage());
+                            cluster.getShortId(crashedMemberId),
+                            e.getLocalizedMessage());
                     LOG.debug("{}", e);
                 }
             }
@@ -99,7 +103,7 @@ public class CrashCleaner {
     }
 
     public void clearDanglingJobs() {
-        Map<Long, ClusterJob> jobsMap = hz.getMap(DsName.JOBS_QUEUE.toString());
+        Map<Long, ClusterJob> jobsMap = hz.getMap(DsName.JOBS_LIST.toString());
         jobsMap.clear();
     }
 }
