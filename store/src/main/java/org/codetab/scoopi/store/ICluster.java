@@ -23,4 +23,6 @@ public interface ICluster {
     int getSize();
 
     boolean isNodeRunning();
+
+    String getShortId(String memberId);
 }

@@ -18,6 +18,8 @@ import org.codetab.scoopi.store.IBarricade;
 import org.codetab.scoopi.store.ICluster;
 import org.codetab.scoopi.store.IStore;
 
+import com.google.common.util.concurrent.Uninterruptibles;
+
 public class Bootstrap {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -122,8 +124,13 @@ public class Bootstrap {
                 LOG.info("compose defs");
                 dInjector.instance(DefsComposer.class).compose();
             } finally {
-                LOG.info("release {}", barricadeName);
-                barricade.finish();
+                final int retryDelay = 200;
+                while (!barricade.isFinished()) {
+                    LOG.info("try release {}", barricadeName);
+                    barricade.finish();
+                    Uninterruptibles.sleepUninterruptibly(retryDelay,
+                            TimeUnit.MILLISECONDS);
+                }
                 LOG.debug("{} released", barricadeName);
             }
         } else {

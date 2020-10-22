@@ -1,6 +1,7 @@
 package org.codetab.scoopi.engine.module;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -9,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.step.extract.JobSeeder;
 import org.codetab.scoopi.store.IBarricade;
 import org.codetab.scoopi.store.IJobStore;
+
+import com.google.common.util.concurrent.Uninterruptibles;
 
 public class JobSeedModule {
 
@@ -40,8 +43,15 @@ public class JobSeedModule {
                 LOG.debug("set jobStore state to READY");
                 jobStore.setState(IJobStore.State.READY);
 
-                jobSeedBrricade.finish();
-                LOG.debug("job seed done");
+                final int retryDelay = 200;
+                while (!jobSeedBrricade.isFinished()) {
+                    LOG.info("try release {}", barricadeName);
+                    jobSeedBrricade.finish();
+                    Uninterruptibles.sleepUninterruptibly(retryDelay,
+                            TimeUnit.MILLISECONDS);
+                }
+                LOG.debug("{} released", barricadeName);
+                LOG.debug("job seed completed");
             });
         } else {
             LOG.info("jobs seeded by another node, cross {}", barricadeName);

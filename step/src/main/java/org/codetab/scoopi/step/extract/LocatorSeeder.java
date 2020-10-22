@@ -147,24 +147,28 @@ public final class LocatorSeeder extends BaseSeeder {
             final boolean logError) {
         try {
             String pushedTo = null;
+            String locatorSource = null;
             if (locatorGroup.isByDef()) {
                 // if seed, push to JM (local or cluster)
-                pushedTo = "to jobMediator [locator from def]";
+                pushedTo = "JM";
+                locatorSource = "locator by def";
 
                 payload.getJobInfo().setId(jobMediator.getJobIdSequence());
                 jobMediator.pushJob(payload);
             } else {
                 // if from parse link, push to TM (local). JobId
                 // of parent job is reused
-                pushedTo = "to taskMediator [locator from link]";
+                pushedTo = "TM";
+                locatorSource = "locator by link";
 
                 final long linkJobId = getPayload().getJobInfo().getId();
                 payload.getJobInfo().setId(linkJobId);
                 taskMediator.pushPayload(payload);
             }
 
-            LOG.debug("push {} jobId {} {}", payload.getJobInfo().getLabel(),
-                    payload.getJobInfo().getId(), pushedTo);
+            LOG.debug("push [{}] to {}, {} jobId {}", locatorSource, pushedTo,
+                    payload.getJobInfo().getLabel(),
+                    payload.getJobInfo().getId());
 
             meter.mark();
             return true;

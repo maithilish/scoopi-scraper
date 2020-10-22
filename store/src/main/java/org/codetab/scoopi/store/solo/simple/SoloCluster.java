@@ -23,6 +23,11 @@ public class SoloCluster implements ICluster {
     }
 
     @Override
+    public String getShortId(final String memberId) {
+        return "solo";
+    }
+
+    @Override
     public Map<String, byte[]> getMetricsHolder() {
         return new HashMap<>();
     }
@@ -60,5 +65,4 @@ public class SoloCluster implements ICluster {
     public boolean isNodeRunning() {
         return true;
     }
-
 }

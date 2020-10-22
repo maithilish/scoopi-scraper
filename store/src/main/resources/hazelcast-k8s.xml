@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://www.hazelcast.com/schema/config
            http://www.hazelcast.com/schema/config/hazelcast-config-4.0.xsd">
 
-    <cluster-name>scoopi-hammer</cluster-name>
+    <cluster-name>scoopi</cluster-name>
 
     <properties>
         <property name="hazelcast.logging.type">log4j2</property>
@@ -22,11 +22,12 @@
 
     <network>
         <join>
-            <multicast enabled="true">
+            <multicast enabled="false">
             </multicast>
-            <tcp-ip enabled="false">
-                <member>localhost</member>
-            </tcp-ip>
+            <kubernetes enabled="true">
+                <namespace>default</namespace>
+                <service-name>hz-service</service-name>
+            </kubernetes>
         </join>
     </network>
 
