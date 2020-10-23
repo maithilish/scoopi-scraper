@@ -242,13 +242,15 @@ public class JobStore implements IClusterJobStore {
                     "jobs taken limit exceeded, unable to acquire permit");
         }
 
+        int size = jobsList.size();
+        if (size == 0) {
+            timer.stop();
+            jobTakeThrottle.release();
+            throw new NoSuchElementException("jobs queue is empty");
+        }
+
         TransactionContext tx = hz.newTransactionContext(txOptions);
         try {
-
-            int size = jobsList.size();
-            if (size == 0) {
-                throw new NoSuchElementException("jobs queue is empty");
-            }
             int index = getLifoIndex(size);
             ClusterJob cJob = jobsList.get(index);
 
@@ -260,10 +262,12 @@ public class JobStore implements IClusterJobStore {
             TransactionalMap<Long, Payload> txPayloadsMap =
                     tx.getMap(DsName.PAYLOADS_MAP.toString());
 
+            long jobId = cJob.getJobId();
             if (!txJobsList.remove(cJob)) {
-                throw new NoSuchElementException("jobs queue is empty");
+                throw new IllegalStateException(
+                        spaceit("unable to find and remove job",
+                                String.valueOf(jobId)));
             } else {
-                long jobId = cJob.getJobId();
                 cJob.setTaken(true);
                 cJob.setMemberId(memberId);
                 txTakenJobsMap.set(jobId, cJob);
