@@ -46,9 +46,9 @@ Kubernetes - when pod is deleted k8s sends a SIGTERM signal to the process and w
 
 ## Locator Seed
 
-JobSeedModule.seedJobs() setup jobSeedBarricade and calls JobSeeder.seedLocatorGroups(). It creates payload for each LocatorGroup (input: LocatorGroup, nextStep: LocatorSeeder), pushes them to taskMediator and downs the seeder count down latch. 
+JobSeedModule.seedJobs() setup jobSeedBarricade and calls JobSeeder.seedLocatorGroups(). It creates payload for each LocatorGroup (input: LocatorGroup, nextStep: LocatorSeeder), pushes them to taskMediator. 
 
-The LocatorSeeder (one for each LG) handover method, gets the first task name for each locator of LG and creates payload for the locator (input: locator, nextStep: PageLoader). The locators are paused to JM (cluster) if LocatorGroup is byDef otherwise to TM (local).
+The LocatorSeeder (one for each LG) handover method gets the first task name for each locator of LG and creates payload for the locator (input: locator, nextStep: PageLoader). The locators are paused to JM (cluster) if LocatorGroup is byDef otherwise to TM (local).
 
 JobSeedBarricade wait: JobSeedModule setup the barricade and waits (async). JobSeeder sets count down latch count to number of locatorGroups to seed. The LocatorSeeder decrement the latch when it pushes payloads of all locator of a LG to JM. Once LocatorSeeder tasks are finished JobSeederModule releases the barricade and sets JobStore state to ready and other nodes proceed.
 

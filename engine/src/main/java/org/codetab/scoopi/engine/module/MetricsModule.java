@@ -1,7 +1,5 @@
 package org.codetab.scoopi.engine.module;
 
-import static java.util.Objects.nonNull;
-
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -61,19 +59,23 @@ public class MetricsModule {
     }
 
     public void stopMetrics() {
-        if (nonNull(metricsSerializer)) {
+        try {
             LOG.debug("stop metrics serializer");
             metricsSerializer.stop();
+        } catch (NullPointerException e) {
+            // when node crashes before init, ignore
         }
 
-        if (configs.isMetricsServerEnabled()) {
-            int period =
-                    configs.getInt("scoopi.metrics.serializer.period", "5");
-            Uninterruptibles.sleepUninterruptibly(period, TimeUnit.SECONDS);
-            if (nonNull(metricsServer)) {
+        try {
+            if (configs.isMetricsServerEnabled()) {
+                int period =
+                        configs.getInt("scoopi.metrics.serializer.period", "5");
+                Uninterruptibles.sleepUninterruptibly(period, TimeUnit.SECONDS);
                 LOG.debug("stop metrics server");
                 metricsServer.stop();
             }
+        } catch (NullPointerException e) {
+            // when node crashes before init, ignore
         }
     }
 
