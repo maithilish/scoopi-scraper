@@ -15,6 +15,7 @@ import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.model.ClusterJob;
 import org.codetab.scoopi.store.ICluster;
 
+import com.hazelcast.collection.IList;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
@@ -106,7 +107,7 @@ public class CrashCleaner {
     }
 
     public void clearDanglingJobs() {
-        Map<Long, ClusterJob> jobsMap = hz.getMap(DsName.JOBS_LIST.toString());
+        IList<ClusterJob> jobsMap = hz.getList(DsName.JOBS_LIST.toString());
         jobsMap.clear();
     }
 }

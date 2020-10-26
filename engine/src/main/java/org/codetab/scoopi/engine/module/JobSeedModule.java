@@ -40,9 +40,6 @@ public class JobSeedModule {
                 LOG.debug("await for seed done");
                 jobSeeder.awaitForSeedDone();
 
-                LOG.debug("set jobStore state to READY");
-                jobStore.setState(IJobStore.State.READY);
-
                 final int retryDelay = 200;
                 while (!jobSeedBrricade.isFinished()) {
                     LOG.info("try release {}", barricadeName);
@@ -51,6 +48,10 @@ public class JobSeedModule {
                             TimeUnit.MILLISECONDS);
                 }
                 LOG.debug("{} released", barricadeName);
+
+                LOG.debug("set jobStore state to READY");
+                jobStore.setState(IJobStore.State.READY);
+
                 LOG.debug("job seed completed");
             });
         } else {
