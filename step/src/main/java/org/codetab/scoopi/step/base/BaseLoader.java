@@ -20,7 +20,6 @@ import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Fingerprint;
 import org.codetab.scoopi.model.Locator;
@@ -267,8 +266,7 @@ public abstract class BaseLoader extends Step {
                 long jobId = getPayload().getJobInfo().getId();
                 // push new jobs and mark old job as finished
                 jobMediator.pushJobs(payloads, jobId);
-            } catch (InterruptedException | JobStateException
-                    | TransactionException e) {
+            } catch (InterruptedException | JobStateException e) {
                 if (e instanceof InterruptedException) {
                     Thread.currentThread().interrupt();
                 }

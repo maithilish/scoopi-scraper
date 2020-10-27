@@ -14,7 +14,6 @@ import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
@@ -80,7 +79,7 @@ public abstract class Step implements IStep {
                         nextStep.getStepName());
             }
         } catch (DefNotFoundException | InterruptedException | JobStateException
-                | IllegalStateException | TransactionException e) {
+                | IllegalStateException e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
