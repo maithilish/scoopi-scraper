@@ -27,7 +27,7 @@ public interface IJobStore {
 
     boolean markFinished(long id) throws TransactionException;
 
-    boolean resetTakenJob(long jobId) throws TransactionException;
+    boolean resetTakenJob(long jobId);
 
     void resetCrashedJobs();
 

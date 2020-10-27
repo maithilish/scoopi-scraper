@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.inject.Singleton;
 
-import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.solo.ISoloJobStore;
 
@@ -87,7 +86,7 @@ public class JobStore implements ISoloJobStore {
     }
 
     @Override
-    public boolean resetTakenJob(final long jobId) throws TransactionException {
+    public boolean resetTakenJob(final long jobId) {
         return true;
     }
 }

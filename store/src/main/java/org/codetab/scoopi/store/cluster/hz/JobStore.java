@@ -349,11 +349,20 @@ public class JobStore implements IClusterJobStore {
 
     /**
      * Methods such as markFinish or takeJobs which removes taken job from map
-     * may fail when a member crashes. Call this method when such method throws
-     * TransactionException to remove the taken job and add it back to jobs map.
+     * may fail when a member crashes. Call this method (in while loop until
+     * true) when such methods throw TransactionException to remove the taken
+     * job and add it back to jobs map.
      */
     @Override
-    public boolean resetTakenJob(final long jobId) throws TransactionException {
+    public boolean resetTakenJob(final long jobId) {
+
+        /*
+         * this method is called when an node crashes and tx ex is thrown, if
+         * this also throws txEx, then reset fails that leads to termination
+         * failure or data error. Fix is to call this method in while loop till
+         * it returns true. Revisit this method if termination hangs and change
+         * unlimited retries to limited.
+         */
 
         TransactionContext tx = hz.newTransactionContext(txOptions);
         try {
@@ -376,12 +385,9 @@ public class JobStore implements IClusterJobStore {
 
             return true;
         } catch (Exception e) {
-            // TODO look at this if data error in cluster
-            // this method is called when an node crashes and tx ex is thrown,
-            // if this also throws txEx, then reset and termination fails
             tx.rollbackTransaction();
-            String message = spaceit("reset taken job", String.valueOf(jobId));
-            throw new TransactionException(message, e);
+            LOG.debug("reset taken job {} failed, {} ", jobId, e);
+            return false;
         }
     }
 

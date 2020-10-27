@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.exception.TransactionException;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.base.BaseProcessor;
@@ -60,8 +59,7 @@ public class LocatorCreator extends BaseProcessor {
         // mark this job as finished and push new task jobs for this document
         try {
             jobMediator.pushJobs(payloads, jobId);
-        } catch (InterruptedException | JobStateException
-                | TransactionException e) {
+        } catch (InterruptedException | JobStateException e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }

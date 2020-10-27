@@ -2,6 +2,7 @@ package org.codetab.scoopi.step.mediator;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.time.Duration;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,6 +17,8 @@ import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
+
+import com.google.common.util.concurrent.Uninterruptibles;
 
 @Singleton
 public class JobMediator {
@@ -89,14 +92,19 @@ public class JobMediator {
     }
 
     public void pushJobs(final List<Payload> payloads, final long jobId)
-            throws InterruptedException, TransactionException {
+            throws InterruptedException {
         notNull(payloads, "payloads must not be null");
         try {
             jobStore.putJobs(payloads, jobId);
         } catch (JobStateException e) {
             LOG.debug("{}", e.getLocalizedMessage());
         } catch (TransactionException e) {
-            jobStore.resetTakenJob(jobId);
+            final int retryWait = 50;
+            while (!jobStore.resetTakenJob(jobId)) {
+                Uninterruptibles
+                        .sleepUninterruptibly(Duration.ofMillis(retryWait));
+                LOG.debug("retry reset {}", jobId);
+            }
         }
     }
 
@@ -104,17 +112,26 @@ public class JobMediator {
         return jobStore.getJobIdSeq();
     }
 
-    public void markJobFinished(final long jobId) throws TransactionException {
+    public void markJobFinished(final long jobId) {
         try {
             jobStore.markFinished(jobId);
         } catch (JobStateException e) {
             LOG.debug("{}", e.getLocalizedMessage());
         } catch (TransactionException e) {
-            jobStore.resetTakenJob(jobId);
+            final int retryWait = 50;
+            while (!jobStore.resetTakenJob(jobId)) {
+                Uninterruptibles
+                        .sleepUninterruptibly(Duration.ofMillis(retryWait));
+                LOG.debug("retry reset {}", jobId);
+            }
         }
     }
 
-    public void resetTakenJob(final long jobId) throws TransactionException {
-        jobStore.resetTakenJob(jobId);
+    public void resetTakenJob(final long jobId) {
+        final int retryWait = 50;
+        while (!jobStore.resetTakenJob(jobId)) {
+            Uninterruptibles.sleepUninterruptibly(Duration.ofMillis(retryWait));
+            LOG.debug("retry reset {}", jobId);
+        }
     }
 }
