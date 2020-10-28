@@ -31,6 +31,7 @@
             </class>
             <seedRetryTimes>3</seedRetryTimes>
         </seeder>
+
         <poolsize>
             <start>4</start>
             <seeder>6</seeder>
@@ -40,29 +41,14 @@
             <filter>4</filter>
             <appender>2</appender>
         </poolsize>
+
         <appender>
             <queueSize>4096</queueSize>
             <file>
                 <baseDir></baseDir> <!-- intentionally empty -->
             </file>
         </appender>
-        <webClient>
-            <timeout>120000</timeout>
-            <userAgent>
-              <![CDATA[
-                Mozilla/5.0 (X11\; Linux x86_64\; rv:50.0) Gecko/20100101 Firefox/50.0
-              ]]>
-            </userAgent>
-        </webClient>
-        <webDriver>
-            <driverPath>.gecko/geckodriver</driverPath>
-            <log>geckodriver.log</log>
-            <waitType>explicit</waitType>
-            <timeout>
-                <explicitWait>10</explicitWait>
-                <implicitWait>10</implicitWait>
-            </timeout>
-        </webDriver>
+
         <highDate>2037-12-31T23:59:59.999</highDate>
         <dateTimePattern>yyyy-MM-dd'T'HH:mm:ss.SSSZ</dateTimePattern>
         <outputDirTimestampPattern>
@@ -70,19 +56,18 @@
                  yyyyMMMdd-HHmmss
             ]]>
         </outputDirTimestampPattern>
-        <wait>false</wait>
-        <fork>
-            <locator>0</locator>
-        </fork>
-        <useDatastore>true</useDatastore>
+
         <datastore>
+            <enable>true</enable>
             <type>jar:file:</type>
             <path>data</path>
         </datastore>
+
         <persist>
             <locator>true</locator>
             <data>true</data>
         </persist>
+
         <cluster>
             <enable>false</enable>
             <tx>
@@ -94,22 +79,32 @@
                 <timeout>60</timeout>
                 <timeoutUnit>SECONDS</timeoutUnit>
             </shutdown>
-            <!-- scoopi.cluster.log.path.suffixUid is system or user defined  -->
+            <!-- system or user defined properties -->
+            <!-- scoopi.cluster.log.path.suffixUid -->
+            <!-- scoopi.cluster.quorum.size -->
         </cluster>
+
         <job>
             <takeLimit>4</takeLimit>
             <takeTimeout>1000</takeTimeout>
             <takeRetryDelay>50</takeRetryDelay>
         </job>
+
         <task>
             <takeTimeout>500</takeTimeout>
         </task>
+
         <monitor>
             <timerPeriod>1000</timerPeriod>
         </monitor>
+
         <loader>
-            <fetchDelay>1000</fetchDelay>
+            <fetch>
+                <parallelism>1</parallelism>
+                <delay>1000</delay>
+            </fetch>
         </loader>
+
         <metrics>
             <server>
                 <enable>true</enable>
@@ -119,9 +114,34 @@
                 <period>5</period>
             </serializer>
         </metrics>
+
         <shutdown>
             <timeout>10</timeout>
             <timeoutUnit>SECONDS</timeoutUnit>
         </shutdown>
+
+        <webClient>
+            <timeout>120000</timeout>
+            <userAgent>
+              <![CDATA[
+                Mozilla/5.0 (X11\; Linux x86_64\; rv:50.0) Gecko/20100101 Firefox/50.0
+              ]]>
+            </userAgent>
+        </webClient>
+
+        <webDriver>
+            <driverPath>.gecko/geckodriver</driverPath>
+            <log>geckodriver.log</log>
+            <waitType>explicit</waitType>
+            <timeout>
+                <explicitWait>10</explicitWait>
+                <implicitWait>10</implicitWait>
+            </timeout>
+        </webDriver>
+
+        <wait>false</wait>
+        <fork>
+            <locator>0</locator>
+        </fork>
     </scoopi>
 </configuration>

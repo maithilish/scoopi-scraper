@@ -55,6 +55,8 @@ public class MetricsModule {
             LOG.debug("start metrics server");
             metricsServer.setMetricsJsonData(metricsMap);
             metricsServer.start();
+        } else {
+            LOG.debug("metrics server is disabled");
         }
     }
 

@@ -158,8 +158,8 @@ public class Configs {
     /**
      * Return effective persist for a type based on user provided config.
      * <p>
-     * User can define persist config scoopi.useDatastore=true|false or for a
-     * type as scoopi.persist.locator=true|false in config file
+     * User can define persist config scoopi.datastore.enable=true|false or for
+     * a type as scoopi.persist.locator=true|false in config file
      * scoopi.properties.
      * </p>
      * <p>
@@ -176,18 +176,18 @@ public class Configs {
     /**
      *
      * <p>
-     * Return value for the key scoopi.useDatastore
+     * Return value for the key scoopi.datastore.enable
      * </p>
      * <p>
-     * This method returns for the key scoopi.useDatastore and if not found then
-     * true;
+     * This method returns for the key scoopi.datastore.enable and if not found
+     * then true;
      * </p>
      * @param key
-     *            scoopi.useDatastore
+     *            scoopi.datastore.enable
      * @return value of key and if not found then true
      */
     public boolean useDataStore() {
-        final String configKey = "scoopi.useDatastore";
+        final String configKey = "scoopi.datastore.enable";
         return configProperties.getBoolean(configKey, true);
     }
 
@@ -232,15 +232,14 @@ public class Configs {
     }
 
     public boolean isMetricsServerEnabled() {
-        boolean enabled = Boolean.parseBoolean(
-                System.getProperty("scoopi.metrics.server.enable", "false"));
-
         if (configProperties.getBoolean("scoopi.cluster.enable", false)) {
             // by default metrics server is disabled in cluster and enabled only
             // through system property
-            enabled = Boolean.parseBoolean(System
+            return Boolean.parseBoolean(System
                     .getProperty("scoopi.metrics.server.enable", "false"));
+        } else {
+            return configProperties.getBoolean("scoopi.metrics.server.enable",
+                    true);
         }
-        return enabled;
     }
 }

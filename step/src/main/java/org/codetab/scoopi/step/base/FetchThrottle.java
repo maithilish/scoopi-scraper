@@ -18,28 +18,21 @@ public class FetchThrottle {
 
     private Semaphore semaphore;
 
-    // delay between fetches
-    private long fetchDelayNano;
-
-    private long lastFetchNano;
+    private long fetchDelay;
 
     public void init() {
-        fetchDelayNano = TimeUnit.MILLISECONDS
-                .toNanos(configs.getInt("scoopi.loader.fetchDelay", "1000"));
-        semaphore = new Semaphore(1, true);
+        fetchDelay = configs.getInt("scoopi.loader.fetch.delay", "1000");
+        int permits = configs.getInt("scoopi.loader.fetch.parallelism", "1");
+        semaphore = new Semaphore(permits, true);
     }
 
     public void acquirePermit() {
         semaphore.acquireUninterruptibly();
-        long remainingNano = lastFetchNano + fetchDelayNano - System.nanoTime();
-        if (remainingNano > 0) {
-            Uninterruptibles.sleepUninterruptibly(remainingNano,
-                    TimeUnit.NANOSECONDS);
-        }
+        Uninterruptibles.sleepUninterruptibly(fetchDelay,
+                TimeUnit.MILLISECONDS);
     }
 
     public void releasePermit() {
-        lastFetchNano = System.nanoTime();
         semaphore.release();
     }
 }
