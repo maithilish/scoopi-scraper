@@ -6,6 +6,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +19,7 @@ import org.codetab.scoopi.store.IJobStore;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 
+@Singleton
 public class JobRunner extends Thread {
 
     private static final Logger LOG = LogManager.getLogger();

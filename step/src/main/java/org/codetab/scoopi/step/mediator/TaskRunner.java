@@ -5,6 +5,7 @@ import static java.util.Objects.isNull;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +16,7 @@ import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.step.Task;
 import org.codetab.scoopi.store.IPayloadStore;
 
+@Singleton
 public class TaskRunner extends Thread {
 
     private static final Logger LOG = LogManager.getLogger();

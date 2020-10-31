@@ -4,7 +4,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.Arrays;
-import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -33,7 +32,7 @@ public class Barricade implements IBarricade {
     @Inject
     private ICluster cluster;
     @Inject
-    private MembershipListener membershipListener;
+    private CrashedMembers crashedMembers;
 
     private TransactionOptions txOptions;
     private HazelcastInstance hz;
@@ -101,8 +100,6 @@ public class Barricade implements IBarricade {
                         key, state, memberIdShort);
             }
 
-            Stack<String> crashedMembers =
-                    membershipListener.getCrashedMembers();
             LOG.debug("crashed members {}",
                     Arrays.toString(crashedMembers.toArray()));
 

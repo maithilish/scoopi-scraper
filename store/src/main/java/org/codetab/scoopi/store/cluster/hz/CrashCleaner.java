@@ -1,9 +1,11 @@
 package org.codetab.scoopi.store.cluster.hz;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -32,7 +34,12 @@ public class CrashCleaner {
     @Inject
     private ICluster cluster;
     @Inject
-    private MembershipListener membershipListener;
+    private CrashedMembers crashedMembers;
+
+    /*
+     * set of crashed members that are processed by CrashCleaner
+     */
+    private Set<String> clearedMembers;
 
     private Map<Long, ClusterJob> takenJobsMap;
     private TransactionOptions txOptions;
@@ -43,33 +50,44 @@ public class CrashCleaner {
         hz = (HazelcastInstance) cluster.getInstance();
         txOptions = (TransactionOptions) cluster.getTxOptions(configs);
         takenJobsMap = hz.getMap(DsName.TAKEN_JOBS_MAP.toString());
+        clearedMembers = new HashSet<String>();
     }
 
     public boolean resetCrashedJobs() {
-        String leader = cluster.getLeader();
-        if (!leader.equals(cluster.getMemberId())) {
+
+        if (crashedMembers.isEmpty()) {
             return false;
         }
 
-        Stack<String> crashedMembers = membershipListener.getCrashedMembers();
-        if (crashedMembers.isEmpty()) {
-            return false;
-        } else {
+        String leader = cluster.getLeader();
+        if (!cluster.getMemberId().equals(leader)) {
+            return false; // not leader
+        }
+
+        /*
+         * get set of members that are in crashedMembers but not yet cleared by
+         * cleaner and find find first in it.
+         */
+        Optional<String> crashedMember =
+                crashedMembers.difference(clearedMembers).stream().findFirst();
+        if (crashedMember.isPresent()) {
             LOG.debug("crashed members {}",
                     Arrays.toString(crashedMembers.toArray()));
             LOG.debug("i am {} leader, reset taken jobs",
                     cluster.getShortId(leader));
+        } else {
+            return false;
         }
 
-        String crashedMemberId = crashedMembers.peek();
+        String crashedMemberId = crashedMember.get();
 
         List<Long> takenJobs = takenJobsMap.values().stream().filter(
                 p -> p.isTaken() && p.getMemberId().equals(crashedMemberId))
                 .map(ClusterJob::getJobId).collect(Collectors.toList());
 
         if (takenJobs.isEmpty()) {
-            // no taken job by crashed node, remove it
-            crashedMembers.pop();
+            // no taken job by crashed node, add it to cleared set
+            clearedMembers.add(crashedMemberId);
             LOG.debug("no taken jobs by {}, crashed member removed",
                     cluster.getShortId(crashedMemberId));
             return false;

@@ -1,0 +1,40 @@
+version: "3"
+services:
+  scoopi-a:
+      image: codetab/scoopi:latest
+      container_name: scoopi-a
+      environment:
+          - "TZ=Asia/Kolkata"
+          - "JAVA_OPTS=-Dhazelcast.config=/hazelcast-mcast.xml -Dscoopi.cluster.enable=true -Dscoopi.log.dir=logs/node-a -Dscoopi.cluster.log.path.suffixUid=false" 
+      volumes:
+          - ./defs:/scoopi/defs
+          - ./conf:/scoopi/conf
+          - ./data:/scoopi/data
+          - ./logs:/scoopi/logs
+          - ./output:/scoopi/output
+  scoopi-b:
+      image: codetab/scoopi:latest
+      container_name: scoopi-b
+      environment:
+          - "TZ=Asia/Kolkata"
+          - "JAVA_OPTS=-Dhazelcast.config=/hazelcast-mcast.xml -Dscoopi.cluster.enable=true -Dscoopi.log.dir=logs/node-b -Dscoopi.cluster.log.path.suffixUid=false" 
+      volumes:
+          - ./defs:/scoopi/defs
+          - ./conf:/scoopi/conf
+          - ./data:/scoopi/data
+          - ./logs:/scoopi/logs
+          - ./output:/scoopi/output
+  scoopi-c:
+      image: codetab/scoopi:latest
+      container_name: scoopi-c
+      ports:
+          - "9010:9010"
+      environment:
+          - "TZ=Asia/Kolkata"
+          - "JAVA_OPTS=-Dhazelcast.config=/hazelcast-mcast.xml -Dscoopi.cluster.enable=true -Dscoopi.log.dir=logs/node-c -Dscoopi.cluster.log.path.suffixUid=false -Dscoopi.metrics.server.enable=true" 
+      volumes:
+          - ./defs:/scoopi/defs
+          - ./conf:/scoopi/conf
+          - ./data:/scoopi/data
+          - ./logs:/scoopi/logs
+          - ./output:/scoopi/output
