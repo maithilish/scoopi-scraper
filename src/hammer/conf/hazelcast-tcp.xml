@@ -21,6 +21,7 @@
     </map>
 
     <network>
+        <port auto-increment="true" port-count="10">5721</port>
         <join>
             <multicast enabled="false">
             </multicast>

@@ -6,10 +6,10 @@ public interface IBarricade {
 
     void await();
 
-    void finish();
+    void release();
 
     boolean isAllowed();
 
-    boolean isFinished();
+    boolean isReleased();
 
 }

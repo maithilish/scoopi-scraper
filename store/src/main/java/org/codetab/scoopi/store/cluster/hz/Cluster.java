@@ -43,7 +43,9 @@ public class Cluster implements ICluster {
             Config cfg = new XmlConfigBuilder(
                     Cluster.class.getResourceAsStream(hzConfigFile)).build();
             cfg.addListenerConfig(new ListenerConfig(membershipListener));
+
             addSystemProperties(cfg);
+            cfg.setProperty("hazelcast.shutdownhook.policy", "GRACEFUL");
 
             LOG.info("start Hazelcast cluster");
             hz = Hazelcast.newHazelcastInstance(cfg);

@@ -125,9 +125,9 @@ public class Bootstrap {
                 dInjector.instance(DefsComposer.class).compose();
             } finally {
                 final int retryDelay = 200;
-                while (!barricade.isFinished()) {
+                while (!barricade.isReleased()) {
                     LOG.info("try release {}", barricadeName);
-                    barricade.finish();
+                    barricade.release();
                     Uninterruptibles.sleepUninterruptibly(retryDelay,
                             TimeUnit.MILLISECONDS);
                 }

@@ -32,13 +32,21 @@ The main thread in Scoopi waiting on waitForFinish of JobMonitor and AppenderMon
 
 ### Shutdown Hook
 
-The JVM can shutdown orderly or abrupt manner. Orderly shut down happens when last normal thread (non-daemon) is terminated or when interrupted with Ctrl-C (SIGINT or kill -2). Abrupt shut down happens when JVM receives kill signal such as SIGTERM or SIGKILL etc (kill -12 or 15) or when Runtime.halt is called.
+The JVM can shutdown in orderly or abrupt manner. 
 
-In abrupt shut down JVM simply halts and exits and shutdown hook is never called. 
+Orderly shut down happens when last normal thread (non-daemon) is terminated or when interrupted with SIGINT (signal 2 or Ctrl-C ) or SIGTERM (signal 15). Shutdown hook is called as soon as signal is received. Linux, the default signal of kill is SIGTERM.  
 
-Normal shutdown - In Scoopi, if cancel is not requested with Ctrl-C then normal shut down happens. In normal shutdown, main thread blocks and waits for jobMediator and appenderMediator to finish. Once they are finished main thread wakes up and calls scoopiEngine.shutdown(). At this point baring few such as metrics and cluster almost all other normal threads are terminates. When metrics and cluster are stopped, main becomes the last normal thread and it terminates. After last thread terminates JVM invokes registered shutdown hook which outputs run status and also closes selenium webdriver and log manager to flush any logs pending in async log appenders.
+Abrupt shut down happens when JVM receives kill signal such as SIGKILL (signal 9) or when Runtime.halt is called. In abrupt shut down JVM simply halts and exits; shutdown hook is not called.
 
-Cancel the run - If JVM receives Ctrl-C it again goes for orderly shutdown but immediately starts shutdown hook. The shutdown hook run() sets cancel status by calling scoopiEngine.cancel() which in turn sets cancelled flag in JobRunner and waits for normal shut down as explained above using a count down latch in shutdownModule. The cancelled flag in jobRunner breaks it and no more jobs are pushed to taskMediator. Whatever running in task pool are eventually are normally completed. When monitor checks the condition IShutdown.tryShutdown() changes tmState to SHUTDOWN as a special case because its cancelled flag is set. The main method calls scoopiEngine.shutdown() which apart from stopping the metrics and cluster as explained above, also count down the shutdownModule count down latch. The shutdown hook thread waiting on this latch wakes and outputs cancel status and does cleanup such as closing webdriver and log manager and eventually JVM terminates. This is graceful termination as whatever already running jobs are completed but no new jobs are allowed to run.
+SIGUSR2 (12) and SIGSEGV triggers JVM fatal error and creates error report file.
+
+Scoopi Shutdown
+
+Normal shutdown - In Scoopi normal shut down happens if cancel is not requested with SIGINT (Ctrl-C) or SIGTERM. In normal shutdown, main thread blocks and waits for jobMediator and appenderMediator to finish. Once they are finished main thread wakes up and calls scoopiEngine.shutdown(). At this point baring few such as metrics and cluster almost all other normal threads are terminates. When metrics and cluster are stopped, main becomes the last normal thread and it terminates. After last thread terminates JVM invokes registered shutdown hook which outputs run status and also closes selenium webdriver and log manager to flush any logs pending in async log appenders.
+
+Cancel the run - If Scoopi receives SIGINT (Ctrl-c) or SIGTERM it goes for orderly shutdown but immediately starts shutdown hook. The shutdown hook run() sets cancel status by calling scoopiEngine.cancel() which in turn sets cancelled flag in JobRunner and waits for normal shut down as explained above using a count down latch in shutdownModule. The cancelled flag in jobRunner breaks it and no more jobs are pushed to taskMediator. Whatever running in task pool are eventually are normally completed. When monitor checks the condition IShutdown.tryShutdown() changes tmState to SHUTDOWN as a special case because its cancelled flag is set. The main method calls scoopiEngine.shutdown() which apart from stopping the metrics and cluster as explained above, also count down the shutdownModule count down latch. The shutdown hook thread waiting on this latch wakes and outputs cancel status and does cleanup such as closing webdriver and log manager and eventually JVM terminates. This is graceful termination as whatever already running jobs are completed but no new jobs are allowed to run.
+
+Abrupt shutdown - When Scoopi receives SIGKILL the shutdown hook is not called, and JVM halts and exits directly. 
 
 InterruptedException - Scoopi doesn't use them for shutdown. Normally, methods throws them, but few catch them to log message. Threads are re-interrupted with Thread.currentThread().interrupt().
 

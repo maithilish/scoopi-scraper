@@ -21,11 +21,12 @@
     </map>
 
     <network>
+        <port auto-increment="true" port-count="10">5721</port>
         <join>
             <multicast enabled="true">
             </multicast>
             <tcp-ip enabled="false">
-                <member>localhost</member>
+                <member>localhost:5801</member>
             </tcp-ip>
         </join>
     </network>
