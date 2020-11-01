@@ -78,6 +78,8 @@ public class JobStore implements IClusterJobStore {
 
     private Random random;
 
+    private int startCrashCleanerMinThreshold;
+
     @Override
     public void open() {
         try {
@@ -86,6 +88,8 @@ public class JobStore implements IClusterJobStore {
             jobTakeLimit = configs.getInt("scoopi.job.takeLimit", "4");
             jobTakeTimeout = configs.getInt("scoopi.job.takeTimeout", "1000");
             jobIdGenerator = hz.getFlakeIdGenerator("job_id_seq");
+            startCrashCleanerMinThreshold = configs.getInt(
+                    "scoopi.cluster.startCrashCleaner.minThreshold", "10");
 
             txOptions = (TransactionOptions) cluster.getTxOptions(configs);
 
@@ -408,6 +412,11 @@ public class JobStore implements IClusterJobStore {
 
     @Override
     public void resetCrashedJobs() {
-        crashCleaner.resetCrashedJobs();
+        // perf: avoid cluster access as far as possible
+        if (crashCleaner.hasCrashedMembers()) {
+            if (jobsList.size() < startCrashCleanerMinThreshold) {
+                crashCleaner.resetCrashedJobs();
+            }
+        }
     }
 }

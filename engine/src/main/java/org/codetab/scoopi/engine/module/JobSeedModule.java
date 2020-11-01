@@ -41,9 +41,9 @@ public class JobSeedModule {
                 jobSeeder.awaitForSeedDone();
 
                 final int retryDelay = 200;
-                while (!jobSeedBrricade.isFinished()) {
+                while (!jobSeedBrricade.isReleased()) {
                     LOG.info("try release {}", barricadeName);
-                    jobSeedBrricade.finish();
+                    jobSeedBrricade.release();
                     Uninterruptibles.sleepUninterruptibly(retryDelay,
                             TimeUnit.MILLISECONDS);
                 }

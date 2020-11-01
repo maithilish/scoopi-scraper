@@ -23,9 +23,14 @@ cleanup() {
 runScoopi() {
     pids=()
     for node in ${nodes[@]}; do
+
         NODE_OPTS="-Dscoopi.log.dir=$logsDir/$node"        
+
+        JAVA_OPTS+="-Dscoopi.project=hammer "
         JAVA_OPTS+="-Dscoopi.appender.file.baseDir=/tmp/hammer/run "
+        JAVA_OPTS+="-Dscoopi.cluster.log.path.suffixUid=false "
         JAVA_OPTS+="-Dhazelcast.config=/hazelcast-tcp.xml "
+
         java $JAVA_OPTS $NODE_OPTS -cp $moduleDir/*:conf:. org.codetab.scoopi.Scoopi >/dev/null &
         pids+=($!)
     done
@@ -35,12 +40,14 @@ runScoopi() {
 
 runScoopiInDocker() {
     pids=()
+
+    JAVA_OPTS+="-Dscoopi.project=hammer "
     JAVA_OPTS+="-Dhazelcast.config=/hazelcast-mcast.xml "
     export JAVA_OPTS
 
     docker-compose --project-directory . -f docker/docker-compose.yaml up -d
     sleep 1
-    pids=($(pgrep -f Scoopi))
+    pids=($(pgrep -f scoopi.project=hammer ))
 
     echo ${pids[@]}
 }
@@ -82,7 +89,7 @@ scheduleNodeCrash() {
     while true; do
         if (($(echo $slept == $crashAfter | bc -l))); then
             if [[ "$(isPidAlive ${nodesToCrash[0]})" == "true" || "$(isPidAlive ${nodesToCrash[1]})" == "true" ]]; then
-                sudo kill ${nodesToCrash[@]}
+                sudo kill -$killSignal ${nodesToCrash[@]}
                 echo -n " pid ${nodesToCrash[@]} killed at $slept"
             else
                 echo -n " pid ${nodesToCrash[@]} completed, can't kill"

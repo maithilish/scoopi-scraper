@@ -128,4 +128,8 @@ public class CrashCleaner {
         IList<ClusterJob> jobsMap = hz.getList(DsName.JOBS_LIST.toString());
         jobsMap.clear();
     }
+
+    public boolean hasCrashedMembers() {
+        return !crashedMembers.isEmpty();
+    }
 }

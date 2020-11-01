@@ -13,7 +13,7 @@ public class Barricade implements IBarricade {
     }
 
     @Override
-    public void finish() {
+    public void release() {
     }
 
     @Override
@@ -22,7 +22,7 @@ public class Barricade implements IBarricade {
     }
 
     @Override
-    public boolean isFinished() {
+    public boolean isReleased() {
         return true;
     }
 

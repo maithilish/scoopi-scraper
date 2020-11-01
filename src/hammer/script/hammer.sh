@@ -8,6 +8,8 @@ crashStartOffset=1
 incrementBy=1
 numOfTimes=25
 parser=jsoupDefault
+killHowMany=1
+killSignal=15
 
 # constants
 scoopiVersion=0.9.8-beta
