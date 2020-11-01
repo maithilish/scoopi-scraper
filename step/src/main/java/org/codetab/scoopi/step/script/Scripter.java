@@ -8,13 +8,13 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.plugin.script.ScriptExecutor;
 import org.codetab.scoopi.step.base.BaseScripter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -24,10 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class Scripter extends BaseScripter {
 
-    /**
-     * logger.
-     */
-    static final Logger LOGGER = LoggerFactory.getLogger(Scripter.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IPluginDef pluginDef;
@@ -39,10 +36,10 @@ public final class Scripter extends BaseScripter {
      * @return true when no error
      */
     @Override
-    public boolean process() {
+    public void process() {
         validState(nonNull(input), "input not set");
 
-        LOGGER.debug(getMarker(), getLabeled("apply scripts to input"));
+        LOG.debug(getJobMarker(), getLabeled("apply scripts to input"));
 
         try {
             String taskGroup = getPayload().getJobInfo().getGroup();
@@ -57,10 +54,8 @@ public final class Scripter extends BaseScripter {
                 scriptOutput = scriptExecutor.execute(plugins.get(), input);
             }
             setOutput(scriptOutput);
-            setConsistent(true);
         } catch (Exception e) {
             throw new StepRunException("unable to execute script plugin", e);
         }
-        return true;
     }
 }

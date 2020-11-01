@@ -1,40 +1,15 @@
 package org.codetab.scoopi.dao;
 
 import org.codetab.scoopi.model.Data;
+import org.codetab.scoopi.model.Fingerprint;
 
-/**
- * <p>
- * DataDao interface.
- * @author Maithilish
- *
- */
 public interface IDataDao {
-    /**
-     * <p>
-     * Store data.
-     * @param data
-     *            to store
-     */
-    void storeData(Data data);
 
-    /**
-     * <p>
-     * Get Data from document id and datadef id.
-     * @param documentId
-     *            document id
-     * @param dataDefId
-     *            datadef id
-     * @return data
-     */
-    Data getData(long documentId, long dataDefId);
+    Data get(Fingerprint dir, Fingerprint file)
+            throws DaoException, ChecksumException;
 
-    /**
-     * <p>
-     * Get Data from data id.
-     * @param id
-     *            data id.
-     * @return data
-     */
-    Data getData(long id);
+    void save(Fingerprint dir, Fingerprint file, Data data) throws DaoException;
 
+    void delete(Fingerprint locatorId, Fingerprint dataFingerprint)
+            throws DaoException;
 }

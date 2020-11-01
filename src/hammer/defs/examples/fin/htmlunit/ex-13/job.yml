@@ -1,0 +1,138 @@
+locatorGroups:
+
+  snapshotGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/fin/page/acme-snapshot-links.html" }  
+    ]
+
+taskGroups:
+
+  snapshotGroup:    
+    priceTask:
+      dataDef: price
+  
+    snapshotTask:
+      dataDef: snapshot
+    
+    linkTask:
+      dataDef: links
+      steps:
+        htmlUnitDefault:
+          process:
+            class: "org.codetab.scoopi.step.process.LocatorCreator"
+            previous: parser
+            next: seeder
+
+  bsGroup:
+    bsTask:
+      dataDef: bs
+      steps: fooSteps
+                   
+  plGroup:
+    plTask:
+      dataDef: pl
+      steps: fooSteps
+
+steps:
+  fooSteps:
+    htmlUnitDefault:
+      converter:
+        class: "org.codetab.scoopi.step.process.DataConverter"
+        previous: filter
+        next: appender           
+        plugins: [
+          plugin: { 
+            name: dateConverter, 
+            class: "org.codetab.scoopi.plugin.converter.DateRoller", 
+            item: year, 
+            inPattern: "MMM ''YY", 
+            outPattern: "yyyy-MM-dd", 
+            roll: "DAY_OF_MONTH=ceil" }            
+        ]
+
+dataDefs:
+
+  price:            
+    query:
+      block: "//*[@id='price_tick_span']"
+      selector: "strong"
+    items: [ 
+      item: { name: "Price", value: "Price" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]        
+
+  snapshot:            
+    query:
+      block: "//*[@id='snapshot']"
+      selector: "div/div/div[starts-with(child::text(),'%{item.match}')]/following-sibling::div[1]"
+    items: [
+      item: { name: "MC", match: "MARKET CAP" },
+      item: { name: "EPS", match: "EPS (TTM)" },
+      item: { name: "PE", match: "P/E" },
+      item: { name: "PC", match: "P/C" },
+      item: { name: "BV", match: "BOOK VALUE" },
+      item: { name: "PB", match: "PRICE/BOOK" },
+      item: { name: "DIV", match: "DIV (%)" },
+      item: { name: "DY", match: "DIV YIELD" },
+      item: { name: "FV", match: "FACE VALUE" },
+      item: { name: "IND PE", match: "INDUSTRY P/E" },
+    ]  
+    dims: [ 
+      item: { name: "date", script: "document.getFromDate()" },
+    ]
+
+  links:
+    query:
+      block: "//div[@id='page_links']/table"
+    items: [ 
+      item: { name: "bsLink", linkGroup: bsGroup, index: 2,  
+              selector: "tbody/tr/td[4]/ul/li[%{index}]/a/@href", 
+              prefix: [ "/defs/examples/fin/page/" ] },
+      item: { name: "plLink", linkGroup: plGroup, index: 3,  
+              selector: "tbody/tr/td[4]/ul/li[%{index}]/a/@href", 
+              prefix: [ "/defs/examples/fin/page/" ] },              
+    ]
+
+  bs:
+    query:
+      block: "//table//*[count(*)=0 and contains(.,'Total Share Capital')]/ancestor::table[1]"
+      selector: "*//*[.='%{item.value}']/following-sibling::td[%{dim.year.index}-1]"       
+    items:  
+      - item:
+          name: item
+          selector: "*//tr[%{index}+1]/td[1]"                        
+          index: 5
+          breakAfter:
+            - "Book Value (Rs)"
+          filters: 
+            - filter: { type: value, pattern: "" }
+            - filter: { type: value, pattern: "Sources Of Funds" }
+            - filter: { type: value, pattern: "Application Of Funds" }
+    dims:  
+      - item:
+          name: year
+          selector: "*//tr[1]/td[%{index}]"
+          indexRange: 2-6
+
+  pl:
+    query:
+      block: "//table//*[count(*)=0 and contains(.,'Employee Cost')]/ancestor::table[1]"
+      selector: "*//*[.='%{item.value}']/following-sibling::td[%{dim.year.index}-1]"       
+    items:  
+      - item:
+          name: item
+          selector: "*//tr[%{index}+1]/td[1]"                        
+          index: 5
+          breakAfter:
+            - "Book Value (Rs)"
+          filters: 
+            - filter: { type: value, pattern: "" }
+            - filter: { type: value, pattern: "Expenditure" }
+            - filter: { type: value, pattern: "Per share data (annualised)" }
+    dims:  
+      - item:
+          name: year
+          selector: "*//tr[1]/td[%{index}]"
+          indexRange: 2-6

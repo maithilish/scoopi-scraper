@@ -1,9 +1,13 @@
 package org.codetab.scoopi.model;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class StepInfo {
+public class StepInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String stepName;
     private final String priviousStepName;

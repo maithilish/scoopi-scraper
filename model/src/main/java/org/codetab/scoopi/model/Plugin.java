@@ -2,10 +2,16 @@ package org.codetab.scoopi.model;
 
 import static org.codetab.scoopi.util.Util.dashit;
 
+import java.io.Serializable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class Plugin {
+public class Plugin implements Serializable {
+
+    private static final long serialVersionUID = 2968170159654889364L;
 
     private final String name;
     private final String className;
@@ -14,6 +20,8 @@ public class Plugin {
     private final String stepName;
     private final String defJson;
     private final Object def;
+
+    private final transient Map<Object, Object> cache;
 
     public Plugin(final String name, final String className,
             final String taskGroup, final String taskName,
@@ -25,6 +33,7 @@ public class Plugin {
         this.stepName = stepName;
         this.defJson = defJson;
         this.def = def;
+        cache = new ConcurrentHashMap<>();
     }
 
     public String getName() {
@@ -53,6 +62,14 @@ public class Plugin {
 
     public Object getDef() {
         return def;
+    }
+
+    public void put(final Object key, final Object value) {
+        cache.put(key, value);
+    }
+
+    public Object get(final Object key) {
+        return cache.get(key);
     }
 
     @Override

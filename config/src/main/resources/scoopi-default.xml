@@ -14,15 +14,24 @@
         </defs>
 
         <fact>
-            <replaceBlank>true</replaceBlank>
-            <replaceWith>-</replaceWith>
+            <blank>
+                <replace>true</replace>
+                <replaceWith>-</replaceWith>
+            </blank>
+            <notFound>
+                <replaceWith>not found</replaceWith>
+            </notFound>
         </fact>
 
-        <seederClass>
+        <seeder>
+            <class>
             <![CDATA[
               org.codetab.scoopi.step.extract.LocatorSeeder
             ]]>
-        </seederClass>
+            </class>
+            <seedRetryTimes>3</seedRetryTimes>
+        </seeder>
+
         <poolsize>
             <start>4</start>
             <seeder>6</seeder>
@@ -32,9 +41,88 @@
             <filter>4</filter>
             <appender>2</appender>
         </poolsize>
+
         <appender>
-            <queuesize>4096</queuesize>
+            <queueSize>4096</queueSize>
+            <file>
+                <baseDir></baseDir> <!-- intentionally empty -->
+            </file>
         </appender>
+
+        <highDate>2037-12-31T23:59:59.999</highDate>
+        <dateTimePattern>yyyy-MM-dd'T'HH:mm:ss.SSSZ</dateTimePattern>
+        <outputDirTimestampPattern>
+            <![CDATA[
+                 yyyyMMMdd-HHmmss
+            ]]>
+        </outputDirTimestampPattern>
+
+        <datastore>
+            <enable>true</enable>
+            <type>jar:file:</type>
+            <path>data</path>
+        </datastore>
+
+        <persist>
+            <locator>true</locator>
+            <data>true</data>
+        </persist>
+
+        <cluster>
+            <enable>false</enable>
+            <tx>
+                <timeout>10</timeout>
+                <timeoutUnit>SECONDS</timeoutUnit>
+                <type>TWO_PHASE</type>
+            </tx>
+            <shutdown>
+                <timeout>60</timeout>
+                <timeoutUnit>SECONDS</timeoutUnit>
+            </shutdown>
+            <startCrashCleaner>
+                <minThreshold>10</minThreshold>
+            </startCrashCleaner>
+            <!-- system or user defined properties -->
+            <!-- scoopi.cluster.log.path.suffixUid -->
+            <!-- scoopi.cluster.quorum.size -->
+        </cluster>
+
+        <job>
+            <takeLimit>4</takeLimit>
+            <takeTimeout>1000</takeTimeout>
+            <takeRetryDelay>50</takeRetryDelay>
+        </job>
+
+        <task>
+            <takeTimeout>500</takeTimeout>
+        </task>
+
+        <monitor>
+            <timerPeriod>1000</timerPeriod>
+        </monitor>
+
+        <loader>
+            <fetch>
+                <parallelism>1</parallelism>
+                <delay>1000</delay>
+            </fetch>
+        </loader>
+
+        <metrics>
+            <server>
+                <enable>true</enable>
+                <port>9010</port>
+            </server>
+            <serializer>
+                <period>5</period>
+            </serializer>
+        </metrics>
+
+        <shutdown>
+            <timeout>10</timeout>
+            <timeoutUnit>SECONDS</timeoutUnit>
+        </shutdown>
+
         <webClient>
             <timeout>120000</timeout>
             <userAgent>
@@ -43,6 +131,7 @@
               ]]>
             </userAgent>
         </webClient>
+
         <webDriver>
             <driverPath>.gecko/geckodriver</driverPath>
             <log>geckodriver.log</log>
@@ -52,33 +141,10 @@
                 <implicitWait>10</implicitWait>
             </timeout>
         </webDriver>
-        <highDate>31-12-2037 23:59:59.999</highDate>
-        <dateParsePattern>dd-MM-yyyy ; dd/MM/yyyy</dateParsePattern>
-        <dateTimeParsePattern>
-            <![CDATA[
-                 dd-MM-yyyy HH:mm:ss.SSS ; dd/MM/yyyy HH:mm:ss.SSS
-            ]]>
-        </dateTimeParsePattern>
+
         <wait>false</wait>
         <fork>
             <locator>0</locator>
         </fork>
-        <useDatastore>true</useDatastore>
-        <datastore>
-            <name>datastore</name>
-            <orm>jdo</orm>
-            <configFile>jdoconfig.properties</configFile>
-        </datastore>
-        <persist>
-            <dataDef>true</dataDef>
-            <locator>true</locator>
-            <data>true</data>
-        </persist>
-        <metrics>
-            <server>
-                <enable>true</enable>
-                <port>9010</port>
-            </server>
-        </metrics>
     </scoopi>
 </configuration>

@@ -1,8 +1,8 @@
 package org.codetab.scoopi.model;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -12,14 +12,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public final class Data extends DataComponent implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3994855512292803137L;
 
     private Long id;
     private String name;
     private String dataDef;
     private Long dataDefId;
     private Long documentId;
-    private Date runDate;
+    private ZonedDateTime runDate;
     private Tag tag = new Tag();
     private List<DataComponent> items = new ArrayList<>();
 
@@ -66,11 +66,11 @@ public final class Data extends DataComponent implements Serializable {
         this.documentId = documentId;
     }
 
-    public Date getRunDate() {
+    public ZonedDateTime getRunDate() {
         return runDate;
     }
 
-    public void setRunDate(final Date runDate) {
+    public void setRunDate(final ZonedDateTime runDate) {
         this.runDate = runDate;
     }
 
@@ -86,6 +86,7 @@ public final class Data extends DataComponent implements Serializable {
         return list;
     }
 
+    @Override
     public DataIterator iterator() {
         return new DataIterator(items.iterator());
     }
@@ -118,6 +119,7 @@ public final class Data extends DataComponent implements Serializable {
      * Deep Copy
      * @return deep copy of Data
      */
+    @Override
     public Data copy() {
         Data copy = new Data();
         copy.id = id;
@@ -133,15 +135,13 @@ public final class Data extends DataComponent implements Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return EqualsBuilder.reflectionEquals(this, obj, excludes);
     }
 
     @Override
     public int hashCode() {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return HashCodeBuilder.reflectionHashCode(this, excludes);
     }
 

@@ -12,21 +12,14 @@ import java.util.zip.DataFormatException;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.step.base.BaseParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Parser extends BaseParser {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
-
     @Inject
     private ValueParser jsoupValueParser;
-    @Inject
-    private DocumentHelper documentHelper;
 
     @Override
     protected boolean postInitialize() {
@@ -50,7 +43,7 @@ public class Parser extends BaseParser {
 
     private InputStream getDocumentHTML()
             throws DataFormatException, IOException {
-        byte[] bytes = documentHelper.getDocumentObject(document);
+        byte[] bytes = (byte[]) document.getDocumentObject();
         return new ByteArrayInputStream(bytes);
     }
 }

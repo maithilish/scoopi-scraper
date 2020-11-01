@@ -1,5 +1,6 @@
 package org.codetab.scoopi.defs.yml;
 
+import static org.codetab.scoopi.util.Util.LINE;
 import static org.codetab.scoopi.util.Util.dashit;
 
 import java.util.ArrayList;
@@ -14,6 +15,10 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Filter;
@@ -25,6 +30,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 
 class ItemDefs {
+
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private Jacksons jacksons;
@@ -117,6 +124,7 @@ class ItemDefs {
             final Map<String, List<Axis>> itemAxisMap,
             final Map<String, List<Axis>> dimAxisMap,
             final Map<String, List<Axis>> factAxisMap) {
+
         Map<String, Data> map = new HashMap<>();
 
         for (String dataDef : itemAxisMap.keySet()) {
@@ -142,6 +150,7 @@ class ItemDefs {
                 item.setAxes(itemAxis);
                 data.addItem(item);
             }
+
             map.put(dataDef, data);
         }
         return map;
@@ -187,13 +196,18 @@ class ItemDefs {
         Map<String, ItemAttribute> map = new HashMap<>();
 
         for (String key : itemNodeMap.keySet()) {
-            Optional<Query> query = queryMap.get(key);
+            /**
+             * ItemAttribute is Serializable and Optional are not allowed, so
+             * discard optional.
+             *
+             */
+            Query query = queryMap.get(key).orElse(null);
             Range<Integer> indexRange = indexRangeMap.get(key);
-            Optional<List<String>> breakAfter = breakAfterMap.get(key);
-            Optional<List<String>> prefix = prefixMap.get(key);
-            Optional<List<Filter>> filter = filterMap.get(key);
-            Optional<String> linkGroup = linkGroupMap.get(key);
-            Optional<List<String>> linkBreakOn = linkBreakOnMap.get(key);
+            List<String> breakAfter = breakAfterMap.get(key).orElse(null);
+            List<String> prefix = prefixMap.get(key).orElse(null);
+            List<Filter> filter = filterMap.get(key).orElse(null);
+            String linkGroup = linkGroupMap.get(key).orElse(null);
+            List<String> linkBreakOn = linkBreakOnMap.get(key).orElse(null);
             ItemAttribute itemAttribute = new ItemAttribute.Builder()
                     .setKey(key).setQuery(query).setIndexRange(indexRange)
                     .setBreakAfter(breakAfter).setPrefix(prefix)
@@ -204,4 +218,13 @@ class ItemDefs {
         return map;
     }
 
+    public void traceDataTemplates(final Map<String, Data> dataTemplates) {
+        for (String dataDef : dataTemplates.keySet()) {
+            Data dataTemplate = dataTemplates.get(dataDef);
+            String markerName = dashit("datadef", dataDef);
+            Marker marker = MarkerManager.getMarker(markerName);
+            LOG.trace(marker, "data template for datadef: {}{}{}", dataDef,
+                    LINE, dataTemplate.toTraceString());
+        }
+    }
 }

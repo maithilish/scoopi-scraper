@@ -9,65 +9,63 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.ConfigNotFoundException;
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.codetab.scoopi.step.base.PayloadFactory;
 
 public class LocatorCreator extends BaseProcessor {
-
-    static final Logger LOGGER = LoggerFactory.getLogger(LocatorCreator.class);
 
     @Inject
     private LocatorGroupFactory locatorGroupFactory;
     @Inject
     private PayloadFactory payloadFactory;
-    @Inject
-    private ErrorLogger errorLogger;
 
     private List<LocatorGroup> locatorGroups;
 
+    private long jobId;
+
     @Override
-    public boolean process() {
-        String locatorName = getPayload().getJobInfo().getName();
-        String dataDef = getPayload().getJobInfo().getDataDef();
+    public void process() {
+        final String locatorName = getPayload().getJobInfo().getName();
+        final String dataDef = getPayload().getJobInfo().getDataDef();
+        jobId = getPayload().getJobInfo().getId();
         locatorGroups = locatorGroupFactory.createLocatorGroups(dataDef,
                 data.getItems(), locatorName);
         setOutput(locatorGroups);
-        setConsistent(true);
-        return true;
     }
 
     @Override
-    public boolean handover() {
-        validState(nonNull(getOutput()), "output is null");
-        validState(isConsistent(), "step inconsistent");
-        validState(nonNull(locatorGroups), "locatorGroups is null");
+    public void handover() {
+        validState(nonNull(getOutput()), "output is not set");
+        validState(nonNull(locatorGroups), "locatorGroups is not set");
 
-        String stepName = "start"; //$NON-NLS-1$
+        final String stepName = "start"; //$NON-NLS-1$
         String seederClzName = null;
         try {
-            seederClzName = configService.getConfig("scoopi.seederClass"); //$NON-NLS-1$
-        } catch (ConfigNotFoundException e) {
+            seederClzName = configs.getConfig("scoopi.seeder.class"); //$NON-NLS-1$
+        } catch (final ConfigNotFoundException e) {
             throw new StepRunException("unable to handover", e);
         }
 
-        List<Payload> payloads = payloadFactory
+        final List<Payload> payloads = payloadFactory
                 .createSeedPayloads(locatorGroups, stepName, seederClzName);
-        for (Payload payload : payloads) {
-            try {
-                taskMediator.pushPayload(payload);
-            } catch (InterruptedException e) {
-                String message =
-                        spaceit("handover link locators,", payload.toString());
-                errorLogger.log(marker, CAT.INTERNAL, message, e);
-            }
+        for (final Payload payload : payloads) {
+            payload.getJobInfo().setId(jobMediator.getJobIdSequence());
         }
-        return true;
+
+        // mark this job as finished and push new task jobs for this document
+        try {
+            jobMediator.pushJobs(payloads, jobId);
+        } catch (InterruptedException | JobStateException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            final String message =
+                    spaceit("handover link locators,", getPayload().toString());
+            throw new StepRunException(message, e);
+        }
     }
 }

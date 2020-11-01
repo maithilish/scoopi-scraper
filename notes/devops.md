@@ -1,45 +1,146 @@
-## Project Build
+## Maven Build
 
-``` BASH
 
-mvn test
-mvn verify
+quick builds
+
+    mvn clean verify -P basic,ng,release,docker -DskipTests
+    mvn clean verify -P basic,ng,release -DskipTests
+    mvn clean verify -P basic,ng -DskipTests
+
+
+Test and verify
+
+Docker compose file for services for itest is located at scoopi-scraper/src/itestservices. See readme.txt for details.
+
+    mvn test
+    mvn verify
  
-mvn test -Dtest=HttpHelperIT.java -P basic
-mvn integration-test -Dtest=HttpHelperIT.java -P basic
+    mvn test -Dtest=HttpHelperIT.java -P basic
+    mvn integration-test -Dtest=HttpHelperIT.java -P basic
 
-# skip test and run itests
-mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P basic
+Release build
 
-mvn test jacoco:report					# without itest
-mvn verify jacoco:report				# with itest
-mvn JavaDoc:JavaDoc
-
-mvn clean verify -P basic,release  	# create release zip and docker image
-mvn clean verify -DskipTests -P basic,release 	# skip all tests
+    cd scoopi-scraper/src/itestservices ; docker-compose up
+    mvn clean verify -P basic,ng,release,docker
 
 
-mvn versions:display-dependency-updates
-mvn versions:display-plugin-updates
-mvn dependency:resolve -Dclassifier=JavaDoc		# download javadoc
-mvn dependency:sources					# download source
+Skip test and run itests
 
-# run, skips exec in all modules except in engine
-mvn process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" -Dexec.cleanupDaemonThreads=false -Dlogback.configurationFile=src/main/resources/logback-dev.xml -Dscoopi.mode=dev -Dexec.skip=true
+    mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P basic
 
-```
+Test coverage without itest
 
-### Run as Java Application
+    mvn test jacoco:report
 
-Select Scoopi class -> Run As -> Java Application
-Go to Run Configuration and select Scoopi, in Arguments Tab enter following in VM arguments text box
+Test coverage with itest
 
--Dlogback.configurationFile=src/main/resources/logback-dev.xml
+    mvn verify jacoco:report
+    mvn JavaDoc:JavaDoc
+
+Download javadoc, source
+
+    mvn dependency:resolve -Dclassifier=JavaDoc
+    mvn dependency:sources
+
+Check for versions
+
+    mvn versions:display-dependency-updates
+    mvn versions:display-plugin-updates
+
+Run from console
+
+Skips exec in all modules except in engine. Error 'Could not resolve dependencies' is thrown if no process-classes otherwise works fine
+
+    mvn process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" \
+    -Dexec.cleanupDaemonThreads=false -Dlogback.configurationFile=src/main/resources/logback-dev.xml \
+    -Dscoopi.mode=dev -Dexec.skip=true
+
+ 
+## IDE Run  
+
+Select Scoopi class -> Run As -> Java Application. Edit Run Configuration; add following in Arguments Tab 
+
+Solo
+
 -Dscoopi.mode=dev
+-Dscoopi.metrics.server.enable=true
+-Dlog4j.configurationFile=src/main/resources/log4j2-dev.xml
 
-### Properties
+Cluster
 
-swtich config file to scoopi-dev.properties
+-Dscoopi.mode=dev
+-Dscoopi.cluster.enable=true
+-Dscoopi.log.dir=logs/cluster-a
+-Dscoopi.cluster.log.path.suffixUid=false
+-Dlog4j.configurationFile=src/main/resources/log4j2-dev.xml
+
+To enable metric server
+
+-Dscoopi.metrics.server.enable=true
+
+For cluster create multiple run configs and group them in Launch Group.
+
+### Run Configuration Variables
+
+For Run As - Java Application, the arguments:
+
+- Program Arguments
+  - space delimited values
+  - get from args[] in main method
+
+- VM Arguments
+  - -Dxyz=abcd
+  - use System.getProperty("xyz") to get value
+
+- Environment Variables
+  - variable + value
+  - use System.getenv(key) to get value
+
+
+## Release
+
+update dependencies and plugin to latest version.
+
+merge branch if any and change version in all modules
+
+	mvn versions:set -DnewVersion=0.9.7-beta
+	mvn versions:commit   # or versions:revert 
+
+commit and add tag 
+	
+	git push
+	git tag <version>          // add local tag
+	git push origin --tags
+	
+build release 
+
+	mvn clean verify -P basic,ng,release,docker
+
+release profile creates release zip and installs docker image in local repository.
+	
+create new release in github and attach zip
+
+push image to docker hub
+
+      docker login            // one time
+      docker push codetab/scoopi:<version>
+
+## Scoopiw Dashboard 
+
+To view dash board, during dev, in IDE; build scoopiw ng module with
+
+	mvn clean verify -P basic,ng -DskipTests
+
+Optionally, create zip of compiled scoopiw in metric/target/classes/webapp and unzip it after very clean 
+
+	cd metric
+	zip -r scoopiw.zip target/classes/webapp
+	
+If ng is not passed to -P during mvn install or verify, then scoopiw is not compiled. When compiled scoopiw is not available in target/classes/webapp, then browser lists WEB-INF dir instead of dashboard.
+
+## Properties
+
+switch config file to scoopi-dev.properties
 
 -Dscoopi.mode=dev
 -Dlogback.configurationFile=src/main/resources/logback-dev.xml
@@ -47,15 +148,8 @@ swtich config file to scoopi-dev.properties
 -Dscoopi.waitForHeapDump=true				# profile
 
 scoopi.datastore.configFile=jdoconfig-dev.properties  	# use dev db
-
-  
-### Docker Services for ITest 
-
-Docker compose file for services for itest is located at src/test/itestresources. 
-See readme.txt for details.
-
  
-### Integration Tests
+## Integration Tests
 
 maven failsafe plugin treats all files \*IT.java as integration test.
 
@@ -71,7 +165,7 @@ mvn clean integration-test -Dtest=zzz.java -DfailIfNoTests=false
 
 For Scoopi development, eclipse requires some setup.
 
-**! ! !  install eclipse-cs and ecl-emma
+**! ! !  install eclipse-cs (checkstyle) and ecl-emma
 import preferences only after cs and emma are installed**
 
 ### Install Java JavaDoc and source
@@ -200,50 +294,46 @@ Filter type = Exclude all.
 Applies to = File and Folders (check all children recursive)
 File and Folder Attributes: Project Relative Path matches src/main/web/scoopiw
 
-### Run Configuration
+### Save Actions
 
-In Eclipse, add new run configuration, go to Run As -> Maven Build and enter
+Pref -> Java -> Editor -> Save Actions
 
-Main 	-> Base directory - ${project_loc:scoopi}
-Goals 	-> process-classes exec:java -Dexec.mainClass="org.codetab.scoopi.Scoopi" 
-	    -Dlogback.configurationFile=src/main/resources/logback-dev.xml 
-	    -Dscoopi.mode=dev -Dexec.cleanupDaemonThreads=false -Dexec.skip=true
+Enable Perform the selected action
+ - Format Source Code 
+    - Edited lines
+ - Organize imports
 
-skips exec in all modules except engine module. 
+Additional Actions -> Configure
 
-Dao Enhance
+Code Organizing:
+ - Remove trailing white spaces on all lines
+Code Style: 
+ - Add final modifier to method parameters
+ - Add final modifier to local variables
+Missing Code:
+ - Add missing '@Override' annotations
+ - Add missing '@Override' annotations to implementations of interface methods
+ - Add missing '@Deprecated' annotations
+Unnecessary Code:
+ - Remove unnecessary casts
+ - Remove unused imports
 
-Main 	-> Base directory - ${project_loc:dao}
-Goals 	-> clean test-compile datanucleus:enhance
-Resolve Workspace Artifacts - check (otherwise mvn tries to download modules)
-
-
-### Run Configuration Variables
-
-For Run As - Java Application, the arguments:
-
-- Program Arguments
-  - space delimited values
-  - get from args[] in main method
-
-- VM Arguments
-  - -Dxyz=abcd
-  - use System.getProperty("xyz") to get value
-
-- Environment Variables
-  - variable + value
-  - use System.getenv(key) to get value
  
 ## Node.js and Angular
 
 On new machine install nodejs and angular cli
+    
+    sudo apt install nodejs
+    sudo apt install npm
+    sudo npm install -g @angular/cli
 
-    curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
-    yum install nodejs
+last build with nodjs - v10.19.0, npm - 6.14.4 and angular cli 9.1.8
 
-    npm install -g @angular/cli
+ng version command run in dir metric/src/main/web/scoopiw shows following message 
+	Your global Angular CLI version (9.1.8) is greater than your local
+	version (6.0.8). The local Angular CLI version is used.
 
-### Scoopi dashboard
+## Scoopi dashboard
 
 scoopiw is in metric module src/main/web dir
 
@@ -254,7 +344,7 @@ install modules
 	npm install
 
 
-### Scoopi Metric
+## Scoopi Metric
 
 Jetty server starts at port 9010. Angular app source is located in metric/src/main/web/scoopiw dir. During dev, in memory datastore is used and in prod build, it fetches data from localhost:9010/api/metrics
 
@@ -266,10 +356,6 @@ mvn package, builds the angular app with
           
 in POM the ng build is in separate profile ng-build which is disabled
 for travis ci build in .travis.yml
-
-### Model Generation
-
-to generate model java files from schema files, run src/main/scripts/schemagen.sh from project base dir. Beans are validated against the schema. It generates the file in target dir and after verification it has to copied to model dir in src.
 
 ## Versions
 
@@ -306,6 +392,10 @@ as messages_fr_CA.properties and run app with
 
 java -Duser.language=fr -Duser.country=CA Default
 
+## Sort data files
+
+sort -t '|' -k 1 -k 2 -k 3 -k 4 data*.txt > expected.txt
+
 ## WINE
 
 windows test is not really essential, but just to clear any doubt about bad coding, prefer to test scoopi with wine.
@@ -331,19 +421,6 @@ to run scoopi.bat, get into window command prompt and run bat file
      wine cmd
      C:\scoopi-0.9.0-beta>scoopi.bat
 
-
-## Docker local build
-
-for io.fabric8:docker-maven-plugin prefix is docker
-
-list goals 
-
-     mvn docker:help
-     
-build image and add image to local image repository
-
-     mvn docker:build
-         
 ## Github
 
 clone and create new project in workspace
@@ -361,33 +438,4 @@ travis maven and build steps
  
  - https://docs.travis-ci.com/user/languages/java/#Projects-Using-Maven
  - https://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Build-Step
-     
-## Release
-
-merge branch if any and change version in all modules
-
-	mvn versions:set -DnewVersion=0.9.7-beta
-	mvn versions:commit   # or versions:revert 
-
-commit and add tag 
-	
-	git push
-	git tag <version>          // add local tag
-	git push origin --tags
-	
-build release 
-
-	mvn clean verify -P basic,release
-
-release profile creates release zip and installs docker image in local repository.
-	
-create new release in github and attach zip
-
-push image to docker hub
-
-      docker login            // one time
-      docker push codetab/scoopi:<version>
-    
-
-
 

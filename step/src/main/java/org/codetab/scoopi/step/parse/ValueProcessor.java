@@ -15,19 +15,18 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
-import org.codetab.scoopi.config.ConfigService;
-import org.codetab.scoopi.exception.ConfigNotFoundException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
-import org.seleniumhq.jetty9.util.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ValueProcessor {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ValueProcessor.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ScriptProcessor scriptProcessor;
@@ -42,7 +41,7 @@ public class ValueProcessor {
     @Inject
     private TaskInfo taskInfo;
     @Inject
-    private ConfigService configService;
+    private Configs configs;
 
     private Map<String, Object> scriptObjectMap;
 
@@ -52,12 +51,12 @@ public class ValueProcessor {
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException, InvalidDefException {
 
-        boolean replaceBlank = configService.isTrue("scoopi.fact.replaceBlank");
-        String replaceWith = "-";
-        try {
-            replaceWith = configService.getConfig("scoopi.fact.replaceWith");
-        } catch (ConfigNotFoundException e) {
-        }
+        boolean replaceBlank =
+                configs.getBoolean("scoopi.fact.blank.replace", true);
+        String blankReplaceWith =
+                configs.getConfig("scoopi.fact.blank.replaceWith", "-");
+        String notFoundReplaceWith = configs
+                .getConfig("scoopi.fact.notFound.replaceWith", "not found");
 
         // as index of AxisName.FACT is zero, process in reverse so that
         // all other axis are processed before the fact
@@ -134,14 +133,22 @@ public class ValueProcessor {
                     if (prefixes.isPresent()) {
                         value = prefixProcessor.prefixValue(value,
                                 prefixes.get());
-                        LOGGER.trace(taskInfo.getMarker(), "prefixed value: {}",
+                        LOG.trace(taskInfo.getMarker(), "prefixed value: {}",
                                 value);
                     }
                 }
 
-                if (axisName.equals("fact") && StringUtil.isBlank(value)) {
-                    if (replaceBlank) {
-                        value = replaceWith;
+                if (axisName.equals("fact")) {
+                    if (isNull(value)) {
+                        value = notFoundReplaceWith;
+                    } else {
+                        if (value.trim().equalsIgnoreCase("null")) {
+                            value = notFoundReplaceWith;
+                        } else if (StringUtils.isBlank(value)) {
+                            if (replaceBlank) {
+                                value = blankReplaceWith;
+                            }
+                        }
                     }
                 }
                 axis.setValue(value);
@@ -158,7 +165,7 @@ public class ValueProcessor {
 
     private void appendQueryTrace(final StringBuilder trace,
             final String message, final Map<String, String> queries) {
-        if (!LOGGER.isTraceEnabled()) {
+        if (!LOG.isTraceEnabled()) {
             return;
         }
         String[] keys = new String[] {"script", "region", "field", "attribute"};
@@ -179,7 +186,7 @@ public class ValueProcessor {
 
     private void logQueryTrace(final String itemName,
             final StringBuilder trace) {
-        LOGGER.trace(taskInfo.getMarker(), "[{}]:{} query{}{}",
+        LOG.trace(taskInfo.getMarker(), "[{}]:{} query{}{}",
                 taskInfo.getLabel(), itemName, LINE, trace.toString());
     }
 

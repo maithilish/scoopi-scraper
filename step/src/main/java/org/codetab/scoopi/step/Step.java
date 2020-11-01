@@ -6,18 +6,21 @@ import static org.apache.commons.lang3.Validate.validState;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.ConfigService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.ITaskDef;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.model.StepInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
+import org.codetab.scoopi.step.mediator.JobMediator;
+import org.codetab.scoopi.step.mediator.TaskMediator;
 
 /**
  * @author maithilish
@@ -25,18 +28,10 @@ import org.slf4j.Marker;
  */
 public abstract class Step implements IStep {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Step.class);
-
-    private Object output;
-    private Payload payload;
-    private boolean consistent = false;
-    private String stepLabel;
-    protected Marker marker;
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
-    protected ConfigService configService;
-    @Inject
-    protected TaskFactory taskFactory;
+    protected Configs configs;
     @Inject
     protected MetricsHelper metricsHelper;
     @Inject
@@ -44,41 +39,52 @@ public abstract class Step implements IStep {
     @Inject
     protected TaskMediator taskMediator;
     @Inject
+    protected JobMediator jobMediator;
+    @Inject
     protected ObjectFactory factory;
 
+    private Object output;
+    private Payload payload;
+    private String stepLabel;
+    protected Marker jobMarker;
+    protected Marker jobAbortedMarker;
+
     @Override
-    public boolean setup() {
-        marker = getJobInfo().getMarker();
-        return true;
+    public void setup() {
+        jobMarker = getJobInfo().getJobMarker();
+        jobAbortedMarker = getJobInfo().getJobAbortedMarker();
     }
 
     @Override
-    public boolean handover() {
+    public void handover() {
         validState(nonNull(output), "output is null");
-        validState(isConsistent(), "step inconsistent");
 
         try {
-            String group = getJobInfo().getGroup();
-            String stepName = getStepInfo().getStepName();
-            String taskName = getJobInfo().getTask();
+            final String group = getJobInfo().getGroup();
+            final String stepName = getStepInfo().getStepName();
+            final String taskName = getJobInfo().getTask();
 
             if (getStepInfo().getNextStepName().equalsIgnoreCase("end")) {
-                LOGGER.info(marker, "job: {} finished",
+                long jobId = getJobInfo().getId();
+                jobMediator.markJobFinished(jobId);
+                LOG.info(jobMarker, "job: {} finished",
                         getJobInfo().getLabel());
             } else {
-                StepInfo nextStep =
+                final StepInfo nextStep =
                         taskDef.getNextStep(group, taskName, stepName);
-                Payload nextStepPayload =
+                final Payload nextStepPayload =
                         factory.createPayload(getJobInfo(), nextStep, output);
                 taskMediator.pushPayload(nextStepPayload);
-                LOGGER.debug(marker, "{} handover to step: {}", getLabel(),
+                LOG.debug(jobMarker, "{} handover to step: {}", getLabel(),
                         nextStep.getStepName());
             }
-        } catch (DefNotFoundException | InterruptedException
+        } catch (DefNotFoundException | InterruptedException | JobStateException
                 | IllegalStateException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             throw new StepRunException("unable to handover", e);
         }
-        return true;
     }
 
     @Override
@@ -117,18 +123,13 @@ public abstract class Step implements IStep {
     }
 
     @Override
-    public boolean isConsistent() {
-        return consistent && nonNull(output);
+    public Marker getJobMarker() {
+        return jobMarker;
     }
 
     @Override
-    public void setConsistent(final boolean consistent) {
-        this.consistent = consistent;
-    }
-
-    @Override
-    public Marker getMarker() {
-        return marker;
+    public Marker getJobAbortedMarker() {
+        return jobAbortedMarker;
     }
 
     /**

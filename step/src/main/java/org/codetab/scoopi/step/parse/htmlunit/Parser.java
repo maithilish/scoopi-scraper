@@ -3,7 +3,6 @@ package org.codetab.scoopi.step.parse.htmlunit;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,14 +12,13 @@ import java.util.zip.DataFormatException;
 import javax.inject.Inject;
 
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
-import org.codetab.scoopi.model.helper.DocumentHelper;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.step.base.BaseParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ImmediateRefreshHandler;
@@ -32,17 +30,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class Parser extends BaseParser {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ValueParser htmlUnitValueParser;
     @Inject
-    private DocumentHelper documentHelper;
-    @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
 
     private static final int TIMEOUT_MILLIS = 120000;
 
+    // TODO check behaviour if jsoup def but defaultSteps htmlUnit
     @Override
     protected boolean postInitialize() {
         notNull(document, "document must not be null");
@@ -73,7 +70,7 @@ public class Parser extends BaseParser {
     }
 
     private String getDocumentHTML() throws DataFormatException, IOException {
-        byte[] bytes = documentHelper.getDocumentObject(document);
+        byte[] bytes = (byte[]) document.getDocumentObject();
         return new String(bytes);
     }
 
@@ -81,11 +78,11 @@ public class Parser extends BaseParser {
         int timeout = TIMEOUT_MILLIS;
         String key = "scoopi.webClient.timeout"; //$NON-NLS-1$
         try {
-            timeout = Integer.parseInt(configService.getConfig(key));
+            timeout = Integer.parseInt(configs.getConfig(key));
         } catch (NumberFormatException | ConfigNotFoundException e) {
-            String message =
-                    spaceit("use default value:", String.valueOf(timeout));
-            errorLogger.log(CAT.INTERNAL, message, e);
+            errors.inc();
+            LOG.error("config: {}, use default: {} [{}]", timeout,
+                    ERROR.INTERNAL, e);
         }
 
         WebClient webClient = new WebClient(BrowserVersion.CHROME);

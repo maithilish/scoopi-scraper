@@ -2,19 +2,21 @@ package org.codetab.scoopi.step.load;
 
 import static org.codetab.scoopi.util.Util.spaceit;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.exception.DefNotFoundException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.exception.JobRunException;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERROR;
+import org.codetab.scoopi.model.ObjectFactory;
+import org.codetab.scoopi.model.PrintPayload;
 import org.codetab.scoopi.plugin.appender.Appender;
 import org.codetab.scoopi.plugin.encoder.IEncoder;
 import org.codetab.scoopi.step.base.BaseAppender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Encode and append Data objects to defined appenders
@@ -23,46 +25,50 @@ import org.slf4j.LoggerFactory;
  */
 public class DataAppender extends BaseAppender {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(DataAppender.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
-    private ErrorLogger errorLogger;
+    private ObjectFactory objectFactory;
+    @Inject
+    private Errors errors;
 
     @Override
-    public boolean process() {
+    public void process() {
+        List<PrintPayload> printPayloads = new ArrayList<>();
         for (String appenderName : appenders.keySet()) {
             try {
                 Appender appender = appenders.get(appenderName);
                 List<IEncoder<?>> encodersList = encoders.get(appenderName);
                 Object encodedData = encode(encodersList);
-                boolean stream = true;
-                try {
-                    stream = Boolean.valueOf(appender.getPluginField("stream"));
-                } catch (DefNotFoundException e) {
-                }
 
-                if (encodedData instanceof Collection) {
-                    Collection<?> list = (Collection<?>) encodedData;
-                    if (stream) {
-                        // stream
-                        for (Object obj : list) {
-                            doAppend(appender, obj);
-                        }
-                    } else {
-                        // bulk load
-                        doAppend(appender, list);
-                    }
-                } else {
-                    doAppend(appender, encodedData);
-                }
+                PrintPayload printPayload = objectFactory.createPrintPayload(
+                        getPayload().getJobInfo(), encodedData);
+
+                // TODO check whether needs streaming
+                doAppend(appender, printPayload);
+                printPayloads.add(printPayload);
+
             } catch (Exception e) {
                 String message = spaceit("unable to append to:", appenderName);
-                errorLogger.log(getMarker(), CAT.ERROR, getLabeled(message), e);
+                errors.inc();
+                LOG.error(getJobAbortedMarker(), "{} [{}]", getLabeled(message),
+                        ERROR.DATAERROR, e);
             }
         }
+        boolean appendError = false;
+        try {
+            for (PrintPayload printPayload : printPayloads) {
+                if (!printPayload.isFinished()) {
+                    appendError = true;
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            appendError = true;
+        }
+        if (appendError) {
+            throw new JobRunException("unable to append data to an appender");
+        }
         setOutput(data);
-        setConsistent(true);
-        // trace();
-        return true;
     }
 }

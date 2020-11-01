@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.codetab.scoopi</groupId>
         <artifactId>scoopi-scraper</artifactId>
-        <version>0.9.7-beta</version>
+        <version>0.9.8-beta</version>
     </parent>
     <artifactId>plugin</artifactId>
 
@@ -17,17 +17,17 @@
         </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
-            <artifactId>log</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codetab.scoopi</groupId>
             <artifactId>def</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codetab.scoopi</groupId>
             <artifactId>di</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codetab.scoopi</groupId>
+            <artifactId>pool</artifactId>
             <version>${project.version}</version>
         </dependency>
 

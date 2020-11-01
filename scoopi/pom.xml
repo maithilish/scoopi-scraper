@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.codetab.scoopi</groupId>
         <artifactId>scoopi-scraper</artifactId>
-        <version>0.9.7-beta</version>
+        <version>0.9.8-beta</version>
     </parent>
     <artifactId>scoopi</artifactId>
     <packaging>pom</packaging>
@@ -37,11 +37,11 @@
                 </plugins>
             </build>
         </profile>
+        <!-- assemble release zip -->
         <profile>
             <id>release</id>
             <build>
                 <plugins>
-                    <!-- assemble release zip -->
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
@@ -59,7 +59,14 @@
                             </descriptors>
                         </configuration>
                     </plugin>
-                    <!-- build docker image -->
+                </plugins>
+            </build>
+        </profile>
+        <!-- build docker image -->
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>

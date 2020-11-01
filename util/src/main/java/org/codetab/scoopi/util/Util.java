@@ -348,4 +348,17 @@ public final class Util {
     public static String spaceit(final String... parts) {
         return String.join(" ", parts);
     }
+
+    public static String patchit(final String str, final Object... vars) {
+        StringBuilder sb = new StringBuilder(str);
+        for (Object var : vars) {
+            int i = sb.indexOf("{}");
+            if (var instanceof String) {
+                sb.replace(i, i + 2, (String) var);
+            } else {
+                sb.replace(i, i + 2, String.valueOf(var));
+            }
+        }
+        return sb.toString();
+    }
 }

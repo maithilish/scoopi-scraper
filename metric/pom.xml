@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.codetab.scoopi</groupId>
         <artifactId>scoopi-scraper</artifactId>
-        <version>0.9.7-beta</version>
+        <version>0.9.8-beta</version>
     </parent>
     <artifactId>metric</artifactId>
 
@@ -32,14 +32,26 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+        </dependency>        
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-http</artifactId>
+        </dependency>
     </dependencies>
 
+    <!-- build metrics web app -->
     <profiles>
         <profile>
-            <id>release</id>
+            <id>ng</id>
             <build>
                 <plugins>
-                    <!-- build metrics web app -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>

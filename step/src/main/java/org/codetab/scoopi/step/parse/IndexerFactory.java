@@ -8,8 +8,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.Range;
 import org.codetab.scoopi.defs.IItemDef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Data factory
@@ -17,8 +15,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class IndexerFactory {
-
-    static final Logger LOGGER = LoggerFactory.getLogger(IndexerFactory.class);
 
     @Inject
     private IItemDef itemDef;

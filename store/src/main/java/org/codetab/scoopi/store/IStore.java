@@ -1,15 +1,20 @@
 package org.codetab.scoopi.store;
 
-import org.codetab.scoopi.model.Payload;
-
+/**
+ * IStore - Interface to local or distributed Cache
+ *
+ * @author m
+ *
+ */
 public interface IStore {
 
-    void putPayload(Payload payload) throws InterruptedException;
+    void open();
 
-    Payload takePayload() throws InterruptedException;
+    void close();
 
-    int getPayloadsCount();
+    boolean put(String key, Object value);
 
-    void clear();
+    Object get(String key);
 
+    boolean contains(String key);
 }

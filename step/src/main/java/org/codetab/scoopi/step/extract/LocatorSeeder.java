@@ -1,5 +1,6 @@
 package org.codetab.scoopi.step.extract;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
 import static org.codetab.scoopi.util.Util.spaceit;
 
@@ -9,17 +10,19 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.helper.ThreadSleep;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.exception.TransactionException;
+import org.codetab.scoopi.metrics.Errors;
+import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.step.PayloadFactory;
 import org.codetab.scoopi.step.base.BaseSeeder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.codetab.scoopi.step.base.PayloadFactory;
+import org.codetab.scoopi.step.mediator.JobMediator;
 
 import com.codahale.metrics.Meter;
 import com.google.common.collect.Lists;
@@ -32,49 +35,40 @@ import com.google.common.collect.Lists;
 
 public final class LocatorSeeder extends BaseSeeder {
 
-    /**
-     * logger.
-     */
-    static final Logger LOGGER = LoggerFactory.getLogger(LocatorSeeder.class);
-
-    /**
-     * delay between task submit.
-     */
-    private static final long SLEEP_MILLIS = 1000;
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * list of locator don't name the next as locators as it hides field.
      * (checkstyle)
      */
-
     private LocatorGroup locatorGroup;
-    @Inject
-    private ThreadSleep threadSleep;
     @Inject
     private PayloadFactory payloadFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
+    @Inject
+    private JobMediator jobMediator;
+    @Inject
+    private JobSeeder jobSeeder;
 
     /**
      * <p>
      * Initialise list of locators
      */
     @Override
-    public boolean initialize() {
-        Object pData = getPayload().getData();
+    public void initialize() {
+        final Object pData = getPayload().getData();
         if (pData instanceof LocatorGroup) {
             locatorGroup = (LocatorGroup) pData;
             setOutput(pData);
-            setConsistent(true);
         } else {
-            String message =
+            final String message =
                     spaceit("payload data is not instance of locator, but",
                             pData.getClass().getName());
             throw new StepRunException(message);
         }
-        Meter meter = metricsHelper.getMeter(this, "locator", "provided");
+        final Meter meter = metricsHelper.getMeter(this, "locator", "provided");
         meter.mark(locatorGroup.getLocators().size());
-        return true;
     }
 
     /**
@@ -82,53 +76,113 @@ public final class LocatorSeeder extends BaseSeeder {
      * Submit tasks to queue.
      */
     @Override
-    public boolean handover() {
-        validState(isConsistent(), "step inconsistent");
+    public void handover() {
+        validState(nonNull(getOutput()), "output is not set");
 
-        Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
+        final Meter meter = metricsHelper.getMeter(this, "locator", "seeded");
 
-        LOGGER.debug("push locators to taskpool");
-        String group = locatorGroup.getGroup();
+        final String group = locatorGroup.getGroup();
+        LOG.debug("push {} locators from locatorGroup {}",
+                locatorGroup.getLocators().size(), group);
+        LOG.debug("is locator group defined by defs : {}",
+                locatorGroup.isByDef());
 
-        for (Locator locator : locatorGroup.getLocators()) {
+        int seedRetryTimes =
+                configs.getInt("scoopi.seeder.seedRetryTimes", "3");
+
+        for (final Locator locator : locatorGroup.getLocators()) {
             // create and push first task payload for each locator
             // so that loader fetch only one document for each locator
-            Optional<String> firstTask = taskDef.getFirstTaskName(group);
+            final Optional<String> firstTask = taskDef.getFirstTaskName(group);
             if (firstTask.isPresent()) {
-                ArrayList<String> firstTaskName =
+                final ArrayList<String> firstTaskName =
                         Lists.newArrayList(firstTask.get());
-                List<Payload> payloads =
+                final List<Payload> payloads =
                         payloadFactory.createPayloads(group, firstTaskName,
                                 getStepInfo(), locator.getName(), locator);
+
                 if (payloads.size() == 1) {
-                    for (Payload payload : payloads) {
-                        try {
-                            taskMediator.pushPayload(payload);
-                            meter.mark();
-                        } catch (InterruptedException e) {
-                            String message = spaceit("handover locator,",
-                                    payload.toString());
-                            errorLogger.log(CAT.INTERNAL, message, e);
+                    for (final Payload payload : payloads) {
+                        for (int r = 1; r <= seedRetryTimes; r++) {
+                            LOG.debug("seed {}, try # {}",
+                                    payload.getJobInfo().getLabel(), r);
+                            boolean logError = false;
+                            if (r < seedRetryTimes) {
+                                // retry on error else break
+                                if (pushPayload(meter, payload, logError)) {
+                                    break;
+                                }
+                            } else {
+                                // on last try if error, log it and continue
+                                logError = true;
+                                pushPayload(meter, payload, logError);
+                            }
                         }
                     }
                 } else {
-                    String message = spaceit("unable to seed locator:",
-                            locator.getName(),
-                            ", expected one payload for taskGroup:", group,
-                            "task:", firstTask.get(), "but got:",
-                            String.valueOf(payloads.size()));
-                    errorLogger.log(CAT.ERROR, message);
+                    final String message =
+                            spaceit("seed locator:", locator.getName(),
+                                    ", expected one payload for taskGroup:",
+                                    group, "task:", firstTask.get(), "but got:",
+                                    String.valueOf(payloads.size()));
+                    errors.inc();
+                    LOG.error("{} [{}]", message, ERROR.INTERNAL);
                 }
+
             } else {
-                String message = spaceit(
-                        "unable to get first task for locator group:", group);
-                errorLogger.log(CAT.ERROR, message);
+                errors.inc();
+                LOG.error(
+                        "seed locator, get first task for locator group: {} [{}]",
+                        group, ERROR.INTERNAL);
             }
-            threadSleep.sleep(SLEEP_MILLIS);
         }
-        LOGGER.debug("locator group: {}, locators: {}, queued to taskpool",
+        LOG.debug("locator group: {}, locators: {}, queued to taskpool",
                 locatorGroup.getGroup(), locatorGroup.getLocators().size());
-        return true;
+        if (locatorGroup.isByDef()) {
+            jobSeeder.countDownSeedLatch();
+        }
     }
 
+    private boolean pushPayload(final Meter meter, final Payload payload,
+            final boolean logError) {
+        try {
+            String pushedTo = null;
+            String locatorSource = null;
+            if (locatorGroup.isByDef()) {
+                // if seed, push to JM (local or cluster)
+                pushedTo = "JM";
+                locatorSource = "locator by def";
+
+                payload.getJobInfo().setId(jobMediator.getJobIdSequence());
+                jobMediator.pushJob(payload);
+            } else {
+                // if from parse link, push to TM (local). JobId
+                // of parent job is reused
+                pushedTo = "TM";
+                locatorSource = "locator by link";
+
+                final long linkJobId = getPayload().getJobInfo().getId();
+                payload.getJobInfo().setId(linkJobId);
+                taskMediator.pushPayload(payload);
+            }
+
+            LOG.debug("push [{}] to {}, {} jobId {}", locatorSource, pushedTo,
+                    payload.getJobInfo().getLabel(),
+                    payload.getJobInfo().getId());
+
+            meter.mark();
+            return true;
+        } catch (InterruptedException | JobStateException
+                | TransactionException e) {
+            if (logError) {
+                // log error for this payload and continue
+                errors.inc();
+                LOG.error("push locator,{} [{}]", payload, ERROR.INTERNAL, e);
+            }
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            return false;
+        }
+    }
 }

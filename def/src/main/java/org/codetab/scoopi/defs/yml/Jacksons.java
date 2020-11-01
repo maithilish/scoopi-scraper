@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonParser;
 
-class Jacksons {
+public class Jacksons {
 
     public List<String> getFieldNames(final JsonNode jNode) {
         return Lists.newArrayList(jNode.fieldNames());

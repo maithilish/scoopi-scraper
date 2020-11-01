@@ -4,3 +4,10 @@ link based on match
         match is assigned to URL and no proper error in tasklog 
         
 set coverall ratio to 0.60         
+
+write a program to find unused public methods by scanning classes in jar
+
+Analyze logging and segregate errors for data and warning for others, 
+	or explore some better way 
+
+Hammer - four nodes and simultaneous two failure 	

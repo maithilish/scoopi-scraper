@@ -11,6 +11,8 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Axis;
@@ -19,8 +21,6 @@ import org.codetab.scoopi.model.Plugin;
 import org.codetab.scoopi.plugin.converter.ConverterMap;
 import org.codetab.scoopi.plugin.converter.IConverter;
 import org.codetab.scoopi.step.base.BaseProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -30,10 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class DataConverter extends BaseProcessor {
 
-    /**
-     * logger.
-     */
-    static final Logger LOGGER = LoggerFactory.getLogger(DataConverter.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IPluginDef pluginDef;
@@ -50,10 +47,10 @@ public final class DataConverter extends BaseProcessor {
      * @return true when no error
      */
     @Override
-    public boolean process() {
+    public void process() {
         validState(nonNull(data), "data not set");
 
-        LOGGER.debug(getMarker(), getLabeled("convert values"));
+        LOG.debug(getJobMarker(), getLabeled("convert values"));
 
         String taskGroup = getPayload().getJobInfo().getGroup();
         String taskName = getPayload().getJobInfo().getTask();
@@ -81,9 +78,7 @@ public final class DataConverter extends BaseProcessor {
         }
 
         setOutput(data);
-        setConsistent(true);
         trace();
-        return true;
     }
 
     private String convert(final String value,
@@ -92,23 +87,23 @@ public final class DataConverter extends BaseProcessor {
         for (IConverter converter : axisConverters) {
             cValue = converter.convert(cValue);
         }
-        if (LOGGER.isTraceEnabled() && !StringUtils.equals(cValue, value)) {
+        if (LOG.isTraceEnabled() && !StringUtils.equals(cValue, value)) {
             convertedValues.put(value, cValue);
         }
         return cValue;
     }
 
     private void trace() {
-        if (!LOGGER.isTraceEnabled()) {
+        if (!LOG.isTraceEnabled()) {
             return;
         }
         if (convertedValues.isEmpty()) {
-            LOGGER.trace(getMarker(), getLabeled("no convert value"));
+            LOG.trace(getJobMarker(), getLabeled("no convert value"));
         } else {
-            LOGGER.trace(getMarker(), getLabeled("converted values"));
+            LOG.trace(getJobMarker(), getLabeled("converted values"));
         }
         for (String key : convertedValues.keySet()) {
-            LOGGER.trace(getMarker(), "  {} -> {}", key, //$NON-NLS-1$
+            LOG.trace(getJobMarker(), "  {} -> {}", key, //$NON-NLS-1$
                     convertedValues.get(key));
         }
     }

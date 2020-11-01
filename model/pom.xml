@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.codetab.scoopi</groupId>
         <artifactId>scoopi-scraper</artifactId>
-        <version>0.9.7-beta</version>
+        <version>0.9.8-beta</version>
     </parent>
     <artifactId>model</artifactId>
 
@@ -30,46 +30,9 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.datanucleus</groupId>
-            <artifactId>datanucleus-accessplatform-jdo-rdbms</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
             <groupId>net.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
         </dependency>
     </dependencies>
 
-    <profiles>
-        <!-- basic profile - no ng and docker builds -->
-        <profile>
-            <id>basic</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>                                       
-                    <!-- datanucleus enhance -->
-                    <!-- we need classes without enhancement for jaxb schemagen hence they 
-                         are enhanced in process-classes phases instead of compile -->
-                    <plugin>
-                        <groupId>org.datanucleus</groupId>
-                        <artifactId>datanucleus-maven-plugin</artifactId>
-                        <version>${datanucleus-enhancer.version}</version>
-                        <configuration>
-                            <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>enhance</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

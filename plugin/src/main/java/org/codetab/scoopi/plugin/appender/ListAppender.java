@@ -1,16 +1,16 @@
 package org.codetab.scoopi.plugin.appender;
 
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.log.Log.CAT;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.model.ERROR;
+import org.codetab.scoopi.model.PrintPayload;
 
 /**
  * <p>
@@ -20,8 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class ListAppender extends Appender {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(ListAppender.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private List<Object> list = new ArrayList<>();
 
@@ -32,7 +31,7 @@ public final class ListAppender extends Appender {
     @Override
     public void init() {
         setInitialized(true);
-        LOGGER.info("created {}, name: {}", this.getClass().getSimpleName(),
+        LOG.info("created {}, name: {}", this.getClass().getSimpleName(),
                 getName());
     }
 
@@ -44,34 +43,36 @@ public final class ListAppender extends Appender {
     public void run() {
         int count = 0;
         for (;;) {
-            Object item = null;
+            PrintPayload printPayload = null;
             try {
-                item = getQueue().take();
+                printPayload = getQueue().take();
                 count++;
-                if (item == Marker.EOF) {
+                if (printPayload.getData() == Marker.END_OF_STREAM) {
                     break;
                 }
-                list.add(item);
+                list.add(printPayload.getData());
             } catch (InterruptedException e) {
-                String message = spaceit("appender:", getName());
-                errorLogger.log(CAT.INTERNAL, message, e);
+                errors.inc();
+                LOG.error("appender: {} [{}]", getName(), ERROR.INTERNAL, e);
+                Thread.currentThread().interrupt();
             }
         }
-        LOGGER.info("appender: {}, {} item appended", getName(), count - 1);
+        LOG.info("appender: {}, {} item appended", getName(), count - 1);
     }
 
     /**
      * Append object to appender queue.
-     * @param object
+     * @param printPayload
      *            object to append, not null
      * @throws InterruptedException
      *             if interrupted while queue put operation
      */
     @Override
-    public void append(final Object object) throws InterruptedException {
-        notNull(object, "object must not be null");
+    public void append(final PrintPayload printPayload)
+            throws InterruptedException {
+        notNull(printPayload, "object must not be null");
         if (isInitialized()) {
-            getQueue().put(object);
+            getQueue().put(printPayload);
         }
     }
 

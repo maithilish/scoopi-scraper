@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="logDir">${sys:scoopi.log.dir:-logs}</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <ThresholdFilter level="INFO"
+                onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout
+                pattern="%-20.-20c{1} %-8level %m %ex{short.message}%n" />
+        </Console>
+
+        <!-- Warn File Appender - only warn -->
+        <File name="WARN_LOG_FILE" fileName="${logDir}/warn.log"
+            append="false">
+            <LevelRangeFilter minLevel="WARN"
+                maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout
+                pattern="%-20.-20c{1} %-8level %m %ex{short}%n" />
+        </File>
+
+        <!-- Error File Appender - only error -->
+        <File name="ERROR_LOG_FILE" fileName="${logDir}/error.log"
+            append="false">
+            <LevelRangeFilter minLevel="ERROR"
+                maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout
+                pattern="%-20.-20c{1} %-8level %m %ex{short}%n" />
+        </File>
+
+        <!-- Debug File Appender -->
+        <File name="DEBUG_LOG_FILE" fileName="${logDir}/debug.log"
+            append="false">
+            <ThresholdFilter level="DEBUG"
+                onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout
+                pattern="%-20c{1} %-8level %m%n%ex" />
+        </File>
+
+        <!-- Trace File Appender -->
+        <File name="TRACE_LOG_FILE" fileName="${logDir}/trace.log"
+            append="false">
+            <ThresholdFilter level="TRACE"
+                onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout
+                pattern="%-20c{1} %-8level %m%n%rEx" />
+        </File>
+
+        <!-- Task File Appender - filter trace log based on markers -->
+        <!-- allowed markers are datadef and task in following format -->
+        <!-- datadef marker:  datadef-<datadef name>  example: datadef-price -->
+        <!-- task marker:  task-<locator name>-<task group>-<task name> -->
+        <!-- task marker example: task-acme-bsGroup-bsTask -->
+        <!-- refer https://www.codetab.org/tutorial/scoopi-web-scraper/manage/logs/  -->
+        <File name="TASK_LOG_FILE" fileName="${logDir}/task.log"
+            append="false">
+            <Filters>
+                <MarkerFilter marker="datadef-price"
+                    onMatch="ACCEPT" onMismatch="NEUTRAL" />
+                <MarkerFilter
+                    marker="task-acme1-snapshotGroup-priceTask" onMatch="ACCEPT"
+                    onMismatch="DENY" />
+            </Filters>
+            <PatternLayout
+                pattern="%-20c{1} %-8level %m%n%rEx" />
+        </File>
+
+        <!-- async appenders -->
+        <Async name="ASYNC">
+            <AppenderRef ref="CONSOLE" />
+            <AppenderRef ref="WARN_LOG_FILE" />
+            <AppenderRef ref="ERROR_LOG_FILE" />
+            <AppenderRef ref="TASK_LOG_FILE" />
+
+            <AppenderRef ref="DEBUG_LOG_FILE" />
+            <AppenderRef ref="TRACE_LOG_FILE" />
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.hazelcast" level="warn" />
+        <Root level="trace">
+            <AppenderRef ref="ASYNC" />
+        </Root>
+    </Loggers>
+
+</Configuration>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE suppressions PUBLIC
-"-//Puppy Crawl//DTD Suppressions 1.1//EN"
-"http://checkstyle.sourceforge.net/dtds/suppressions_1_1.dtd">
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 
 <suppressions>
     <!-- disable all check for jaxb xjc generated model files  -->
@@ -19,7 +19,8 @@
     <suppress files="ObjectFactory.java" checks="[a-zA-Z0-9]*" />
 
     <!-- disable modules for specific files  -->
-    <suppress files="messages.properties" checks="RegexpSingleline" />
+    <suppress files="messages.properties"
+        checks="RegexpSingleline" />
     <suppress files=".*Test.java" checks="MagicNumber" />
     <suppress files=".*TestIT.java" checks="MagicNumber" />
     <suppress files=".*IT.java" checks="MagicNumber" />

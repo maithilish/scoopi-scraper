@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.codetab.scoopi</groupId>
     <artifactId>scoopi-scraper</artifactId>
-    <version>0.9.7-beta</version>
+    <version>0.9.8-beta</version>
 
     <url>http://www.codetab.org/scoopi</url>
 
@@ -17,7 +17,6 @@
         <module>def</module>
         <module>model</module>
         <module>helper</module>
-        <module>log</module>
         <module>metric</module>
         <module>dao</module>
         <module>di</module>
@@ -25,61 +24,60 @@
         <module>scoopi</module>
         <module>step</module>
         <module>plugin</module>
+        <module>pool</module>
     </modules>
 
     <properties>
         <java-release>8</java-release>
 
-        <commons-beanutils.version>1.9.4</commons-beanutils.version>
-        <commons-configuration2.version>2.6</commons-configuration2.version>
-        <commons-csv.version>1.7</commons-csv.version>
-        <commons-dbcp2.version>2.7.0</commons-dbcp2.version>
-        <commons-lang3.version>3.9</commons-lang3.version>
-        <commons-pool2.version>2.7.0</commons-pool2.version>
-        <commons-text.version>1.8</commons-text.version>
-        <commons-io.version>2.6</commons-io.version>
-        <commons-validator.version>1.6</commons-validator.version>
-        <httpclient.version>4.5.10</httpclient.version>
-
-        <guava.version>28.1-jre</guava.version>
-        <gson.version>2.8.6</gson.version>
-        <java-inject.version>1</java-inject.version>
-        <guice.version>4.2.2</guice.version>
-        <hsqldb.version>2.4.1</hsqldb.version>
+        <jsoup.version>1.13.1</jsoup.version>
         <htmlunit.version>2.36.0</htmlunit.version>
-        <jackson.version>2.10.1</jackson.version>
-        <jaxb-xjc.version>2.3.0.1</jaxb-xjc.version>
-        <jcip-annotations.version>1.0</jcip-annotations.version>
-        <jetty.version>9.4.14.v20181114</jetty.version>
-        <json-validator.version>2.2.11</json-validator.version>
-        <jsoup.version>1.12.1</jsoup.version>
 
-        <log4j.version>1.2.17</log4j.version>
-        <logback.version>1.2.3</logback.version>
-        <metrics.version>4.1.1</metrics.version>
+        <commons-lang3.version>3.11</commons-lang3.version>
+        <commons-configuration2.version>2.7</commons-configuration2.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-csv.version>1.8</commons-csv.version>
+        <commons-pool2.version>2.9.0</commons-pool2.version>
+        <commons-text.version>1.9</commons-text.version>
+        <commons-io.version>2.8.0</commons-io.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <commons-validator.version>1.7</commons-validator.version>
+
+        <java-inject.version>1</java-inject.version>
+        <guice.version>4.2.3</guice.version>
+        <guava.version>29.0-jre</guava.version>
+        <jackson.version>2.11.3</jackson.version>
+        <gson.version>2.8.6</gson.version>
+        <json-validator.version>2.2.14</json-validator.version>
+        <lz4.version>1.7.1</lz4.version>
+        <metrics.version>4.1.12.1</metrics.version>
+
+        <jcip-annotations.version>1.0</jcip-annotations.version>
+        <jetty.version>9.4.32.v20200930</jetty.version>
+        <httpclient.version>4.5.12</httpclient.version>
         <selenium.version>3.141.59</selenium.version>
 
-        <junit.version>4.12</junit.version>
-        <mockito.version>3.1.0</mockito.version>
-        <byte-budy.version>1.9.10</byte-budy.version>
-        <assertj.version>3.14.0</assertj.version>
+        <hazelcast.version>4.0.3</hazelcast.version>
 
-        <datanucleus.version>5.2.2</datanucleus.version>
-        <mariadb-client.version>2.2.5</mariadb-client.version>
-        <mysql-connector.version>5.1.43</mysql-connector.version>
+        <log4j2.version>2.13.3</log4j2.version>
+        <slf4j-simple.version>2.0.0-alpha1</slf4j-simple.version>
 
+        <junit.version>4.13</junit.version>
+        <assertj.version>3.17.2</assertj.version>
+        <mockito.version>3.5.13</mockito.version>
+        <byte-budy.version>1.10.16</byte-budy.version>
+        
         <!-- plugin version -->
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <jar-plugin.version>3.2.0</jar-plugin.version>
         <dependency-plugin.version>3.1.1</dependency-plugin.version>
-        <assembly-plugin.version>3.2.0</assembly-plugin.version>
+        <assembly-plugin.version>3.3.0</assembly-plugin.version>
         <install-plugin.version>3.0.0-M1</install-plugin.version>
-        <failsafe-plugin.version>3.0.0-M3</failsafe-plugin.version>
-        <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
-        <datanucleus-enhancer.version>5.2.1</datanucleus-enhancer.version>
+        <failsafe-plugin.version>3.0.0-M5</failsafe-plugin.version>
+        <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
-        <versions-plugin.version>2.7</versions-plugin.version>
-        <exec-plugin.version>1.6.0</exec-plugin.version>
+        <versions-plugin.version>2.8.1</versions-plugin.version>
+        <exec-plugin.version>3.0.0</exec-plugin.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -123,33 +121,6 @@
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
                 <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.datanucleus</groupId>
-                <artifactId>datanucleus-accessplatform-jdo-rdbms</artifactId>
-                <version>${datanucleus.version}</version>
-                <type>pom</type>
-            </dependency>
-        <!-- jdo requires dbcp -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-dbcp2</artifactId>
-                <version>${commons-dbcp2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hsqldb</groupId>
-                <artifactId>hsqldb</artifactId>
-                <version>${hsqldb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mariadb.jdbc</groupId>
-                <artifactId>mariadb-java-client</artifactId>
-                <version>${mariadb-client.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -202,6 +173,16 @@
                 <version>${commons-pool2.version}</version>
             </dependency>
             <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>${lz4.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>net.jcip</groupId>
                 <artifactId>jcip-annotations</artifactId>
                 <version>${jcip-annotations.version}</version>
@@ -227,6 +208,22 @@
                 <version>${jetty.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-io</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-util</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>            
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-http</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-core</artifactId>
                 <version>${metrics.version}</version>
@@ -236,26 +233,44 @@
                 <artifactId>metrics-servlets</artifactId>
                 <version>${metrics.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast-all</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     
     <!-- common to all modules -->
     <dependencies>
+        <!-- log -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <!-- for any dependency that uses sl4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-simple.version}</version>
+        </dependency>
+
+        <!-- inject -->
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>${java-inject.version}</version>
         </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
+
+        <!-- test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -293,8 +308,15 @@
         </dependency>
     </dependencies>
 
+    <!-- profiles 
+         basic - basic build
+         ng - builds scoopiw metrics angular web app 
+         release - builds release zip
+         docker - builds docker image
+     -->
     <profiles>
-        <!-- basic profile - no ng and docker builds -->
+        <!-- basic profile -->
+        <!-- for travis, pass "-P basic" to activate only the basic -->
         <profile>
             <id>basic</id>
             <activation>
@@ -365,7 +387,8 @@
                                     <classifier>release</classifier>
                                     <excludes>
                                         <exclude>*.properties</exclude>
-                                        <exclude>logback.xml</exclude>
+                                        <exclude>hazelcast*.xml</exclude>
+                                        <exclude>log4j2.xml</exclude>
                                         <exclude>simple/</exclude>
                                         <exclude>defs/**</exclude>
                                         <exclude>devdefs/**</exclude>
@@ -436,8 +459,45 @@
         </profile>
 
         <profile>
-            <!-- profile - release, builds metrics web app and docker image -->
-            <!-- for travis, pass "-P basic" to activate only the basic and not release profile -->
+            <!-- profile - ng, builds metrics web app-->
+            <id>ng</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>exec-maven-plugin</artifactId>
+                            <version>${exec-plugin.version}</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- profile - docker, builds docker image-->
+            <id>docker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>exec-maven-plugin</artifactId>
+                            <version>${exec-plugin.version}</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- profile - release, builds release zip -->
             <id>release</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -449,11 +509,6 @@
                         <plugin>
                             <artifactId>maven-assembly-plugin</artifactId>
                             <version>${assembly-plugin.version}</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>exec-maven-plugin</artifactId>
-                            <version>${exec-plugin.version}</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>

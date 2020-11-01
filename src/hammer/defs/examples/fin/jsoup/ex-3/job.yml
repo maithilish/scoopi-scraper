@@ -1,0 +1,29 @@
+locatorGroups:
+  
+  bsGroup:   
+    locators: [
+       { name: acme, url: "/defs/examples/fin/page/acme-bs.html" }  
+    ]
+                                        
+taskGroups:
+
+  bsGroup:
+    bsTask:
+      dataDef: bs
+        
+dataDefs:
+
+  bs:
+    query:
+      block: "table:contains(Sources Of Funds)"
+      selector: "tr:nth-child(%{item.index}) > td:nth-child(%{dim.year.index})"       
+    items:  
+      - item:
+          name: item
+          selector: "tr:nth-child(%{index}) > td:nth-child(1)"                        
+          indexRange: 7-9             
+    dims:  
+      - item:
+          name: year
+          selector: "tr:nth-child(1) > td:nth-child(%{index})"
+          index: 2        

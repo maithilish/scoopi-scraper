@@ -7,151 +7,155 @@ import static org.codetab.scoopi.util.Util.LINE;
 import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.dao.ChecksumException;
+import org.codetab.scoopi.dao.DaoException;
+import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.exception.DefNotFoundException;
+import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
 import org.codetab.scoopi.model.Document;
+import org.codetab.scoopi.model.Fingerprint;
 import org.codetab.scoopi.model.Locator;
+import org.codetab.scoopi.model.ObjectFactory;
 import org.codetab.scoopi.model.Payload;
-import org.codetab.scoopi.model.helper.DocumentHelper;
-import org.codetab.scoopi.persistence.DocumentPersistence;
-import org.codetab.scoopi.persistence.LocatorPersistence;
-import org.codetab.scoopi.step.PayloadFactory;
+import org.codetab.scoopi.model.helper.Documents;
 import org.codetab.scoopi.step.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.codetab.scoopi.step.mediator.JobMediator;
 
 /**
  * <p>
- * Abstract Base Loader. Either, loads active document from store or if not
- * found, creates new document by fetching resource from from web or file
- * system. Delegates the fetch to the concrete sub class.
+ * Abstract Base Loader. Loads saved document from store, if not found creates
+ * new document by fetching resource from from web or file system. Delegates the
+ * fetch to the concrete sub class.
  * @author Maithilish
  *
  */
 public abstract class BaseLoader extends Step {
 
-    /**
-     * logger.
-     */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(BaseLoader.class);
+    private static final Logger LOG = LogManager.getLogger();
 
-    /**
-     * locator.
-     */
-    private Locator locator;
-    /**
-     * active document.
-     */
-    private Document document;
-    /**
-     * persister.
-     */
     @Inject
-    private LocatorPersistence locatorPersistence;
-    /**
-     * persister.
-     */
+    private IDocumentDao documentDao;
     @Inject
-    private DocumentPersistence documentPersistence;
-    /**
-     * helper.
-     */
+    private Documents documents;
     @Inject
-    private DocumentHelper documentHelper;
+    private ObjectFactory objectFactory;
     @Inject
     private PayloadFactory payloadFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private JobMediator jobMediator;
+    @Inject
+    private Persists persists;
+    @Inject
+    private FetchThrottle fetchThrottle;
+
+    private Locator locator;
+    private Document document;
+
+    private boolean fetchDocument = true;
+
+    private boolean persist;
 
     /**
-     * Creates log marker from locator name and group.
+     * Get and assign locator from payload
      * @return true
      * @see org.codetab.scoopi.step.IStep#initialize()
      */
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
-        Object pData = getPayload().getData();
+        final Object pData = getPayload().getData();
         if (pData instanceof Locator) {
             this.locator = (Locator) pData;
         } else {
-            String message = spaceit("payload is not instance of Locator, but",
-                    pData.getClass().getName());
+            final String message =
+                    spaceit("payload is not instance of Locator, but",
+                            pData.getClass().getName());
             throw new StepRunException(message);
         }
-        return true;
+
+        persist = persists.persistDocument();
     }
 
     /**
-     * Tries to load locator from store, if successful, then add fields and URL
-     * of input locator to loaded locator and use it as input locator. If no
-     * locator found in db, then input locator with its fields is used.
-     *
+     * Loads document from store, if exists. Loads metadata and uses the
+     * documentDate and live to get toDate and finds whether existing document
+     * is live. If document live then loads it from store and marks
+     * fetchDocument as false.
+     * <p>
+     * If metadata or document not found or document stale then removes
+     * containing folder (metadata, document and parsed data files)
      * @return true
      * @see org.codetab.scoopi.step.IStep#load()
      */
     @Override
-    public boolean load() {
+    public void load() {
         validState(nonNull(locator), "locator is null");
 
-        Locator savedLocator = null;
-
-        // load locator from db
-        if (persist()) {
-            savedLocator = locatorPersistence.loadLocator(locator.getName(),
-                    locator.getGroup());
+        if (!persist) {
+            return;
         }
 
-        if (isNull(savedLocator)) {
-            // use the locator from payload passed to this step
-            String message = getLabeled("use locator defined in defs");
-            LOGGER.debug(marker, "{}", message);
-            LOGGER.trace(marker, "defined locator:{}{}", LINE, locator);
-        } else {
-            // update existing locator with new fields and URL
-            savedLocator.setUrl(locator.getUrl());
-
-            // switch locator to persisted locator (detached locator)
-            locator = savedLocator;
-            String message = getLabeled("use locator loaded from store");
-            LOGGER.debug(marker, "{}", message);
-            LOGGER.trace(marker, "loaded locator:{}{}", LINE, locator);
+        String live = "PT0S"; // default
+        try {
+            String taskGroup = getJobInfo().getGroup();
+            live = taskDef.getLive(taskGroup);
+        } catch (final DefNotFoundException e1) {
+        } catch (IOException e) {
+            LOG.error(jobMarker, "{}, unable to get live, defaults to PT0S",
+                    getLabel());
         }
-        return true;
+
+        Fingerprint locatorFp = locator.getFingerprint();
+
+        ZonedDateTime documentToDate = null;
+        try {
+            ZonedDateTime documentDate = documentDao.getDocumentDate(locatorFp);
+            documentToDate =
+                    documents.getToDate(documentDate, live, getJobInfo());
+        } catch (DaoException e) {
+            documentToDate = configs.getRunDateTime();
+        }
+
+        try {
+            if (documents.isDocumentLive(documentToDate)) {
+                try {
+                    document = documentDao.get(locatorFp);
+                } catch (ChecksumException e) {
+                    LOG.error(jobMarker, "load document {}", e);
+                }
+            }
+
+            if (isNull(document)) {
+                // document not found or stale or checksum error
+                // remove containing folder (document and data files)
+                documentDao.delete(locatorFp);
+            } else {
+                // don't fetch fresh document, use saved document
+                fetchDocument = false;
+                final String message = getLabeled("use saved document");
+                LOG.debug(jobMarker, "{}", message);
+                LOG.trace(jobMarker, "loaded document:{}{}", LINE, document);
+            }
+        } catch (DaoException e) {
+            final String message = "load document";
+            throw new StepRunException(message, e);
+        }
     }
 
     /**
      * <p>
-     * Loads the active document for locator.
-     * <p>
-     * In case, locator id it not null (locator is loaded from DB), then gets
-     * active document id from locator documents list.
-     * </p>
-     * <p>
-     * If document id is not null, then it gets document from locator list and
-     * checks whether it is expired for current live value ignoring the old
-     * document toDate which is based on earlier live value. If expired, then
-     * activeDocument id is set to null so that new document can be created.
-     * </p>
-     * <p>
-     * If active document id is not null, then it loads the document with its
-     * documentObject. Otherwise, it creates new document and adds it locator.
-     * <p>
-     * When new document is created, it fetches the documRentObject either from
-     * web or file system and adds it to document using DocumentHelper which
-     * compresses the documentObject. Other metadata like from and to dates are
-     * also added to new document.
+     * If fetchDocument is true, fetches the documRentObject either from web or
+     * file system and adds it to newly created document.
      * <p>
      *
      * @return true
@@ -160,88 +164,47 @@ public abstract class BaseLoader extends Step {
      * @see org.codetab.scoopi.step.IStep#process()
      */
     @Override
-    public boolean process() {
+    public void process() {
         validState(nonNull(locator), "locator is null");
-
-        String taskGroup = getJobInfo().getGroup();
-        String live;
-        try {
-            live = taskDef.getLive(taskGroup);
-        } catch (DefNotFoundException e1) {
-            live = "PT0S";
-        }
-
-        /*
-         * load the active document, get new todate for new live and reset
-         * document toDate to new toDate. If still active for new toDate then
-         * use the active document else reset toDate to runDateTime - 1 and set
-         * activeDocument to null so that new document is created
-         */
-        Document activeDoc = documentHelper.getActiveDocument(locator);
-        if (nonNull(activeDoc)) {
-            Date newToDate = documentHelper.getToDate(activeDoc.getFromDate(),
-                    live, getJobInfo());
-            if (documentHelper.resetToDate(activeDoc, newToDate)) {
-                activeDoc = null;
-            }
-        }
 
         /**
          * if activeDocumentId is null create new document otherwise load the
          * active document.
          */
-        if (isNull(activeDoc)) {
+        if (fetchDocument) {
             // no active document, create new one
             byte[] documentObject = null;
             try {
+                fetchThrottle.acquirePermit();
                 // fetch documentObject as byte[]
                 documentObject = fetchDocumentObject(locator.getUrl());
-            } catch (IOException e) {
-                String message = "unable to fetch document page";
+                fetchThrottle.releasePermit();
+            } catch (final IOException e) {
+                final String message = "unable to fetch document page";
                 throw new StepRunException(message, e);
             }
-
-            // document metadata
-            Date fromDate = configService.getRunDateTime();
-            Date toDate =
-                    documentHelper.getToDate(fromDate, live, getJobInfo());
 
             // create new document
-            activeDoc = documentHelper.createDocument(locator.getName(),
-                    locator.getUrl(), fromDate, toDate);
+            ZonedDateTime documentDate = configs.getRunDateTime();
+            Document newDocument = objectFactory.createDocument(
+                    locator.getName(), documentDate, locator.getUrl(),
+                    locator.getFingerprint());
+            newDocument.setDocumentObject(documentObject);
 
-            // compress and set documentObject
-            try {
-                documentHelper.setDocumentObject(activeDoc, documentObject);
-            } catch (IOException e) {
-                String message = "unable to compress document page";
-                throw new StepRunException(message, e);
-            }
+            document = newDocument;
+            setOutput(newDocument);
 
-            document = activeDoc;
-            locator.getDocuments().add(document);
-            setOutput(document);
-            setConsistent(true);
-            LOGGER.debug(marker, "{} create new document, toDate: {}",
-                    getLabel(), document.getToDate());
-            LOGGER.trace(marker, "create new document{}{}", LINE, document);
+            LOG.debug(jobMarker, "{} create new document", getLabel());
+            LOG.trace(jobMarker, "create new document{}{}", LINE, document);
         } else {
-            // as activeDoc comes from datastore it indicates that
-            // datastore is active so load the activeDoc with doc object
-            document = documentPersistence.loadDocument(activeDoc.getId());
             setOutput(document);
-            setConsistent(true);
-            LOGGER.debug(marker, "{}, use stored document, toDate: {}",
-                    getLabel(), document.getToDate());
-            LOGGER.trace(marker, "use stored document {}", document);
         }
-        return true;
     }
 
     /**
      * <p>
-     * Stores locator and its documents when persists is true. As DAO may clear
-     * the data object after persist, they are reloaded.
+     * Stores metadata and document when persists is true. Locator is not stored
+     * as they are always created from defs.
      *
      * @return true;
      * @throws StepRunException
@@ -249,65 +212,70 @@ public abstract class BaseLoader extends Step {
      * @see org.codetab.scoopi.step.IStep#store()
      */
     @Override
-    public boolean store() {
+    public void store() {
         validState(nonNull(locator), "locator is null");
         validState(nonNull(document), "document is null");
 
         try {
-            boolean persist = persist();
-            // store locator
-            if (persist && locatorPersistence.storeLocator(locator)) {
-                // if stored then reload locator and document
-                Locator tLocator =
-                        locatorPersistence.loadLocator(locator.getId());
-                if (nonNull(tLocator)) {
-                    locator = tLocator;
-                }
-
-                Document tDocument =
-                        documentPersistence.loadDocument(document.getId());
-                if (nonNull(tDocument)) {
-                    document = tDocument;
-                    setOutput(tDocument);
-                }
-                LOGGER.debug(marker, "locator and document stored, {}",
-                        getLabel());
-                LOGGER.trace(marker, "stored locator{}{}", LINE, locator);
+            if (fetchDocument && persist) {
+                // If fetchDocument is true then existing data files are deleted
+                // in load(). Create fresh folder and save document
+                Fingerprint locatorFp = locator.getFingerprint();
+                documentDao.save(locatorFp, document);
+                LOG.debug(jobMarker, "document stored, {}", getLabel());
             }
-        } catch (RuntimeException e) {
-            String message = "unable to store locator and document";
+        } catch (final DaoException e) {
+            final String message = "unable to store document";
             throw new StepRunException(message, e);
         }
-        return true;
     }
 
     @Override
-    public boolean handover() {
-        validState(isConsistent(), "step inconsistent");
+    public void handover() {
+        validState(nonNull(getOutput()), "output is not set");
 
-        LOGGER.debug("push document tasks to taskpool");
-        String group = getJobInfo().getGroup();
+        LOG.debug("push document tasks to taskpool");
+        final String group = getJobInfo().getGroup();
 
-        List<String> taskNames = taskDef.getTaskNames(group);
-        List<Payload> payloads = payloadFactory.createPayloads(group, taskNames,
-                getStepInfo(), getJobInfo().getName(), getOutput());
+        /*
+         * if single task is defined for a document, then normal handover to
+         * taskMediator defined in super Step is called without compressing the
+         * document. When multiple tasks are defined, then new payload jobs are
+         * created for tasks and compressed document is assigned to each
+         * payload. As they are pushed to cluster, document is compressed.
+         * Payloads are pushed job mediator as new jobs and old job is marked as
+         * finished.
+         */
+        final List<String> taskNames = taskDef.getTaskNames(group);
 
-        for (Payload payload : payloads) {
+        if (taskNames.size() == 1) {
+            // normal task handover - pushes to task mediator
+            super.handover();
+        } else {
+            if (configs.isCluster()) {
+                ((Document) getOutput()).compress();
+            }
+            final List<Payload> payloads =
+                    payloadFactory.createPayloads(group, taskNames,
+                            getStepInfo(), getJobInfo().getName(), getOutput());
+            for (final Payload payload : payloads) {
+                // treat each task as new job with new seq job id
+                payload.getJobInfo().setId(jobMediator.getJobIdSequence());
+            }
             try {
-                taskMediator.pushPayload(payload);
-            } catch (InterruptedException e) {
-                String message =
-                        spaceit("handover document,", payload.toString());
-                errorLogger.log(CAT.INTERNAL, message, e);
+                long jobId = getPayload().getJobInfo().getId();
+                // push new jobs and mark old job as finished
+                jobMediator.pushJobs(payloads, jobId);
+            } catch (InterruptedException | JobStateException e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                final String message = spaceit(
+                        "create defined tasks for the document and push",
+                        getPayload().toString());
+                throw new StepRunException(message, e);
             }
         }
-        return true;
-    }
-
-    private boolean persist() {
-        Optional<Boolean> locatorLevelPersistence = Optional.ofNullable(true);
-        boolean persist = locatorPersistence.persist(locatorLevelPersistence);
-        return persist;
     }
 
     /**

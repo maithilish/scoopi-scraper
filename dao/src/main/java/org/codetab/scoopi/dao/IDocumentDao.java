@@ -1,22 +1,18 @@
 package org.codetab.scoopi.dao;
 
-import org.codetab.scoopi.model.Document;
+import java.time.ZonedDateTime;
 
-/**
- * <p>
- * DocumentDao interface.
- * @author Maithilish
- *
- */
+import org.codetab.scoopi.model.Document;
+import org.codetab.scoopi.model.Fingerprint;
+
 public interface IDocumentDao {
 
-    /**
-     * <p>
-     * Get Document by id.
-     * @param id
-     *            document id
-     * @return document
-     */
-    Document getDocument(long id);
+    Fingerprint save(Fingerprint dir, Document document) throws DaoException;
+
+    Document get(Fingerprint dir) throws DaoException, ChecksumException;
+
+    ZonedDateTime getDocumentDate(Fingerprint dir) throws DaoException;
+
+    void delete(Fingerprint dir) throws DaoException;
 
 }

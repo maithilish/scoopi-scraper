@@ -2,22 +2,25 @@
 package org.codetab.scoopi.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.codetab.scoopi.util.LzCompressUtil;
 
 public class Document implements Serializable {
 
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8309456077125211948L;
+
     private Long id;
-    private Object documentObject;
     private String name;
-    private Date fromDate;
-    private Date toDate;
+    private ZonedDateTime fromDate;
     private String url;
+    private Fingerprint locatorId;
+    private Object documentObject;
+    private boolean compressed = false;
 
     Document() {
     }
@@ -39,7 +42,7 @@ public class Document implements Serializable {
      *            allowed object is {@link Long }
      *
      */
-    public void setId(Long value) {
+    public void setId(final Long value) {
         this.id = value;
     }
 
@@ -60,8 +63,22 @@ public class Document implements Serializable {
      *            allowed object is {@link Object }
      *
      */
-    public void setDocumentObject(Object value) {
+    public void setDocumentObject(final Object value) {
         this.documentObject = value;
+    }
+
+    public void compress() {
+        if (!compressed) {
+            documentObject = LzCompressUtil.compress((byte[]) documentObject);
+            compressed = true;
+        }
+    }
+
+    public void decompress() {
+        if (compressed) {
+            documentObject = LzCompressUtil.decompress((byte[]) documentObject);
+            compressed = false;
+        }
     }
 
     /**
@@ -81,50 +98,16 @@ public class Document implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
-    /**
-     * Gets the value of the fromDate property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public Date getFromDate() {
+    public ZonedDateTime getFromDate() {
         return fromDate;
     }
 
-    /**
-     * Sets the value of the fromDate property.
-     *
-     * @param value
-     *            allowed object is {@link String }
-     *
-     */
-    public void setFromDate(Date value) {
-        this.fromDate = value;
-    }
-
-    /**
-     * Gets the value of the toDate property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public Date getToDate() {
-        return toDate;
-    }
-
-    /**
-     * Sets the value of the toDate property.
-     *
-     * @param value
-     *            allowed object is {@link String }
-     *
-     */
-    public void setToDate(Date value) {
-        this.toDate = value;
+    public void setFromDate(final ZonedDateTime fromDate) {
+        this.fromDate = fromDate;
     }
 
     /**
@@ -137,6 +120,14 @@ public class Document implements Serializable {
         return url;
     }
 
+    public Fingerprint getLocatorId() {
+        return locatorId;
+    }
+
+    public void setLocatorId(final Fingerprint locatorId) {
+        this.locatorId = locatorId;
+    }
+
     /**
      * Sets the value of the url property.
      *
@@ -144,21 +135,19 @@ public class Document implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setUrl(String value) {
+    public void setUrl(final String value) {
         this.url = value;
     }
 
     @Override
     public boolean equals(final Object obj) {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return EqualsBuilder.reflectionEquals(this, obj, excludes);
     }
 
     @Override
     public int hashCode() {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return HashCodeBuilder.reflectionHashCode(this, excludes);
     }
 
@@ -166,7 +155,6 @@ public class Document implements Serializable {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId()).append("name", getName())
-                .append("fromDate", fromDate).append("toDate", toDate)
                 .append("url", url).toString();
     }
 

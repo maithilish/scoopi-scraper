@@ -1,7 +1,5 @@
 package org.codetab.scoopi.step.process;
 
-import static org.codetab.scoopi.util.Util.spaceit;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,30 +8,28 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.defs.IItemDef;
-import org.codetab.scoopi.log.ErrorLogger;
-import org.codetab.scoopi.log.Log.CAT;
+import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.Locator;
 import org.codetab.scoopi.model.LocatorGroup;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class LocatorGroupFactory {
 
-    static final Logger LOGGER =
-            LoggerFactory.getLogger(LocatorGroupFactory.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IItemDef itemDef;
     @Inject
     private ObjectFactory objectFactory;
     @Inject
-    private ErrorLogger errorLogger;
+    private Errors errors;
 
     public List<LocatorGroup> createLocatorGroups(final String dataDef,
             final List<Item> items, final String locatorName) {
@@ -62,6 +58,8 @@ public class LocatorGroupFactory {
                     if (!lgs.containsKey(linkGroup)) {
                         LocatorGroup lg =
                                 objectFactory.createLocatorGroup(linkGroup);
+                        // LocatorGroup not defined by defs
+                        lg.setByDef(false);
                         lgs.put(linkGroup, lg);
                     }
                     LocatorGroup lg = lgs.get(linkGroup);
@@ -70,10 +68,10 @@ public class LocatorGroupFactory {
             } else {
                 String label = String.join(":", dataDef,
                         item.getAxes().get(0).getItemName());
-                String message = spaceit(
-                        "create locator from link, no linkGroup defined for item:",
+                errors.inc();
+                LOG.error(
+                        "create locator from link, no linkGroup defined for item: {}",
                         label);
-                errorLogger.log(CAT.ERROR, message);
             }
         }
         return Lists.newArrayList(lgs.values());

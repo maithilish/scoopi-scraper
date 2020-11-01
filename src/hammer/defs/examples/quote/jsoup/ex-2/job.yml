@@ -1,0 +1,39 @@
+locatorGroups:
+  
+  quoteGroup:   
+    locators: [
+       { name: quotes, url: "http://quotes.toscrape.com/scroll" }  
+    ]
+                                        
+taskGroups:
+
+  quoteGroup:
+    quoteTask:
+      dataDef: quote
+      steps: 
+        jsoupDefault:
+          loader:
+            class: "org.codetab.scoopi.step.extract.DomLoader"
+            previous: seeder 
+            next: parser
+            plugins: [
+              plugin: { 
+                name: script, 
+                class: "org.codetab.scoopi.plugin.script.BasicScript",
+                script: "/defs/examples/quote/jsoup/ex-2/script.js",
+                entryPoint: "execute", }                            
+            ]
+                 
+dataDefs:
+
+  quote:           
+    query:
+      block: "body > div div.quote:nth-child(%{item.index})"
+      selector: "span:nth-child(1)"            
+    items: [
+      item: { name: "quote", indexRange: 1-40, value: "quote"},      
+    ]
+    dims: [
+      item: { name: "by", selector: "span:nth-child(2) > small" },
+      item: { name: "tags", selector: "div a" },     
+    ]    

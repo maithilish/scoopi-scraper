@@ -22,7 +22,7 @@ public abstract class BaseQueryAnalyzer extends Step {
     private AnalyzerConsole analyzerConsole;
 
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
@@ -35,12 +35,11 @@ public abstract class BaseQueryAnalyzer extends Step {
             throw new StepRunException(message);
         }
 
-        // TODO move this to load as loadPage()
-        return postInitialize();
+        postInitialize();
     }
 
     @Override
-    public boolean process() {
+    public void process() {
 
         while (true) {
             String input = analyzerConsole.getInput();
@@ -63,8 +62,6 @@ public abstract class BaseQueryAnalyzer extends Step {
             }
         }
         setOutput("dummy");
-        setConsistent(true);
-        return true;
     }
 
     protected abstract boolean postInitialize();
@@ -74,13 +71,10 @@ public abstract class BaseQueryAnalyzer extends Step {
     protected abstract String getPageSource();
 
     @Override
-    public boolean load() {
-        return true;
+    public void load() {
     }
 
     @Override
-    public boolean store() {
-        return true;
+    public void store() {
     }
-
 }

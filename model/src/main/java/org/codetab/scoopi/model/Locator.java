@@ -2,8 +2,6 @@
 package org.codetab.scoopi.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -12,12 +10,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Locator implements Serializable {
 
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4314372195753269746L;
+
     private Long id;
     private String name;
     private String group;
     private String url;
-    private List<Document> documents;
+    private Fingerprint fingerprint;
 
     Locator() {
     }
@@ -39,38 +38,8 @@ public class Locator implements Serializable {
      *            allowed object is {@link Long }
      *
      */
-    public void setId(Long value) {
+    public void setId(final Long value) {
         this.id = value;
-    }
-
-    /**
-     * Gets the value of the documents property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the documents property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * 
-     * <pre>
-     * getDocuments().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link Document
-     * }
-     *
-     *
-     */
-    public List<Document> getDocuments() {
-        if (documents == null) {
-            documents = new ArrayList<Document>();
-        }
-        return this.documents;
     }
 
     /**
@@ -90,7 +59,7 @@ public class Locator implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -111,7 +80,7 @@ public class Locator implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setGroup(String value) {
+    public void setGroup(final String value) {
         this.group = value;
     }
 
@@ -132,8 +101,16 @@ public class Locator implements Serializable {
      *            allowed object is {@link String }
      *
      */
-    public void setUrl(String value) {
+    public void setUrl(final String value) {
         this.url = value;
+    }
+
+    public Fingerprint getFingerprint() {
+        return fingerprint;
+    }
+
+    public void setFingerprint(final Fingerprint fingerprint) {
+        this.fingerprint = fingerprint;
     }
 
     public Locator copy() {
@@ -147,15 +124,13 @@ public class Locator implements Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return EqualsBuilder.reflectionEquals(this, obj, excludes);
     }
 
     @Override
     public int hashCode() {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return HashCodeBuilder.reflectionHashCode(this, excludes);
     }
 
@@ -163,8 +138,7 @@ public class Locator implements Serializable {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId()).append("name", getName())
-                .append("group", group).append("url", url)
-                .append("documents", documents).toString();
+                .append("group", group).append("url", url).toString();
     }
 
 }

@@ -4,8 +4,8 @@ import static org.codetab.scoopi.util.Util.LINE;
 import static org.codetab.scoopi.util.Util.dashit;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,28 +14,23 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.codetab.scoopi.config.ConfigService;
-import org.codetab.scoopi.model.Data;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.model.DataDef;
 import org.codetab.scoopi.model.ObjectFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 class DataDefDefs {
 
-    /**
-     * logger.
-     */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(DataDefDefs.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
-    private ConfigService configService;
+    private Configs configs;
     @Inject
     private ObjectFactory objectFactory;
     @Inject
@@ -57,8 +52,8 @@ class DataDefDefs {
             String dataDefName = entry.getKey();
             JsonNode jDataDef = entry.getValue();
             String defJson = yamls.toJson(jDataDef);
-            Date fromDate = configService.getRunDateTime();
-            Date toDate = configService.getHighDate();
+            ZonedDateTime fromDate = configs.getRunDateTime();
+            ZonedDateTime toDate = configs.getHighDate();
             DataDef dataDef = objectFactory.createDataDef(dataDefName, fromDate,
                     toDate, defJson);
             dataDefs.add(dataDef);
@@ -88,17 +83,12 @@ class DataDefDefs {
         return dataDefMap;
     }
 
-    public void traceDataDefs(final Map<String, DataDef> dataDefMap,
-            final Map<String, Data> dataTemplateMap) {
-        LOGGER.trace("--- datadefs and data templates ---");
-        for (String dataDefName : dataDefMap.keySet()) {
-            String markerName = dashit("datadef", dataDefName);
-            Marker marker = MarkerFactory.getMarker(markerName);
-            DataDef dataDef = dataDefMap.get(dataDefName);
-            Data dataTemplate = dataTemplateMap.get(dataDefName);
-            LOGGER.trace(marker, "{}{}{}", dataDef, LINE, dataDef.getDefJson());
-            LOGGER.trace(marker, "data template:{}{}", LINE,
-                    dataTemplate.toTraceString());
+    public void traceDataDef(final List<DataDef> dataDefs) {
+        for (DataDef dataDef : dataDefs) {
+            String markerName = dashit("datadef", dataDef.getName());
+            Marker marker = MarkerManager.getMarker(markerName);
+            LOG.trace(marker, "datadef: {}{}{}{}", dataDef.getName(), LINE,
+                    dataDef.getDefJson());
         }
     }
 }

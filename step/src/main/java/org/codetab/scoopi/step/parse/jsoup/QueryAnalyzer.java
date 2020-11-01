@@ -11,23 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
-import javax.inject.Inject;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.step.base.BaseQueryAnalyzer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class QueryAnalyzer extends BaseQueryAnalyzer {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(QueryAnalyzer.class);
-
-    @Inject
-    private DocumentHelper documentHelper;
+    private static final Logger LOG = LogManager.getLogger();
 
     private Document page;
 
@@ -51,7 +45,7 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
 
     private InputStream getDocumentHTML()
             throws DataFormatException, IOException {
-        byte[] bytes = documentHelper.getDocumentObject(document);
+        byte[] bytes = (byte[]) document.getDocumentObject();
         return new ByteArrayInputStream(bytes);
     }
 
@@ -62,20 +56,14 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
             Elements elements = page.select(selector);
             elements.stream().forEach(e -> list.add(e.outerHtml()));
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOG.error(e.getMessage());
         }
         return list;
     }
 
     @Override
     protected String getPageSource() {
-        String pageSource = "";
-        try {
-            byte[] bytes = documentHelper.getDocumentObject(document);
-            pageSource = new String(bytes);
-        } catch (DataFormatException | IOException e) {
-            LOGGER.error("", e);
-        }
-        return pageSource;
+        byte[] bytes = (byte[]) document.getDocumentObject();
+        return new String(bytes);
     }
 }

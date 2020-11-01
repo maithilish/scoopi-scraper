@@ -3,6 +3,7 @@ package org.codetab.scoopi.step.parse;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -12,16 +13,17 @@ import javax.inject.Inject;
 import javax.script.ScriptException;
 
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.defs.IItemDef;
 import org.codetab.scoopi.model.Query;
 import org.codetab.scoopi.model.TaskInfo;
 import org.codetab.scoopi.step.parse.cache.ParserCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ScriptProcessor {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ScriptProcessor.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private IItemDef itemDef;
@@ -31,6 +33,8 @@ public class ScriptProcessor {
     private ParserCache parserCache;
     @Inject
     private TaskInfo taskInfo;
+    @Inject
+    private Configs configs;
 
     public void init(final Map<String, Object> scriptObjectMap) {
         notNull(scriptObjectMap, "scriptObjectMap must not be null");
@@ -60,11 +64,16 @@ public class ScriptProcessor {
         String value = parserCache.get(key);
         if (isNull(value)) {
             Object val = scriptParser.eval(scripts.get("script")); //$NON-NLS-1$
-            value = ConvertUtils.convert(val);
+            if (val instanceof ZonedDateTime) {
+                ZonedDateTime zdt = (ZonedDateTime) val;
+                value = zdt.format(configs.getDateTimeFormatter());
+            } else {
+                value = ConvertUtils.convert(val);
+            }
             parserCache.put(key, value);
         }
-        LOGGER.trace(taskInfo.getMarker(), "[{}], value: {}",
-                taskInfo.getLabel(), value);
+        LOG.trace(taskInfo.getMarker(), "[{}], value: {}", taskInfo.getLabel(),
+                value);
         return value;
     }
 

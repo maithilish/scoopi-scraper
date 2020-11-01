@@ -74,15 +74,13 @@ public class DataSet {
 
     @Override
     public boolean equals(final Object obj) {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return EqualsBuilder.reflectionEquals(this, obj, excludes);
     }
 
     @Override
     public int hashCode() {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return HashCodeBuilder.reflectionHashCode(this, excludes);
     }
 

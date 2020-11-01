@@ -5,17 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 
 import org.codetab.scoopi.helper.HttpHelper;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class HttpHelperIT {
 
     private HttpHelper httpHelper;
-
-    @Rule
-    public ExpectedException testRule = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -42,11 +38,9 @@ public class HttpHelperIT {
 
     @Test
     public void getContentNoPageTest() throws IOException {
-
-        testRule.expect(IOException.class);
-        httpHelper.getContent("http://localhost/unknownpage.html", "Mozilla",
-                12000);
-
+        Assert.assertThrows(IOException.class,
+                () -> httpHelper.getContent("http://localhost/unknownpage.html",
+                        "Mozilla", 12000));
     }
 
     private byte[] getExpectedContent() {

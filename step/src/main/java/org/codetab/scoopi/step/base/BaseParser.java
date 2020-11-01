@@ -3,57 +3,65 @@ package org.codetab.scoopi.step.base;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.validState;
 import static org.codetab.scoopi.util.Util.LINE;
+import static org.codetab.scoopi.util.Util.dashit;
 import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.dao.ChecksumException;
+import org.codetab.scoopi.dao.DaoException;
+import org.codetab.scoopi.dao.IDataDao;
 import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
-import org.codetab.scoopi.exception.DefNotFoundException;
 import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.Document;
+import org.codetab.scoopi.model.Fingerprint;
 import org.codetab.scoopi.model.Item;
+import org.codetab.scoopi.model.JobInfo;
 import org.codetab.scoopi.model.helper.DataHelper;
-import org.codetab.scoopi.persistence.DataPersistence;
+import org.codetab.scoopi.model.helper.Fingerprints;
 import org.codetab.scoopi.step.Step;
 import org.codetab.scoopi.step.parse.IValueParser;
 import org.codetab.scoopi.step.parse.Indexer;
 import org.codetab.scoopi.step.parse.IndexerFactory;
 import org.codetab.scoopi.step.parse.ValueProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.Counter;
 
 public abstract class BaseParser extends Step {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(BaseParser.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ValueProcessor valueProcessor;
     @Inject
-    private DataPersistence dataPersistence;
-    @Inject
     private DataFactory dataFactory;
     @Inject
     private IDataDefDef dataDefDef;
+
+    @Inject
+    private IDataDao dataDao;
+
     @Inject
     private DataHelper dataHelper;
     @Inject
     private StopWatch timer;
     @Inject
     private IndexerFactory indexerFactory;
+    @Inject
+    private Persists persists;
 
     private Data data;
     protected Document document;
@@ -63,10 +71,14 @@ public abstract class BaseParser extends Step {
      */
     private IValueParser valueParser;
 
-    private boolean parseData;
+    private boolean parseData = true;
+
+    private Fingerprint dataFingerprint;
+
+    private boolean persist;
 
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
@@ -75,56 +87,74 @@ public abstract class BaseParser extends Step {
         Object pData = getPayload().getData();
         if (pData instanceof Document) {
             document = (Document) pData;
+            // documents taken from cluster (multi task docs) are compressed,
+            // local documents (single task) are not. Decompress if compressed.
+            document.decompress();
         } else {
             String message = spaceit("payload data type is not Document but",
                     pData.getClass().getName());
             throw new StepRunException(message);
         }
 
-        // TODO move this to load as loadPage()
-        return postInitialize();
+        JobInfo jobInfo = getJobInfo();
+        String dataId = dashit(jobInfo.getName(), jobInfo.getGroup(),
+                jobInfo.getTask(), jobInfo.getDataDef(),
+                dataDefDef.getFingerprint(jobInfo.getDataDef()).getValue());
+        dataFingerprint = Fingerprints.fingerprint(dataId.getBytes());
+
+        persist = persists.persistData(jobInfo);
+
+        postInitialize();
     }
 
     protected abstract boolean postInitialize();
 
     @Override
-    public boolean load() {
-        parseData = true;
-        try {
-            String dataDefName = getJobInfo().getDataDef();
-            Long dataDefId = dataDefDef.getDataDefId(dataDefName);
-            Long documentId = document.getId();
-            if (nonNull(documentId) && nonNull(dataDefId)) {
-                data = dataPersistence.loadData(dataDefId, documentId);
-                if (nonNull(data)) {
-                    parseData = false;
-                }
-            }
-            return true;
-        } catch (DataDefNotFoundException e) {
-            String message = "unable to get datadef id";
-            throw new StepRunException(message, e);
-        }
-    }
+    public void load() {
 
-    @Override
-    public boolean store() {
-        boolean persist = persist();
-        if (persist && parseData) {
-            if (dataPersistence.storeData(data)) {
-                data = dataPersistence.loadData(data.getId());
-                setOutput(data);
-                LOGGER.debug(marker, getLabeled("data stored"));
-            }
-        }
         if (!persist) {
-            LOGGER.debug(marker, getLabeled("persist false, data not stored"));
+            return;
         }
-        return true;
+
+        try {
+            try {
+                data = dataDao.get(document.getLocatorId(), dataFingerprint);
+            } catch (ChecksumException e) {
+                LOG.error(jobMarker, getLabeled("load data {}"), e);
+                dataDao.delete(document.getLocatorId(), dataFingerprint);
+            }
+            if (nonNull(data)) {
+                parseData = false;
+            } else {
+                LOG.debug(jobMarker, getLabeled("no parsed data in datastore"));
+            }
+        } catch (DaoException e) {
+            LOG.debug(jobMarker, getLabeled("load data {}"), e);
+        }
     }
 
     @Override
-    public boolean process() {
+    public void store() {
+
+        if (parseData && persist) {
+            try {
+                dataDao.save(document.getLocatorId(), dataFingerprint, data);
+                setOutput(data);
+                LOG.debug(jobMarker, getLabeled("persist true, data stored"));
+            } catch (DaoException e) {
+                String message = "store data";
+                throw new StepRunException(message, e);
+            }
+        } else {
+            if (!persist) {
+                LOG.debug(jobMarker,
+                        getLabeled("persist false, data not stored"));
+            }
+        }
+    }
+
+    @Override
+    public void process() {
         Counter dataParseCounter =
                 metricsHelper.getCounter(this, "data", "parse");
         Counter dataReuseCounter =
@@ -132,18 +162,16 @@ public abstract class BaseParser extends Step {
 
         if (parseData) {
             try {
-                LOGGER.debug(marker, "{}", getLabeled("parse data"));
+                LOG.debug(jobMarker, "{}", getLabeled("parse data"));
                 String dataDefName = getJobInfo().getDataDef();
                 data = dataFactory.createData(dataDefName, document.getId(),
-                        getJobInfo().getLabel(),
-                        configService.getRunDateTime());
+                        getJobInfo().getLabel(), configs.getRunDateTime());
 
                 dataHelper.addPageTag(data);
                 dataHelper.addItemTag(data);
                 dataHelper.addAxisTags(data, null);
 
                 parse();
-                setConsistent(true);
                 dataParseCounter.inc();
             } catch (IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException | DataDefNotFoundException
@@ -152,17 +180,15 @@ public abstract class BaseParser extends Step {
                 throw new StepRunException(message, e);
             }
         } else {
-            setConsistent(true);
             dataReuseCounter.inc();
-            LOGGER.debug(marker, "{}", getLabeled("data exists, reuse"));
+            LOG.debug(jobMarker, "{}",
+                    getLabeled("parsed data found in datastore, reuse"));
         }
 
         setOutput(data);
 
         timer.stop();
-        LOGGER.trace(marker, "parse time: {}", timer.toString());
-
-        return true;
+        LOG.trace(jobMarker, "parse time: {}", timer.toString());
     }
 
     protected void setValueParser(final IValueParser valueParser) {
@@ -174,7 +200,7 @@ public abstract class BaseParser extends Step {
             DataDefNotFoundException, ScriptException, InvalidDefException {
 
         valueProcessor.addScriptObject("document", document);
-        valueProcessor.addScriptObject("configs", configService);
+        valueProcessor.addScriptObject("configs", configs);
 
         // expanded item list
         List<DataComponent> newItems = new ArrayList<>();
@@ -197,23 +223,8 @@ public abstract class BaseParser extends Step {
         // replace with expanded item list
         data.setItems(newItems);
 
-        LOGGER.trace(marker, "-- data after parse --{}{}{}", LINE, getLabel(),
+        LOG.trace(jobMarker, "-- data after parse --{}{}{}", LINE, getLabel(),
                 LINE, data);
     }
 
-    private boolean persist() {
-        // TODO code and move it to yaml
-        // write itest and verify Ex-12
-        String taskGroup = getJobInfo().getGroup();
-        String taskName = getJobInfo().getTask();
-        boolean persistData = true;
-        try {
-            persistData = Boolean.valueOf(taskDef.getFieldValue(taskGroup,
-                    taskName, "persist", "data"));
-        } catch (DefNotFoundException e) {
-        }
-        Optional<Boolean> taskLevelPersistence =
-                Optional.ofNullable(persistData);
-        return dataPersistence.persist(taskLevelPersistence);
-    }
 }

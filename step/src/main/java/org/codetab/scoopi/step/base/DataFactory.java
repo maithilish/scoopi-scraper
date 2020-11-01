@@ -1,15 +1,13 @@
 package org.codetab.scoopi.step.base;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import javax.inject.Inject;
 
+import org.codetab.scoopi.defs.IDataDefDef;
 import org.codetab.scoopi.defs.IItemDef;
-import org.codetab.scoopi.defs.yml.DataDefDef;
 import org.codetab.scoopi.exception.DataDefNotFoundException;
 import org.codetab.scoopi.model.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Data factory
@@ -18,10 +16,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DataFactory {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(DataFactory.class);
-
     @Inject
-    private DataDefDef dataDefDef;
+    private IDataDefDef dataDefDef;
     @Inject
     private IItemDef itemDef;
 
@@ -30,7 +26,7 @@ public class DataFactory {
     }
 
     public Data createData(final String dataDef, final Long documentId,
-            final String label, final Date runDateTime)
+            final String label, final ZonedDateTime runDateTime)
             throws DataDefNotFoundException {
         Data data = itemDef.getDataTemplate(dataDef);
         data.setName(label);

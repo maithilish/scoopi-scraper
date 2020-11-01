@@ -8,12 +8,12 @@ import java.net.URL;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.codetab.scoopi.config.ConfigHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.helper.HttpHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.step.base.BaseLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -25,11 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PageLoader extends BaseLoader {
 
-    /**
-     * logger.
-     */
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(PageLoader.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * Helper to handle URLConnection.
@@ -39,7 +35,7 @@ public class PageLoader extends BaseLoader {
     @Inject
     private MetricsHelper metricsHelper;
     @Inject
-    private ConfigHelper configHelper;
+    private Configs configs;
 
     /**
      * Fetch document content from web, file system or classpath using the URL
@@ -61,27 +57,28 @@ public class PageLoader extends BaseLoader {
         // TODO charset encoding
         byte[] bytes = null;
 
-        String protocol = httpHelper.getProtocol(urlSpec);
+        // TODO if doc not found, show helpful log
+        final String protocol = httpHelper.getProtocol(urlSpec);
         if (protocol.equals("resource")) {
-            LOGGER.info(marker, "fetch resource: {}", urlSpec);
+            LOG.info(jobMarker, "fetch resource: {}", urlSpec);
             try {
-                URL fileURL = PageLoader.class.getResource(urlSpec);
+                final URL fileURL = PageLoader.class.getResource(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
-                LOGGER.debug(marker, "fetched resource: {}", urlSpec);
+                LOG.debug(jobMarker, "fetched resource: {}", urlSpec);
                 return bytes;
-            } catch (IOException e1) {
+            } catch (final IOException e1) {
                 throw new IOException(spaceit("file not found: ", urlSpec));
             }
         }
 
         if (protocol.equals("file")) {
-            LOGGER.info(marker, "fetch file: {}", urlSpec);
+            LOG.info(jobMarker, "fetch file: {}", urlSpec);
             try {
-                URL fileURL = new URL(urlSpec);
+                final URL fileURL = new URL(urlSpec);
                 bytes = IOUtils.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "file").inc();
-                LOGGER.debug(marker, "fetched file: {}", urlSpec);
+                LOG.debug(jobMarker, "fetched file: {}", urlSpec);
                 return bytes;
             } catch (IOException | NullPointerException e) {
                 throw new IOException(spaceit("file not found: ", urlSpec));
@@ -90,16 +87,16 @@ public class PageLoader extends BaseLoader {
 
         if (protocol.equals("http") || protocol.equals("https")) {
 
-            int timeout = configHelper.getTimeout();
-            String userAgent = configHelper.getUserAgent();
+            final int timeout = configs.getWebClientTimeout();
+            final String userAgent = configs.getUserAgent();
 
-            String urlSpecEscaped = httpHelper.escapeUrl(urlSpec);
-            LOGGER.info(marker, "fetch web resource: {}", urlSpecEscaped);
+            final String urlSpecEscaped = httpHelper.escapeUrl(urlSpec);
+            LOG.info(jobMarker, "fetch web resource: {}", urlSpecEscaped);
 
             bytes = httpHelper.getContent(urlSpecEscaped, userAgent, timeout);
 
             metricsHelper.getCounter(this, "fetch", "web").inc();
-            LOGGER.debug(marker, "fetched: {}, length: {}", urlSpecEscaped,
+            LOG.debug(jobMarker, "fetched: {}, length: {}", urlSpecEscaped,
                     bytes.length);
             return bytes;
         }

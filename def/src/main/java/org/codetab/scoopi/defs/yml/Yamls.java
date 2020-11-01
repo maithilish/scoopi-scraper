@@ -11,10 +11,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ValidationException;
 import org.codetab.scoopi.helper.IOHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,9 +25,9 @@ import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
-class Yamls {
+public class Yamls {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Yamls.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Inject
     private ObjectMapper mapper;
@@ -45,17 +45,17 @@ class Yamls {
 
     public JsonNode loadYaml(final String file)
             throws JsonProcessingException, IOException {
-        LOGGER.info("load defs {} ", file);
+        LOG.info("load defs {} ", file);
         try (InputStream ymlStream = ioHelper.getInputStream(file)) {
             JsonNode node = mapper.readTree(ymlStream);
-            LOGGER.debug(spaceit(file, "loaded"));
+            LOG.debug(spaceit(file, "loaded"));
             return node;
         }
     }
 
     public JsonNode mergeNodes(final List<JsonNode> nodesList) {
-        LOGGER.info("merge defs");
-        ObjectNode mergedNodes = (ObjectNode) mapper.createObjectNode();
+        LOG.info("merge defs");
+        ObjectNode mergedNodes = mapper.createObjectNode();
         for (JsonNode nodes : nodesList) {
             Iterator<String> fieldNames = nodes.fieldNames();
             while (fieldNames.hasNext()) {
@@ -77,24 +77,24 @@ class Yamls {
                 }
             }
         }
-        LOGGER.debug("defs merged");
+        LOG.debug("defs merged");
         return mergedNodes;
     }
 
     public boolean validateSchema(final String schemaName,
             final InputStream schemaStream, final JsonNode node)
             throws ProcessingException, IOException, ValidationException {
-        LOGGER.info("validate schema {}", schemaName);
+        LOG.info("validate schema {}", schemaName);
         ObjectMapper jsonMapper = new ObjectMapper();
         JsonNode schemaNodes = jsonMapper.readTree(schemaStream);
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
         final JsonSchema schema = factory.getJsonSchema(schemaNodes);
         ProcessingReport report = schema.validate(node);
         if (report.isSuccess()) {
-            LOGGER.info("schema validation success");
+            LOG.info("schema validation success");
         } else {
-            LOGGER.error("schema validation failed");
-            report.forEach(p -> LOGGER.error(pretty(p.asJson())));
+            LOG.error("schema validation failed");
+            report.forEach(p -> LOG.error(pretty(p.asJson())));
             throw new ValidationException("invalid defs");
         }
         return true;

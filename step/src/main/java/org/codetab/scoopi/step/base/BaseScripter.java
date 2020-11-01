@@ -10,21 +10,17 @@ public abstract class BaseScripter extends Step {
     protected Object input;
 
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
         input = getPayload().getData();
-        return true;
     }
 
     @Override
-    public boolean load() {
-        return false;
+    public void load() {
     }
 
     @Override
-    public boolean store() {
-        return false;
+    public void store() {
     }
-
 }

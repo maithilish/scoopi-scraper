@@ -13,17 +13,14 @@ import org.codetab.scoopi.defs.IPluginDef;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Plugin;
+import org.codetab.scoopi.model.PrintPayload;
 import org.codetab.scoopi.plugin.appender.Appender;
 import org.codetab.scoopi.plugin.appender.Appenders;
 import org.codetab.scoopi.plugin.encoder.Encoders;
 import org.codetab.scoopi.plugin.encoder.IEncoder;
 import org.codetab.scoopi.step.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class BaseAppender extends Step {
-
-    static final Logger LOGGER = LoggerFactory.getLogger(BaseAppender.class);
 
     @Inject
     private IPluginDef pluginDef;
@@ -35,7 +32,7 @@ public abstract class BaseAppender extends Step {
     protected Data data;
 
     @Override
-    public boolean initialize() {
+    public void initialize() {
         validState(nonNull(getPayload()), "payload is null");
         validState(nonNull(getPayload().getData()), "payload data is null");
 
@@ -53,23 +50,22 @@ public abstract class BaseAppender extends Step {
         String stepsName = getPayload().getJobInfo().getSteps();
         String stepName = getStepName();
 
-        Optional<List<Plugin>> plugins = null;
         try {
-            plugins = pluginDef.getPlugins(taskGroup, taskName, stepName);
+            Optional<List<Plugin>> plugins =
+                    pluginDef.getPlugins(taskGroup, taskName, stepName);
+            if (plugins.isPresent()) {
+                appenders.createAppenders(plugins.get(), stepsName, stepName);
+                encoders.createEncoders(plugins.get(), stepsName, stepName);
+            }
         } catch (Exception e) {
+            // TODO - validate appender/encoder def at boot, on error shutdown
             throw new StepRunException("unable to create appenders", e);
         }
-
-        if (nonNull(plugins) && plugins.isPresent()) {
-            appenders.createAppenders(plugins.get(), stepsName, stepName);
-            encoders.createEncoders(plugins.get(), stepsName, stepName);
-        }
-        return true;
     }
 
-    protected void doAppend(final Appender appender, final Object obj)
-            throws InterruptedException {
-        appender.append(obj);
+    protected void doAppend(final Appender appender,
+            final PrintPayload printPayload) throws InterruptedException {
+        appender.append(printPayload);
     }
 
     protected Object encode(final List<IEncoder<?>> encodersList)
@@ -82,12 +78,10 @@ public abstract class BaseAppender extends Step {
     }
 
     @Override
-    public boolean load() {
-        return false;
+    public void load() {
     }
 
     @Override
-    public boolean store() {
-        return false;
+    public void store() {
     }
 }

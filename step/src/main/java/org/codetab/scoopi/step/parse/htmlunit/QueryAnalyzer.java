@@ -11,15 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
-import javax.inject.Inject;
-
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
-import org.codetab.scoopi.model.helper.DocumentHelper;
 import org.codetab.scoopi.step.base.BaseQueryAnalyzer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ImmediateRefreshHandler;
@@ -32,10 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class QueryAnalyzer extends BaseQueryAnalyzer {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(QueryAnalyzer.class);
-
-    @Inject
-    private DocumentHelper documentHelper;
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final int TIMEOUT_MILLIS = 120000;
 
@@ -68,7 +62,7 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
     }
 
     private String getDocumentHTML() throws DataFormatException, IOException {
-        byte[] bytes = documentHelper.getDocumentObject(document);
+        byte[] bytes = (byte[]) document.getDocumentObject();
         return new String(bytes);
     }
 
@@ -76,7 +70,7 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
         int timeout = TIMEOUT_MILLIS;
         String key = "scoopi.webClient.timeout"; //$NON-NLS-1$
         try {
-            timeout = Integer.parseInt(configService.getConfig(key));
+            timeout = Integer.parseInt(configs.getConfig(key));
         } catch (NumberFormatException | ConfigNotFoundException e) {
         }
 
@@ -108,20 +102,14 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
             List<Object> elements = page.getByXPath(xpath);
             elements.stream().forEach(e -> list.add(((DomNode) e).asXml()));
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOG.error(e.getMessage());
         }
         return list;
     }
 
     @Override
     protected String getPageSource() {
-        String pageSource = "";
-        try {
-            byte[] bytes = documentHelper.getDocumentObject(document);
-            pageSource = new String(bytes);
-        } catch (DataFormatException | IOException e) {
-            LOGGER.error("", e);
-        }
-        return pageSource;
+        byte[] bytes = (byte[]) document.getDocumentObject();
+        return new String(bytes);
     }
 }

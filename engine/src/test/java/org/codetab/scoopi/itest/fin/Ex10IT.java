@@ -5,10 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
+import org.codetab.scoopi.itest.ITestSoloBase;
 import org.junit.Test;
 
-public class Ex10IT extends ITestBase {
+public class Ex10IT extends ITestSoloBase {
 
     private String exName = "ex-10";
     private String exBase = "/defs/examples/fin";
@@ -19,9 +21,9 @@ public class Ex10IT extends ITestBase {
         String exDir = getExampleDir(exName, exBase, cat);
         String expectedFile = getExpectedFile(exName, exBase, cat);
 
-        System.setProperty("scoopi.defs.defaultSteps", "jsoupDefault");
+        Properties properties = getCommonProperties(exDir);
 
-        List<String> actual = runScoopi(exDir);
+        List<String> actual = runScoopiSolo(properties);
 
         List<String> expected = getExpectedList(expectedFile);
 
@@ -35,9 +37,10 @@ public class Ex10IT extends ITestBase {
         String exDir = getExampleDir(exName, exBase, cat);
         String expectedFile = getExpectedFile(exName, exBase, cat);
 
-        System.setProperty("scoopi.defs.defaultSteps", "htmlUnitDefault");
+        Properties properties = getCommonProperties(exDir);
+        properties.setProperty("scoopi.defs.defaultSteps", "htmlUnitDefault");
 
-        List<String> actual = runScoopi(exDir);
+        List<String> actual = runScoopiSolo(properties);
 
         List<String> expected = getExpectedList(expectedFile);
 

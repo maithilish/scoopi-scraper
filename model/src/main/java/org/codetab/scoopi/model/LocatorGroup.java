@@ -14,6 +14,11 @@ public class LocatorGroup implements Serializable {
 
     private String group;
     private List<Locator> locators;
+    /*
+     * LocatorGroup defined by defs or created by parsed link default true
+     * (defined by defs)
+     */
+    private boolean byDef = true;
 
     LocatorGroup() {
     }
@@ -42,17 +47,23 @@ public class LocatorGroup implements Serializable {
         return copy;
     }
 
+    public boolean isByDef() {
+        return byDef;
+    }
+
+    public void setByDef(final boolean byDef) {
+        this.byDef = byDef;
+    }
+
     @Override
     public boolean equals(final Object obj) {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return EqualsBuilder.reflectionEquals(this, obj, excludes);
     }
 
     @Override
     public int hashCode() {
-        String[] excludes =
-                {"id", "dnDetachedState", "dnFlags", "dnStateManager"};
+        String[] excludes = {"id"};
         return HashCodeBuilder.reflectionHashCode(this, excludes);
     }
 

@@ -8,18 +8,14 @@ import javax.inject.Inject;
 import org.codetab.scoopi.model.DataComponent;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.step.base.BaseProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DataFilter extends BaseProcessor {
-
-    static final Logger LOGGER = LoggerFactory.getLogger(DataFilter.class);
 
     @Inject
     private FilterHelper filterHelper;
 
     @Override
-    public boolean process() {
+    public void process() {
         /*
          * data uses composite pattern and data.getItems() returns copy of
          * DataComponet list with only objects of Item type. The removeItem()
@@ -37,8 +33,5 @@ public class DataFilter extends BaseProcessor {
         }
         data.setItems(items);
         setOutput(data);
-        setConsistent(true);
-
-        return true;
     }
 }
