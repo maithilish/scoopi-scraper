@@ -6,7 +6,7 @@ import org.codetab.scoopi.config.Configs;
 
 public interface ICluster {
 
-    void start();
+    void start(String clusterMode, String clusterConfigFile);
 
     void shutdown();
 
@@ -25,4 +25,5 @@ public interface ICluster {
     boolean isNodeRunning();
 
     String getShortId(String memberId);
+
 }

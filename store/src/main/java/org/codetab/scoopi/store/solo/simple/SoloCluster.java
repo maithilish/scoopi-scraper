@@ -34,7 +34,7 @@ public class SoloCluster implements ICluster {
 
     // ignore methods
     @Override
-    public void start() {
+    public void start(final String clusterMode, final String configFileName) {
     }
 
     @Override

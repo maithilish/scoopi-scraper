@@ -60,7 +60,21 @@ public class Bootstrap {
 
         store = dInjector.instance(IStore.class);
         cluster = dInjector.instance(ICluster.class);
-        cluster.start();
+
+        String clusterMode =
+                bootConfigs.getConfig("scoopi.cluster.mode", "server");
+
+        String clusterConfigFile;
+        // default config file is null and it is set in Cluster class
+        if (clusterMode.equalsIgnoreCase("server")) {
+            clusterConfigFile =
+                    bootConfigs.getConfig("scoopi.cluster.config.file", null);
+        } else {
+            clusterConfigFile =
+                    bootConfigs.getConfig("scoopi.cluster.config.file", null);
+        }
+
+        cluster.start(clusterMode, clusterConfigFile);
 
         LOG.info("open store");
         store.open();

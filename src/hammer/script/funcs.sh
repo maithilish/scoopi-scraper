@@ -22,34 +22,59 @@ cleanup() {
 
 runScoopi() {
     pids=()
-    for node in ${nodes[@]}; do
+    for ((c = 0; c < ${#nodes[@]}; c++)); do
 
-        NODE_OPTS="-Dscoopi.log.dir=$logsDir/$node"        
+        NODE_OPTS="-Dscoopi.log.dir=$logsDir/node-$c"
 
-        JAVA_OPTS+="-Dscoopi.project=hammer "
-        JAVA_OPTS+="-Dscoopi.appender.file.baseDir=/tmp/hammer/run "
-        JAVA_OPTS+="-Dscoopi.cluster.log.path.suffixUid=false "
-        JAVA_OPTS+="-Dhazelcast.config=/hazelcast-tcp.xml "
+        L_JAVA_OPTS=$JAVA_OPTS
+        L_JAVA_OPTS+="-Dscoopi.project=hammer "
+        L_JAVA_OPTS+="-Dscoopi.appender.file.baseDir=/tmp/hammer/run "
+        L_JAVA_OPTS+="-Dscoopi.cluster.log.path.suffixUid=false "
 
-        java $JAVA_OPTS $NODE_OPTS -cp $moduleDir/*:conf:. org.codetab.scoopi.Scoopi >/dev/null &
-        pids+=($!)
+        if [[ ${nodes[$c]} == "server" ]]; then
+            L_JAVA_OPTS+="-Dscoopi.cluster.config.file=/hazelcast-tcp.xml "
+        else
+            L_JAVA_OPTS+="-Dscoopi.cluster.mode=client "
+            L_JAVA_OPTS+="-Dscoopi.cluster.config.file=/hazelcast-client.xml "
+        fi
+
+        java $L_JAVA_OPTS $NODE_OPTS -cp $moduleDir/*:conf:. org.codetab.scoopi.Scoopi >/dev/null &
+
     done
-
-    echo ${pids[@]}
+    pids=($(pgrep -f scoopi.project=hammer))
+    echo "${pids[@]}"
 }
 
 runScoopiInDocker() {
     pids=()
+    for ((c = 0; c < ${#nodes[@]}; c++)); do
 
-    JAVA_OPTS+="-Dscoopi.project=hammer "
-    JAVA_OPTS+="-Dhazelcast.config=/hazelcast-mcast.xml "
-    export JAVA_OPTS
+        L_JAVA_OPTS=$JAVA_OPTS
+        L_JAVA_OPTS+="-Dscoopi.project=hammer "
 
-    docker-compose --project-directory . -f docker/docker-compose.yaml up -d
+        if [[ ${nodes[$c]} == "server" ]]; then
+            L_JAVA_OPTS+="-Dscoopi.cluster.config.file=/hazelcast-mcast.xml "
+        else
+            L_JAVA_OPTS+="-Dscoopi.cluster.mode=client "
+            L_JAVA_OPTS+="-Dscoopi.cluster.config.file=/hazelcast-client.xml "
+        fi
+
+        cName="hammer-node-$c"
+
+        docker rm $cName >/dev/null 2>&1
+
+        docker run --name $cName -d \
+            -v $PWD/conf:/scoopi/conf \
+            -v $PWD/defs:/scoopi/defs \
+            -v $logsDir:/scoopi/logs \
+            -v $outputDir:/scoopi/output \
+            -e JAVA_OPTS="$L_JAVA_OPTS" \
+            codetab/scoopi:0.9.8-beta >/dev/null 2>&1
+        #pids+=($!)
+    done
     sleep 1
-    pids=($(pgrep -f scoopi.project=hammer ))
-
-    echo ${pids[@]}
+    pids=($(pgrep -f "java.*scoopi.project=hammer"))
+    echo "${pids[@]}"
 }
 
 isPidAlive() {
@@ -90,9 +115,9 @@ scheduleNodeCrash() {
         if (($(echo $slept == $crashAfter | bc -l))); then
             if [[ "$(isPidAlive ${nodesToCrash[0]})" == "true" || "$(isPidAlive ${nodesToCrash[1]})" == "true" ]]; then
                 sudo kill -$killSignal ${nodesToCrash[@]}
-                echo -n " pid ${nodesToCrash[@]} killed at $slept"
+                echo -n " [pid ${nodesToCrash[@]} killed at ${crashAfter}s]"
             else
-                echo -n " pid ${nodesToCrash[@]} completed, can't kill"
+                echo -n " pid ${nodesToCrash[@]} finished, can't kill"
             fi
             echo -n " "
             break
@@ -123,7 +148,7 @@ checkConsistency() {
     sed -i "s/%{documentFromDate}/$documentFromDate/" $outputDir/$dirTimestamp/expected.tmp
     sort -t '|' -k 1 -k 2 -k 3 -k 4 $outputDir/$dirTimestamp/expected.tmp >$outputDir/$dirTimestamp/expected.txt
 
-    diff -q $outputDir/$dirTimestamp/expected.txt $outputDir/$dirTimestamp/actual.txt > /dev/null
+    diff -q $outputDir/$dirTimestamp/expected.txt $outputDir/$dirTimestamp/actual.txt >/dev/null
     if [[ $? == 0 ]]; then
         echo "  $(tput setaf 2)success$(tput sgr0)"
     else
@@ -132,4 +157,18 @@ checkConsistency() {
         cp -r $outputDir/$dirTimestamp/* $errorDir
         cp -r $logsDir/* $errorDir
     fi
+}
+
+getNodesList() {
+    servers=$1
+    clients=$2
+
+    nodes=()
+    for ((c = 0; c < $servers; c++)); do
+        nodes+=("server")
+    done
+    for ((c = 0; c < $clients; c++)); do
+        nodes+=("client")
+    done
+    echo ${nodes[@]}
 }
