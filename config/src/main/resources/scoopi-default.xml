@@ -85,6 +85,8 @@
             <!-- system or user defined properties -->
             <!-- scoopi.cluster.log.path.suffixUid -->
             <!-- scoopi.cluster.quorum.size -->
+            <!-- scoopi.cluster.mode -->
+            <!-- scoopi.cluster.config.file -->
         </cluster>
 
         <job>

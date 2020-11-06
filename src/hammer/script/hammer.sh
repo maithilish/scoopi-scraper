@@ -4,11 +4,11 @@
 
 # options - defaults
 runName="run-a"
-crashStartOffset=1
+crashBeginAt=1
 incrementBy=1
-numOfTimes=25
-parser=jsoupDefault
-killHowMany=1
+numOfRuns=25
+parser=jsoup
+numOfKills=1
 killSignal=15
 
 # constants
@@ -44,32 +44,32 @@ JAVA_OPTS+="-Dscoopi.defs.defaultSteps=$parser "
 
 extractModules
 
-for ((c = 0; c < numOfTimes; c++)); do
+nodes=($(getNodesList $numOfServers $numOfClients))
 
-    cleanup
+for ((c = 0; c < numOfRuns; c++)); do
 
-    nodes=("node-a" "node-b" "node-c" "node-d")
+  cleanup
 
-    if [[ "$runtime" == "java" ]]; then
-      pids=($(runScoopi))
-    else
-      pids=($(runScoopiInDocker))    
-    fi
-   
-    crashAfter=$(echo "$crashStartOffset + ($c * $incrementBy)" | bc)
+  if [[ "$engine" == "java" ]]; then
+    pids=($(runScoopi))
+  else
+    pids=($(runScoopiInDocker))
+  fi
 
-    echo -n "[$runName] #$(($c + 1)), kill after: $crashAfter seconds "
+  crashAfter=$(echo "$crashBeginAt + ($c * $incrementBy)" | bc)
 
-    if [[ "$killHowMany" == "1" ]]; then
-      nodesToCrash=(${pids[0]})
-    else
-      nodesToCrash=(${pids[0]} ${pids[2]})
-    fi
+  echo -n "[$runName] #$(($c + 1)) "
 
-    scheduleNodeCrash
+  nodesToCrash=()
+  for ((i = 0; i < ${#killIndexes[@]}; i++)); do
+    index=${killIndexes[$i]}
+    nodesToCrash+=(${pids[$index]})
+  done
 
-    waitForFinish ${pids[@]}
+  scheduleNodeCrash
 
-    checkConsistency
+  waitForFinish ${pids[@]}
+
+  checkConsistency
 
 done

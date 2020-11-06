@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -16,10 +17,11 @@ import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.store.ICluster;
 
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.cluster.Member;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.ListenerConfig;
-import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.transaction.TransactionOptions;
@@ -32,42 +34,66 @@ public class Cluster implements ICluster {
 
     @Inject
     private MembershipListener membershipListener;
+    @Inject
+    private HazelcastConfig hazelcastConfig;
 
     private HazelcastInstance hz;
 
     @Override
-    public void start() {
-        String hzConfigFile = getConfigFile();
+    public void start(final String clusterMode, final String configFileName) {
+
+        Properties properties = hazelcastConfig.getHazelcastSystemProperties();
+
+        String configFile = configFileName;
         try {
-            LOG.info("load hz config file {}", hzConfigFile);
-            Config cfg = new XmlConfigBuilder(
-                    Cluster.class.getResourceAsStream(hzConfigFile)).build();
-            cfg.addListenerConfig(new ListenerConfig(membershipListener));
+            // create server or client hazelcast instance
+            if (clusterMode.equalsIgnoreCase("server")) {
+                // default server config
+                if (isNull(configFile)) {
+                    configFile = "/hazelcast.xml";
+                }
 
-            addSystemProperties(cfg);
-            cfg.setProperty("hazelcast.shutdownhook.policy", "GRACEFUL");
+                LOG.info("load hazelcast config file {}", configFile);
+                Config cfg = hazelcastConfig.getConfig(configFile);
+                cfg.addListenerConfig(new ListenerConfig(membershipListener));
 
-            LOG.info("start Hazelcast cluster");
-            hz = Hazelcast.newHazelcastInstance(cfg);
+                // add system and other properties
+                properties.forEach(
+                        (k, v) -> cfg.setProperty((String) k, (String) v));
 
-            String group = cfg.getClusterName();
-            logMemberInfo(group);
+                LOG.info("start Hazelcast cluster");
+                hz = Hazelcast.newHazelcastInstance(cfg);
+
+                logMemberInfo(cfg.getClusterName());
+
+            } else {
+                // default client config
+                if (isNull(configFile)) {
+                    configFile = "/hazelcast-client.xml";
+                }
+
+                LOG.info("load hazelcast client config file {}", configFile);
+                ClientConfig clientCfg =
+                        hazelcastConfig.getClientConfig(configFile);
+                clientCfg.addListenerConfig(
+                        new ListenerConfig(membershipListener));
+
+                // unlike server, at present no system properties are added to
+                // client, enable if required later
+
+                LOG.info("start Hazelcast client");
+                hz = HazelcastClient.newHazelcastClient(clientCfg);
+
+                logMemberInfo(clientCfg.getClusterName());
+            }
         } catch (IllegalArgumentException e) {
-            LOG.error("hz config file {} not found", hzConfigFile);
-            throw new CriticalException("fail to start Hazelcast cluster");
+            LOG.error("hz config file {} not found", configFile);
+            String message = "fail to start Hazelcast client";
+            if (clusterMode.equalsIgnoreCase("server")) {
+                message = "fail to start Hazelcast cluster";
+            }
+            throw new CriticalException(message);
         }
-    }
-
-    /**
-     * Get hazelcast config file name from system properties or return default
-     * @return
-     */
-    private String getConfigFile() {
-        String configFile = System.getProperty("hazelcast.config");
-        if (isNull(configFile)) {
-            configFile = "/hazelcast.xml";
-        }
-        return configFile;
     }
 
     /**
@@ -131,18 +157,14 @@ public class Cluster implements ICluster {
                 .setTimeout(txTimeout, timeUnit);
     }
 
-    /**
-     * Add additional hazelcast system properties specified with -D option in
-     * command line
-     * @param cfg
-     */
-    private void addSystemProperties(final Config cfg) {
-        System.getProperties().entrySet().stream()
-                .filter(e -> ((String) e.getKey()).startsWith("hazelcast"))
-                .forEach(e -> {
-                    cfg.setProperty((String) e.getKey(), (String) e.getValue());
-                    LOG.debug("set {} {}", e.getKey(), e.getValue());
-                });
+    @Override
+    public int getSize() {
+        return hz.getCluster().getMembers().size();
+    }
+
+    @Override
+    public boolean isNodeRunning() {
+        return hz.getLifecycleService().isRunning();
     }
 
     private void logMemberInfo(final String group) {
@@ -158,13 +180,4 @@ public class Cluster implements ICluster {
         }
     }
 
-    @Override
-    public int getSize() {
-        return hz.getCluster().getMembers().size();
-    }
-
-    @Override
-    public boolean isNodeRunning() {
-        return hz.getLifecycleService().isRunning();
-    }
 }
