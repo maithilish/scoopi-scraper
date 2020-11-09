@@ -15,11 +15,15 @@
 
     <network>
         <cluster-members>
+            <!-- for java -->
             <address>localhost:5721</address>
             <address>localhost:5722</address>
             <address>localhost:5723</address>
-            <address>localhost:5724</address>
-            <address>localhost:5725</address>
+
+            <!-- for docker - bridge network 172.17.0.x -->
+            <address>172.17.0.2:5721</address>
+            <address>172.17.0.3:5721</address>
+            <address>172.17.0.4:5721</address>
         </cluster-members>
     </network>
 

@@ -169,15 +169,21 @@ public class Cluster implements ICluster {
 
     private void logMemberInfo(final String group) {
         Set<Member> members = hz.getCluster().getMembers();
-        LOG.info("joined Hazelcast cluster: group: {}, members: {}", group,
-                members.size());
+
+        Optional<Member> thisMember =
+                members.stream().filter(Member::localMember).findFirst();
+        if (thisMember.isPresent()) {
+            LOG.info("joined Hazelcast cluster: group: {}, members: {}", group,
+                    members.size());
+            LOG.info("this member address: {}",
+                    thisMember.get().getSocketAddress());
+            LOG.info("this member uuid: {} this", thisMember.get().getUuid());
+        }
+
         for (Member member : members) {
-            if (member.localMember()) {
-                LOG.info("member: {} this", member.getUuid());
-            } else {
+            if (!member.localMember()) {
                 LOG.info("member: {}", member.getUuid());
             }
         }
     }
-
 }
