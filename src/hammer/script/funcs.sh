@@ -53,7 +53,7 @@ runScoopiInDocker() {
         L_JAVA_OPTS+="-Dscoopi.project=hammer "
 
         if [[ ${nodes[$c]} == "server" ]]; then
-            L_JAVA_OPTS+="-Dscoopi.cluster.config.file=/hazelcast-mcast.xml "
+            L_JAVA_OPTS+="-Dscoopi.cluster.config.file=/hazelcast-multicast.xml "
         else
             L_JAVA_OPTS+="-Dscoopi.cluster.mode=client "
             L_JAVA_OPTS+="-Dscoopi.cluster.config.file=/hazelcast-client.xml "

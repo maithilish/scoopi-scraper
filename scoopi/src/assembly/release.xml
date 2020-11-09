@@ -77,8 +77,8 @@
                         </directory>
                         <outputDirectory>../docker</outputDirectory>
                         <includes>
-                            <include>schema.sql</include>
                             <include>docker-compose.yml</include>
+                            <include>docker-cluster.yml</include>
                         </includes>
                     </fileSet>
                 </fileSets>

@@ -1,40 +1,41 @@
 version: "3"
 services:
-  scoopi-a:
+  scoopi-node-1:
       image: codetab/scoopi:latest
-      container_name: scoopi-a
+      container_name: scoopi-node-1
       environment:
           - "TZ=Asia/Kolkata"
-          - "JAVA_OPTS=-Dhazelcast.config=/hazelcast-mcast.xml -Dscoopi.cluster.enable=true -Dscoopi.log.dir=logs/node-a -Dscoopi.cluster.log.path.suffixUid=false" 
+          - "JAVA_OPTS=-Dscoopi.cluster.enable=true -Dscoopi.cluster.config.file=/hazelcast-multicast.xml" 
       volumes:
           - ./defs:/scoopi/defs
           - ./conf:/scoopi/conf
           - ./data:/scoopi/data
           - ./logs:/scoopi/logs
           - ./output:/scoopi/output
-  scoopi-b:
+  scoopi-node-2:
       image: codetab/scoopi:latest
-      container_name: scoopi-b
+      container_name: scoopi-node-2
       environment:
           - "TZ=Asia/Kolkata"
-          - "JAVA_OPTS=-Dhazelcast.config=/hazelcast-mcast.xml -Dscoopi.cluster.enable=true -Dscoopi.log.dir=logs/node-b -Dscoopi.cluster.log.path.suffixUid=false" 
+          - "JAVA_OPTS=-Dscoopi.cluster.enable=true -Dscoopi.cluster.config.file=/hazelcast-multicast.xml" 
       volumes:
           - ./defs:/scoopi/defs
           - ./conf:/scoopi/conf
           - ./data:/scoopi/data
           - ./logs:/scoopi/logs
           - ./output:/scoopi/output
-  scoopi-c:
+  scoopi-node-3:
       image: codetab/scoopi:latest
-      container_name: scoopi-c
+      container_name: scoopi-node-3
       ports:
           - "9010:9010"
       environment:
           - "TZ=Asia/Kolkata"
-          - "JAVA_OPTS=-Dhazelcast.config=/hazelcast-mcast.xml -Dscoopi.cluster.enable=true -Dscoopi.log.dir=logs/node-c -Dscoopi.cluster.log.path.suffixUid=false -Dscoopi.metrics.server.enable=true" 
+          - "JAVA_OPTS=-Dscoopi.cluster.enable=true -Dscoopi.cluster.config.file=/hazelcast-multicast.xml" 
       volumes:
           - ./defs:/scoopi/defs
           - ./conf:/scoopi/conf
           - ./data:/scoopi/data
           - ./logs:/scoopi/logs
           - ./output:/scoopi/output
+

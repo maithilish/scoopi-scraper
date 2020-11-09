@@ -23,6 +23,7 @@
     <network>
         <port auto-increment="true" port-count="10">5721</port>
         <join>
+            <!-- uses docker bridge network 172.17.0.x -->
             <multicast enabled="true">
             </multicast>
             <tcp-ip enabled="false">
