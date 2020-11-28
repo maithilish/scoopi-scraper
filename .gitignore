@@ -6,4 +6,4 @@
 /engine/data
 logs
 output
-src/main/web/scoopiw/package-lock.json
+metric/src/main/web/scoopiw/node_modules

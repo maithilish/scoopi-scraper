@@ -8,8 +8,8 @@ import { Metric } from '../data-model';
 })
 export class PoolPanelComponent implements OnChanges {
 
-  @Input() metrics: Metric[];
-  gauges: Metric[];
+  @Input() metrics!: Metric[];
+  gauges!: Metric[];
 
   constructor() { }
 
@@ -21,6 +21,8 @@ export class PoolPanelComponent implements OnChanges {
     this.gauges = this.metrics.filter(metric => {
       if (metric.type === 'gauge' && metric.cat === 'pool') {
         return metric;
+      } else {
+        return undefined;
       }
     });
   }

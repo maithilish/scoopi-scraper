@@ -9,11 +9,11 @@ import { Metric } from '../data-model';
 })
 export class TimerPanelComponent implements OnChanges {
 
-  @Input() metrics: Metric[];
-  @Input() cat: string;
-  @Input() heading: string;
+  @Input() metrics!: Metric[];
+  @Input() cat!: string;
+  @Input() heading!: string;
 
-  timers: Metric[];
+  timers!: Metric[];
 
   constructor() { }
 
@@ -25,6 +25,8 @@ export class TimerPanelComponent implements OnChanges {
     this.timers = this.metrics.filter(metric => {
       if (metric.type === 'timer' && metric.cat === this.cat) {
         return metric;
+      } else {
+        return undefined;
       }
     });
   }

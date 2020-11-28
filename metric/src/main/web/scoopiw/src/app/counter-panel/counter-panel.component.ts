@@ -8,11 +8,11 @@ import { Metric } from '../data-model';
 })
 export class CounterPanelComponent implements OnChanges {
 
-  @Input() metrics: Metric[];
-  @Input() cat: string[];
-  @Input() heading: string;
+  @Input() metrics!: Metric[];
+  @Input() cat!: string[];
+  @Input() heading!: string;
 
-  counters: Metric[];
+  counters!: Metric[];
 
   constructor() { }
 
@@ -25,6 +25,8 @@ export class CounterPanelComponent implements OnChanges {
     this.counters = this.metrics.filter(metric => {
       if (metric.type === 'counter' && this.cat.includes(metric.cat)) {
         return metric;
+      } else {
+        return undefined;
       }
     });
   }

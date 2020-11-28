@@ -1,12 +1,13 @@
-import { isUndefined } from 'util';
+import { ArrayType } from '@angular/compiler';
 
 export class Metric {
-    name: string;
-    type: string;
-    clz: string;
-    cat: string;
-    label: string;
-    // additional dynamic properties
+    name!: string;
+    type!: string;
+    clz!: string;
+    cat!: string;
+    label!: string;
+    [key:string]:any;    
+    // additional dynamic properties  
 }
 
 export const nameLabelMap = [
@@ -90,7 +91,7 @@ export class MetricDataConverter {
             const last = others.pop();
             const metricCat = others.join('.');
             Object.entries(inMetric[1]).forEach(value => {
-                const items = value[1];
+                const items = value[1] as any[];
                 // create metric
                 const metric: Metric = {
                     name: metricName,
@@ -99,7 +100,7 @@ export class MetricDataConverter {
                     cat: metricCat,
                     label: this.getLabel(metricName),
                 };
-                // create and add data
+                // create and add data                              
                 Object.entries(items).forEach(item => {
                     metric[item[0]] = item[1];
                 });
@@ -113,9 +114,11 @@ export class MetricDataConverter {
         const item = nameLabelMap.find(ii => {
             if (ii.name === name) {
                 return true;
+            } else{
+                return undefined;
             }
         });
-        if (isUndefined(item)) {
+        if (item === undefined) {
             return name;
         } else {
             return item.label;

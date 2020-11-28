@@ -8,11 +8,11 @@ import { Metric } from '../data-model';
 })
 export class MeterPanelComponent implements OnChanges {
 
-  @Input() metrics: Metric[];
-  @Input() cat: string;
-  @Input() heading: string;
+  @Input() metrics!: Metric[];
+  @Input() cat!: string;
+  @Input() heading!: string;
 
-  meters: Metric[];
+  meters!: Metric[];
 
   constructor() { }
 
@@ -24,6 +24,8 @@ export class MeterPanelComponent implements OnChanges {
     this.meters = this.metrics.filter(metric => {
       if (metric.type === 'meter' && metric.cat === this.cat) {
         return metric;
+      } else {
+        return undefined;
       }
     });
   }

@@ -3,7 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from './data.service';
 import { MetricDataConverter, Metric } from './data-model';
 import { timeInterval } from 'rxjs/operators';
-import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
+
+/* import { TimeInterval } from 'rxjs/internal/operators/timeInterval'; */
 
 @Component({
   selector: 'app-root',

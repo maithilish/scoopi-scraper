@@ -335,6 +335,41 @@ ng version command run in dir metric/src/main/web/scoopiw shows following messag
 	Your global Angular CLI version (9.1.8) is greater than your local
 	version (6.0.8). The local Angular CLI version is used.
 
+## Scoopiw dev
+
+Ng dev server
+
+	cd metric/src/main/web/scoopiw/
+	ng serve -o 
+
+Minor version upgrade: change versions in package.json and run commands
+ 
+	npm update
+	ng update
+	
+to update devkit, use following 
+	
+	npm uninstall @angular-devkit/build-angular
+	npm install --save-dev @angular-devkit/build-angular@0.1100.2
+	
+Major version upgrade: 
+
+  - create new app with `ng new scoopiw` in work dir. Choose strict, no routing and style CSS.
+  - compare new package.json with old and add any left out such as "bootstrap": "^x.x.x"
+  - update angular.json and add "node_modules/bootstrap/dist/css/bootstrap.min.css" to build/styles element.  
+  - copy app, assets, favicon.ico, index.html, styles.css from old src folder to new src folder.
+
+	rm -rf node_module 
+	npm cache clean --force
+	npm install	
+	ng serve
+	
+After errors refactor copy new scoopiw to metric/src/main/web/scoopiw and build
+
+	mvn clean verify -P basic,ng,release,docker -DskipTests
+
+Run scoopi (solo and cluster) in IDE and check webapp.	  
+
 ## Scoopi dashboard
 
 scoopiw is in metric module src/main/web dir

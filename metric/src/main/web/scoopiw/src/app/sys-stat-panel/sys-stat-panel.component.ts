@@ -8,7 +8,7 @@ import { Metric } from '../data-model';
 })
 export class SysStatPanelComponent implements OnChanges {
 
-  @Input() metrics: Metric[];
+  @Input() metrics!: Metric[];
   gauges: Metric[] = [];
   errors: Metric[] = [];
 
@@ -22,12 +22,16 @@ export class SysStatPanelComponent implements OnChanges {
     this.gauges = this.metrics.filter(metric => {
       if (metric.type === 'gauge' && metric.cat === 'system') {
         return metric;
+      } else {
+        return undefined;
       }
     });
 
     this.errors = this.metrics.filter(metric => {
       if (metric.type === 'counter' && metric.cat === 'system') {
         return metric;
+      } else {
+        return undefined;
       }
     });
   }
