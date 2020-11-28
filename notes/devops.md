@@ -327,7 +327,9 @@ On new machine install nodejs and angular cli
     sudo apt install npm
     sudo npm install -g @angular/cli
 
-last build with nodjs - v10.19.0, npm - 6.14.4 and angular cli 9.1.8
+built with 
+Oct 2020 - nodjs - v10.19.0, npm - 6.14.4 and angular cli 9.1.8
+Dec 2020 - nodjs - v10.19.0, npm - 6.14.4 and angular cli 11.0.2
 
 ng version command run in dir metric/src/main/web/scoopiw shows following message 
 	Your global Angular CLI version (9.1.8) is greater than your local

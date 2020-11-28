@@ -36,6 +36,7 @@ public class DataDao implements IDataDao {
         } catch (DaoException e) {
             if (e.getCause() instanceof FileSystemNotFoundException) {
                 // no data file, null is returned
+                serializedData = null;
             } else {
                 throw e;
             }

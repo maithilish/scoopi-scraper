@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: scoopi-job
+spec:
+  completions: 5
+  parallelism: 5
+  template:
+     metadata:
+       labels:
+         app:  scoopi-job
+     spec:
+       restartPolicy: OnFailure
+       volumes:
+       - name: vol-output
+         persistentVolumeClaim:
+           claimName: pvc-output
+       - name: vol-logs
+         persistentVolumeClaim:
+           claimName: pvc-logs
+       - name: vol-data
+         persistentVolumeClaim:
+           claimName: pvc-data
+       containers:
+       - name: scoopi
+         image: codetab/scoopi:0.9.8-beta
+         env:
+         - name: "JAVA_OPTS"
+           value: "-Dscoopi.defs.dir=/defs/examples/fin/jsoup/ex-13 -Dscoopi.cluster.enable=true -Dscoopi.cluster.quorum.size=3 -Dscoopi.cluster.config.file=/hazelcast-k8s.xml"
+         volumeMounts:
+         - mountPath: /scoopi/output
+           name: vol-output 
+         - mountPath: /scoopi/logs
+           name: vol-logs
+         - mountPath: /scoopi/data
+           name: vol-data
+

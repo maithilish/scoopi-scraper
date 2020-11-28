@@ -81,6 +81,15 @@
                             <include>docker-cluster.yml</include>
                         </includes>
                     </fileSet>
+                    <fileSet>
+                        <directory>${project.basedir}/src/kubernetes
+                        </directory>
+                        <outputDirectory>../kubernetes</outputDirectory>
+                        <includes>
+                            <include>scoopi.yaml</include>
+                            <include>scoopi-service.yaml</include>
+                        </includes>
+                    </fileSet>
                 </fileSets>
             </sources>
 
