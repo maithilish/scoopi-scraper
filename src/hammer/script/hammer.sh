@@ -12,7 +12,7 @@ numOfKills=1
 killSignal=15
 
 # constants
-scoopiVersion=0.9.8-beta
+scoopiVersion=1.0.0
 runDateTime="30-01-2020T10:20:05"
 documentFromDate="30-01-2020T10:20:05"
 dirTimestamp=2020Jan30-102005

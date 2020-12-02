@@ -23,7 +23,7 @@ spec:
            claimName: pvc-data
        containers:
        - name: scoopi
-         image: codetab/scoopi:0.9.8-beta
+         image: codetab/scoopi:latest
          env:
          - name: "JAVA_OPTS"
            value: "-Dscoopi.defs.dir=/defs/examples/fin/jsoup/ex-13 -Dscoopi.cluster.enable=true -Dscoopi.cluster.quorum.size=3 -Dscoopi.cluster.config.file=/hazelcast-k8s.xml"

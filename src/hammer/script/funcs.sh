@@ -69,7 +69,7 @@ runScoopiInDocker() {
             -v $logsDir:/scoopi/logs \
             -v $outputDir:/scoopi/output \
             -e JAVA_OPTS="$L_JAVA_OPTS" \
-            codetab/scoopi:0.9.8-beta >/dev/null 2>&1
+            codetab/scoopi:$scoopiVersion >/dev/null 2>&1
         #pids+=($!)
     done
     sleep 1

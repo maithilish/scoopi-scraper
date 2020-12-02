@@ -222,6 +222,6 @@ parser+="Default"
 killIndexes=(${killList/,/ })
 
 echo
-echo "$(tput setaf 3)[$runName]$(tput sgr0) runs: $(tput setaf 3)$numOfRuns$(tput sgr0)  kill at: $(tput setaf 3)$crashBeginAt$(tput sgr0)  inc: $(tput setaf 3)$incrementBy$(tput sgr0)  kill: $(tput setaf 3)$killList nodes$(tput sgr0)  kill SIG: $(tput setaf 3)$killSignal$(tput sgr0)"
+echo "$(tput setaf 3)[$runName]$(tput sgr0) runs: $(tput setaf 3)$numOfRuns$(tput sgr0)  kill at: $(tput setaf 3)$crashBeginAt$(tput sgr0)  inc: $(tput setaf 3)$incrementBy$(tput sgr0)  kill list: $(tput setaf 3)[$killList] nodes$(tput sgr0)  kill SIG: $(tput setaf 3)$killSignal$(tput sgr0)"
 echo "$(tput setaf 3)[$runName]$(tput sgr0) defs: $(tput setaf 3)$defsDirBaseName$(tput sgr0)  parser: $(tput setaf 3)$parser$(tput sgr0)  engine: $(tput setaf 3)$engine$(tput sgr0)  servers: $(tput setaf 3)$numOfServers$(tput sgr0)  clients: $(tput setaf 3)$numOfClients$(tput sgr0)"
 echo
