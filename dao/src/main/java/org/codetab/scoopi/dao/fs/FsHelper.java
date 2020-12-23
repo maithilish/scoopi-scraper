@@ -4,10 +4,12 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.READ;
 import static org.codetab.scoopi.util.Util.spaceit;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
@@ -71,7 +73,7 @@ public class FsHelper {
      * @throws DaoException
      * @throws ChecksumException
      */
-    public byte[] readDataObj(final URI uri)
+    public byte[] readObjFile(final URI uri)
             throws DaoException, ChecksumException {
         Map<String, String> env = new HashMap<>();
         env.put("create", "false");
@@ -93,6 +95,8 @@ public class FsHelper {
                 String message = spaceit("checksum mismatch", uri.toString());
                 throw new ChecksumException(message);
             }
+        } catch (UnsupportedOperationException e) {
+            throw new ChecksumException(e);
         } catch (IOException | FileSystemNotFoundException e) {
             String message = spaceit("read data file", uri.toString());
             throw new DaoException(message, e);
@@ -188,5 +192,18 @@ public class FsHelper {
     private String getDataStorePath() {
         return Paths.get(configs.getConfig("scoopi.datastore.path", "data"))
                 .toAbsolutePath().toString();
+    }
+
+    public void writeMetaFile(final Fingerprint dir, final String data)
+            throws DaoException {
+        String dataStorePath = getDataStorePath();
+        File file = Paths.get(dataStorePath, dir.getValue(), "metadata.txt")
+                .toFile();
+        try {
+            FileUtils.writeStringToFile(file, data, Charset.defaultCharset(),
+                    true);
+        } catch (IOException e) {
+            throw new DaoException(e);
+        }
     }
 }

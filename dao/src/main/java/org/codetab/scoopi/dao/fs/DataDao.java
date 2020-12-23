@@ -16,6 +16,7 @@ import org.codetab.scoopi.dao.DaoException;
 import org.codetab.scoopi.dao.IDataDao;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Fingerprint;
+import org.codetab.scoopi.util.Util;
 
 public class DataDao implements IDataDao {
 
@@ -32,7 +33,7 @@ public class DataDao implements IDataDao {
 
         byte[] serializedData = null;
         try {
-            serializedData = fsHelper.readDataObj(uri);
+            serializedData = fsHelper.readObjFile(uri);
         } catch (DaoException e) {
             if (e.getCause() instanceof FileSystemNotFoundException) {
                 // no data file, null is returned
@@ -69,11 +70,25 @@ public class DataDao implements IDataDao {
                 dashit(filePrefix, file.getValue()));
 
         fsHelper.writeObjFile(uri, dataMap);
+        fsHelper.writeMetaFile(dir, getMetadata(file, data));
     }
 
     @Override
     public void delete(final Fingerprint dir, final Fingerprint file)
             throws DaoException {
-        fsHelper.deleteFile(dir.getValue(), file.getValue());
+        fsHelper.deleteFile(dir.getValue(),
+                dashit(filePrefix, file.getValue()));
+    }
+
+    private String getMetadata(final Fingerprint fp, final Data data) {
+        String nl = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
+        Util.append(sb, "Type: ", "data", nl);
+        Util.append(sb, "Name: ", data.getName(), nl);
+        Util.append(sb, "DataDef: ", data.getDataDef(), nl);
+        Util.append(sb, "Run Date: ", data.getRunDate().toString(), nl);
+        Util.append(sb, "Fingerprint: ", fp.getValue(), nl);
+        Util.append(sb, "---", nl);
+        return sb.toString();
     }
 }

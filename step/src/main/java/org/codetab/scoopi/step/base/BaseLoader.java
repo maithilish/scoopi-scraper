@@ -142,8 +142,10 @@ public abstract class BaseLoader extends Step {
             } else {
                 // don't fetch fresh document, use saved document
                 fetchDocument = false;
-                final String message = getLabeled("use saved document");
-                LOG.debug(jobMarker, "{}", message);
+                final int fpLen = 12;
+                final String message = getLabeled("use saved doc");
+                LOG.debug(jobMarker, "{} {}", message,
+                        locatorFp.getValue().substring(0, fpLen));
                 LOG.trace(jobMarker, "loaded document:{}{}", LINE, document);
             }
         } catch (DaoException e) {

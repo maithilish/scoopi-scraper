@@ -17,6 +17,7 @@ import org.codetab.scoopi.dao.IDocumentDao;
 import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Fingerprint;
 import org.codetab.scoopi.model.helper.Fingerprints;
+import org.codetab.scoopi.util.Util;
 
 public class DocumentDao implements IDocumentDao {
 
@@ -30,7 +31,7 @@ public class DocumentDao implements IDocumentDao {
             throws DaoException, ChecksumException {
         URI uri = fsHelper.getURI(dir.getValue(), fileName);
 
-        byte[] serializedData = fsHelper.readDataObj(uri);
+        byte[] serializedData = fsHelper.readObjFile(uri);
         if (isNull(serializedData)) {
             return null;
         } else {
@@ -79,6 +80,7 @@ public class DocumentDao implements IDocumentDao {
         URI uri = fsHelper.getURI(dir.getValue(), fileName);
 
         fsHelper.writeObjFile(uri, dataMap);
+        fsHelper.writeMetaFile(dir, getMetadata(dir, document));
 
         return Fingerprints.fingerprint(serializedData);
     }
@@ -87,5 +89,17 @@ public class DocumentDao implements IDocumentDao {
     public void delete(final Fingerprint dir) throws DaoException {
         Path path = fsHelper.getDirPath(dir.getValue());
         fsHelper.deleteDir(path);
+    }
+
+    private String getMetadata(final Fingerprint fp, final Document document) {
+        String nl = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
+        Util.append(sb, "Type: ", "document", nl);
+        Util.append(sb, "Name: ", document.getName(), nl);
+        Util.append(sb, "From Date: ", document.getFromDate().toString(), nl);
+        Util.append(sb, "URL: ", document.getUrl(), nl);
+        Util.append(sb, "Fingerprint: ", fp.getValue(), nl);
+        Util.append(sb, "---", nl);
+        return sb.toString();
     }
 }

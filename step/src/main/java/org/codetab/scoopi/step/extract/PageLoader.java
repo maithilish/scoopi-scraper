@@ -67,7 +67,7 @@ public class PageLoader extends BaseLoader {
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
                 LOG.debug(jobMarker, "fetched resource: {}", urlSpec);
                 return bytes;
-            } catch (final IOException e1) {
+            } catch (final IOException | NullPointerException e1) {
                 throw new IOException(spaceit("file not found: ", urlSpec));
             }
         }

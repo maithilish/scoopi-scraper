@@ -349,6 +349,12 @@ public final class Util {
         return String.join(" ", parts);
     }
 
+    public static void append(final StringBuilder sb, final String... parts) {
+        for (String part : parts) {
+            sb.append(part);
+        }
+    }
+
     public static String patchit(final String str, final Object... vars) {
         StringBuilder sb = new StringBuilder(str);
         for (Object var : vars) {
