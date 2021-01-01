@@ -64,13 +64,13 @@ public class DataDao implements IDataDao {
         Map<String, byte[]> dataMap = new HashMap<>();
         dataMap.put("/data", serializedData);
         dataMap.put("/checksum", checksum);
+        dataMap.put("/metadata", getMetadata(file, data).getBytes());
 
         fsHelper.createDir(dir.getValue());
         URI uri = fsHelper.getURI(dir.getValue(),
                 dashit(filePrefix, file.getValue()));
 
         fsHelper.writeObjFile(uri, dataMap);
-        fsHelper.writeMetaFile(dir, getMetadata(file, data));
     }
 
     @Override

@@ -180,10 +180,11 @@ public abstract class BaseLoader extends Step {
                 fetchThrottle.acquirePermit();
                 // fetch documentObject as byte[]
                 documentObject = fetchDocumentObject(locator.getUrl());
-                fetchThrottle.releasePermit();
             } catch (final IOException e) {
                 final String message = "unable to fetch document page";
                 throw new StepRunException(message, e);
+            } finally {
+                fetchThrottle.releasePermit();
             }
 
             // create new document

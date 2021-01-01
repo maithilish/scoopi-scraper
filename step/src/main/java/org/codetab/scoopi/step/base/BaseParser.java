@@ -115,7 +115,15 @@ public abstract class BaseParser extends Step {
         if (!persist) {
             return;
         }
-
+        /*
+         * dataFingerprint is used to save and load the data. The datadef
+         * fingerprint is part dataFingerprint, so new data is parsed when
+         * datadef is modified. There is no way to find or delete the old saved
+         * data. At present, the workaround to clear the dangling data files is
+         * to delete all data files. Possible fix - move datadef fingerprint
+         * from file fingerprint to metadata and match it after loading the file
+         * to decide on re-parse.
+         */
         try {
             try {
                 data = dataDao.get(document.getLocatorId(), dataFingerprint);

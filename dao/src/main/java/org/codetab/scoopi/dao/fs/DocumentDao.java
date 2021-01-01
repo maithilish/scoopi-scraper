@@ -75,12 +75,12 @@ public class DocumentDao implements IDocumentDao {
         dataMap.put("/data", serializedData);
         dataMap.put("/documentDate", documentDate);
         dataMap.put("/checksum", checksum);
+        dataMap.put("/metadata", getMetadata(dir, document).getBytes());
 
         fsHelper.createDir(dir.getValue());
         URI uri = fsHelper.getURI(dir.getValue(), fileName);
 
         fsHelper.writeObjFile(uri, dataMap);
-        fsHelper.writeMetaFile(dir, getMetadata(dir, document));
 
         return Fingerprints.fingerprint(serializedData);
     }
