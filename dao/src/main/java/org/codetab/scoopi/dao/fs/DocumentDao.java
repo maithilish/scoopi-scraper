@@ -96,8 +96,9 @@ public class DocumentDao implements IDocumentDao {
         StringBuilder sb = new StringBuilder();
         Util.append(sb, "Type: ", "document", nl);
         Util.append(sb, "Name: ", document.getName(), nl);
-        Util.append(sb, "From Date: ", document.getFromDate().toString(), nl);
+        Util.append(sb, "Group: ", document.getGroup(), nl);
         Util.append(sb, "URL: ", document.getUrl(), nl);
+        Util.append(sb, "From Date: ", document.getFromDate().toString(), nl);
         Util.append(sb, "Fingerprint: ", fp.getValue(), nl);
         Util.append(sb, "---", nl);
         return sb.toString();

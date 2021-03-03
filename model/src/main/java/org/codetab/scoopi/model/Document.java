@@ -19,6 +19,7 @@ public class Document implements Serializable {
     private ZonedDateTime fromDate;
     private String url;
     private Fingerprint locatorId;
+    private String group;
     private Object documentObject;
     private boolean compressed = false;
 
@@ -129,6 +130,18 @@ public class Document implements Serializable {
     }
 
     /**
+     * set locatorGroup
+     * @param group
+     */
+    public void setGroup(final String group) {
+        this.group = group;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    /**
      * Sets the value of the url property.
      *
      * @param value
@@ -155,7 +168,6 @@ public class Document implements Serializable {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId()).append("name", getName())
-                .append("url", url).toString();
+                .append("group", getGroup()).append("url", url).toString();
     }
-
 }

@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -37,7 +39,10 @@ public class HttpHelper {
         byte[] content = new byte[0];
         CloseableHttpClient client =
                 HttpClientBuilder.create().setUserAgent(userAgent)
-                        .setConnectionTimeToLive(timeout, TimeUnit.MILLISECONDS)
+                        .setConnectionTimeToLive(timeout,
+                                TimeUnit.MILLISECONDS)
+                        .setDefaultRequestConfig(RequestConfig.custom()
+                                .setCookieSpec(CookieSpecs.STANDARD).build())
                         .build();
         HttpGet httpGet = new HttpGet(url);
         new HttpGet(url);

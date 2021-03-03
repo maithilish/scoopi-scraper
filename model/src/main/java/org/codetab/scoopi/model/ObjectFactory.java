@@ -60,12 +60,13 @@ public class ObjectFactory {
 
     public Document createDocument(final String name,
             final ZonedDateTime fromDate, final String url,
-            final Fingerprint locator) {
+            final String locatorGroup, final Fingerprint locator) {
         final Document document = new Document();
         document.setName(name);
         document.setFromDate(fromDate);
         document.setUrl(url);
         document.setLocatorId(locator);
+        document.setGroup(locatorGroup);
         return document;
     }
 

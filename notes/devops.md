@@ -172,31 +172,24 @@ import preferences only after cs and emma are installed**
 
 for context help, install JavaDoc and sources.
 
-    dnf list java-1.8.0-openjdk*
-    dnf install java-1.8.0-openjdk-javadoc
-    dnf install java-1.8.0-openjdk-src
+	sudo apt install openjdk-8-jdk openjdk-8-doc openjdk-8-source
 
-- in Fedora, source src.zip is installed under /usr/lib/jvm/jdk<xxx>/
+JVM location in Ubuntu
 
-- use alternatives to find location of JavaDoc  `alternatives --list`
+  - jvm: /usr/lib/jvm/java-8-openjdk-amd64
+  - doc: /usr/lib/jvm/java-8-openjdk-amd64/docs
+  - src: /usr/lib/jvm/java-8-openjdk-amd64/src.zip
 
-Go to, _Preferences -> Installed JRE -> OpenJdk x.x.x -> Edit and select rt.jar_ and enter
 
-JavaDoc Location - enter JavaDoc URL as file:///etc/alternatives/JavaDocdir
+Go to, Preferences -> Installed JRE -> OpenJdk x.x.x -> Edit and select rt.jar_ and enter
 
-Source Attachment - external location -> path as /usr/lib/jvm/jdk1.8.0_xxx/src.zip
+JavaDoc Location - enter JavaDoc URL as file:///usr/lib/jvm/java-8-openjdk-amd64/docs/api
+Source Attachment - external location -> path as /usr/lib/jvm/java-8-openjdk-amd64/src.zip
 
-to know src.zip location use
-
-    rpm -ql java-1.8.0-openjdk-src
-
-ubuntu
-javadoc - url - file:///usr/share/doc/openjdk-8-jre-headless/api
-source - external location - /usr/lib/jvm/java-8-openjdk-amd64/src.zip
 
 ### Add Imports
 
-For static import of AssertJ and Mockito go to, _Static import - Preference -> Java -> Editor -> Content Assist -> Favorites_ and add New Types
+For static import of AssertJ and Mockito go to Preference -> Java -> Editor -> Content Assist -> Favorites and add New Types
 
     org.mockito.Mockito
     org.mockito.BDDMockito
@@ -328,8 +321,9 @@ On new machine install nodejs and angular cli
     sudo npm install -g @angular/cli
 
 built with 
-Oct 2020 - nodjs - v10.19.0, npm - 6.14.4 and angular cli 9.1.8
+
 Dec 2020 - nodjs - v10.19.0, npm - 6.14.4 and angular cli 11.0.2
+Oct 2020 - nodjs - v10.19.0, npm - 6.14.4 and angular cli 9.1.8
 
 ng version command run in dir metric/src/main/web/scoopiw shows following message 
 	Your global Angular CLI version (9.1.8) is greater than your local

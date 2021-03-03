@@ -191,7 +191,7 @@ public abstract class BaseLoader extends Step {
             ZonedDateTime documentDate = configs.getRunDateTime();
             Document newDocument = objectFactory.createDocument(
                     locator.getName(), documentDate, locator.getUrl(),
-                    locator.getFingerprint());
+                    locator.getGroup(), locator.getFingerprint());
             newDocument.setDocumentObject(documentObject);
 
             document = newDocument;
