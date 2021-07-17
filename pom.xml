@@ -25,6 +25,7 @@
         <module>step</module>
         <module>plugin</module>
         <module>pool</module>
+        <module>coverage</module>
     </modules>
 
     <properties>
@@ -216,7 +217,7 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-util</artifactId>
                 <version>${jetty.version}</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-http</artifactId>
@@ -411,7 +412,7 @@
                             </execution>
                             <execution>
                                 <id>default-report</id>
-                                <phase>test</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>report</goal>
                                 </goals>

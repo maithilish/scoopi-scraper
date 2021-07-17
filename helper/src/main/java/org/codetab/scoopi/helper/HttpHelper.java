@@ -39,8 +39,7 @@ public class HttpHelper {
         byte[] content = new byte[0];
         CloseableHttpClient client =
                 HttpClientBuilder.create().setUserAgent(userAgent)
-                        .setConnectionTimeToLive(timeout,
-                                TimeUnit.MILLISECONDS)
+                        .setConnectionTimeToLive(timeout, TimeUnit.MILLISECONDS)
                         .setDefaultRequestConfig(RequestConfig.custom()
                                 .setCookieSpec(CookieSpecs.STANDARD).build())
                         .build();

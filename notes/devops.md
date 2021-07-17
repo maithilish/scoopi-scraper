@@ -20,6 +20,7 @@ Docker compose file for services for itest is located at scoopi-scraper/src/ites
 
 Release build
 
+	sudo systemctl stop apache2
     cd scoopi-scraper/src/itestservices ; docker-compose up
     mvn clean verify -P basic,ng,release,docker
 
@@ -165,7 +166,9 @@ mvn clean integration-test -Dtest=zzz.java -DfailIfNoTests=false
 
 For Scoopi development, eclipse requires some setup.
 
-**! ! !  install eclipse-cs (checkstyle) and ecl-emma
+EclEcmma comes bundled in Eclipse Java IDE.
+
+!!! install eclipse-cs (checkstyle) !!!
 import preferences only after cs and emma are installed**
 
 ### Install Java JavaDoc and source
