@@ -412,15 +412,10 @@
                             </execution>
                             <execution>
                                 <id>default-report</id>
-                                <phase>package</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>report</goal>
                                 </goals>
-<!--                         <configuration> -->
-<!--                             <excludes> -->
-<!--                                 <exclude>**/org/codetab/scoopi/model/*</exclude> -->
-<!--                             </excludes> -->
-<!--                         </configuration> -->
                             </execution>
                             <execution>
                                 <id>default-check</id>
@@ -435,7 +430,7 @@
                                                 <limit>
                                                     <counter>COMPLEXITY</counter>
                                                     <value>COVEREDRATIO</value>
-                                                    <minimum>0.01</minimum>
+                                                    <minimum>0.00</minimum>
                                                 </limit>
                                             </limits>
                                         </rule>

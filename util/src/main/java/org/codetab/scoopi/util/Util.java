@@ -17,7 +17,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.Gson;
@@ -315,32 +314,6 @@ public final class Util {
         return map;
     }
 
-    public static Range<Integer> getRange(final String value) {
-        notNull(value, "value must not be null");
-
-        if (value.startsWith("-")) { //$NON-NLS-1$
-            throw new NumberFormatException("invalid range" + value);
-        }
-        String[] tokens = StringUtils.split(value, '-');
-        if (tokens.length < 1 || tokens.length > 2) {
-            throw new NumberFormatException("invalid range" + value);
-        }
-        Integer min = 0, max = 0;
-        if (tokens.length == 1) {
-            min = Integer.parseInt(tokens[0]);
-            max = Integer.parseInt(tokens[0]);
-        }
-        if (tokens.length == 2) {
-            min = Integer.parseInt(tokens[0]);
-            max = Integer.parseInt(tokens[1]);
-
-        }
-        if (min > max) {
-            throw new NumberFormatException("invalid range, min > max" + value);
-        }
-        return Range.between(min, max);
-    }
-
     public static String dashit(final String... parts) {
         return String.join("-", parts);
     }
@@ -353,18 +326,5 @@ public final class Util {
         for (String part : parts) {
             sb.append(part);
         }
-    }
-
-    public static String patchit(final String str, final Object... vars) {
-        StringBuilder sb = new StringBuilder(str);
-        for (Object var : vars) {
-            int i = sb.indexOf("{}");
-            if (var instanceof String) {
-                sb.replace(i, i + 2, (String) var);
-            } else {
-                sb.replace(i, i + 2, String.valueOf(var));
-            }
-        }
-        return sb.toString();
     }
 }

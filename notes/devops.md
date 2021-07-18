@@ -24,19 +24,19 @@ Release build
     cd scoopi-scraper/src/itestservices ; docker-compose up
     mvn clean verify -P basic,ng,release,docker
 
-
 Skip test and run itests
 
     mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P basic
 
-Test coverage without itest
+Test coverage
 
-    mvn test jacoco:report
+By default, reports are generated and aggregated in verify phase.
 
-Test coverage with itest
+    mvn verify			// test + itest
+    
+To generate and aggregate for unit tests only, use
 
-    mvn verify jacoco:report
-    mvn JavaDoc:JavaDoc
+    mvn clean test jacoco:report-aggregate
 
 Download javadoc, source
 
@@ -472,4 +472,8 @@ travis maven and build steps
  
  - https://docs.travis-ci.com/user/languages/java/#Projects-Using-Maven
  - https://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Build-Step
+
+## Jacoco Reports
+
+For Itests, reports are generated only for engine module. It is not possible to acquire the coverage data for the dependent modules.
 

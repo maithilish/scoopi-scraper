@@ -24,6 +24,11 @@
             <artifactId>util</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.codetab.scoopi</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -35,7 +40,7 @@
                 <executions>
                     <execution>
                         <id>report-aggregate</id>
-                        <phase>package</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
