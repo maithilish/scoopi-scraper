@@ -1,15 +1,20 @@
 package org.codetab.scoopi.config;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 import java.util.Properties;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
 
+/**
+ * Helper class used by Configs to get properties.
+ * @author m
+ *
+ */
 public class ConfigProperties {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -47,11 +52,9 @@ public class ConfigProperties {
     public String[] getStringArray(final String key)
             throws ConfigNotFoundException {
         String value = properties.getProperty(key);
-        if (nonNull(value)) {
-            String[] values = value.split(" ; ");
-            if (values.length > 0) {
-                return values;
-            }
+        String[] values = StringUtils.split(value, " ; ");
+        if (ArrayUtils.isNotEmpty(values)) {
+            return values;
         }
         throw new ConfigNotFoundException(key);
     }

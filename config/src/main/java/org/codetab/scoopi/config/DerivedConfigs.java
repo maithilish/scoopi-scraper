@@ -59,14 +59,14 @@ public class DerivedConfigs {
     private DateTimeFormatter getDateTimeFormatter(final String pattern) {
         DateTimeFormatter formatter;
         if (isNull(pattern)) {
-            formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+            formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         } else {
             formatter = DateTimeFormatter.ofPattern(pattern);
         }
-        // zone in both formatters is null
-        if (isNull(formatter.getZone())) {
-            formatter = formatter.withZone(ZoneId.systemDefault());
-        }
+
+        // by default, formatter is without time zone, so set it
+        formatter = formatter.withZone(ZoneId.systemDefault());
+
         return formatter;
     }
 

@@ -81,4 +81,12 @@ public class BootConfigs {
         }
     }
 
+    /**
+     * Used by unit tests, package private
+     * @param key
+     * @param value
+     */
+    void setUserDefinedProperty(final String key, final String value) {
+        userDefinedProperties.setProperty(key, value);
+    }
 }

@@ -33,10 +33,6 @@ import org.codetab.scoopi.exception.CriticalException;
  */
 public class ConfigBuilder {
 
-    enum ConfigIndex {
-        SYSTEM, PROVIDED, DEFAULTS
-    }
-
     private static final Logger LOG = LogManager.getLogger();
 
     @Inject
@@ -92,7 +88,7 @@ public class ConfigBuilder {
         return properties;
     }
 
-    public void logConfigs(final Properties properties) {
+    public StringBuilder logConfigs(final Properties properties) {
         TreeMap<Object, Object> sortedMap = new TreeMap<>(properties);
         sortedMap.remove("java.class.path");
 
@@ -108,5 +104,6 @@ public class ConfigBuilder {
                 properties.getProperty("scoopi.runDateTimeText"));
         LOG.debug("{}---- effective configuration ----{}{}-------------------",
                 newline, newline, sb.toString());
+        return sb;
     }
 }

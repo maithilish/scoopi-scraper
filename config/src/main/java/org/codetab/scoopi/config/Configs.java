@@ -99,7 +99,7 @@ public class Configs {
         return runDateTime;
     }
 
-    public String getRunDateTimeTextg() {
+    public String getRunDateTimeText() {
         final String key = "scoopi.runDateTimeText";
         try {
             return configProperties.getConfig(key);
@@ -110,9 +110,9 @@ public class Configs {
 
     public DateTimeFormatter getDateTimeFormatter() {
         DateTimeFormatter formatter;
-        String pattern;
         try {
-            pattern = configProperties.getConfig("scoopi.dateTimePattern");
+            String pattern =
+                    configProperties.getConfig("scoopi.dateTimePattern");
             formatter = DateTimeFormatter.ofPattern(pattern)
                     .withZone(ZoneId.systemDefault());
         } catch (ConfigNotFoundException e) {

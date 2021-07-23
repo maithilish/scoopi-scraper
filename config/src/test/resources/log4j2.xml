@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="logDir">${sys:scoopi.log.dir:-logs}</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Warn File Appender - only warn -->
+        <File name="WARN_LOG_FILE" fileName="${logDir}/warn.log"
+            append="false">
+            <LevelRangeFilter minLevel="WARN"
+                maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout
+                pattern="%-20.-20c{1} %-8level %m %ex{short}%n" />
+        </File>
+
+        <!-- Error File Appender - only error -->
+        <File name="ERROR_LOG_FILE" fileName="${logDir}/error.log"
+            append="false">
+            <LevelRangeFilter minLevel="ERROR"
+                maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout
+                pattern="%-20.-20c{1} %-8level %m %ex{short}%n" />
+        </File>
+
+        <!-- async appenders -->
+        <Async name="ASYNC">
+            <AppenderRef ref="WARN_LOG_FILE" />
+            <AppenderRef ref="ERROR_LOG_FILE" />
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="ASYNC" />
+        </Root>
+    </Loggers>
+
+</Configuration>
