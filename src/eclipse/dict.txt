@@ -190,3 +190,4 @@ systemctl
 sudo
 itestservices
 jacoco
+geckodriver

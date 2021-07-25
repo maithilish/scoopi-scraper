@@ -82,7 +82,7 @@ public abstract class BaseModule extends AbstractModule {
 
     @Provides
     @Singleton
-    LocatorDefData provideLocatorDef() {
+    LocatorDefData provideLocatorDefData() {
         return (LocatorDefData) store.get("locatorDef");
     }
 

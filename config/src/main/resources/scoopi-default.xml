@@ -9,7 +9,10 @@
             <defaultStepsFile>/steps-default.yml</defaultStepsFile>
             <defaultSteps>jsoupDefault</defaultSteps>
             <definedSchema>/schema/defs-defined.json</definedSchema>
-            <effectiveSchema>/schema/defs-effective.json
+            <effectiveSchema>
+            <![CDATA[
+              /schema/defs-effective.json
+            ]]>
             </effectiveSchema>
         </defs>
 
