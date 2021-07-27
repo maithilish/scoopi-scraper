@@ -5,23 +5,24 @@ import static org.codetab.scoopi.util.Util.dashit;
 
 import java.net.URI;
 import java.nio.file.FileSystemNotFoundException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.codetab.scoopi.dao.ChecksumException;
 import org.codetab.scoopi.dao.DaoException;
 import org.codetab.scoopi.dao.IDataDao;
 import org.codetab.scoopi.model.Data;
 import org.codetab.scoopi.model.Fingerprint;
-import org.codetab.scoopi.util.Util;
 
 public class DataDao implements IDataDao {
 
     @Inject
     private FsHelper fsHelper;
+    @Inject
+    private Serializer serializer;
+    @Inject
+    private Factory factory;
 
     private final String filePrefix = "data";
 
@@ -46,7 +47,7 @@ public class DataDao implements IDataDao {
         if (isNull(serializedData)) {
             return null;
         } else {
-            Object obj = SerializationUtils.deserialize(serializedData);
+            Object obj = serializer.deserialize(serializedData);
             if (obj instanceof Data) {
                 return (Data) obj;
             } else {
@@ -58,13 +59,13 @@ public class DataDao implements IDataDao {
     @Override
     public void save(final Fingerprint dir, final Fingerprint file,
             final Data data) throws DaoException {
-        byte[] serializedData = SerializationUtils.serialize(data);
+        byte[] serializedData = serializer.serialize(data);
         byte[] checksum = fsHelper.getChecksum(serializedData);
 
-        Map<String, byte[]> dataMap = new HashMap<>();
+        Map<String, byte[]> dataMap = factory.createDataMap();
         dataMap.put("/data", serializedData);
         dataMap.put("/checksum", checksum);
-        dataMap.put("/metadata", getMetadata(file, data).getBytes());
+        dataMap.put("/metadata", fsHelper.getMetadata(file, data).getBytes());
 
         fsHelper.createDir(dir.getValue());
         URI uri = fsHelper.getURI(dir.getValue(),
@@ -78,17 +79,5 @@ public class DataDao implements IDataDao {
             throws DaoException {
         fsHelper.deleteFile(dir.getValue(),
                 dashit(filePrefix, file.getValue()));
-    }
-
-    private String getMetadata(final Fingerprint fp, final Data data) {
-        String nl = System.lineSeparator();
-        StringBuilder sb = new StringBuilder();
-        Util.append(sb, "Type: ", "data", nl);
-        Util.append(sb, "Name: ", data.getName(), nl);
-        Util.append(sb, "DataDef: ", data.getDataDef(), nl);
-        Util.append(sb, "Run Date: ", data.getRunDate().toString(), nl);
-        Util.append(sb, "Fingerprint: ", fp.getValue(), nl);
-        Util.append(sb, "---", nl);
-        return sb.toString();
     }
 }

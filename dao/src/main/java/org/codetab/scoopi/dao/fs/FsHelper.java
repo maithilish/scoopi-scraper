@@ -23,17 +23,21 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.SerializationUtils;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.dao.ChecksumException;
 import org.codetab.scoopi.dao.DaoException;
+import org.codetab.scoopi.model.Data;
+import org.codetab.scoopi.model.Document;
 import org.codetab.scoopi.model.Fingerprint;
 import org.codetab.scoopi.model.helper.Fingerprints;
+import org.codetab.scoopi.util.Util;
 
 public class FsHelper {
 
     @Inject
     private Configs configs;
+    @Inject
+    private Serializer serializer;
 
     /**
      * Write multiple files contained in input map to a filesystem.
@@ -90,7 +94,7 @@ public class FsHelper {
                 checksum = IOUtils.toByteArray(is);
             }
             Fingerprint dataFp = Fingerprints.fingerprint(data);
-            Fingerprint checksumFp = SerializationUtils.deserialize(checksum);
+            Fingerprint checksumFp = serializer.deserialize(checksum);
             if (!dataFp.equals(checksumFp)) {
                 String message = spaceit("checksum mismatch", uri.toString());
                 throw new ChecksumException(message);
@@ -155,7 +159,7 @@ public class FsHelper {
 
     public byte[] getChecksum(final byte[] data) {
         Fingerprint fp = Fingerprints.fingerprint(data);
-        return SerializationUtils.serialize(fp);
+        return serializer.serialize(fp);
     }
 
     public URI getURI(final String dir, final String file) {
@@ -205,5 +209,30 @@ public class FsHelper {
         } catch (IOException e) {
             throw new DaoException(e);
         }
+    }
+
+    public String getMetadata(final Fingerprint fp, final Document document) {
+        String nl = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
+        Util.append(sb, "Type: ", "document", nl);
+        Util.append(sb, "Name: ", document.getName(), nl);
+        Util.append(sb, "Group: ", document.getGroup(), nl);
+        Util.append(sb, "URL: ", document.getUrl(), nl);
+        Util.append(sb, "From Date: ", document.getFromDate().toString(), nl);
+        Util.append(sb, "Fingerprint: ", fp.getValue(), nl);
+        Util.append(sb, "---", nl);
+        return sb.toString();
+    }
+
+    public String getMetadata(final Fingerprint fp, final Data data) {
+        String nl = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
+        Util.append(sb, "Type: ", "data", nl);
+        Util.append(sb, "Name: ", data.getName(), nl);
+        Util.append(sb, "DataDef: ", data.getDataDef(), nl);
+        Util.append(sb, "Run Date: ", data.getRunDate().toString(), nl);
+        Util.append(sb, "Fingerprint: ", fp.getValue(), nl);
+        Util.append(sb, "---", nl);
+        return sb.toString();
     }
 }
