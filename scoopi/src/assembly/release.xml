@@ -25,6 +25,10 @@
             <!-- use all modules -->
             <useAllReactorProjects>true</useAllReactorProjects>
 
+            <excludes>
+                <exclude>org.codetab.scoopi:coverage</exclude>
+            </excludes>
+
             <binaries>
                 <outputDirectory>module</outputDirectory>
                 <unpack>false</unpack>

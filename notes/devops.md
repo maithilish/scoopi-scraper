@@ -3,10 +3,9 @@
 
 quick builds
 
-    mvn clean verify -P basic,ng,release,docker -DskipTests
-    mvn clean verify -P basic,ng,release -DskipTests
-    mvn clean verify -P basic,ng -DskipTests
-
+    mvn clean verify -DskipTests -P basic,ng
+    mvn clean verify -DskipTests -P basic,ng,release
+    mvn clean verify -DskipTests -P basic,ng,release,docker
 
 Test and verify
 
@@ -15,9 +14,6 @@ Docker compose file for services for itest is located at scoopi-scraper/src/ites
     mvn test
     mvn verify
  
-    mvn test -Dtest=HttpHelperIT.java -P basic
-    mvn integration-test -Dtest=HttpHelperIT.java -P basic
-
 Release build
 
 	sudo systemctl stop apache2
@@ -26,6 +22,7 @@ Release build
 
 Skip test and run itests
 
+    mvn test -Dtest=HttpHelperIT.java -P basic
     mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P basic
 
 Test coverage

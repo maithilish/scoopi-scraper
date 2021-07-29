@@ -8,21 +8,22 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.google.common.net.UrlEscapers;
 
 public class HttpHelper {
+
+    @Inject
+    private HttpFactory httpFactory;
 
     /**
      * Get web page content using Apache HttpClient. Takes care of page
@@ -38,13 +39,8 @@ public class HttpHelper {
         // integration test
         byte[] content = new byte[0];
         CloseableHttpClient client =
-                HttpClientBuilder.create().setUserAgent(userAgent)
-                        .setConnectionTimeToLive(timeout, TimeUnit.MILLISECONDS)
-                        .setDefaultRequestConfig(RequestConfig.custom()
-                                .setCookieSpec(CookieSpecs.STANDARD).build())
-                        .build();
-        HttpGet httpGet = new HttpGet(url);
-        new HttpGet(url);
+                httpFactory.getHttpClient(userAgent, timeout);
+        HttpGet httpGet = httpFactory.httpGet(url);
         try (CloseableHttpResponse response = client.execute(httpGet)) {
             int code = response.getStatusLine().getStatusCode();
             if (code != HttpURLConnection.HTTP_OK) {

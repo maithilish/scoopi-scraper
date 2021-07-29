@@ -3,7 +3,7 @@ package org.codetab.scoopi.helper;
 import static org.codetab.scoopi.util.Util.spaceit;
 
 import java.io.FileWriter;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,8 +21,8 @@ public class AnalyzerConsole {
 
     private String fileName;
 
-    public String getInput() {
-        try (Scanner sc = new Scanner(new CloseShieldInputStream(System.in))) {
+    public String getInput(final InputStream in) {
+        try (Scanner sc = new Scanner(new CloseShieldInputStream(in))) {
             String input = displayPrompt(sc);
             switch (input) {
             case "2":
@@ -70,7 +70,7 @@ public class AnalyzerConsole {
         try (FileWriter w = new FileWriter(fileName)) {
             w.write(pageSource);
             System.out.println(spaceit("wrote page source to file:", fileName));
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("", e);
         }
     }

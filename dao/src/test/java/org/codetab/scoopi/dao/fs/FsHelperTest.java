@@ -45,7 +45,7 @@ public class FsHelperTest {
     @Mock
     private Serializer serializer;
 
-    private String tmpDir = System.getProperty("java.io.tmpdir");
+    private String testTmpDir = FileUtils.getTempDirectoryPath() + "/scooptest";
 
     @Before
     public void setUp() throws Exception {
@@ -54,13 +54,12 @@ public class FsHelperTest {
 
     @After
     public void tearDown() throws Exception {
-        // dir and file
-        FileUtils.deleteQuietly(Paths.get(tmpDir, "foo").toFile());
-        FileUtils.deleteQuietly(Paths.get(tmpDir, "foo.doc").toFile());
+        FileUtils.deleteQuietly(new File(testTmpDir));
     }
 
     @Test
-    public void testWriteObjFile() throws DaoException, ChecksumException {
+    public void testWriteObjFile()
+            throws DaoException, ChecksumException, IOException {
         ZonedDateTime date = ZonedDateTime.now();
         byte[] data = SerializationUtils.serialize(date);
         Fingerprint fingerprint = Fingerprints.fingerprint(data);
@@ -74,8 +73,9 @@ public class FsHelperTest {
                 .thenReturn("jar:file:");
         when(configs.getConfig("scoopi.datastore.path", "data"))
                 .thenReturn("/");
-        URI uri = fsHelper.getURI(tmpDir, "foo.doc");
+        URI uri = fsHelper.getURI(testTmpDir, "foo.doc");
 
+        FileUtils.forceMkdir(new File(testTmpDir));
         fsHelper.writeObjFile(uri, dataMap);
 
         when(serializer.deserialize(checksum)).thenReturn(fingerprint);
@@ -94,7 +94,7 @@ public class FsHelperTest {
 
     @Test
     public void testReadObjFileChecksumException()
-            throws DaoException, ChecksumException {
+            throws DaoException, ChecksumException, IOException {
         ZonedDateTime date = ZonedDateTime.now();
         byte[] data = SerializationUtils.serialize(date);
         Fingerprint fingerprint = Fingerprints.fingerprint(data);
@@ -118,7 +118,7 @@ public class FsHelperTest {
 
     @Test
     public void testReadObjFileOpException()
-            throws DaoException, ChecksumException {
+            throws DaoException, ChecksumException, IOException {
         ZonedDateTime date = ZonedDateTime.now();
         byte[] data = SerializationUtils.serialize(date);
         Fingerprint fingerprint = Fingerprints.fingerprint(data);
@@ -133,7 +133,7 @@ public class FsHelperTest {
     }
 
     @Test
-    public void testReadFile() throws DaoException {
+    public void testReadFile() throws DaoException, IOException {
         ZonedDateTime date = ZonedDateTime.now();
         byte[] data = SerializationUtils.serialize(date);
         Fingerprint fingerprint = Fingerprints.fingerprint(data);
@@ -147,7 +147,7 @@ public class FsHelperTest {
     }
 
     @Test
-    public void testReadFileException() throws DaoException {
+    public void testReadFileException() throws DaoException, IOException {
         ZonedDateTime date = ZonedDateTime.now();
         byte[] data = SerializationUtils.serialize(date);
         Fingerprint fingerprint = Fingerprints.fingerprint(data);
@@ -161,7 +161,7 @@ public class FsHelperTest {
 
     @Test
     public void testDeleteDir() throws IOException, DaoException {
-        Path dir = Paths.get(tmpDir, "foo");
+        Path dir = Paths.get(testTmpDir, "foo");
         FileUtils.deleteQuietly(dir.toFile());
         FileUtils.forceMkdir(dir.toFile());
         assertThat(Files.exists(dir)).isTrue();
@@ -172,7 +172,7 @@ public class FsHelperTest {
 
     @Test
     public void testDeleteDirException() throws IOException, DaoException {
-        Path file = Paths.get(tmpDir, "foo");
+        Path file = Paths.get(testTmpDir, "foo");
         FileUtils.deleteQuietly(file.toFile());
         FileUtils.touch(file.toFile());
 
@@ -181,7 +181,7 @@ public class FsHelperTest {
 
     @Test
     public void testDeleteFile() throws IOException, DaoException {
-        Path file = Paths.get(tmpDir, "foo.doc");
+        Path file = Paths.get(testTmpDir, "foo.doc");
         FileUtils.deleteQuietly(file.toFile());
         FileUtils.touch(file.toFile());
 
@@ -191,13 +191,13 @@ public class FsHelperTest {
                 .thenReturn("/");
 
         assertThat(Files.exists(file)).isTrue();
-        fsHelper.deleteFile(tmpDir, "foo.doc");
+        fsHelper.deleteFile(testTmpDir, "foo.doc");
         assertThat(Files.exists(file)).isFalse();
     }
 
     @Test
     public void testDeleteFileException() throws IOException, DaoException {
-        Path file = Paths.get(tmpDir, "foo.doc");
+        Path file = Paths.get(testTmpDir, "foo.doc");
         FileUtils.deleteQuietly(file.toFile());
 
         when(configs.getConfig("scoopi.datastore.type", "jar:file:"))
@@ -206,7 +206,7 @@ public class FsHelperTest {
                 .thenReturn("/");
 
         assertThrows(DaoException.class,
-                () -> fsHelper.deleteFile(tmpDir, "foo.doc"));
+                () -> fsHelper.deleteFile(testTmpDir, "foo.doc"));
     }
 
     @Test
@@ -259,13 +259,13 @@ public class FsHelperTest {
 
     @Test
     public void testCreateDir() throws DaoException {
-        Path dir = Paths.get(tmpDir, "foo");
+        Path dir = Paths.get(testTmpDir, "foo");
         FileUtils.deleteQuietly(dir.toFile());
 
         when(configs.getConfig("scoopi.datastore.type", "jar:file:"))
                 .thenReturn("jar:file:");
         when(configs.getConfig("scoopi.datastore.path", "data"))
-                .thenReturn(tmpDir);
+                .thenReturn(testTmpDir);
 
         fsHelper.createDir("foo");
 
@@ -285,11 +285,11 @@ public class FsHelperTest {
     @Test
     public void testWriteMetaFile() throws DaoException, IOException {
         String metadata = "test metadata";
-        File file = Paths.get(tmpDir, "foo", "metadata.txt").toFile();
+        File file = Paths.get(testTmpDir, "foo", "metadata.txt").toFile();
         when(configs.getConfig("scoopi.datastore.type", "jar:file:"))
                 .thenReturn("jar:file:");
         when(configs.getConfig("scoopi.datastore.path", "data"))
-                .thenReturn(tmpDir);
+                .thenReturn(testTmpDir);
 
         Fingerprint fingerprint = new Fingerprint("foo");
         fsHelper.writeMetaFile(fingerprint, metadata);
@@ -364,7 +364,7 @@ public class FsHelperTest {
     }
 
     private URI writeFileObj(final byte[] data, final byte[] checksum)
-            throws DaoException {
+            throws DaoException, IOException {
         Map<String, byte[]> dataMap = new HashMap<>();
         dataMap.put("/data", data);
         dataMap.put("/checksum", checksum);
@@ -373,8 +373,9 @@ public class FsHelperTest {
                 .thenReturn("jar:file:");
         when(configs.getConfig("scoopi.datastore.path", "data"))
                 .thenReturn("/");
-        URI uri = fsHelper.getURI(tmpDir, "foo.doc");
+        URI uri = fsHelper.getURI(testTmpDir, "foo.doc");
 
+        FileUtils.forceMkdir(new File(testTmpDir));
         fsHelper.writeObjFile(uri, dataMap);
 
         return uri;

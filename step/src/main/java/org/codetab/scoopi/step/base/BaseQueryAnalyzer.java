@@ -42,7 +42,7 @@ public abstract class BaseQueryAnalyzer extends Step {
     public void process() {
 
         while (true) {
-            String input = analyzerConsole.getInput();
+            String input = analyzerConsole.getInput(System.in);
             if (StringUtils.isBlank(input)) {
                 break;
             }

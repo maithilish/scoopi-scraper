@@ -39,6 +39,11 @@
             <artifactId>dao</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.codetab.scoopi</groupId>
+            <artifactId>helper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

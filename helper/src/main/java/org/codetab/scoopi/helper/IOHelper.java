@@ -27,14 +27,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.MoreFiles;
 
 public class IOHelper {
-
-    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * Search for file in classpath if not found then in file system and return
@@ -67,20 +63,18 @@ public class IOHelper {
      * @param path
      * @return URL
      * @throws FileNotFoundException
+     * @throws MalformedURLException
      */
-    public URL getURL(final String path) throws FileNotFoundException {
+    public URL getURL(final String path)
+            throws FileNotFoundException, MalformedURLException {
         URL url = IOHelper.class.getResource(path);
         if (isNull(url)) {
             url = ClassLoader.getSystemResource(path);
             if (isNull(url)) {
                 Path fsPath = Paths.get(path);
-                if (Files.exists(fsPath)) {
-                    try {
-                        url = fsPath.toUri().toURL();
-                    } catch (MalformedURLException e) {
-                        // can't test
-                        LOG.debug("{}", e);
-                    }
+                url = fsPath.toUri().toURL();
+                if (Files.notExists(fsPath)) {
+                    url = null;
                 }
             }
         }
@@ -97,9 +91,10 @@ public class IOHelper {
      * @return File
      * @throws FileNotFoundException
      * @throws URISyntaxException
+     * @throws MalformedURLException
      */
-    public File getFile(final String fileName)
-            throws FileNotFoundException, URISyntaxException {
+    public File getFile(final String fileName) throws FileNotFoundException,
+            URISyntaxException, MalformedURLException {
         URL url = getURL(fileName);
         return new File(url.toURI());
     }
@@ -137,9 +132,16 @@ public class IOHelper {
      */
     public Collection<String> getFilesInDir(final String dir,
             final String[] extensions) throws URISyntaxException, IOException {
+
+        URL dirURL;
+        if (dir.startsWith("jar")) {
+            dirURL = new URL(dir);
+        } else {
+            dirURL = getResourceURL(dir);
+        }
+
         Path dirPath;
-        FileSystem jarFs = null;
-        URL dirURL = getResourceURL(dir);
+        FileSystem jarfs = null;
         if (isNull(dirURL)) {
             // fs dir
             dirPath = Paths.get(dir);
@@ -147,10 +149,11 @@ public class IOHelper {
             // classpath dir
             URI uri = dirURL.toURI();
             if (uri.getScheme().equals("jar")) {
-                // classpath dir - in jar
-                jarFs = FileSystems.newFileSystem(uri,
+                // dir in jar
+                jarfs = FileSystems.newFileSystem(uri,
                         Collections.<String, Object>emptyMap());
-                dirPath = jarFs.getPath(dir);
+                String fileName = dir.substring(dir.indexOf("!/") + 1);
+                dirPath = jarfs.getPath(fileName);
             } else {
                 // classpath dir - normal
                 dirPath = Paths.get(uri);
@@ -168,9 +171,9 @@ public class IOHelper {
                 }
             }
         }
-        // close jarFs if created
-        if (nonNull(jarFs)) {
-            jarFs.close();
+        // we can close fs only after traverse
+        if (nonNull(jarfs)) {
+            jarfs.close();
         }
         return files;
     }
@@ -188,4 +191,5 @@ public class IOHelper {
         FileUtils.forceMkdirParent(file);
         return new PrintWriter(file);
     }
+
 }

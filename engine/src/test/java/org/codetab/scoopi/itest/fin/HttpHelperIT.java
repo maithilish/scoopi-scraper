@@ -4,18 +4,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 
+import org.codetab.scoopi.di.DInjector;
+import org.codetab.scoopi.di.SoloModule;
 import org.codetab.scoopi.helper.HttpHelper;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class HttpHelperIT {
 
+    private static DInjector di;
     private HttpHelper httpHelper;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        di = new DInjector(new SoloModule());
+    }
 
     @Before
     public void setUp() {
-        httpHelper = new HttpHelper();
+        httpHelper = di.instance(HttpHelper.class);
     }
 
     @Test
