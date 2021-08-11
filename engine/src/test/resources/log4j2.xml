@@ -1,49 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-    <Properties>
-        <Property name="logDir">${sys:scoopi.log.dir:-logs}</Property>
-    </Properties>
 
     <Appenders>
-        <!-- Warn File Appender - only warn -->
-        <File name="WARN_LOG_FILE" fileName="${logDir}/warn.log"
+        <File name="FILE" fileName="target/logs/warn.log"
             append="false">
-            <LevelRangeFilter minLevel="WARN"
-                maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout
-                pattern="%-20.-20c{1} %-8level %m %ex{short}%n" />
         </File>
-
-        <!-- Error File Appender - only error -->
-        <File name="ERROR_LOG_FILE" fileName="${logDir}/error.log"
-            append="false">
-            <LevelRangeFilter minLevel="ERROR"
-                maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout
-                pattern="%-20.-20c{1} %-8level %m %ex{short}%n" />
-        </File>
-
-        <!-- Debug File Appender -->
-        <File name="DEBUG_LOG_FILE" fileName="${logDir}/debug.log"
-            append="false">
-            <ThresholdFilter level="DEBUG"
-                onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout
-                pattern="%-20c{1} %-8level %m%n%ex" />
-        </File>
-
-        <!-- async appenders -->
-        <Async name="ASYNC">
-            <AppenderRef ref="WARN_LOG_FILE" />
-            <AppenderRef ref="ERROR_LOG_FILE" />
-            <AppenderRef ref="DEBUG_LOG_FILE" />
-        </Async>
     </Appenders>
 
     <Loggers>
-        <Logger name="com.hazelcast" level="warn" />
-        <Root level="DEBUG">
-            <AppenderRef ref="ASYNC" />
+        <Root level="WARN">
+            <AppenderRef ref="FILE" />
         </Root>
     </Loggers>
 

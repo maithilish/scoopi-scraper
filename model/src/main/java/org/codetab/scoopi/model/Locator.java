@@ -118,6 +118,7 @@ public class Locator implements Serializable {
         copy.setGroup(group);
         copy.setName(name);
         copy.setUrl(url);
+        copy.setFingerprint(fingerprint);
         // documents not cloned
         return copy;
     }

@@ -24,6 +24,8 @@ public class DataDefDefBuilder implements IDefBuilder {
 
     @Inject
     private DataDefDefs dataDefDefs;
+    @Inject
+    private Factory factory;
 
     private DataDefDefData dataDefDefData;
 
@@ -32,7 +34,7 @@ public class DataDefDefBuilder implements IDefBuilder {
         Validate.validState(defs instanceof JsonNode,
                 "dataDefDefsNode is not JsonNode");
         try {
-            dataDefDefData = new DataDefDefData();
+            dataDefDefData = factory.createDataDefDefData();
             JsonNode node = (JsonNode) defs;
             List<DataDef> dataDefs = dataDefDefs.createDataDefs(node);
             dataDefDefData.setDefinedDataDefs(dataDefs);

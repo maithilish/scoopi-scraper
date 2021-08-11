@@ -3,7 +3,7 @@ package org.codetab.scoopi.dao.fs;
 import java.util.HashMap;
 import java.util.Map;
 
-class Factory {
+final class Factory {
 
     Map<String, byte[]> createDataMap() {
         return new HashMap<>();

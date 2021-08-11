@@ -39,6 +39,8 @@ class ItemDefs {
     private ObjectFactory objectFactory;
     @Inject
     private ItemAttributes itemAttributes;
+    @Inject
+    private ItemMapFactory itemMapFactory;
 
     public Map<String, Query> getQueryMap(final JsonNode defs) {
 
@@ -73,51 +75,15 @@ class ItemDefs {
     }
 
     public Map<String, List<Axis>> getItemAxisMap(final JsonNode defs) {
-        return getItemMap(defs, "items", "item");
+        return itemMapFactory.getItemMap(defs, "items", "item");
     }
 
     public Map<String, List<Axis>> getDimAxisMap(final JsonNode defs) {
-        return getItemMap(defs, "dims", "dim");
+        return itemMapFactory.getItemMap(defs, "dims", "dim");
     }
 
     public Map<String, List<Axis>> getFactAxisMap(final JsonNode defs) {
-        return getItemMap(defs, "facts", "fact");
-    }
-
-    private Map<String, List<Axis>> getItemMap(final JsonNode defs,
-            final String type, final String axisName) {
-        Map<String, List<Axis>> map = new HashMap<>();
-        Iterator<String> dataDefNames = defs.fieldNames();
-        while (dataDefNames.hasNext()) {
-            String dataDefName = dataDefNames.next();
-            String path = jacksons.path(dataDefName, type);
-            List<JsonNode> jItems = defs.at(path).findValues("item");
-            List<Axis> list = new ArrayList<>();
-            for (JsonNode jItem : jItems) {
-                // default null
-                String itemName = jItem.path("name").asText(null);
-                String match = jItem.path("match").asText(null);
-                String value = jItem.path("value").asText(null);
-
-                Integer index = null;
-                String indexStr = jItem.path("index").asText();
-                if (StringUtils.isNotBlank(indexStr)) {
-                    index = Integer.valueOf(indexStr);
-                }
-
-                Integer order = null;
-                String orderStr = jItem.path("order").asText();
-                if (StringUtils.isNotBlank(orderStr)) {
-                    order = Integer.valueOf(orderStr);
-                }
-
-                Axis axis = objectFactory.createAxis(axisName, itemName, value,
-                        match, index, order);
-                list.add(axis);
-            }
-            map.put(dataDefName, list);
-        }
-        return map;
+        return itemMapFactory.getItemMap(defs, "facts", "fact");
     }
 
     public Map<String, Data> generateDataTemplates(
@@ -226,5 +192,47 @@ class ItemDefs {
             LOG.trace(marker, "data template for datadef: {}{}{}", dataDef,
                     LINE, dataTemplate.toTraceString());
         }
+    }
+}
+
+class ItemMapFactory {
+    @Inject
+    private Jacksons jacksons;
+    @Inject
+    private ObjectFactory objectFactory;
+
+    public Map<String, List<Axis>> getItemMap(final JsonNode defs,
+            final String type, final String axisName) {
+        Map<String, List<Axis>> map = new HashMap<>();
+        Iterator<String> dataDefNames = defs.fieldNames();
+        while (dataDefNames.hasNext()) {
+            String dataDefName = dataDefNames.next();
+            String path = jacksons.path(dataDefName, type);
+            List<JsonNode> jItems = defs.at(path).findValues("item");
+            List<Axis> list = new ArrayList<>();
+            for (JsonNode jItem : jItems) {
+                // default null
+                String itemName = jItem.path("name").asText(null);
+                String match = jItem.path("match").asText(null);
+                String value = jItem.path("value").asText(null);
+
+                Integer index = null;
+                String indexStr = jItem.path("index").asText();
+                if (StringUtils.isNotBlank(indexStr)) {
+                    index = Integer.valueOf(indexStr);
+                }
+
+                Integer order = null;
+                String orderStr = jItem.path("order").asText();
+                if (StringUtils.isNotBlank(orderStr)) {
+                    order = Integer.valueOf(orderStr);
+                }
+                Axis axis = objectFactory.createAxis(axisName, itemName, value,
+                        match, index, order);
+                list.add(axis);
+            }
+            map.put(dataDefName, list);
+        }
+        return map;
     }
 }

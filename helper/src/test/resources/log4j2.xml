@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-    <Properties>
-        <Property name="logDir">${sys:scoopi.log.dir:-logs}</Property>
-    </Properties>
 
     <Appenders>
-        <File name="LOG_FILE" fileName="${logDir}/warn.log"
+        <File name="FILE" fileName="target/logs/warn.log"
             append="false">
         </File>
     </Appenders>
 
     <Loggers>
         <Root level="WARN">
-            <AppenderRef ref="LOG_FILE" />
+            <AppenderRef ref="FILE" />
         </Root>
     </Loggers>
 

@@ -22,8 +22,8 @@ public class ItemDefBuilder implements IDefBuilder {
 
     @Inject
     private ItemDefs itemDefs;
-
-    private ItemDefData itemDefData;
+    @Inject
+    private Factory factory;
 
     @Override
     public IDefData buildData(final Object defs) throws DefNotFoundException {
@@ -31,7 +31,7 @@ public class ItemDefBuilder implements IDefBuilder {
                 "itemDefsNode is not JsonNode");
         JsonNode node = (JsonNode) defs;
 
-        itemDefData = new ItemDefData();
+        ItemDefData itemDefData = factory.createItemDefData();
         itemDefData.setQueryMap(itemDefs.getQueryMap(node));
         itemDefData.setItemAxisMap(itemDefs.getItemAxisMap(node));
         itemDefData.setDimAxisMap(itemDefs.getDimAxisMap(node));

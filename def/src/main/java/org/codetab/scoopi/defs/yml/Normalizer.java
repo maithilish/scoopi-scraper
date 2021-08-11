@@ -162,5 +162,4 @@ public class Normalizer {
             ((ObjectNode) topStepsDef).set(stepsName, extSteps);
         }
     }
-
 }
