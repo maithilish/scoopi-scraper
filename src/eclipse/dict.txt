@@ -194,3 +194,14 @@ geckodriver
 baz
 args
 refs
+plugins
+metasyntatic
+qux
+quux
+corge
+grault
+garply
+waldo
+fred
+plugh
+xyzzy

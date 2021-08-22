@@ -40,7 +40,10 @@ public class PluginDefBuilder implements IDefBuilder {
 
         pluginDefData = new PluginDefData();
         Map<String, JsonNode> allTasks = taskDefs.getAllTasks(node);
-        Map<String, JsonNode> stepsMap = stepDefs.getStepNodeMap(allTasks);
+        Map<String, String> stepsNameMap =
+                stepDefs.getTaskStepsNameMap(allTasks);
+        Map<String, JsonNode> stepsMap =
+                stepDefs.getStepNodeMap(allTasks, stepsNameMap);
         Map<String, List<Plugin>> pluginMap = pluginDefs.getPluginMap(stepsMap);
         pluginDefData.setPluginMap(pluginMap);
 

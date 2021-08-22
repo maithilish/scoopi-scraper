@@ -160,10 +160,10 @@ class StepDefs {
     }
 
     public Map<String, JsonNode> getStepNodeMap(
-            final Map<String, JsonNode> tasksMap) throws DefNotFoundException {
+            final Map<String, JsonNode> tasksMap,
+            final Map<String, String> stepsNameMap)
+            throws DefNotFoundException {
         Map<String, JsonNode> map = new HashMap<>();
-
-        Map<String, String> stepsNameMap = getTaskStepsNameMap(tasksMap);
 
         for (String key : tasksMap.keySet()) {
             JsonNode jTask = tasksMap.get(key);
@@ -199,7 +199,6 @@ class StepDefs {
     }
 
     public Map<String, Map<String, StepInfo>> getNextStepsMap(
-            final JsonNode defs,
             final Map<String, Map<String, StepInfo>> stepsMap) {
         Map<String, Map<String, StepInfo>> nextStepsMap = new HashMap<>();
         for (String key : stepsMap.keySet()) {
@@ -208,7 +207,6 @@ class StepDefs {
                 nextStepsView.put(stepInfo.getPriviousStepName(), stepInfo);
             }
             nextStepsMap.put(key, nextStepsView);
-
         }
         return nextStepsMap;
     }

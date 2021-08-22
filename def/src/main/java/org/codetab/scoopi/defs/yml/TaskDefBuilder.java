@@ -40,7 +40,7 @@ public class TaskDefBuilder implements IDefBuilder {
         taskDefData.setStepsMap(
                 stepDefs.getStepsMap(node, taskDefData.getTaskNamesMap()));
         taskDefData.setNextStepsMap(
-                stepDefs.getNextStepsMap(node, taskDefData.getStepsMap()));
+                stepDefs.getNextStepsMap(taskDefData.getStepsMap()));
         return taskDefData;
     }
 }
