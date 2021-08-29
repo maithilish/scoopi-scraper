@@ -205,3 +205,5 @@ waldo
 fred
 plugh
 xyzzy
+kiwi
+lychee

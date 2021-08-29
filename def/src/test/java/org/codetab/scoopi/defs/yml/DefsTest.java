@@ -2,6 +2,8 @@ package org.codetab.scoopi.defs.yml;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -34,10 +36,12 @@ import org.mockito.MockitoAnnotations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
 public class DefsTest {
 
@@ -185,7 +189,9 @@ public class DefsTest {
 
         defs.validateDefinedDefs(definedDefs);
 
-        verify(yamls).validateSchema(schema, schemaStream, definedDefs);
+        verify(yamls).validateSchema(eq(schema), eq(schemaStream),
+                eq(definedDefs), any(ObjectMapper.class),
+                any(JsonSchemaFactory.class));
     }
 
     @Test
@@ -201,7 +207,9 @@ public class DefsTest {
 
         defs.validateEffectiveDefs(effectiveDefs);
 
-        verify(yamls).validateSchema(schema, schemaStream, effectiveDefs);
+        verify(yamls).validateSchema(eq(schema), eq(schemaStream),
+                eq(effectiveDefs), any(ObjectMapper.class),
+                any(JsonSchemaFactory.class));
     }
 
     @Test

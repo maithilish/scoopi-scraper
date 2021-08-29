@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
@@ -82,19 +83,20 @@ public class Yamls {
     }
 
     public boolean validateSchema(final String schemaName,
-            final InputStream schemaStream, final JsonNode node)
+            final InputStream schemaStream, final JsonNode node,
+            final ObjectMapper jsonMapper, final JsonSchemaFactory factory)
             throws ProcessingException, IOException, ValidationException {
         LOG.info("validate schema {}", schemaName);
-        ObjectMapper jsonMapper = new ObjectMapper();
         JsonNode schemaNodes = jsonMapper.readTree(schemaStream);
-        final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
         final JsonSchema schema = factory.getJsonSchema(schemaNodes);
         ProcessingReport report = schema.validate(node);
         if (report.isSuccess()) {
             LOG.info("schema validation success");
         } else {
             LOG.error("schema validation failed");
-            report.forEach(p -> LOG.error(pretty(p.asJson())));
+            for (ProcessingMessage m : report) {
+                LOG.error(pretty(m.asJson()));
+            }
             throw new ValidationException("invalid defs");
         }
         return true;

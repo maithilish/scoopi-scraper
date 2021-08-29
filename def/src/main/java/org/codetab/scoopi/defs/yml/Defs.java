@@ -22,8 +22,10 @@ import org.codetab.scoopi.exception.ValidationException;
 import org.codetab.scoopi.helper.IOHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
 class Defs {
 
@@ -100,7 +102,10 @@ class Defs {
         String schema = configs.getConfig("scoopi.defs.definedSchema"); //$NON-NLS-1$
 
         try (InputStream schemaStream = ioHelper.getInputStream(schema)) {
-            yamls.validateSchema(schema, schemaStream, definedDefs);
+            ObjectMapper jsonMapper = new ObjectMapper();
+            JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+            yamls.validateSchema(schema, schemaStream, definedDefs, jsonMapper,
+                    factory);
         }
         LOG.debug("defined defs validated");
     }
@@ -111,8 +116,10 @@ class Defs {
         LOG.info("validate effective defs");
 
         String schema = configs.getConfig("scoopi.defs.effectiveSchema"); //$NON-NLS-1$
+        ObjectMapper jsonMapper = new ObjectMapper();
+        final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
         yamls.validateSchema(schema, ioHelper.getInputStream(schema),
-                effectiveDefs);
+                effectiveDefs, jsonMapper, factory);
 
         LOG.debug("effectvie defs validated");
     }
