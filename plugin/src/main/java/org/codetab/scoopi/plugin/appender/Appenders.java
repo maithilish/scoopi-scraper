@@ -40,8 +40,7 @@ public class Appenders extends HashMap<String, Appender> {
             try {
                 String appenderName = dashit(stepName, plugin.getName());
                 // avoid calling synchronized createAppender
-                Appender appender =
-                        appenderMediator.getAppender(appenderName, plugin);
+                Appender appender = appenderMediator.getAppender(appenderName);
                 // if no such appender then call createAppender
                 if (isNull(appender)) {
                     appender = appenderMediator.createAppender(appenderName,

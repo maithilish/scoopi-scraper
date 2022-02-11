@@ -58,7 +58,7 @@ public class Serializer extends ScheduledReporter {
         private boolean shutdownExecutorOnStop;
         private Set<MetricAttribute> disabledMetricAttributes;
 
-        private Builder(final MetricRegistry registry) {
+        Builder(final MetricRegistry registry) {
             this.registry = registry;
             this.rateUnit = TimeUnit.SECONDS;
             this.durationUnit = TimeUnit.MILLISECONDS;

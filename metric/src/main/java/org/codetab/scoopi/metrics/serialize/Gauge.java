@@ -2,11 +2,12 @@ package org.codetab.scoopi.metrics.serialize;
 
 import static org.codetab.scoopi.util.Util.spaceit;
 
-import java.text.ParseException;
+import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -75,7 +76,7 @@ public class Gauge implements Metric {
                 if (t2 > t1) {
                     result = val2;
                 }
-            } catch (ParseException e) {
+            } catch (DateTimeParseException e) {
                 throw new IllegalArgumentException("aggregate uptime", e);
             }
             break;
@@ -98,7 +99,7 @@ public class Gauge implements Metric {
         return result;
     }
 
-    private long convertTime(final Object timeStr) throws ParseException {
+    private long convertTime(final Object timeStr) throws DateTimeException {
         LocalTime reference = LocalTime.parse("00:00:00", formatter);
         LocalTime time = LocalTime.parse((String) timeStr, formatter);
         Duration duration = Duration.between(reference, time);

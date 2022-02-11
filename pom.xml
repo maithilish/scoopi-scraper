@@ -61,7 +61,7 @@
         <hazelcast.version>4.0.3</hazelcast.version>
 
         <log4j2.version>2.13.3</log4j2.version>
-        <slf4j-simple.version>2.0.0-alpha1</slf4j-simple.version>
+        <slf4j-simple.version>1.7.36</slf4j-simple.version>
 
         <junit.version>4.13</junit.version>
         <assertj.version>3.17.2</assertj.version>

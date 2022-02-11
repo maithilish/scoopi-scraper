@@ -36,11 +36,12 @@ public final class FileAppender extends Appender {
     @Inject
     private Configs configs;
 
+    @Inject
+    private JobFilePath jobFilePath;
     private String baseDir;
     private String fileDir;
     private String fileBaseName;
     private String fileExtension;
-
     private String dirTimestamp;
 
     @Inject
@@ -90,9 +91,10 @@ public final class FileAppender extends Appender {
                 Thread.currentThread().interrupt();
             }
             if (nonNull(printPayload)) {
-                String jobFilePath = getJobFilePath(printPayload);
-                try (PrintWriter writer =
-                        ioHelper.getPrintWriter(jobFilePath)) {
+                String filePath = jobFilePath.getPath(baseDir, fileDir,
+                        fileBaseName, fileExtension, dirTimestamp,
+                        printPayload.getJobInfo().getId());
+                try (PrintWriter writer = ioHelper.getPrintWriter(filePath)) {
 
                     // int r = (jobCount++) % (random.nextInt(10) + 2);
                     // if (r == 0) {
@@ -116,33 +118,12 @@ public final class FileAppender extends Appender {
                     // recoverable - so no data error
                     LOG.error("appender: {} file path: {} [{}]", getName(),
                             jobFilePath, ERROR.ERROR);
+                    LOG.error("hello");
                 }
                 printPayload.finished();
             }
         }
         LOG.info("appender: {}, {} item appended", getName(), count);
-    }
-
-    /**
-     * Construct path defined in plugin.
-     * <p>
-     * If path (plugin) is not absolute then prefix it with path, if not blank,
-     * defined by config: scoopi.appender.file.baseDir
-     * <p>
-     * Example: scoopi.appender.file.baseDir=/tmp/scoopi for plugin file path:
-     * output, appender writes file to /tmp/scoopi/output
-     * @param printPayload
-     * @return
-     */
-    private String getJobFilePath(final PrintPayload printPayload) {
-        String path =
-                String.join("", fileDir, "/", dirTimestamp, "/", fileBaseName,
-                        "-", String.valueOf(printPayload.getJobInfo().getId()),
-                        ".", fileExtension);
-        if (!Paths.get(path).isAbsolute() && StringUtils.isNotBlank(baseDir)) {
-            path = String.join("/", baseDir, path);
-        }
-        return FilenameUtils.separatorsToSystem(path);
     }
 
     /**
@@ -159,5 +140,30 @@ public final class FileAppender extends Appender {
         if (isInitialized()) {
             getQueue().put(printPayload);
         }
+    }
+}
+
+class JobFilePath {
+
+    /**
+     * Construct path defined in plugin.
+     * <p>
+     * If path (plugin) is not absolute then prefix it with path, if not blank,
+     * defined by config: scoopi.appender.file.baseDir
+     * <p>
+     * Example: scoopi.appender.file.baseDir=/tmp/scoopi for plugin file path:
+     * output, appender writes file to /tmp/scoopi/output
+     * @param printPayload
+     * @return
+     */
+    public String getPath(final String baseDir, final String fileDir,
+            final String fileBaseName, final String fileExtension,
+            final String dirTimestamp, final long jobId) {
+        String path = String.join("", fileDir, "/", dirTimestamp, "/",
+                fileBaseName, "-", String.valueOf(jobId), ".", fileExtension);
+        if (!Paths.get(path).isAbsolute() && StringUtils.isNotBlank(baseDir)) {
+            path = String.join("/", baseDir, path);
+        }
+        return FilenameUtils.separatorsToSystem(path);
     }
 }

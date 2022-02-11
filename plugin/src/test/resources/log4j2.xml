@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Appenders>
+        <File name="FILE" fileName="target/logs/warn.log"
+            append="false">
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="WARN">
+            <AppenderRef ref="FILE" />
+        </Root>
+    </Loggers>
+
+</Configuration>

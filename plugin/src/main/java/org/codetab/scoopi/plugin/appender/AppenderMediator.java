@@ -1,7 +1,6 @@
 package org.codetab.scoopi.plugin.appender;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,8 +36,7 @@ public class AppenderMediator {
     private final Map<String, Appender> appenders =
             new ConcurrentHashMap<String, Appender>();
 
-    public Appender getAppender(final String appenderName,
-            final Plugin plugin) {
+    public Appender getAppender(final String appenderName) {
         return appenders.get(appenderName);
     }
 
@@ -57,14 +55,8 @@ public class AppenderMediator {
 
     @GuardedBy("this")
     public synchronized void closeAll() {
-        for (String name : appenders.keySet()) {
-            close(name);
-        }
-    }
-
-    private void close(final String appenderName) {
-        Appender appender = appenders.get(appenderName);
-        if (nonNull(appender)) {
+        for (String appenderName : appenders.keySet()) {
+            Appender appender = appenders.get(appenderName);
             try {
                 PrintPayload eosPayload = objectFactory.createPrintPayload(null,
                         Marker.END_OF_STREAM);

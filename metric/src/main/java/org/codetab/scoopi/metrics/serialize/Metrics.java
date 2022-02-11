@@ -58,9 +58,4 @@ public class Metrics {
     public void setTimers(final Map<String, Timer> timers) {
         this.timers = timers;
     }
-
-    public void aggregate(final Metrics other) {
-
-    }
-
 }
