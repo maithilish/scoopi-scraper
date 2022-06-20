@@ -17,14 +17,10 @@ import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.CriticalException;
 import org.codetab.scoopi.store.ICluster;
 
-import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.cluster.Member;
 import com.hazelcast.config.Config;
-import com.hazelcast.config.ListenerConfig;
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.transaction.TransactionOptions;
 import com.hazelcast.transaction.TransactionOptions.TransactionType;
 
 @Singleton
@@ -36,6 +32,8 @@ public class Cluster implements ICluster {
     private MembershipListener membershipListener;
     @Inject
     private HazelcastConfig hazelcastConfig;
+    @Inject
+    private Factory factory;
 
     private HazelcastInstance hz;
 
@@ -55,14 +53,15 @@ public class Cluster implements ICluster {
 
                 LOG.info("load hazelcast config file {}", configFile);
                 Config cfg = hazelcastConfig.getConfig(configFile);
-                cfg.addListenerConfig(new ListenerConfig(membershipListener));
+                cfg.addListenerConfig(
+                        factory.createListenerConfig(membershipListener));
 
                 // add system and other properties
                 properties.forEach(
                         (k, v) -> cfg.setProperty((String) k, (String) v));
 
                 LOG.info("start Hazelcast cluster");
-                hz = Hazelcast.newHazelcastInstance(cfg);
+                hz = factory.createHazelcastInstance(cfg);
 
                 logMemberInfo(cfg.getClusterName());
 
@@ -76,13 +75,13 @@ public class Cluster implements ICluster {
                 ClientConfig clientCfg =
                         hazelcastConfig.getClientConfig(configFile);
                 clientCfg.addListenerConfig(
-                        new ListenerConfig(membershipListener));
+                        factory.createListenerConfig(membershipListener));
 
                 // unlike server, at present no system properties are added to
                 // client, enable if required later
 
                 LOG.info("start Hazelcast client");
-                hz = HazelcastClient.newHazelcastClient(clientCfg);
+                hz = factory.createHazelcastClientInstance(clientCfg);
 
                 logMemberInfo(clientCfg.getClusterName());
             }
@@ -153,7 +152,7 @@ public class Cluster implements ICluster {
                 configs.getConfig("scoopi.cluster.tx.type", "TWO_PHASE")
                         .toUpperCase());
 
-        return new TransactionOptions().setTransactionType(txType)
+        return factory.createTxOptions().setTransactionType(txType)
                 .setTimeout(txTimeout, timeUnit);
     }
 

@@ -22,8 +22,12 @@ Release build
 
 Skip test and run itests
 
-    mvn test -Dtest=HttpHelperIT.java -P basic
+    mvn test -Dtest=HttpHelperIT.java -DfailIfNoTests=false -P basic
     mvn integration-test -Dtest=zzz.java -DfailIfNoTests=false -P basic
+
+run single itest, but this will not skip unit tests
+    
+    mvn integration-test -Dit.test=FinEx13KillAfter13SecIT.java -DfailIfNoTests=false -P basic
 
 Test coverage
 
@@ -312,14 +316,25 @@ Unnecessary Code:
  - Remove unused imports
 
  
-## Node.js and Angular
+## Node and Angular
 
-On new machine install nodejs and angular cli
+On new machine install nodejs
     
     sudo apt install nodejs
     sudo apt install npm
-    sudo npm install -g @angular/cli
+    
+Then, downgrade versions and install angular cli
 
+	sudo npm install -g npm@6.14.4
+	hash -r
+	npm -v
+	sudo npm install -g n   # to downgrade node
+	sudo n 10.19.0
+	hash -r
+	node -v
+	
+	sudo npm install -g @angular/cli@11.0.2
+	
 built with 
 
 Dec 2020 - nodjs - v10.19.0, npm - 6.14.4 and angular cli 11.0.2
@@ -474,3 +489,14 @@ travis maven and build steps
 
 For Itests, reports are generated only for engine module. It is not possible to acquire the coverage data for the dependent modules.
 
+## Troubleshoot
+
+### Cluster ITest failure in CLI
+
+Cluster IT passes classpath from System.getProperty("java.class.path")) to ProcessBuilder. This classpath is set by failsafe plugin; till 2.18.1 version it use to add target/test-classes and target/classes to classpath but later versions doesn't add engine/target/classes but adds other modules such as config,metrics etc., jars. As a workaround following configuration is set for the plugin so that engine/classes is added to classpath.
+
+	<additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
+	
+To enable System.out.println() output from the process set inheritIO().
+
+	ProcessBuilder pb = new ProcessBuilder(cmd).inheritIO();	

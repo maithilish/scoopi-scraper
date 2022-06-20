@@ -57,6 +57,11 @@
 			<artifactId>metric</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.codetab.scoopi</groupId>
+			<artifactId>store</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

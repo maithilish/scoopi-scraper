@@ -3,6 +3,7 @@ package org.codetab.scoopi.metrics.server;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -137,6 +138,15 @@ public class MetricsServerTest {
         metricsServer.stop();
 
         verify(server).stop();
+    }
+
+    @Test
+    public void testStopServerIsNull() throws Exception {
+        FieldUtils.writeDeclaredField(metricsServer, "server", null, true);
+
+        metricsServer.stop();
+
+        verify(server, never()).stop();
     }
 
     @Test
