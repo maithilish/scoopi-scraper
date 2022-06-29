@@ -45,7 +45,7 @@
         <commons-validator.version>1.7</commons-validator.version>
 
         <java-inject.version>1</java-inject.version>
-        <guice.version>4.2.3</guice.version>
+        <guice.version>5.1.0</guice.version>
         <guava.version>29.0-jre</guava.version>
         <jackson.version>2.11.3</jackson.version>
         <gson.version>2.8.6</gson.version>

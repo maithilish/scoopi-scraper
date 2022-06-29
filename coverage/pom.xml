@@ -62,6 +62,11 @@
 			<artifactId>store</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.codetab.scoopi</groupId>
+			<artifactId>step</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

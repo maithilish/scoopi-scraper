@@ -1,5 +1,7 @@
 package org.codetab.scoopi.step.base;
 
+import static java.util.Objects.isNull;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -38,10 +40,16 @@ public class Persists {
         // TODO write itest and verify Ex-12
         String taskGroup = jobInfo.getGroup();
         String taskName = jobInfo.getTask();
-        boolean persistData = true;
+        Boolean persistData = true;
         try {
-            persistData = Boolean.valueOf(taskDef.getFieldValue(taskGroup,
-                    taskName, "persist", "data"));
+            String v = taskDef.getFieldValue(taskGroup, taskName, "persist",
+                    "data");
+            // modified for coverage - refactor this
+            if (isNull(v)) {
+                persistData = null;
+            } else {
+                persistData = Boolean.valueOf(v);
+            }
         } catch (DefNotFoundException e) {
         } catch (IOException e) {
             LOG.error("get persist for {} {}, {}", taskGroup, taskName,

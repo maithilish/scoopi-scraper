@@ -7,11 +7,11 @@ import java.net.URL;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.helper.HttpHelper;
+import org.codetab.scoopi.helper.IOHelper;
 import org.codetab.scoopi.metrics.MetricsHelper;
 import org.codetab.scoopi.step.base.BaseLoader;
 
@@ -32,6 +32,8 @@ public class PageLoader extends BaseLoader {
      */
     @Inject
     private HttpHelper httpHelper;
+    @Inject
+    private IOHelper ioHelper;
     @Inject
     private MetricsHelper metricsHelper;
     @Inject
@@ -62,8 +64,8 @@ public class PageLoader extends BaseLoader {
         if (protocol.equals("resource")) {
             LOG.info(jobMarker, "fetch resource: {}", urlSpec);
             try {
-                final URL fileURL = PageLoader.class.getResource(urlSpec);
-                bytes = IOUtils.toByteArray(fileURL);
+                final URL fileURL = ioHelper.getResourceURL(urlSpec);
+                bytes = ioHelper.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "resource").inc();
                 LOG.debug(jobMarker, "fetched resource: {}", urlSpec);
                 return bytes;
@@ -75,8 +77,8 @@ public class PageLoader extends BaseLoader {
         if (protocol.equals("file")) {
             LOG.info(jobMarker, "fetch file: {}", urlSpec);
             try {
-                final URL fileURL = new URL(urlSpec);
-                bytes = IOUtils.toByteArray(fileURL);
+                final URL fileURL = ioHelper.getURLFromSpec(urlSpec);
+                bytes = ioHelper.toByteArray(fileURL);
                 metricsHelper.getCounter(this, "fetch", "file").inc();
                 LOG.debug(jobMarker, "fetched file: {}", urlSpec);
                 return bytes;

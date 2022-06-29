@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import com.google.common.io.MoreFiles;
 
@@ -112,6 +113,15 @@ public class IOHelper {
         return url;
     }
 
+    public URL getURLFromSpec(final String urlSpec)
+            throws MalformedURLException {
+        return new URL(urlSpec);
+    }
+
+    public byte[] toByteArray(final URL fileURL) throws IOException {
+        return IOUtils.toByteArray(fileURL);
+    }
+
     /**
      * Get list of files in a dir in classpath or file system. The list is path
      * to the file which may be
@@ -191,5 +201,4 @@ public class IOHelper {
         FileUtils.forceMkdirParent(file);
         return new PrintWriter(file);
     }
-
 }
