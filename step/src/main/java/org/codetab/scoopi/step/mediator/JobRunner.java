@@ -13,11 +13,10 @@ import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.TransactionException;
+import org.codetab.scoopi.helper.Snooze;
 import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.IJobStore;
-
-import com.google.common.util.concurrent.Uninterruptibles;
 
 @Singleton
 public class JobRunner extends Thread {
@@ -32,6 +31,8 @@ public class JobRunner extends Thread {
     private IJobStore jobStore;
     @Inject
     private StateFliper stateFliper;
+    @Inject
+    private Snooze snooze;
 
     private AtomicBoolean cancelled = new AtomicBoolean(false);
 
@@ -70,8 +71,7 @@ public class JobRunner extends Thread {
             } catch (NoSuchElementException e) {
                 // SPINNER
                 LOG.debug("{}, retry", e.getMessage());
-                Uninterruptibles.sleepUninterruptibly(jobTakeRetryDelay,
-                        TimeUnit.MILLISECONDS);
+                snooze.sleepUninterruptibly(jobTakeRetryDelay);
             } catch (JobStateException | IllegalStateException
                     | InterruptedException | TransactionException
                     | TimeoutException e) {

@@ -86,4 +86,3 @@ public class StoreTest {
         assertTrue(actual);
     }
 }
-

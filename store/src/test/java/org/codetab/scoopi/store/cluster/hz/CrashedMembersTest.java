@@ -77,4 +77,3 @@ public class CrashedMembersTest {
         assertArrayEquals(apple, actual);
     }
 }
-

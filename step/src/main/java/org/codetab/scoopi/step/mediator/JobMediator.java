@@ -2,7 +2,6 @@ package org.codetab.scoopi.step.mediator;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-import java.time.Duration;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,13 +11,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codetab.scoopi.exception.JobStateException;
 import org.codetab.scoopi.exception.TransactionException;
+import org.codetab.scoopi.helper.Snooze;
 import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.model.Payload;
 import org.codetab.scoopi.store.IJobStore;
 import org.codetab.scoopi.store.IShutdown;
-
-import com.google.common.util.concurrent.Uninterruptibles;
 
 @Singleton
 public class JobMediator {
@@ -37,6 +35,8 @@ public class JobMediator {
     private Monitor monitor;
     @Inject
     private Errors errors;
+    @Inject
+    private Snooze snooze;
 
     /**
      * cluster: init connection, create tables. For first node, change jobStore
@@ -101,8 +101,7 @@ public class JobMediator {
         } catch (TransactionException e) {
             final int retryWait = 50;
             while (!jobStore.resetTakenJob(jobId)) {
-                Uninterruptibles
-                        .sleepUninterruptibly(Duration.ofMillis(retryWait));
+                snooze.sleepUninterruptibly(retryWait);
                 LOG.debug("retry reset {}", jobId);
             }
         }
@@ -120,8 +119,7 @@ public class JobMediator {
         } catch (TransactionException e) {
             final int retryWait = 50;
             while (!jobStore.resetTakenJob(jobId)) {
-                Uninterruptibles
-                        .sleepUninterruptibly(Duration.ofMillis(retryWait));
+                snooze.sleepUninterruptibly(retryWait);
                 LOG.debug("retry reset {}", jobId);
             }
         }
@@ -130,7 +128,7 @@ public class JobMediator {
     public void resetTakenJob(final long jobId) {
         final int retryWait = 50;
         while (!jobStore.resetTakenJob(jobId)) {
-            Uninterruptibles.sleepUninterruptibly(Duration.ofMillis(retryWait));
+            snooze.sleepUninterruptibly(retryWait);
             LOG.debug("retry reset {}", jobId);
         }
     }

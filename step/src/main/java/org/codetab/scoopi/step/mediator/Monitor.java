@@ -1,6 +1,5 @@
 package org.codetab.scoopi.step.mediator;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -18,11 +17,13 @@ public class Monitor implements Runnable {
     private Configs configs;
     @Inject
     private StateFliper stateFliper;
+    @Inject
+    private Factory factory;
 
     private ScheduledExecutorService scheduler;
 
     public void start() {
-        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler = factory.newSingleThreadScheduledExecutor();
         final int initialDelay = 1;
         int delay = configs.getInt("scoopi.monitor.timerPeriod", "1000");
 

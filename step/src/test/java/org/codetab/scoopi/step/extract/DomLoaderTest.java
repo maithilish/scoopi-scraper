@@ -117,7 +117,8 @@ public class DomLoaderTest {
         when(apple.getTask()).thenReturn(taskName);
         when(payload.getStepInfo()).thenReturn(orange);
         when(orange.getStepName()).thenReturn(kiwi);
-        when(pluginDef.getPlugins(taskGroup, taskName, stepName)).thenReturn(plugins);
+        when(pluginDef.getPlugins(taskGroup, taskName, stepName))
+                .thenReturn(plugins);
         when(webDriverPool.borrowObject()).thenReturn(webDriver);
         when(webDriver.getPageSource()).thenReturn(pageSrc);
 
@@ -195,4 +196,3 @@ public class DomLoaderTest {
         verify(webDriverPool, never()).returnObject(webDriver);
     }
 }
-
