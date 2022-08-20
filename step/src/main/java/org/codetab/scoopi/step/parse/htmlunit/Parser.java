@@ -20,12 +20,9 @@ import org.codetab.scoopi.metrics.Errors;
 import org.codetab.scoopi.model.ERROR;
 import org.codetab.scoopi.step.base.BaseParser;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ImmediateRefreshHandler;
 import com.gargoylesoftware.htmlunit.StringWebResponse;
-import com.gargoylesoftware.htmlunit.ThreadedRefreshHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class Parser extends BaseParser {
@@ -36,6 +33,8 @@ public class Parser extends BaseParser {
     private ValueParser htmlUnitValueParser;
     @Inject
     private Errors errors;
+    @Inject
+    private Factory htmlUnitFactory;
 
     private static final int TIMEOUT_MILLIS = 120000;
 
@@ -50,9 +49,10 @@ public class Parser extends BaseParser {
         try {
             String html = getDocumentHTML();
             URL url = getDocumentURL();
-            StringWebResponse response = new StringWebResponse(html, url);
+            StringWebResponse response =
+                    htmlUnitFactory.createStringWebResponse(html, url);
             webClient = getWebClient();
-            HtmlPage page = HTMLParser.parseHtml(response,
+            HtmlPage page = htmlUnitFactory.createPage(response,
                     webClient.getCurrentWindow());
 
             htmlUnitValueParser.setPage(page);
@@ -85,8 +85,9 @@ public class Parser extends BaseParser {
                     ERROR.INTERNAL, e);
         }
 
-        WebClient webClient = new WebClient(BrowserVersion.CHROME);
-        webClient.setRefreshHandler(new ThreadedRefreshHandler());
+        WebClient webClient = htmlUnitFactory.createWebClient();
+        webClient.setRefreshHandler(
+                htmlUnitFactory.createThreadedRefreshHandler());
 
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
@@ -99,9 +100,10 @@ public class Parser extends BaseParser {
     private URL getDocumentURL() throws MalformedURLException {
         URL url;
         if (UrlValidator.getInstance().isValid(document.getUrl())) {
-            url = new URL(document.getUrl());
+            url = htmlUnitFactory.createUrl(document.getUrl());
         } else {
-            url = new URL(new URL("file:"), document.getUrl()); //$NON-NLS-1$
+            url = htmlUnitFactory.createURL(htmlUnitFactory.createUrl("file:"),
+                    document.getUrl());
         }
         return url;
     }

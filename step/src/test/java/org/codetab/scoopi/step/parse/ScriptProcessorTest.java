@@ -110,7 +110,8 @@ public class ScriptProcessorTest {
         int key = 1;
         ZonedDateTime val = Mockito.mock(ZonedDateTime.class);
         ZonedDateTime zdt = Mockito.mock(ZonedDateTime.class);
-        DateTimeFormatter dateTimeFormatter = Mockito.mock(DateTimeFormatter.class);
+        DateTimeFormatter dateTimeFormatter =
+                Mockito.mock(DateTimeFormatter.class);
         String value = null;
         Marker marker = Mockito.mock(Marker.class);
         String mango = "Foo";
@@ -135,7 +136,8 @@ public class ScriptProcessorTest {
         int key = 1;
         Integer val = 5;
         ZonedDateTime zdt = Mockito.mock(ZonedDateTime.class);
-        DateTimeFormatter dateTimeFormatter = Mockito.mock(DateTimeFormatter.class);
+        DateTimeFormatter dateTimeFormatter =
+                Mockito.mock(DateTimeFormatter.class);
         String value = "5";
         Marker marker = Mockito.mock(Marker.class);
         String mango = "Foo";
@@ -179,4 +181,3 @@ public class ScriptProcessorTest {
         verify(parserCache, never()).put(key, value);
     }
 }
-

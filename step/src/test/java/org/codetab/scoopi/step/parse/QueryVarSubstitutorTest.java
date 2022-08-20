@@ -59,7 +59,8 @@ public class QueryVarSubstitutorTest {
 
         queries.put(placeHolder, query);
 
-        Map<String, String> actual = queryVarSubstitutor.getVarValueMap(queries, axisList, ownAxis);
+        Map<String, String> actual =
+                queryVarSubstitutor.getVarValueMap(queries, axisList, ownAxis);
 
         assertEquals(valueMap, actual);
     }
@@ -233,4 +234,3 @@ public class QueryVarSubstitutorTest {
 
     }
 }
-

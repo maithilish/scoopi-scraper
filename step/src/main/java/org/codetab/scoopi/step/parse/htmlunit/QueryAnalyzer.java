@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
+import javax.inject.Inject;
+
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,13 +20,9 @@ import org.codetab.scoopi.exception.ConfigNotFoundException;
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.step.base.BaseQueryAnalyzer;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.ImmediateRefreshHandler;
 import com.gargoylesoftware.htmlunit.StringWebResponse;
-import com.gargoylesoftware.htmlunit.ThreadedRefreshHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class QueryAnalyzer extends BaseQueryAnalyzer {
@@ -32,6 +30,9 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
     private static final Logger LOG = LogManager.getLogger();
 
     private static final int TIMEOUT_MILLIS = 120000;
+
+    @Inject
+    private Factory htmlUnitFactory;
 
     private HtmlPage page;
 
@@ -45,9 +46,11 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
         try {
             String html = getDocumentHTML();
             URL url = getDocumentURL();
-            StringWebResponse response = new StringWebResponse(html, url);
+            StringWebResponse response =
+                    htmlUnitFactory.createStringWebResponse(html, url);
             webClient = getWebClient();
-            page = HTMLParser.parseHtml(response, webClient.getCurrentWindow());
+            page = htmlUnitFactory.createPage(response,
+                    webClient.getCurrentWindow());
 
             return true;
         } catch (IllegalStateException | IOException | DataFormatException e) {
@@ -55,7 +58,8 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
             throw new StepRunException(message, e);
         } finally {
             if (webClient != null) {
-                webClient.setRefreshHandler(new ImmediateRefreshHandler());
+                webClient.setRefreshHandler(
+                        htmlUnitFactory.createImmediateRefreshHandler());
                 webClient.close();
             }
         }
@@ -74,8 +78,9 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
         } catch (NumberFormatException | ConfigNotFoundException e) {
         }
 
-        WebClient webClient = new WebClient(BrowserVersion.CHROME);
-        webClient.setRefreshHandler(new ThreadedRefreshHandler());
+        WebClient webClient = htmlUnitFactory.createWebClient();
+        webClient.setRefreshHandler(
+                htmlUnitFactory.createThreadedRefreshHandler());
 
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
@@ -88,9 +93,10 @@ public class QueryAnalyzer extends BaseQueryAnalyzer {
     private URL getDocumentURL() throws MalformedURLException {
         URL url;
         if (UrlValidator.getInstance().isValid(document.getUrl())) {
-            url = new URL(document.getUrl());
+            url = htmlUnitFactory.createUrl(document.getUrl());
         } else {
-            url = new URL(new URL("file:"), document.getUrl()); //$NON-NLS-1$
+            url = htmlUnitFactory.createURL(htmlUnitFactory.createUrl("file:"),
+                    document.getUrl());
         }
         return url;
     }
