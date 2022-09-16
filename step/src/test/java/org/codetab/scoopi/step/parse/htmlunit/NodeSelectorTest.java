@@ -6,8 +6,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +14,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.codetab.scoopi.model.TaskInfo;
+import org.codetab.scoopi.step.TestUtils;
 import org.codetab.scoopi.util.Util;
 import org.junit.Before;
 import org.junit.Test;
@@ -187,7 +186,7 @@ public class NodeSelectorTest {
         Marker marker = Mockito.mock(Marker.class);
 
         Logger log = Mockito.mock(Logger.class);
-        setFinalStaticField(NodeSelector.class, "LOG", log);
+        TestUtils.setFinalStaticField(NodeSelector.class, "LOG", log);
         when(log.isTraceEnabled()).thenReturn(true);
 
         when(node.asXml()).thenReturn(grape);
@@ -223,7 +222,7 @@ public class NodeSelectorTest {
         Marker marker = Mockito.mock(Marker.class);
 
         Logger log = Mockito.mock(Logger.class);
-        setFinalStaticField(NodeSelector.class, "LOG", log);
+        TestUtils.setFinalStaticField(NodeSelector.class, "LOG", log);
         when(log.isTraceEnabled()).thenReturn(true);
 
         when(node.asXml()).thenReturn(grape);
@@ -234,17 +233,4 @@ public class NodeSelectorTest {
                 Util.indent(grape, "  "), LINE);
     }
 
-    private static void setFinalStaticField(final Class<?> clazz,
-            final String fieldName, final Object value)
-            throws ReflectiveOperationException {
-
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-
-        Field modifiers = Field.class.getDeclaredField("modifiers");
-        modifiers.setAccessible(true);
-        modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-        field.set(null, value);
-    }
 }

@@ -4,7 +4,6 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.validState;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.DataFormatException;
@@ -13,13 +12,14 @@ import javax.inject.Inject;
 
 import org.codetab.scoopi.exception.StepRunException;
 import org.codetab.scoopi.step.base.BaseParser;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class Parser extends BaseParser {
 
     @Inject
     private ValueParser jsoupValueParser;
+    @Inject
+    private DocumentHelper documentHelper;
 
     @Override
     protected boolean postInitialize() {
@@ -28,8 +28,8 @@ public class Parser extends BaseParser {
             validState(nonNull(document.getDocumentObject()),
                     "documentObject is not loaded");
 
-            InputStream html = getDocumentHTML();
-            Document page = Jsoup.parse(html, null, "");
+            InputStream html = documentHelper.getDocumentHTML(document);
+            Document page = documentHelper.createDocument(html);
 
             jsoupValueParser.setPage(page);
             setValueParser(jsoupValueParser);
@@ -39,11 +39,5 @@ public class Parser extends BaseParser {
             String message = "unable to initialize parser";
             throw new StepRunException(message, e);
         }
-    }
-
-    private InputStream getDocumentHTML()
-            throws DataFormatException, IOException {
-        byte[] bytes = (byte[]) document.getDocumentObject();
-        return new ByteArrayInputStream(bytes);
     }
 }

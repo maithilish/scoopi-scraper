@@ -10,8 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +25,7 @@ import org.codetab.scoopi.exception.InvalidDefException;
 import org.codetab.scoopi.model.Axis;
 import org.codetab.scoopi.model.Item;
 import org.codetab.scoopi.model.TaskInfo;
+import org.codetab.scoopi.step.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -117,7 +116,7 @@ public class ValueProcessorTest {
         Marker marker3 = Mockito.mock(Marker.class);
 
         Logger log = Mockito.mock(Logger.class);
-        setFinalStaticField(ValueProcessor.class, "LOG", log);
+        TestUtils.setFinalStaticField(ValueProcessor.class, "LOG", log);
         when(log.isTraceEnabled()).thenReturn(true);
 
         when(configs.getBoolean("scoopi.fact.blank.replace", true))
@@ -235,7 +234,7 @@ public class ValueProcessorTest {
         Marker marker3 = Mockito.mock(Marker.class);
 
         Logger log = Mockito.mock(Logger.class);
-        setFinalStaticField(ValueProcessor.class, "LOG", log);
+        TestUtils.setFinalStaticField(ValueProcessor.class, "LOG", log);
         when(log.isTraceEnabled()).thenReturn(false);
 
         when(configs.getBoolean("scoopi.fact.blank.replace", true))
@@ -1941,17 +1940,4 @@ public class ValueProcessorTest {
         assertSame(value, scriptObjectMap1.get(key));
     }
 
-    private static void setFinalStaticField(final Class<?> clazz,
-            final String fieldName, final Object value)
-            throws ReflectiveOperationException {
-
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-
-        Field modifiers = Field.class.getDeclaredField("modifiers");
-        modifiers.setAccessible(true);
-        modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-        field.set(null, value);
-    }
 }
