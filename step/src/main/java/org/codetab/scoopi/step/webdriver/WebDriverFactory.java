@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
-import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.codetab.scoopi.config.Configs;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -21,6 +20,8 @@ class WebDriverFactory extends BasePooledObjectFactory<WebDriver> {
     private Configs configs;
     @Inject
     private WebDrivers webDrivers;
+    @Inject
+    private DriverFactory driverFactory;
 
     @Override
     public WebDriver create() throws Exception {
@@ -42,10 +43,8 @@ class WebDriverFactory extends BasePooledObjectFactory<WebDriver> {
                 "true");
         System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,
                 driverLogFile);
-        FirefoxOptions options = new FirefoxOptions();
-        options.addArguments("--headless");
-        options.addArguments("--log warn");
-        WebDriver webDriver = new FirefoxDriver(options);
+        FirefoxOptions options = driverFactory.createFireFoxOptions();
+        WebDriver webDriver = driverFactory.createFirefoxDriver(options);
         webDrivers.setImplicitTimeout(webDriver);
         webDriver.manage().window().maximize();
         return webDriver;
@@ -53,7 +52,7 @@ class WebDriverFactory extends BasePooledObjectFactory<WebDriver> {
 
     @Override
     public PooledObject<WebDriver> wrap(final WebDriver webDriver) {
-        return new DefaultPooledObject<WebDriver>(webDriver);
+        return driverFactory.createDefaultPooledObject(webDriver);
     }
 
     @Override

@@ -1,20 +1,20 @@
 package org.codetab.scoopi.step.webdriver;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 
 import org.codetab.scoopi.config.Configs;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class WebDrivers {
 
     @Inject
     private Configs configs;
+    @Inject
+    private DriverFactory driverFactory;
 
     public void explicitlyWaitForDomReady(final WebDriver webDriver)
             throws ConfigNotFoundException {
@@ -22,10 +22,10 @@ public class WebDrivers {
         if (waitType.equalsIgnoreCase("explicit")) {
             String timeout =
                     configs.getConfig("scoopi.webDriver.timeout.explicitWait");
-            new WebDriverWait(webDriver, Integer.parseInt(timeout)).until(
-                    (ExpectedCondition<Boolean>) wd -> ((JavascriptExecutor) wd)
-                            .executeScript("return document.readyState")
-                            .equals("complete"));
+            Function<WebDriver, Boolean> waitFunction =
+                    driverFactory.createWaitFunction();
+            driverFactory.createWebDriverWait(webDriver, timeout)
+                    .until(waitFunction);
         }
     }
 

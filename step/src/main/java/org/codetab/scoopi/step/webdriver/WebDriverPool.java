@@ -13,5 +13,4 @@ public class WebDriverPool extends GenericObjectPool<WebDriver> {
     public WebDriverPool(final WebDriverFactory factory) {
         super(factory);
     }
-
 }
