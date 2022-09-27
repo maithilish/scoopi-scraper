@@ -157,22 +157,22 @@ public class ScripterTest {
         pluginsList.add(plugin);
         Optional<List<Plugin>> plugins = Optional.of(pluginsList);
 
-
         doThrow(Exception.class).when(scriptExecutor).execute(plugins.get(),
                 input);
 
         when(payload.getStepInfo()).thenReturn(stepInfo).thenReturn(stepInfo2);
         when(stepInfo.getStepName()).thenReturn(orange);
-        when(payload.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2).thenReturn(jobInfo3);
+        when(payload.getJobInfo()).thenReturn(jobInfo).thenReturn(jobInfo2)
+                .thenReturn(jobInfo3);
         when(jobInfo.getLabel()).thenReturn(kiwi);
         when(jobInfo2.getGroup()).thenReturn(taskGroup);
         when(jobInfo3.getTask()).thenReturn(taskName);
         when(stepInfo2.getStepName()).thenReturn(cherry);
-        when(pluginDef.getPlugins(taskGroup, taskName, stepName)).thenReturn(plugins);
+        when(pluginDef.getPlugins(taskGroup, taskName, stepName))
+                .thenReturn(plugins);
 
         assertThrows(StepRunException.class, () -> scripter.process());
 
         assertSame(output, scripter.getOutput());
     }
 }
-

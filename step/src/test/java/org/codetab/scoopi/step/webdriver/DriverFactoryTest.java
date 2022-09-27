@@ -14,6 +14,7 @@ import java.util.function.Function;
 
 import org.apache.commons.pool2.PooledObject;
 import org.codetab.scoopi.exception.ConfigNotFoundException;
+import org.codetab.scoopi.exception.CriticalException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -67,9 +68,20 @@ public class DriverFactoryTest {
         options.addArguments("--headless");
         options.setLogLevel(FirefoxDriverLogLevel.FATAL);
 
-        WebDriver actual = driverFactory.createFirefoxDriver(options);
-
-        assertTrue(actual instanceof WebDriver);
+        try {
+            WebDriver actual = driverFactory.createFirefoxDriver(options);
+            assertTrue(actual instanceof WebDriver);
+        } catch (Exception e) {
+            if (e.getMessage()
+                    .startsWith("The driver executable does not exist")) {
+                String msg = String.join(" ",
+                        "The geckodrive is missing! Download and place it in $HOME/.gecko folder.",
+                        e.getMessage());
+                throw new CriticalException(msg, e);
+            } else {
+                throw e;
+            }
+        }
     }
 
     @Test

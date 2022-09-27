@@ -143,19 +143,16 @@ public class LocatorCreatorTest {
         doThrow(InterruptedException.class).when(jobMediator).pushJobs(payloads,
                 jobId);
 
-        assertThrows(StepRunException.class,
-                () -> locatorCreator.handover());
+        assertThrows(StepRunException.class, () -> locatorCreator.handover());
 
         assertTrue(Thread.currentThread().isInterrupted());
 
         verify(jobInfo).setId(kiwi);
 
-
     }
 
     @Test
-    public void testHandoverTryCatchJobStateException()
-            throws Exception {
+    public void testHandoverTryCatchJobStateException() throws Exception {
         String stepName = "start";
         String seederClzName = "Foo";
         List<Payload> payloads = new ArrayList<>();
@@ -165,7 +162,6 @@ public class LocatorCreatorTest {
         String mango = "Bar";
         long jobId = 0L;
         payloads.add(payload2);
-
 
         when(configs.getConfig("scoopi.seeder.class"))
                 .thenReturn(seederClzName);
@@ -178,8 +174,7 @@ public class LocatorCreatorTest {
         doThrow(JobStateException.class).when(jobMediator).pushJobs(payloads,
                 jobId);
 
-        assertThrows(StepRunException.class,
-                () -> locatorCreator.handover());
+        assertThrows(StepRunException.class, () -> locatorCreator.handover());
 
         assertFalse(Thread.currentThread().isInterrupted());
 
